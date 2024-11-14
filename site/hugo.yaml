@@ -61,6 +61,6 @@ menu:
         type: search
     - name: GitHub
       weight: 4
-      url: "https://github.com/modelcontextprotocol/spec"
+      url: "https://github.com/modelcontextprotocol/specification"
       params:
         icon: github

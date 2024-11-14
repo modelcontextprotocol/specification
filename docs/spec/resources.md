@@ -451,4 +451,4 @@ zed://
     : Prompts provided by MCP servers for the Zed prompt library
 
 If you would like to include a commonly used URI schema in this list,
-please open an issue the [MCP Specification Github](https://github.com/modelcontextprotocol/specifications).
+please open an issue the [MCP Specification Github](https://github.com/modelcontextprotocol/specification).
