@@ -189,7 +189,7 @@ export interface ClientCapabilities {
   /**
    * Experimental, non-standard capabilities that the client supports.
    */
-  experimental?: { [key: string]: object };
+  experimental?: { [key: string]: unknown };
   /**
    * Present if the client supports listing roots.
    */
@@ -212,7 +212,7 @@ export interface ServerCapabilities {
   /**
    * Experimental, non-standard capabilities that the server supports.
    */
-  experimental?: { [key: string]: object };
+  experimental?: { [key: string]: unknown };
   /**
    * Present if the server supports sending log messages to the client.
    */
@@ -814,14 +814,14 @@ export interface Annotated {
   annotations?: {
     /**
      * Describes who the intended customer of this object or data is.
-     * 
+     *
      * It can include multiple entries to indicate content useful for multiple audiences (e.g., `["user", "assistant"]`).
      */
     audience?: Role[];
 
     /**
      * Describes how important this data is for operating the server.
-     * 
+     *
      * A value of 1 means "most important," and indicates that the data is
      * effectively required, while 0 means "least important," and indicates that
      * the data is entirely optional.
