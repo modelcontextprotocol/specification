@@ -25,6 +25,48 @@
             },
             "type": "object"
         },
+        "AudioContent": {
+            "description": "Audio provided to or from an LLM.",
+            "properties": {
+                "annotations": {
+                    "properties": {
+                        "audience": {
+                            "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
+                            "items": {
+                                "$ref": "#/definitions/Role"
+                            },
+                            "type": "array"
+                        },
+                        "priority": {
+                            "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
+                            "maximum": 1,
+                            "minimum": 0,
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "data": {
+                    "description": "The base64-encoded audio data.",
+                    "format": "byte",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of the audio. Different providers may support different audio types.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "audio",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "mimeType",
+                "type"
+            ],
+            "type": "object"
+        },
         "BlobResourceContents": {
             "properties": {
                 "blob": {
@@ -93,6 +135,9 @@
                             },
                             {
                                 "$ref": "#/definitions/ImageContent"
+                            },
+                            {
+                                "$ref": "#/definitions/AudioContent"
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
@@ -409,6 +454,9 @@
                         },
                         {
                             "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
                         }
                     ]
                 },
@@ -1350,6 +1398,9 @@
                             "$ref": "#/definitions/ImageContent"
                         },
                         {
+                            "$ref": "#/definitions/AudioContent"
+                        },
+                        {
                             "$ref": "#/definitions/EmbeddedResource"
                         }
                     ]
@@ -1718,6 +1769,9 @@
                         },
                         {
                             "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
                         }
                     ]
                 },
