@@ -67,7 +67,7 @@ To retrieve roots, servers send a `roots/list` request:
 
 ### Root List Changes
 
-When roots change, clients that support `listChanged` MUST send a notification:
+When roots change, clients that support `listChanged` **MUST** send a notification:
 
 ```json
 {
@@ -128,7 +128,7 @@ Example roots for different use cases:
 
 ## Error Handling
 
-Clients SHOULD return standard JSON-RPC errors for common failure cases:
+Clients **SHOULD** return standard JSON-RPC errors for common failure cases:
 
 - Client does not support roots: `-32601` (Method not found)
 - Internal errors: `-32603`

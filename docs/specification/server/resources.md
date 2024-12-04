@@ -293,7 +293,7 @@ Git version control integration.
 
 ## Error Handling
 
-Servers SHOULD return standard JSON-RPC errors for common failure cases:
+Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
 
 - Resource not found: `-32002`
 - Internal errors: `-32603`
