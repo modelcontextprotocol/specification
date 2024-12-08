@@ -23,7 +23,7 @@ params:
     logo:
       path: images/light.svg
       dark: images/dark.svg
-      link: /
+      link: /specification
       width: 204
       height: 30
   protocolRevision: "2024-11-05"
@@ -59,7 +59,7 @@ enableInlineShortcodes: true
 menu:
   main:
     - name: Specification
-      pageRef: /
+      pageRef: /specification
       weight: 1
     - name: Resources
       pageRef: /resources
