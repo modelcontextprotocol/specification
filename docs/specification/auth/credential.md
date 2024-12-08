@@ -4,8 +4,10 @@ type: docs
 weight: 52
 ---
 
-{{< callout type="info" >}}
-**Protocol Revision**: {{< param protocolRevision >}}
+{{< callout type="warning" >}}
+Auth is **experimental**, and being drafted for release in the next [revision]({{< ref "/specification/revisions" >}}) of the protocol.
+
+The additions to the base protocol are backwards compatible to revision 2024-11-05; however, **the auth specification may change in backwards incompatible ways** until the next protocol revision.
 {{< /callout >}}
 
 The Model Context Protocol (MCP) supports credential-based authentication for scenarios requiring API keys or similar secrets.
@@ -117,3 +119,4 @@ When credentials are missing or invalid, servers **SHOULD** respond with:
 
 2. Servers **MUST**:
    - Maintain secure storage of credentials if needed
+   - Treat credential names as case-insensitive (like HTTP headers)

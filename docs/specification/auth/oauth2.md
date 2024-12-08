@@ -4,8 +4,10 @@ type: docs
 weight: 51
 ---
 
-{{< callout type="info" >}}
-**Protocol Revision**: {{< param protocolRevision >}}
+{{< callout type="warning" >}}
+Auth is **experimental**, and being drafted for release in the next [revision]({{< ref "/specification/revisions" >}}) of the protocol.
+
+The additions to the base protocol are backwards compatible to revision 2024-11-05; however, **the auth specification may change in backwards incompatible ways** until the next protocol revision.
 {{< /callout >}}
 
 The Model Context Protocol (MCP) supports OAuth 2.0 as a standardized authentication method, allowing secure authorization flows between clients and servers. Tokens will be securely communicated as part of the request body.
@@ -97,7 +99,7 @@ The authorization URL **SHOULD** prompt the user to configure any credentials as
 
 2. Authorization Code Exchange
 
-After receiving the authorization code, the client **MUST** exchange it for tokens:
+After receiving the authorization code, the client **SHOULD** exchange it for tokens:
 
 ```json
 {
@@ -128,7 +130,7 @@ The server responds with tokens:
 
 ### Valid Access Token Flow
 
-Once a client has obtained an access token, it **MUST** include it in the initialization request:
+Once a client has obtained an access token, it **SHOULD** include it in the initialization request:
 
 ```json
 {
@@ -142,8 +144,10 @@ Once a client has obtained an access token, it **MUST** include it in the initia
         "oauth2": true
       }
     },
-    "headers": {
-      "Authorization": "Bearer access_token"
+    "auth": {
+      "oauth2": {
+        "access_token": "..."
+      }
     }
   }
 }
@@ -175,7 +179,7 @@ If the access token is invalid, the server **MUST** respond with:
 
 ### Refresh Token Flow
 
-When an access token expires, the client **MUST** request a new one using the refresh token:
+When an access token expires, the client **SHOULD** request a new one using the refresh token:
 
 ```json
 {
@@ -212,7 +216,7 @@ To revoke a token:
 {
   "jsonrpc": "2.0",
   "id": 1,
-  "method": "auth/oauth/revoke",
+  "method": "auth/oauth2/revoke",
   "params": {
     "token": "access_or_refresh_token"
   }
