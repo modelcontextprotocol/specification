@@ -158,9 +158,11 @@ Once a client has obtained an access token, it **SHOULD** include it in all requ
   "id": 1,
   "method": "...",
   "params": {
-    "auth": {
-      "oauth2": {
-        "access_token": "..."
+    "_meta": {
+      "auth": {
+        "oauth2": {
+          "access_token": "..."
+        }
       }
     }
   }

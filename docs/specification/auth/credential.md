@@ -89,10 +89,12 @@ During initialization, if the client and server both support the `credentials` c
         "credentials": true
       }
     },
-    "auth": {
-      "credentials": {
-        "API-KEY": "api_key",
-        "MISC-PASSWORD": "password"
+    "_meta": {
+      "auth": {
+        "credentials": {
+          "API-KEY": "api_key",
+          "MISC-PASSWORD": "password"
+        }
       }
     }
   }
