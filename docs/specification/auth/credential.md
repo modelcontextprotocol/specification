@@ -20,7 +20,7 @@ Clients supporting credential authentication **MUST** declare it during initiali
 {
   "capabilities": {
     "auth": {
-      "credential": true
+      "credentials": true
     }
   }
 }
@@ -32,7 +32,7 @@ Servers supporting credentials **MUST** include their capabilities:
 {
   "capabilities": {
     "auth": {
-      "credential": {
+      "credentials": {
         "list": true
       }
     }
@@ -43,31 +43,40 @@ Servers supporting credentials **MUST** include their capabilities:
 ## Protocol Messages
 
 ### Credential Requirements
+Clients can list required credentials with an `auth/credentials/list` capability.
 
-Servers can list required credentials using the credential/list capability:
-
+**Request:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "auth/credentials/list",
+}
+```
+**Response:**
 ```json
 {
   "jsonrpc": "2.0",
   "id": 1,
   "result": {
-    "credential": [
+    "credentials": [
       {
-        "name": "X-API-KEY",
+        "name": "API-KEY",
         "description": "An API key must be provided to call this tool."
       },
       {
-        "name": "X-MISC-PASSWORD",
+        "name": "MISC-PASSWORD",
         "description": "A password must be provided to list this resource"
       }
     ]
   }
 }
 ```
+- Clients and servers **MUST** treat credential names as case-insensitive.
 
 ### Providing Credentials
 
-Clients provide credentials through headers during initialization:
+Clients **MUST** provide credentials through headers during initialization:
 
 ```json
 {
@@ -80,9 +89,11 @@ Clients provide credentials through headers during initialization:
         "credential": true
       }
     },
-    "headers": {
-      "X-API-KEY": "api_key",
-      "X-MISC-PASSWORD": "password"
+    "auth": {
+      "credentials": {
+        "API-KEY": "api_key",
+        "MISC-PASSWORD": "password"
+      }
     }
   }
 }
@@ -90,26 +101,33 @@ Clients provide credentials through headers during initialization:
 
 ## Error Handling
 
-When credentials are missing or invalid, servers **SHOULD** respond with:
+When credentials are missing or invalid, servers **MUST** respond with at least an error code.
 
+**Response:**
 ```json
 {
   "jsonrpc": "2.0",
   "id": 1,
   "error": {
-    "code": 32004,
-    "message": "See required configuration",
+    "code": -32001,
+    "message": "Auth error, please see nested data.",
     "data": {
-      "requiredConfiguration": [
-        {
-          "name": "X-API-KEY",
-          "description": "An API key must be provided to call this tool."
+      "authRequest": {
+        "credentials": {
+          "error": "ASCII error code", // REQUIRED
+          "errors": { // RECOMMENDED
+            // Breakdown of error per-credential
+          }
+          
         }
-      ]
+      }
     }
   }
 }
 ```
+- Servers **SHOULD** include helpful error messages
+- Servers **SHOULD** include per-credential breakdowns of errors
+- Clients **SHOULD** surface errors in a human-readable way to the end user.
 
 ## Security Considerations
 

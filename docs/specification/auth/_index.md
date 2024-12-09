@@ -64,6 +64,7 @@ Servers that support authentication **MUST** include their supported authenticat
   "capabilities": {
     "auth": {
       "oauth2": {
+        "authorize": true,
         "token": true,
         "revoke": true
       },
@@ -103,7 +104,6 @@ Servers that support non-standard authentication schemes can declare them as exp
 1. Clients **SHOULD**:
    - Prompt users for consent before initiating authentication flows
    - Provide clear user interfaces for authentication management
-   - Implement automatic token refresh
    - Handle authentication errors gracefully
 
 2. Servers **SHOULD**:
