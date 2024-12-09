@@ -16,6 +16,8 @@ This specification defines the authoritative protocol requirements, based on the
 
 For implementation guides and examples, visit [modelcontextprotocol.io](https://modelcontextprotocol.io).
 
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [BCP 14](https://datatracker.ietf.org/doc/html/bcp14) [[RFC2119](https://datatracker.ietf.org/doc/html/rfc2119)] [[RFC8174](https://datatracker.ietf.org/doc/html/rfc8174)] when, and only when, they appear in all capitals, as shown here.
+
 ## Overview
 
 MCP provides a standardized way for applications to:
