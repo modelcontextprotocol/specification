@@ -37,7 +37,7 @@ sequenceDiagram
     Client->>AuthServer: Refresh Token Request (auth/oauth2/token)
     AuthServer->>Client: New Access Token
 
-    Note right of client: Revoking tokens:
+    Note right of Client: Revoking tokens:
     Client->>AuthServer: Revoke Token Request (auth/oauth2/revoke)
 ```
 Note that the authorization server may be the same server as the resource server or a separate entity. A single authorization server may issue access tokens accepted by multiple resource servers.
@@ -82,7 +82,7 @@ During initialization, if the client and server both support the `oauth2` capabi
 To obtain an access token, clients **MUST** send an `auth/oauth2/authorize` request.
 
 **Request:**
-```json
+```typescript
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -129,7 +129,7 @@ After receiving the authorization code, the client **SHOULD** exchange it for to
 
 The server responds with tokens:
 
-```json
+```typescript
 {
   "jsonrpc": "2.0",
   "id": 2,
@@ -173,7 +173,7 @@ If the client has a refresh token, the client **SHOULD** automatically request a
 
 **Request:**
 
-```json
+```typescript
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -207,7 +207,7 @@ The response will be identical to obtaining an access token for the first time.
 If a request failed client authentication or is invalid the server should respond with an error response as described in [Section 5.2 of RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749#section-5.2).
 
 **Response:**
-```json
+```typescript
 {
   "jsonrpc": "2.0",
   "id": 1,

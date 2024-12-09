@@ -76,7 +76,7 @@ Clients can list required credentials with an `auth/credentials/list` capability
 
 ### Providing Credentials
 
-Clients **MUST** provide credentials through headers during initialization:
+During initialization, if the client and server both support the `credentials` capability, the client **SHOULD** provide credentials as parameters during initialization:
 
 ```json
 {
@@ -86,7 +86,7 @@ Clients **MUST** provide credentials through headers during initialization:
   "params": {
     "capabilities": {
       "auth": {
-        "credential": true
+        "credentials": true
       }
     },
     "auth": {
@@ -104,7 +104,7 @@ Clients **MUST** provide credentials through headers during initialization:
 When credentials are missing or invalid, servers **MUST** respond with at least an error code.
 
 **Response:**
-```json
+```typescript
 {
   "jsonrpc": "2.0",
   "id": 1,
