@@ -183,6 +183,11 @@ export interface InitializedNotification extends Notification {
 }
 
 /**
+ * A string representing a BCP 47 language tag.
+ */
+export type LanguageTag = string;
+
+/**
  * Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
  */
 export interface ClientCapabilities {
@@ -203,6 +208,15 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client has a list of preferred languages for translatable fields.
+   */
+  locale?: {
+    /**
+     * An array of preferred languages for translatable fields, listed in descending order of priority.
+     */
+    preferredLanguages: LanguageTag[];
+  };
 }
 
 /**
@@ -247,6 +261,15 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
+  };
+  /**
+   * Present if the server specifies the language it uses for translatable fields.
+   */
+  locale?: {
+    /**
+     * The language used by the server for translatable fields.
+     */
+    language: LanguageTag;
   };
 }
 
