@@ -29,4 +29,5 @@ Explore these key primitives in more detail below:
   {{< card link="prompts" title="Prompts" icon="chat-alt-2" >}}
   {{< card link="resources" title="Resources" icon="document" >}}
   {{< card link="tools" title="Tools" icon="adjustments" >}}
+  {{< card link="i18n" title="I18n support" icon="globe-alt" >}}
 {{< /cards >}}
