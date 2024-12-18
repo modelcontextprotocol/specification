@@ -64,6 +64,9 @@ The client **MUST** initiate this phase by sending an `initialize` request conta
         "listChanged": true
       },
       "sampling": {}
+      "locale": {
+        "preferredLanguages": ["en-US", "en-GB", "fr-FR"]
+      }
     },
     "clientInfo": {
       "name": "ExampleClient",
@@ -92,6 +95,9 @@ The server **MUST** respond with its own capabilities and information:
       },
       "tools": {
         "listChanged": true
+      },
+      "locale": {
+        "language": "en-US"
       }
     },
     "serverInfo": {
@@ -132,11 +138,13 @@ Key capabilities include:
 |----------|--------------- |-------------|
 | Client   | `roots`        | Ability to provide filesystem [roots]({{< ref "/specification/client/roots" >}}) |
 | Client   | `sampling`     | Support for LLM [sampling]({{< ref "/specification/client/sampling" >}}) requests |
+| Client   | `locale`       | Provides [i18n support]({{< ref "/specification/client/i18n" >}}) |
 | Client   | `experimental` | Describes support for non-standard experimental features |
 | Server   | `prompts`      | Offers [prompt templates]({{< ref "/specification/server/prompts" >}}) |
 | Server   | `resources`    | Provides readable [resources]({{< ref "/specification/server/resources" >}}) |
 | Server   | `tools`        | Exposes callable [tools]({{< ref "/specification/server/tools" >}}) |
 | Server   | `logging`      | Emits structured [log messages]({{< ref "/specification/server/utilities/logging" >}}) |
+| Server   | `locale`       | | Provides [i18n support]({{< ref "/specification/server/i18n" >}}) |
 | Server   | `experimental` | Describes support for non-standard experimental features |
 
 Capability objects can describe sub-capabilities like:
