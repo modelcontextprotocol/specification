@@ -188,6 +188,15 @@ Tool results can contain multiple content items of different types:
 }
 ```
 
+#### Audio Content
+```json
+{
+  "type": "audio",
+  "data": "base64-encoded-audio-data",
+  "mimeType": "audio/wav"
+}
+```
+
 #### Embedded Resources
 
 [Resources]({{< ref "/specification/server/resources" >}}) **MAY** be embedded, to provide additional context or data, behind a URI that can be subscribed to or fetched again by the client later:

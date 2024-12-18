@@ -600,7 +600,7 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | EmbeddedResource;
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
 }
 
 /**
@@ -649,7 +649,7 @@ export interface ListToolsResult extends PaginatedResult {
  * should be reported as an MCP error response.
  */
 export interface CallToolResult extends Result {
-  content: (TextContent | ImageContent | EmbeddedResource)[];
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
 
   /**
    * Whether the tool call ended in an error.
@@ -805,7 +805,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: TextContent | ImageContent;
+  content: TextContent | ImageContent | AudioContent;
 }
 
 /**
@@ -862,6 +862,25 @@ export interface ImageContent extends Annotated {
    */
   mimeType: string;
 }
+
+
+/**
+ * Audio provided to or from an LLM.
+ */
+export interface AudioContent extends Annotated {
+  type: "audio";
+  /**
+   * The base64-encoded audio data.
+   *
+   * @format byte
+   */
+  data: string;
+  /**
+   * The MIME type of the audio. Different providers may support different audio types.
+   */
+  mimeType: string;
+}
+
 
 /**
  * The server's preferences for model selection, requested of the client during sampling.

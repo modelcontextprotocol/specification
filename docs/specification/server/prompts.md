@@ -189,6 +189,17 @@ Image content allows including visual information in messages:
 ```
 The image data **MUST** be base64-encoded and include a valid MIME type. This enables multi-modal interactions where visual context is important.
 
+#### Audio Content
+Audio content allows including audio information in messages:
+```json
+{
+  "type": "audio",
+  "data": "base64-encoded-audio-data",
+  "mimeType": "audio/wav"
+}
+```
+The audio data MUST be base64-encoded and include a valid MIME type. This enables multi-modal interactions where audio context is important.
+
 #### Embedded Resources
 Embedded resources allow referencing server-side resources directly in messages:
 ```json
