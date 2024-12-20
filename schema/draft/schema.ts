@@ -248,6 +248,16 @@ export interface ServerCapabilities {
      */
     listChanged?: boolean;
   };
+  auth?: {
+    /**
+     * Whether the server supports authentication.
+     */
+    oauth2?: {
+      authorize?: { [key: string]: object };
+      token?: { [key: string]: object };
+      revoke?: { [key: string]: object };
+    };
+  };
 }
 
 /**
