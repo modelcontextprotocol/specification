@@ -44,17 +44,6 @@ Note that the authorization server may be the same server as the resource server
 
 ## Capabilities
 
-Clients supporting OAuth 2.0 **MUST** declare it during initialization:
-
-```json
-{
-  "capabilities": {
-    "auth": {
-      "oauth2": true
-    }
-  }
-}
-```
 
 Servers supporting OAuth 2.0 **MUST** include their capabilities:
 
@@ -63,9 +52,9 @@ Servers supporting OAuth 2.0 **MUST** include their capabilities:
   "capabilities": {
     "auth": {
       "oauth2": {
-        "authorize": true,
-        "token": true,
-        "revoke": true
+        "authorize": {},
+        "token": {},
+        "revoke": {}
       }
     }
   }
@@ -74,7 +63,7 @@ Servers supporting OAuth 2.0 **MUST** include their capabilities:
 
 ## Flows
 ### Initialization
-During initialization, if the client and server both support the `oauth2` capability, the client **SHOULD** include an access token in all subsequent requests. If the client does not have an access token, the client **SHOULD** obtain one.
+During initialization, if the server supports the `oauth2` capability, the client **SHOULD** include an access token in all subsequent requests. If the client does not have an access token, the client **SHOULD** obtain one.
 
 ### Obtaining an Access Token
 

@@ -1,5 +1,5 @@
 ---
-title: Authentication
+title: "Authentication"
 type: docs 
 weight: 50
 ---
@@ -14,62 +14,22 @@ The Model Context Protocol (MCP) provides a standardized way for clients and ser
 
 ## User Interaction Model
 
-Authentication in MCP is designed to be flexible and secure, supporting various authentication flows that may require different levels of user interaction:
-
-- OAuth 2.0 for standardized authorization flows
-- Credential-based authentication for API keys and similar secrets
-
-Other authentication schemes may also be implemented by clients and servers as extensions to the base protocol.
+Authentication in MCP is designed to be flexible and secure. OAuth 2.0 for standardized authorization flows. Other authentication schemes may also be implemented by clients and servers as extensions to the base protocol.
 
 ## Capabilities
 
-Clients that support authentication **MUST** declare their supported authentication methods during [initialization]({{< ref "/specification/basic/lifecycle#initialization" >}}):
-
-```json
-{
-  "capabilities": {
-    "auth": {
-      "oauth2": true,
-      "credential": true,
-    }
-  }
-}
-```
-
-The `auth` capability can include any combination of the following authentication methods:
-
-- `oauth2`: Indicates support for [OAuth 2.0]({{< ref "/specification/auth/oauth2" >}}) authentication flows
-- `credential`: Indicates support for [credential-based]({{< ref "/specification/auth/credential" >}}) authentication
-
-Clients that support or wish to use non-standard authentication schemes can declare them as experimental capabilities:
-
-```json
-{
-  "capabilities": {
-    "experimental": {
-      "auth": {
-        "mycustomauth": true
-      }
-    }
-  }
-}
-```
-
 ## Server Response
 
-Servers that support authentication **MUST** include their supported authentication methods in their initialization response:
+Servers that support authentication **MUST** include their supported authentication methods in their [initialization]({{< ref "/specification/basic/lifecycle#initialization" >}}) response:
 
 ```json
 {
   "capabilities": {
     "auth": {
       "oauth2": {
-        "authorize": true,
-        "token": true,
-        "revoke": true
-      },
-      "credential": {
-        "list": true
+        "authorize": {},
+        "token": {},
+        "revoke": {}
       },
     }
   }
