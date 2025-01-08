@@ -153,6 +153,22 @@
                     "description": "Experimental, non-standard capabilities that the client supports.",
                     "type": "object"
                 },
+                "locale": {
+                    "description": "Present if the client has a list of preferred languages for translatable fields.",
+                    "properties": {
+                        "preferredLanguages": {
+                            "description": "An array of preferred languages for translatable fields, listed in descending order of priority.",
+                            "items": {
+                                "$ref": "#/definitions/LanguageTag"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "preferredLanguages"
+                    ],
+                    "type": "object"
+                },
                 "roots": {
                     "description": "Present if the client supports listing roots.",
                     "properties": {
@@ -824,6 +840,10 @@
                 "result"
             ],
             "type": "object"
+        },
+        "LanguageTag": {
+            "description": "A string representing a BCP 47 language tag.",
+            "type": "string"
         },
         "ListPromptsRequest": {
             "description": "Sent from the client to request a list of prompts and prompt templates the server has.",
@@ -1744,6 +1764,19 @@
                         "type": "object"
                     },
                     "description": "Experimental, non-standard capabilities that the server supports.",
+                    "type": "object"
+                },
+                "locale": {
+                    "description": "Present if the server specifies the language it uses for translatable fields.",
+                    "properties": {
+                        "language": {
+                            "$ref": "#/definitions/LanguageTag",
+                            "description": "The language used by the server for translatable fields."
+                        }
+                    },
+                    "required": [
+                        "language"
+                    ],
                     "type": "object"
                 },
                 "logging": {
