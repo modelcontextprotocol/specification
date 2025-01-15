@@ -121,7 +121,7 @@
                     "type": "string"
                 },
                 "inputSchema": {
-                    "description": "A JSON Schema object defining the expected additional parameters for the tool.",
+                    "description": "A JSON Schema object defining the expected additional parameters for the augmentation.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {

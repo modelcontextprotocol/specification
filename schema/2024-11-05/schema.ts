@@ -832,7 +832,7 @@ export interface Augmentation {
    */
   description?: string;
   /**
-   * A JSON Schema object defining the expected additional parameters for the tool.
+   * A JSON Schema object defining the expected additional parameters for the augmentation.
    */
   inputSchema: {
     type: "object";
