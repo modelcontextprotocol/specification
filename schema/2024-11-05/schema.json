@@ -36,9 +36,12 @@
                     "properties": {
                         "arguments": {
                             "additionalProperties": {},
-                            "description": "Additional parameters for the augmentation.",
+                            "description": "Additional parameters for the augmentation.\nmaxResult and minRelevance are common parameters for augmentations that return multiple results, but the exact parameters are server-specific.",
                             "properties": {
                                 "maxResults": {
+                                    "type": "integer"
+                                },
+                                "minRelevance": {
                                     "type": "integer"
                                 }
                             },

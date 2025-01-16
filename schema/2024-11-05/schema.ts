@@ -754,9 +754,11 @@ export interface AugmentRequest {
       context: (TextContent | ImageContent | EmbeddedResource | VectorContent)[];
       /**
        * Additional parameters for the augmentation.
+       * maxResult and minRelevance are common parameters for augmentations that return multiple results, but the exact parameters are server-specific.
        */
       arguments?: {
           maxResults?: number;  
+          minRelevance?: number;
           [key: string]: unknown;
       };
   };
