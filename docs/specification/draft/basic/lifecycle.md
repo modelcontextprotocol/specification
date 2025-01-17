@@ -46,6 +46,8 @@ During this phase, the client and server:
 - Exchange and negotiate capabilities
 - Share implementation details
 
+#### Initial Request
+
 The client **MUST** initiate this phase by sending an `initialize` request containing:
 
 - Protocol version supported
@@ -72,6 +74,8 @@ The client **MUST** initiate this phase by sending an `initialize` request conta
   }
 }
 ```
+
+#### Server Response
 
 The server **MUST** respond with its own capabilities and information:
 
@@ -101,6 +105,40 @@ The server **MUST** respond with its own capabilities and information:
   }
 }
 ```
+
+#### Upgrading Transports
+
+The server **MAY** request a transport change by including an `upgrade` field in the
+initialize response:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2024-11-05",
+    "upgrade": {
+      "endpoint": "http://localhost:8080",
+      "transport": "http+sse"
+    },
+    "serverInfo": {
+      "name": "ExampleServer",
+      "version": "1.0.0"
+    }
+  }
+}
+```
+
+When receiving an upgrade response, the client **MUST**:
+
+1. Close the current transport connection
+2. Connect to the specified endpoint using the new transport
+3. Perform initialization again on the new transport
+
+Clients **MUST** track transport history and **MUST NOT** accept upgrades to previously
+used transports to prevent upgrade loops.
+
+#### Initialization Complete
 
 After successful initialization, the client **MUST** send an `initialized` notification
 to indicate it is ready to begin normal operations:
