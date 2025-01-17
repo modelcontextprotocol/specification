@@ -11,8 +11,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "validate:schema": "tsc --noEmit schema/schema.ts schema/draft/schema.ts",
-    "generate:json": "typescript-json-schema --defaultNumberType integer --required schema/schema.ts \"*\" -o schema/schema.json && typescript-json-schema --defaultNumberType integer --required schema/draft/schema.ts \"*\" -o schema/draft/schema.json",
+    "validate:schema": "tsc --noEmit schema/**/*.ts",
+    "generate:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required \"$f\" \"*\" -o \"${f%ts}json\"; done",
     "serve:docs": "hugo --source site/ server --logLevel debug --disableFastRender"
   },
   "devDependencies": {
