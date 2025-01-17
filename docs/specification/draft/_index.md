@@ -12,7 +12,7 @@ weight: 10
 
 [Model Context Protocol](https://modelcontextprotocol.io) (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.
 
-This specification defines the authoritative protocol requirements, based on the TypeScript schema in [schema.ts](https://github.com/modelcontextprotocol/specification/draft/blob/main/schema/schema.ts).
+This specification defines the authoritative protocol requirements, based on the TypeScript schema in [schema.ts](https://github.com/modelcontextprotocol/specification/blob/main/schema/draft/schema.ts).
 
 For implementation guides and examples, visit [modelcontextprotocol.io](https://modelcontextprotocol.io).
 

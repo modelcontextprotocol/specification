@@ -52,6 +52,6 @@ Clients and servers **MAY** negotiate their own custom authentication and author
 
 ## Schema
 
-The full specification of the protocol is defined as a [TypeScript schema](http://github.com/modelcontextprotocol/specification/2024-11-05/tree/main/schema/schema.ts). This is the source of truth for all protocol messages and structures.
+The full specification of the protocol is defined as a [TypeScript schema](https://github.com/modelcontextprotocol/specification/blob/main/schema/2024-11-05/schema.ts). This is the source of truth for all protocol messages and structures.
 
-There is also a [JSON Schema](http://github.com/modelcontextprotocol/specification/2024-11-05/tree/main/schema/schema.json), which is automatically generated from the TypeScript source of truth, for use with various automated tooling.
+There is also a [JSON Schema](https://github.com/modelcontextprotocol/specification/blob/main/schema/2024-11-05/schema.json), which is automatically generated from the TypeScript source of truth, for use with various automated tooling.
