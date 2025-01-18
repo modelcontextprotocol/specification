@@ -247,6 +247,15 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
+  };  
+  /**
+   * Present if the server offers any augmentation capabilities.
+   */
+  augmentation?: {
+    /**
+     * Whether this server supports notifications for changes to the augmentation list.
+     */
+    listChanged?: boolean;
   };
 }
 
@@ -691,6 +700,135 @@ export interface Tool {
   description?: string;
   /**
    * A JSON Schema object defining the expected parameters for the tool.
+   */
+  inputSchema: {
+    type: "object";
+    properties?: { [key: string]: object };
+    required?: string[];
+  };
+}
+
+
+/**
+ * Sent from the client to request a list of augmentations the server has.
+ */
+export interface ListAugmentationsRequest extends PaginatedRequest {
+  method: "augmentation/list";
+}
+
+/**
+* The server's response to an augmentation/list request from the client.
+*/
+export interface ListAugmentationsResult extends PaginatedResult {
+  augmentations: Augmentation[];
+}
+
+/**
+* An optional notification from the server to the client, informing that the list
+* of augmentations it offers has changed. This may be issued by servers without
+* any previous subscription.
+*/
+export interface AugmentationListChangedNotification extends Notification {
+  method: "notifications/augmentation/list_changed";
+}
+
+/**
+ * Request to augment context with additional information.
+ */
+export interface AugmentRequest {
+  method: "augmentation/augment";
+  params: {
+      /**
+       * The name of the augmentation to perform.
+       */
+      name: string;
+      /**
+       * The context to augment. This can include text, images, or other resources.
+       */
+      context: (TextContent | ImageContent | AudioContent | EmbeddedResource | VectorContent)[];
+      /**
+       * Additional parameters for the augmentation.
+       * maxResult and minRelevance are common parameters for augmentations that return multiple results, but the exact parameters are server-specific.
+       */
+      arguments?: {
+          maxResults?: number;  
+          minRelevance?: number;
+          [key: string]: unknown;
+      };
+  };
+}
+
+/**
+ * A single piece of content returned from augmentation with its properties.
+ */
+export interface AugmentedContent {
+  /**
+   * The content part of the individual augmented result content.
+   */
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource | VectorContent;
+  /**
+   * The properties of the individual augmented result content.
+   */
+  properties?: {
+      /**
+       * Relevance of the content, as often used in RAG systems.
+       */
+      relevance?: number;
+      /**
+       * Optional additional properties.
+       */
+      [key: string]: unknown;
+  };
+}
+
+/**
+* Response containing augmented context.
+*/
+export interface AugmentResult extends Result {
+  /**
+   * The augmented content. Each item in the array represents a single augmented result.
+   * It is server-specific how to interpret the content.
+   */
+  content: AugmentedContent[];
+  /**
+   * Hints for the client on how to interpret the augmented content.
+   */
+  hint?: string;
+  /**
+   * Optional metadata for the entire augmented result.
+   */
+  metadata?: object;
+}
+
+/**
+* Vector representation of content.
+*/
+export interface VectorContent {
+  type: "vector";
+  /**
+   * The vector values.
+   */
+  values: number[];
+  /**
+   * The dimensions of the vector. For future compatibility with sparse vectors, this should be set to the length of the values array.
+   */
+  dimensions: number;
+}
+
+/**
+ * Describes an augmentation capability offered by the server.
+ */
+export interface Augmentation {
+  /**
+   * The name of the augmentation.
+   */
+  name: string;
+  /**
+   * A human-readable description of the augmentation.
+   */
+  description?: string;
+  /**
+   * A JSON Schema object defining the expected additional parameters for the augmentation.
    */
   inputSchema: {
     type: "object";
