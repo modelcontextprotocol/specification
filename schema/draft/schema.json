@@ -104,9 +104,6 @@
                                     },
                                     {
                                         "$ref": "#/definitions/EmbeddedResource"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/VectorContent"
                                     }
                                 ]
                             },
@@ -246,9 +243,6 @@
                         },
                         {
                             "$ref": "#/definitions/EmbeddedResource"
-                        },
-                        {
-                            "$ref": "#/definitions/VectorContent"
                         }
                     ],
                     "description": "The content part of the individual augmented result content."
@@ -2372,32 +2366,6 @@
             "required": [
                 "method",
                 "params"
-            ],
-            "type": "object"
-        },
-        "VectorContent": {
-            "description": "Vector representation of content.",
-            "properties": {
-                "dimensions": {
-                    "description": "The dimensions of the vector. For future compatibility with sparse vectors, this should be set to the length of the values array.",
-                    "type": "integer"
-                },
-                "type": {
-                    "const": "vector",
-                    "type": "string"
-                },
-                "values": {
-                    "description": "The vector values.",
-                    "items": {
-                        "type": "integer"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "dimensions",
-                "type",
-                "values"
             ],
             "type": "object"
         }

@@ -745,7 +745,7 @@ export interface AugmentRequest {
       /**
        * The context to augment. This can include text, images, or other resources.
        */
-      context: (TextContent | ImageContent | AudioContent | EmbeddedResource | VectorContent)[];
+      context: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
       /**
        * Additional parameters for the augmentation.
        * maxResult and minRelevance are common parameters for augmentations that return multiple results, but the exact parameters are server-specific.
@@ -765,7 +765,7 @@ export interface AugmentedContent {
   /**
    * The content part of the individual augmented result content.
    */
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource | VectorContent;
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
   /**
    * The properties of the individual augmented result content.
    */
@@ -798,21 +798,6 @@ export interface AugmentResult extends Result {
    * Optional metadata for the entire augmented result.
    */
   metadata?: object;
-}
-
-/**
-* Vector representation of content.
-*/
-export interface VectorContent {
-  type: "vector";
-  /**
-   * The vector values.
-   */
-  values: number[];
-  /**
-   * The dimensions of the vector. For future compatibility with sparse vectors, this should be set to the length of the values array.
-   */
-  dimensions: number;
 }
 
 /**
