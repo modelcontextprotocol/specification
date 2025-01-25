@@ -53,7 +53,7 @@ The capability supports two optional features:
   resources changes.
 
 Both `subscribe` and `listChanged` are optional&mdash;servers can support neither,
-either, or both:
+either, or both (_stateless_ servers **SHALL NOT** implement either of them):
 
 ```json
 {
@@ -209,8 +209,8 @@ capability **SHOULD** send a notification:
 
 ### Subscriptions
 
-The protocol supports optional subscriptions to resource changes. Clients can subscribe
-to specific resources and receive notifications when they change:
+When _statfull_ transports are used, the protocol supports optional subscriptions to resource
+changes. Clients can subscribe to specific resources and receive notifications when they change:
 
 **Subscribe Request:**
 
@@ -269,7 +269,7 @@ sequenceDiagram
 A resource definition includes:
 
 - `uri`: Unique identifier for the resource
-- `name`: Human-readable name
+- `name`: Optional human-readable name
 - `description`: Optional description
 - `mimeType`: Optional MIME type
 
@@ -282,6 +282,7 @@ Resources can contain either text or binary data:
 ```json
 {
   "uri": "file:///example.txt",
+  "name": "An example text file",
   "mimeType": "text/plain",
   "text": "Resource content"
 }
@@ -292,6 +293,7 @@ Resources can contain either text or binary data:
 ```json
 {
   "uri": "file:///example.png",
+  "name": "An example image",
   "mimeType": "image/png",
   "blob": "base64-encoded-data"
 }

@@ -103,8 +103,8 @@ The server **MUST** respond with its own capabilities and information:
 }
 ```
 
-After successful initialization, the client **MUST** send an `initialized` notification
-to indicate it is ready to begin normal operations:
+When using _statfull_ transports, after successful initialization, the client **MUST**
+send an `initialized` notification to indicate it is ready to begin normal operations:
 
 ```json
 {
@@ -126,9 +126,13 @@ to indicate it is ready to begin normal operations:
 In the `initialize` request, the client **MUST** send a protocol version it supports.
 This **SHOULD** be the _latest_ version supported by the client.
 
-If the server supports the requested protocol version, it **MUST** respond with the same
-version. Otherwise, the server **MUST** respond with another protocol version it
-supports. This **SHOULD** be the _latest_ version supported by the server.
+For _statfull_ transports, if the server supports the requested protocol version, it 
+**MUST** respond with the same version. Otherwise, the server **MUST** respond with
+another protocol version it supports. This **SHOULD** be the _latest_ version supported
+by the server.
+
+For _stateless_ transports, the server **SHOULD** respond with the _latest_ version
+supported by the server.
 
 If the client does not support the version in the server's response, it **SHOULD**
 disconnect.
@@ -186,10 +190,15 @@ client **SHOULD** initiate shutdown by:
 The server **MAY** initiate shutdown by closing its output stream to the client and
 exiting.
 
+#### SSE
+
+For SSE [transports]({{< ref "/specification/2024-11-05/basic/transports" >}}), shutdown
+is indicated by closing the associated SSE connection(s).
+
 #### HTTP
 
 For HTTP [transports]({{< ref "/specification/2024-11-05/basic/transports" >}}), shutdown
-is indicated by closing the associated HTTP connection(s).
+is not needed.
 
 ## Error Handling
 

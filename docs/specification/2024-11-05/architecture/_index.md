@@ -9,7 +9,8 @@ The Model Context Protocol (MCP) follows a client-host-server architecture where
 host can run multiple client instances. This architecture enables users to integrate AI
 capabilities across applications while maintaining clear security boundaries and
 isolating concerns. Built on JSON-RPC, MCP provides a stateful session protocol focused
-on context exchange and sampling coordination between clients and servers.
+on context exchange and sampling coordination between clients and servers. A stateless
+version of the protocol is available, which provides a limited subset of the capabiities.
 
 ## Core Components
 
@@ -61,7 +62,7 @@ The host process acts as the container and coordinator:
 
 Each client is created by the host and maintains an isolated server connection:
 
-- Establishes one stateful session per server
+- Establishes one stateful or stateless session per server
 - Handles protocol negotiation and capability exchange
 - Routes protocol messages bidirectionally
 - Manages subscriptions and notifications
@@ -174,6 +175,8 @@ sequenceDiagram
     Client->>-Server: End session
     deactivate Server
 ```
+
+In case of stateless connection, there will be no "Server Request".
 
 Each capability unlocks specific protocol features for use during the session. For
 example:

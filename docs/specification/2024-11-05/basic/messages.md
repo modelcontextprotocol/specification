@@ -13,7 +13,7 @@ three types of messages:
 
 ## Requests
 
-Requests are sent from the client to the server or vice versa.
+Requests are sent from the client to the server, or vice versa if the transport and capabilities allows.
 
 ```typescript
 {

@@ -7,11 +7,14 @@ weight: 40
 {{< callout type="info" >}} **Protocol Revision**: {{< param protocolRevision >}}
 {{< /callout >}}
 
-MCP currently defines two standard transport mechanisms for client-server communication:
+MCP currently defines three standard transport mechanisms for client-server communication:
 
 1. [stdio](#stdio), communication over standard in and standard out
 2. [HTTP with Server-Sent Events](#http-with-sse) (SSE)
+3. [HTTP](#http-stateless)
 
+Transports **stdio** and **SSE** are _statefull_ transports, while **HTTP** is _stateless_.
+Servers **MUST** support one or more of **stdio**, **SSE**, or **HTTP** transports.
 Clients **SHOULD** support stdio whenever possible.
 
 It is also possible for clients and servers to implement
@@ -46,7 +49,7 @@ sequenceDiagram
     deactivate Server Process
 ```
 
-## HTTP with SSE
+## SSE
 
 In the **SSE** transport, the server operates as an independent process that can handle
 multiple client connections.
@@ -76,6 +79,30 @@ sequenceDiagram
         Server->>Client: SSE message events
     end
     Client->>Server: Close SSE connection
+```
+
+## HTTP
+
+The **HTTP** transport is _stateless_. 
+
+If the server supports **HTTP** _stateless_ transport, the server **MUST** provide
+one regular HTTP POST endpoint for clients to send messages to the server.
+
+In the **HTTP** transport, the server operates as an independent process that
+can handle multiple client connections. The server **MAY** answer to each request
+independently. The server **MAY NOT** have memory of any client capabilites, client
+supported versions, or previous client interations.
+
+Server requests and server notifications **MAY NOT** be implemented in **HTTP** _stateless_ transport.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+
+    loop Message Exchange
+        Client->>Server: HTTP POST messages
+    end
 ```
 
 ## Custom Transports
