@@ -13,7 +13,8 @@ three types of messages:
 
 ## Requests
 
-Requests are sent from the client to the server, or vice versa if the transport and capabilities allows.
+Requests are sent from the client to the server, or vice versa if the transport
+qand capabilities allows (e.g. the HTTP transport does not allow server requests).
 
 ```typescript
 {
@@ -56,8 +57,9 @@ Responses are sent in reply to requests.
 
 ## Notifications
 
-Notifications are sent from the client to the server or vice versa. They do not expect a
-response.
+Notifications are sent from the client to the server or vice versa if the transport
+and capabilities allows (e.g. the HTTP transport does not allow server notifications).
+Notifications do not expect a response.
 
 ```typescript
 {

@@ -192,12 +192,12 @@ exiting.
 
 #### SSE
 
-For SSE [transports]({{< ref "/specification/2024-11-05/basic/transports" >}}), shutdown
+For SSE [transport]({{< ref "/specification/2024-11-05/basic/transports" >}}), shutdown
 is indicated by closing the associated SSE connection(s).
 
 #### HTTP
 
-For HTTP [transports]({{< ref "/specification/2024-11-05/basic/transports" >}}), shutdown
+For HTTP [transport]({{< ref "/specification/2024-11-05/basic/transports" >}}), shutdown
 is not needed.
 
 ## Error Handling

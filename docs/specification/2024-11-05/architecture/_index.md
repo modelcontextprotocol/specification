@@ -10,7 +10,7 @@ host can run multiple client instances. This architecture enables users to integ
 capabilities across applications while maintaining clear security boundaries and
 isolating concerns. Built on JSON-RPC, MCP provides a stateful session protocol focused
 on context exchange and sampling coordination between clients and servers. A stateless
-version of the protocol is available, which provides a limited subset of the capabiities.
+version of the protocol is available, which provides a subset of the capabiities.
 
 ## Core Components
 
@@ -176,7 +176,7 @@ sequenceDiagram
     deactivate Server
 ```
 
-In case of stateless connection, there will be no "Server Request".
+In case of stateless transport, there will be no "Server Request".
 
 Each capability unlocks specific protocol features for use during the session. For
 example:
