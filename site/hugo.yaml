@@ -1,6 +1,7 @@
-baseURL: "https://legendary-broccoli-1p63635.pages.github.io/"
-title: "Model Context Protocol"
+baseURL: "https://spec.modelcontextprotocol.io"
+title: Model Context Protocol Specification
 
+enableEmoji: true
 enableRobotsTXT: true
 enableGitInfo: true
 
@@ -16,8 +17,16 @@ module:
 contentDir: ../docs
 
 params:
-  github_base: "https://github.com/modelcontextprotocol"
-  uv_docs: "https://docs.astral.sh/uv/"
+  navbar:
+    displayTitle: false
+    displayLogo: true
+    logo:
+      path: images/light.svg
+      dark: images/dark.svg
+      link: /latest
+      width: 204
+      height: 30
+  protocolRevision: "2024-11-05"
 
 markup:
   goldmark:
@@ -49,18 +58,44 @@ enableInlineShortcodes: true
 
 menu:
   main:
-    - name: Guide
-      pageRef: /guide
+    - name: Specification (Draft)
+      pageRef: /draft
       weight: 1
-    - name: Specification
-      pageRef: /spec
+    - name: Specification (Latest)
+      pageRef: /latest
       weight: 2
-    - name: Search
+    - name: Resources
+      pageRef: /resources
       weight: 3
+    - name: Search
+      weight: 4
       params:
         type: search
     - name: GitHub
-      weight: 4
+      weight: 5
       url: "https://github.com/modelcontextprotocol/specification"
       params:
         icon: github
+
+  sidebar:
+    - identifier: schema
+      name: "Schema ↗"
+      url: "https://github.com/modelcontextprotocol/specification/tree/main/schema"
+      weight: 1
+    - identifier: more
+      name: More
+      params:
+        type: separator
+      weight: 2
+    - identifier: userDocs
+      name: "User Guide ↗"
+      url: "https://modelcontextprotocol.io"
+      weight: 3
+    - identifier: pythonSdk
+      name: "Python SDK ↗"
+      url: "https://github.com/modelcontextprotocol/python-sdk"
+      weight: 4
+    - identifier: typescriptSdk
+      name: "TypeScript SDK ↗"
+      url: "https://github.com/modelcontextprotocol/typescript-sdk"
+      weight: 5

@@ -1,24 +1,38 @@
 {
   "name": "@modelcontextprotocol/specification",
+  "private": true,
   "version": "0.1.0",
   "description": "Model Context Protocol specification and protocol schema",
   "license": "MIT",
   "author": "Anthropic, PBC (https://anthropic.com)",
-  "homepage": "https://modelcontextprotocol.github.io",
+  "homepage": "https://modelcontextprotocol.io",
   "bugs": "https://github.com/modelcontextprotocol/specification/issues",
   "engines": {
     "node": ">=20"
   },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.md",
+        "options": {
+          "printWidth": 89,
+          "proseWrap": "always"
+        }
+      }
+    ]
+  },
   "scripts": {
-    "validate:schema": "tsc --noEmit schema/schema.ts",
-    "validate:examples": "tsx scripts/validate_examples.ts",
-    "generate:json": "typescript-json-schema --defaultNumberType integer --required schema/schema.ts \"*\" -o schema/schema.json",
-    "serve:docs": "cd site/ && hugo server --logLevel debug --disableFastRender"
+    "validate:schema": "tsc --noEmit schema/**/*.ts",
+    "generate:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required \"$f\" \"*\" -o \"${f%ts}json\"; done",
+    "serve:docs": "hugo --source site/ server --logLevel debug --disableFastRender",
+    "format": "prettier --write \"**/*.md\"",
+    "format:check": "prettier --check \"**/*.md\""
   },
   "devDependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "glob": "^11.0.0",
+    "prettier": "^3.4.2",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "typescript-json-schema": "^0.65.1"
