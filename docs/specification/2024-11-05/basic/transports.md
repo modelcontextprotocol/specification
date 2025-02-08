@@ -13,7 +13,7 @@ MCP currently defines three standard transport mechanisms for client-server comm
 2. [SSE](#http-with-sse) (HTTP with Server-Sent Events)
 3. [HTTP](#http-stateless) (HTTP using POST requests)
 
-Transports **stdio** and **SSE** are _statefull_ transports, while **HTTP** is _stateless_.
+Transports **stdio** and **SSE** are _stateful_ transports, while **HTTP** is _stateless_.
 Servers **MUST** support one or more of **stdio**, **SSE**, or **HTTP** transports.
 Clients **SHOULD** support stdio whenever possible.
 

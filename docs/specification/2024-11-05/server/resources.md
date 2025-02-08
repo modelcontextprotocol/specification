@@ -209,7 +209,7 @@ capability **SHOULD** send a notification:
 
 ### Subscriptions
 
-When _statfull_ transports are used, the protocol supports optional subscriptions to resource
+When _statful_ transports are used, the protocol supports optional subscriptions to resource
 changes. Clients can subscribe to specific resources and receive notifications when they change:
 
 **Subscribe Request:**
