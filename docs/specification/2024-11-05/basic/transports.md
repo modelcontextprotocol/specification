@@ -11,15 +11,15 @@ MCP currently defines three standard transport mechanisms for client-server comm
 
 1. [stdio](#stdio), communication over standard in and standard out
 2. [SSE](#http-with-sse) (HTTP with Server-Sent Events)
-3. [HTTP](#http-stateless) (HTTP using POST requests)
+3. [HTTP](#http) (HTTP using POST requests)
 
 Transports **stdio** and **SSE** are _stateful_ transports, while **HTTP** MAY be _stateless_.
 Servers **MUST** support one or more of **stdio**, **SSE**, or **HTTP** transports.
 Clients **SHOULD** support stdio whenever possible.
 
 If the server support multiple transports, clients **MAY** choose different transports
-depending on their needs at different times, e.g. start with an **HTTP** transport
-for simple _statless_ tools, and switch to **SSE** for server notifications.
+depending on their needs at different times, e.g. use **HTTP** transport
+for simple _statless_ tools, and use **SSE** for server notifications.
 
 It is also possible for clients and servers to implement
 [custom transports](#custom-transports) in a pluggable fashion.
