@@ -103,7 +103,7 @@ The server **MUST** respond with its own capabilities and information:
 }
 ```
 
-When using _statful_ transports, after successful initialization, the client **MUST**
+When using _stateful_ transports, after successful initialization, the client **MUST**
 send an `initialized` notification to indicate it is ready to begin normal operations:
 
 ```json
@@ -126,7 +126,7 @@ send an `initialized` notification to indicate it is ready to begin normal opera
 In the `initialize` request, the client **MUST** send a protocol version it supports.
 This **SHOULD** be the _latest_ version supported by the client.
 
-For _statful_ transports, if the server supports the requested protocol version, it 
+For _stateful_ transports, if the server supports the requested protocol version, it 
 **MUST** respond with the same version. Otherwise, the server **MUST** respond with
 another protocol version it supports. This **SHOULD** be the _latest_ version supported
 by the server.

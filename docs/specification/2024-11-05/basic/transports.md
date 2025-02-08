@@ -13,9 +13,13 @@ MCP currently defines three standard transport mechanisms for client-server comm
 2. [SSE](#http-with-sse) (HTTP with Server-Sent Events)
 3. [HTTP](#http-stateless) (HTTP using POST requests)
 
-Transports **stdio** and **SSE** are _stateful_ transports, while **HTTP** is _stateless_.
+Transports **stdio** and **SSE** are _stateful_ transports, while **HTTP** MAY be _stateless_.
 Servers **MUST** support one or more of **stdio**, **SSE**, or **HTTP** transports.
 Clients **SHOULD** support stdio whenever possible.
+
+If the server support multiple transports, clients **MAY** choose different transports
+depending on their needs at different times, e.g. start with an **HTTP** transport
+for simple _statless_ tools, and switch to **SSE** for server notifications.
 
 It is also possible for clients and servers to implement
 [custom transports](#custom-transports) in a pluggable fashion.
@@ -81,11 +85,14 @@ sequenceDiagram
     Client->>Server: Close SSE connection
 ```
 
+Servers maintain **SSE** connections on a *"best effort"* approach. This means
+that servers **MAY** disconnect and loose client state. 
+
 ## HTTP
 
-The **HTTP** transport is _stateless_. 
+The **HTTP** transport MAY be _stateless_. 
 
-If the server supports **HTTP** _stateless_ transport, the server **MUST** provide
+If the server supports **HTTP** transport, the server **MUST** provide
 one regular HTTP POST endpoint for clients to send messages to the server.
 
 In the **HTTP** transport, the server operates as an independent process that
@@ -93,7 +100,10 @@ can handle multiple client connections. The server **MAY** answer to each reques
 independently. The server **MAY NOT** have memory of any client capabilites, client
 supported versions, or previous client interations.
 
-Server requests and server notifications **MAY NOT** be implemented in **HTTP** _stateless_ transport.
+Server requests and server notifications **MAY NOT** be implemented in **HTTP**
+transport. If the server supports multiple transports, clients **MAY** use
+other transsports as needed (e.g. **SSE**) to access features not implemented
+on **HTTP** transport.
 
 ```mermaid
 sequenceDiagram
