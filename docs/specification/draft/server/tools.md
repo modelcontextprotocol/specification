@@ -30,6 +30,7 @@ Applications **SHOULD**:
 - Insert clear visual indicators when tools are invoked
 - Present confirmation prompts to the user for operations, to ensure a human is in the
   loop {{< /callout >}}
+- Always present a confirmation prompt to the user when invoking a sensitive operation
 
 ## Capabilities
 
@@ -79,6 +80,7 @@ To discover available tools, clients send a `tools/list` request. This operation
       {
         "name": "get_weather",
         "description": "Get current weather information for a location",
+        "sensitive": false,
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -181,6 +183,8 @@ A tool definition includes:
 - `name`: Unique identifier for the tool
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
+- `sensitive`: A boolean flag that indicates whether the tool performs a sensitive
+  operation.
 
 ### Tool Result
 
@@ -291,6 +295,9 @@ Example tool execution error:
    - Prompt for user confirmation on sensitive operations
    - Show tool inputs to the user before calling the server, to avoid malicious or
      accidental data exfiltration
+   - For any tool with `sensitive` set to true, explicitly prompt the user to confirm the
+     operation. The confirmation UI SHOULD clearly indicate the tool’s purpose, the
+     inputs provided, and any potential impact of the operation.
    - Validate tool results before passing to LLM
    - Implement timeouts for tool calls
    - Log tool usage for audit purposes

@@ -2057,6 +2057,10 @@
                 "name": {
                     "description": "The name of the tool.",
                     "type": "string"
+                },
+                "sensitive": {
+                    "description": "Indicates whether invoking this tool performs a sensitive operation. Defaults to false if not specified.",
+                    "type": "boolean"
                 }
             },
             "required": [
