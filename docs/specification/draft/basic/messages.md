@@ -55,8 +55,8 @@ Responses are sent in reply to requests.
 
 ## Notifications
 
-Notifications are sent from the client to the server or vice versa. They do not expect a
-response.
+Notifications are sent from the client to the server or vice versa. The receiver **MUST NOT**
+send a response.
 
 ```typescript
 {
