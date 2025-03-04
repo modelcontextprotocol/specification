@@ -678,6 +678,47 @@ export interface ToolListChangedNotification extends Notification {
 }
 
 /**
+ * A simple string descriptor that categorizes a tool.
+ * A tool may specify a category outside the predefined set.
+ */
+export type ToolCategory =
+  "search" |
+  "repl" |
+  /* ... | */
+  string;
+
+/**
+ * A tool annotation categorizes the tool and describes its operational behavior.
+ * 
+ * Note that this information is intended for use by client infrastructure,
+ * and is distinct from what a model will extract/infer from the tool's description
+ * property.
+ */
+export interface ToolAnnotations {
+  /**
+   * If true, this tool does not perform writes or updates,
+   * or otherwise change external state in ways that would
+   * be visible in subsequent tool calls.
+   *
+   * If not set, this is assumed to be false.
+   */
+  readonly?: boolean;
+
+  /**
+   * A simple string descriptor that categorizes this tool, e.g.
+   * "search", "repl", etc.
+   *
+   * If not set, the tool is uncategorized.
+   */
+  category?: ToolCategory;
+
+  /**
+   * Supplemental tool information.
+   */
+  extraInfo?: { [key: string]: unknown };
+}
+
+/**
  * Definition for a tool the client can call.
  */
 export interface Tool {
@@ -689,6 +730,10 @@ export interface Tool {
    * A human-readable description of the tool.
    */
   description?: string;
+  /**
+   * Annotations
+   */
+  annotations?: ToolAnnotations;
   /**
    * A JSON Schema object defining the expected parameters for the tool.
    */

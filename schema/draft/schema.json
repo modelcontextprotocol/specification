@@ -2023,6 +2023,10 @@
         "Tool": {
             "description": "Definition for a tool the client can call.",
             "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/ToolAnnotations",
+                    "description": "Annotations"
+                },
                 "description": {
                     "description": "A human-readable description of the tool.",
                     "type": "string"
@@ -2064,6 +2068,29 @@
                 "name"
             ],
             "type": "object"
+        },
+        "ToolAnnotations": {
+            "description": "A tool annotation categorizes the tool and describes its operational behavior.\n\nNote that this information is intended for use by client infrastructure,\nand is distinct from what a model will extract/infer from the tool's description\nproperty.",
+            "properties": {
+                "category": {
+                    "description": "A simple string descriptor that categorizes this tool, e.g.\n\"search\", \"repl\", etc.\n\nIf not set, the tool is uncategorized.",
+                    "type": "string"
+                },
+                "extraInfo": {
+                    "additionalProperties": {},
+                    "description": "Supplemental tool information.",
+                    "type": "object"
+                },
+                "readonly": {
+                    "description": "If true, this tool does not perform writes or updates,\nor otherwise change external state in ways that would\nbe visible in subsequent tool calls.\n\nIf not set, this is assumed to be false.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "ToolCategory": {
+            "description": "A simple string descriptor that categorizes a tool.\nA tool may specify a category outside the predefined set.",
+            "type": "string"
         },
         "ToolListChangedNotification": {
             "description": "An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.",
