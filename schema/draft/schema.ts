@@ -697,6 +697,10 @@ export interface Tool {
     properties?: { [key: string]: object };
     required?: string[];
   };
+  /**
+   * Indicates whether invoking this tool performs a sensitive operation. Defaults to false if not specified.
+   */
+  sensitive?: boolean;
 }
 
 /* Logging */
