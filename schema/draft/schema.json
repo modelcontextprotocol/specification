@@ -1407,6 +1407,18 @@
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
+                },
+                "toolCalls": {
+                    "items": {
+                        "$ref": "#/definitions/ToolCall"
+                    },
+                    "type": "array"
+                },
+                "toolResult": {
+                    "items": {
+                        "$ref": "#/definitions/ToolResult"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -2065,6 +2077,30 @@
             ],
             "type": "object"
         },
+        "ToolCall": {
+            "description": "A tool call initiated by the assistant.",
+            "properties": {
+                "arguments": {
+                    "additionalProperties": {},
+                    "description": "The arguments passed to the tool, as a JSON object.",
+                    "type": "object"
+                },
+                "id": {
+                    "description": "A unique identifier for this tool call.\nThis ID is used to match tool calls with their results.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the tool being called.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "arguments",
+                "id",
+                "name"
+            ],
+            "type": "object"
+        },
         "ToolListChangedNotification": {
             "description": "An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.",
             "properties": {
@@ -2086,6 +2122,28 @@
             },
             "required": [
                 "method"
+            ],
+            "type": "object"
+        },
+        "ToolResult": {
+            "description": "A result returned from a tool call.",
+            "properties": {
+                "content": {
+                    "description": "The content returned from the tool, typically text.",
+                    "type": "string"
+                },
+                "isError": {
+                    "description": "Whether the tool call resulted in an error.\nIf not specified, assumed to be false.",
+                    "type": "boolean"
+                },
+                "toolCallId": {
+                    "description": "The ID of the tool call this result is for.\nThis must match the ID of a previous tool call.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "content",
+                "toolCallId"
             ],
             "type": "object"
         },
