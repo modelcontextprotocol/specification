@@ -832,6 +832,14 @@ export interface Annotated {
      * @maximum 1
      */
     priority?: number;
+    
+    /**
+     * The timestamp when the resource was last modified.
+     * Examples: last activity timestamp in an open file, timestamp when resource is attached, etc.
+     * 
+     * Should be an ISO 8601 formatted string (e.g., "2025-01-12T15:00:58Z").
+     */
+    lastModified?: Date;
   }
 }
 

@@ -13,6 +13,11 @@
                             },
                             "type": "array"
                         },
+                        "lastModified": {
+                            "description": "The timestamp when the resource was last modified.\nExamples: last activity timestamp in an open file, timestamp when resource is attached, etc.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").",
+                            "format": "date-time",
+                            "type": "string"
+                        },
                         "priority": {
                             "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
                             "maximum": 1,
@@ -36,6 +41,11 @@
                                 "$ref": "#/definitions/Role"
                             },
                             "type": "array"
+                        },
+                        "lastModified": {
+                            "description": "The timestamp when the resource was last modified.\nExamples: last activity timestamp in an open file, timestamp when resource is attached, etc.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").",
+                            "format": "date-time",
+                            "type": "string"
                         },
                         "priority": {
                             "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
@@ -495,6 +505,11 @@
                             },
                             "type": "array"
                         },
+                        "lastModified": {
+                            "description": "The timestamp when the resource was last modified.\nExamples: last activity timestamp in an open file, timestamp when resource is attached, etc.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").",
+                            "format": "date-time",
+                            "type": "string"
+                        },
                         "priority": {
                             "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
                             "maximum": 1,
@@ -596,6 +611,11 @@
                                 "$ref": "#/definitions/Role"
                             },
                             "type": "array"
+                        },
+                        "lastModified": {
+                            "description": "The timestamp when the resource was last modified.\nExamples: last activity timestamp in an open file, timestamp when resource is attached, etc.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").",
+                            "format": "date-time",
+                            "type": "string"
                         },
                         "priority": {
                             "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
@@ -1532,6 +1552,11 @@
                             },
                             "type": "array"
                         },
+                        "lastModified": {
+                            "description": "The timestamp when the resource was last modified.\nExamples: last activity timestamp in an open file, timestamp when resource is attached, etc.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").",
+                            "format": "date-time",
+                            "type": "string"
+                        },
                         "priority": {
                             "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
                             "maximum": 1,
@@ -1637,6 +1662,11 @@
                                 "$ref": "#/definitions/Role"
                             },
                             "type": "array"
+                        },
+                        "lastModified": {
+                            "description": "The timestamp when the resource was last modified.\nExamples: last activity timestamp in an open file, timestamp when resource is attached, etc.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").",
+                            "format": "date-time",
+                            "type": "string"
                         },
                         "priority": {
                             "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
@@ -1973,6 +2003,11 @@
                                 "$ref": "#/definitions/Role"
                             },
                             "type": "array"
+                        },
+                        "lastModified": {
+                            "description": "The timestamp when the resource was last modified.\nExamples: last activity timestamp in an open file, timestamp when resource is attached, etc.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").",
+                            "format": "date-time",
+                            "type": "string"
                         },
                         "priority": {
                             "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
