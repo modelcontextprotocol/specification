@@ -97,7 +97,7 @@ When resuming an existing session, the client **MUST** provide a `sessionId` que
 - The server **MUST** follow the callback URI when replying. 
 - For successful requests, the server must respond with a `200 OK` status code.
 - When receiving new payloads from the client, the server **SHOULD** use the latest callback URI from the client.
-- The server **MUST** include a `X-MCP-Session-Id` header when sending messages to the client. The server **MAY** change the `X-MCP-Session-Id` in following responses.
+- The server **MUST** include a `MCP-Session-Id` header when sending messages to the client. The server **MAY** change the `MCP-Session-Id` in following responses.
 - The Server **MAY** encode information in the session id, to enable it to act as a (time-scoped) _Secure Access Signature_ URI.
  
  ### Disconnect
