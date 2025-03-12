@@ -61,7 +61,7 @@
       },
       {
         "tab": "SDKs",
-        "icon": "book-open",
+        "icon": "shapes",
         "groups": [
           {
             "group": "Java",
@@ -69,6 +69,153 @@
               "sdk/java/mcp-overview",
               "sdk/java/mcp-client",
               "sdk/java/mcp-server"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Specification",
+        "icon": "book",
+        "groups": [
+          {
+            "group": "Specification (Latest)",
+            "pages": [
+              "specification/2024-11-05/index",
+              {
+                "group": "Architecture",
+                "pages": [
+                  "specification/2024-11-05/architecture/index"
+                ]
+              },
+              {
+                "group": "Base Protocol",
+                "pages": [
+                  "specification/2024-11-05/basic/index",
+                  "specification/2024-11-05/basic/lifecycle",
+                  "specification/2024-11-05/basic/messages",
+                  "specification/2024-11-05/basic/transports",
+                  "specification/2024-11-05/basic/versioning",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/2024-11-05/basic/utilities/index",
+                      "specification/2024-11-05/basic/utilities/cancellation",
+                      "specification/2024-11-05/basic/utilities/ping",
+                      "specification/2024-11-05/basic/utilities/progress"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Server Features",
+                "pages": [
+                  "specification/2024-11-05/server/index",
+                  "specification/2024-11-05/server/prompts",
+                  "specification/2024-11-05/server/resources",
+                  "specification/2024-11-05/server/tools",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/2024-11-05/server/utilities/index",
+                      "specification/2024-11-05/server/utilities/completion",
+                      "specification/2024-11-05/server/utilities/logging",
+                      "specification/2024-11-05/server/utilities/pagination"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Client Features",
+                "pages": [
+                  "specification/2024-11-05/client/index",
+                  "specification/2024-11-05/client/roots",
+                  "specification/2024-11-05/client/sampling"
+                ]
+              },
+              {
+                "group": "Contributing",
+                "pages": [
+                  "specification/2024-11-05/contributing/index"
+                ]
+              },
+              {
+                "group": "Revisions",
+                "pages": [
+                  "specification/2024-11-05/revisions/index",
+                  "specification/2024-11-05/revisions/2024-11-05"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Specification (Draft)",
+            "pages": [
+              "specification/draft/index",
+              {
+                "group": "Architecture",
+                "pages": [
+                  "specification/draft/architecture/index" 
+                ]
+              },
+              {
+                "group": "Base Protocol",
+                "pages": [
+                  "specification/draft/basic/index",
+                  "specification/draft/basic/authorization",
+                  "specification/draft/basic/lifecycle",
+                  "specification/draft/basic/messages",
+                  "specification/draft/basic/transports",
+                  "specification/draft/basic/versioning",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/draft/basic/utilities/index",
+                      "specification/draft/basic/utilities/cancellation",
+                      "specification/draft/basic/utilities/ping",
+                      "specification/draft/basic/utilities/progress"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Server Features",
+                "pages": [
+                  "specification/draft/server/index",
+                  "specification/draft/server/prompts",
+                  "specification/draft/server/resources",
+                  "specification/draft/server/tools",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/draft/server/utilities/index",
+                      "specification/draft/server/utilities/completion",
+                      "specification/draft/server/utilities/logging",
+                      "specification/draft/server/utilities/pagination"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Client Features",
+                "pages": [
+                  "specification/draft/client/index",
+                  "specification/draft/client/roots",
+                  "specification/draft/client/sampling"
+                ]
+              },
+              {
+                "group": "Contributing",
+                "pages": [
+                  "specification/draft/contributing/index"
+                ]
+              },
+              {
+                "group": "Revisions",
+                "pages": [
+                  "specification/draft/revisions/index",
+                  "specification/draft/revisions/2024-11-05"
+                ]
+              }
             ]
           }
         ]
@@ -95,11 +242,6 @@
           "anchor": "Kotlin SDK",
           "href": "https://github.com/modelcontextprotocol/kotlin-sdk",
           "icon": "square-k"
-        },
-        {
-          "anchor": "Specification",
-          "href": "https://spec.modelcontextprotocol.io",
-          "icon": "book"
         }
       ]
     }
