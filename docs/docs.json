@@ -76,7 +76,9 @@
       {
         "tab": "Specification",
         "icon": "book",
-        "groups": [
+        "pages": [
+          "revisions",
+          "contributing",
           {
             "group": "Specification (Latest)",
             "pages": [
@@ -123,14 +125,6 @@
                   "specification/2024-11-05/client/overview",
                   "specification/2024-11-05/client/roots",
                   "specification/2024-11-05/client/sampling"
-                ]
-              },
-              "specification/2024-11-05/contributing",
-              {
-                "group": "Revisions",
-                "pages": [
-                  "specification/2024-11-05/revisions/overview",
-                  "specification/2024-11-05/revisions/2024-11-05"
                 ]
               }
             ]
@@ -182,14 +176,6 @@
                   "specification/draft/client/overview",
                   "specification/draft/client/roots",
                   "specification/draft/client/sampling"
-                ]
-              },
-              "specification/draft/contributing",
-              {
-                "group": "Revisions",
-                "pages": [
-                  "specification/draft/revisions/overview",
-                  "specification/draft/revisions/2024-11-05"
                 ]
               }
             ]
