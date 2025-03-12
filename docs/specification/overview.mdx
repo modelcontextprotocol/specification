@@ -1,11 +1,9 @@
 ---
 title: "Overview"
-description: "Overview of the specification and available versions"
+description: "Model Context Protocol specification"
 ---
 
-# Model Context Protocol Specification
-
-The Model Context Protocol (MCP) is designed to help AI applications connect to external data sources, tools, and capabilities. This page provides access to the official specification documents.
+The Model Context Protocol (MCP) is designed to help AI applications connect to external data sources, tools, and capabilities. This documentation contains the official specification.
 
 ## Protocol Overview
 
@@ -19,23 +17,9 @@ The protocol is built on [JSON-RPC](https://www.jsonrpc.org/) 2.0 and focuses on
 - Exposing tools and capabilities to AI systems
 - Building composable integrations and workflows
 
-## Versioning
-
-The Model Context Protocol uses string-based version identifiers following the format `YYYY-MM-DD`, to indicate the last date backwards incompatible changes were made.
-
-<Note>
-The protocol version will _not_ be incremented when the protocol is updated, as long as the changes maintain backwards compatibility. This allows for incremental improvements while preserving interoperability.
-</Note>
-
-### Version Negotiation
-
-Version negotiation happens during [initialization](/specification/2024-11-05/basic/lifecycle#initialization). Clients and servers **MAY** support multiple protocol versions simultaneously, but they **MUST** agree on a single version to use for the session.
-
-The protocol provides appropriate error handling if version negotiation fails, allowing clients to gracefully terminate connections when they cannot find a version compatible with the server.
-
 ## Available Revisions
 
-MCP revisions may be marked as:
+MCP follows a versioning approach based on dates (YYYY-MM-DD). Revisions may be marked as:
 
 - **Draft**: In-progress specifications, not yet ready for production use
 - **Current**: The stable protocol version, which may continue to receive backward-compatible changes
@@ -48,4 +32,4 @@ MCP revisions may be marked as:
 
 ## Contributing
 
-We welcome contributions to the MCP specification. Please see the [Contributing](/development/contributing) page for more information on how to get involved.
+We welcome contributions to the MCP specification. Please see the [Contributing](/contributing) page for more information on how to get involved.
