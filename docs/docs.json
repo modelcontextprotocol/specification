@@ -1,0 +1,140 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "willow",
+  "name": "Model Context Protocol",
+  "colors": {
+    "primary": "#09090b",
+    "light": "#FAFAFA",
+    "dark": "#09090b"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              {
+                "group": "Quickstart",
+                "pages": [
+                  "quickstart/server",
+                  "quickstart/client",
+                  "quickstart/user"
+                ]
+              },
+              "examples",
+              "clients"
+            ]
+          },
+          {
+            "group": "Tutorials",
+            "pages": [
+              "tutorials/building-mcp-with-llms",
+              "docs/tools/debugging",
+              "docs/tools/inspector"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "docs/concepts/architecture",
+              "docs/concepts/resources",
+              "docs/concepts/prompts",
+              "docs/concepts/tools",
+              "docs/concepts/sampling",
+              "docs/concepts/roots",
+              "docs/concepts/transports"
+            ]
+          },
+          {
+            "group": "Development",
+            "pages": [
+              "development/updates",
+              "development/roadmap",
+              "development/contributing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDKs",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Java",
+            "pages": [
+              "sdk/java/mcp-overview",
+              "sdk/java/mcp-client",
+              "sdk/java/mcp-server"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Python SDK",
+          "href": "https://github.com/modelcontextprotocol/python-sdk",
+          "icon": "python"
+        },
+        {
+          "anchor": "TypeScript SDK",
+          "href": "https://github.com/modelcontextprotocol/typescript-sdk",
+          "icon": "square-js"
+        },
+        {
+          "anchor": "Java SDK",
+          "href": "https://github.com/modelcontextprotocol/java-sdk",
+          "icon": "java"
+        },
+        {
+          "anchor": "Kotlin SDK",
+          "href": "https://github.com/modelcontextprotocol/kotlin-sdk",
+          "icon": "square-k"
+        },
+        {
+          "anchor": "Specification",
+          "href": "https://spec.modelcontextprotocol.io",
+          "icon": "book"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [],
+    "primary": {
+      "type": "button",
+      "label": "GitHub",
+      "href": "https://github.com/modelcontextprotocol"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "og:image": "https://raw.githubusercontent.com/modelcontextprotocol/docs/2eb6171ddbfeefde349dc3b8d5e2b87414c26250/images/og-image.png"
+    },
+    "indexing": "navigable"
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/modelcontextprotocol"
+    }
+  },
+  "redirects": [
+    {
+      "source": "/tutorials/building-a-client",
+      "destination": "/quickstart/client"
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/quickstart/server"
+    }
+  ]
+}
