@@ -77,10 +77,15 @@
         "tab": "Specification",
         "icon": "book",
         "pages": [
-          "revisions",
-          "contributing",
           {
-            "group": "Specification (Latest)",
+            "group": "Specification",
+            "pages": [
+              "specification/overview",
+              "development/contributing"
+            ]
+          },
+          {
+            "group": "Latest Version (2024-11-05)",
             "pages": [
               "specification/2024-11-05/overview",
               "specification/2024-11-05/architecture",
@@ -130,7 +135,7 @@
             ]
           },
           {
-            "group": "Specification (Draft)",
+            "group": "Draft Version",
             "pages": [
               "specification/draft/overview",
               "specification/draft/architecture",
