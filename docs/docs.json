@@ -96,7 +96,6 @@
                   "specification/2024-11-05/basic/lifecycle",
                   "specification/2024-11-05/basic/messages",
                   "specification/2024-11-05/basic/transports",
-                  "specification/2024-11-05/basic/versioning",
                   {
                     "group": "Utilities",
                     "pages": [
@@ -147,7 +146,6 @@
                   "specification/draft/basic/lifecycle",
                   "specification/draft/basic/messages",
                   "specification/draft/basic/transports",
-                  "specification/draft/basic/versioning",
                   {
                     "group": "Utilities",
                     "pages": [
