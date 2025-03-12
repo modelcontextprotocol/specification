@@ -80,12 +80,12 @@
           {
             "group": "Specification (Latest)",
             "pages": [
-              "specification/2024-11-05/index",
+              "specification/2024-11-05/overview",
               "specification/2024-11-05/architecture",
               {
                 "group": "Base Protocol",
                 "pages": [
-                  "specification/2024-11-05/basic/index",
+                  "specification/2024-11-05/basic/overview",
                   "specification/2024-11-05/basic/lifecycle",
                   "specification/2024-11-05/basic/messages",
                   "specification/2024-11-05/basic/transports",
@@ -93,7 +93,7 @@
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/2024-11-05/basic/utilities/index",
+                      "specification/2024-11-05/basic/utilities/overview",
                       "specification/2024-11-05/basic/utilities/cancellation",
                       "specification/2024-11-05/basic/utilities/ping",
                       "specification/2024-11-05/basic/utilities/progress"
@@ -104,14 +104,14 @@
               {
                 "group": "Server Features",
                 "pages": [
-                  "specification/2024-11-05/server/index",
+                  "specification/2024-11-05/server/overview",
                   "specification/2024-11-05/server/prompts",
                   "specification/2024-11-05/server/resources",
                   "specification/2024-11-05/server/tools",
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/2024-11-05/server/utilities/index",
+                      "specification/2024-11-05/server/utilities/overview",
                       "specification/2024-11-05/server/utilities/completion",
                       "specification/2024-11-05/server/utilities/logging",
                       "specification/2024-11-05/server/utilities/pagination"
@@ -122,7 +122,7 @@
               {
                 "group": "Client Features",
                 "pages": [
-                  "specification/2024-11-05/client/index",
+                  "specification/2024-11-05/client/overview",
                   "specification/2024-11-05/client/roots",
                   "specification/2024-11-05/client/sampling"
                 ]
@@ -131,7 +131,7 @@
               {
                 "group": "Revisions",
                 "pages": [
-                  "specification/2024-11-05/revisions/index",
+                  "specification/2024-11-05/revisions/overview",
                   "specification/2024-11-05/revisions/2024-11-05"
                 ]
               }
@@ -140,12 +140,12 @@
           {
             "group": "Specification (Draft)",
             "pages": [
-              "specification/draft/index",
+              "specification/draft/overview",
               "specification/draft/architecture",
               {
                 "group": "Base Protocol",
                 "pages": [
-                  "specification/draft/basic/index",
+                  "specification/draft/basic/overview",
                   "specification/draft/basic/authorization",
                   "specification/draft/basic/lifecycle",
                   "specification/draft/basic/messages",
@@ -154,7 +154,7 @@
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/draft/basic/utilities/index",
+                      "specification/draft/basic/utilities/overview",
                       "specification/draft/basic/utilities/cancellation",
                       "specification/draft/basic/utilities/ping",
                       "specification/draft/basic/utilities/progress"
@@ -165,14 +165,14 @@
               {
                 "group": "Server Features",
                 "pages": [
-                  "specification/draft/server/index",
+                  "specification/draft/server/overview",
                   "specification/draft/server/prompts",
                   "specification/draft/server/resources",
                   "specification/draft/server/tools",
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/draft/server/utilities/index",
+                      "specification/draft/server/utilities/overview",
                       "specification/draft/server/utilities/completion",
                       "specification/draft/server/utilities/logging",
                       "specification/draft/server/utilities/pagination"
@@ -183,7 +183,7 @@
               {
                 "group": "Client Features",
                 "pages": [
-                  "specification/draft/client/index",
+                  "specification/draft/client/overview",
                   "specification/draft/client/roots",
                   "specification/draft/client/sampling"
                 ]
@@ -192,7 +192,7 @@
               {
                 "group": "Revisions",
                 "pages": [
-                  "specification/draft/revisions/index",
+                  "specification/draft/revisions/overview",
                   "specification/draft/revisions/2024-11-05"
                 ]
               }

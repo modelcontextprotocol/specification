@@ -1,8 +1,8 @@
 ---
-title: Specification (Latest)
+title: Overview
 description: "Model Context Protocol specification"
 ---
-<Note>**Protocol Revision**: 2024-11-05</Note>
+<Note>**Protocol Revision**: draft</Note>
 
 [Model Context Protocol](https://modelcontextprotocol.io) (MCP) is an open protocol that
 enables seamless integration between LLM applications and external data sources and
@@ -12,7 +12,7 @@ they need.
 
 This specification defines the authoritative protocol requirements, based on the
 TypeScript schema in
-[schema.ts](https://github.com/modelcontextprotocol/specification/blob/main/schema/2024-11-05/schema.ts).
+[schema.ts](https://github.com/modelcontextprotocol/specification/blob/main/schema/draft/schema.ts).
 
 For implementation guides and examples, visit
 [modelcontextprotocol.io](https://modelcontextprotocol.io).
@@ -124,9 +124,19 @@ implementors **SHOULD**:
 Explore the detailed specification for each protocol component:
 
 <CardGroup cols={3}>
-  <Card title="Architecture" icon="template" href="/specification/2024-11-05/architecture" />
-  <Card title="Base Protocol" icon="code" href="/specification/2024-11-05/basic" />
-  <Card title="Server Features" icon="server" href="/specification/2024-11-05/server" />
-  <Card title="Client Features" icon="user" href="/specification/2024-11-05/client" />
-  <Card title="Contributing" icon="pencil" href="/specification/2024-11-05/contributing" />
+  <Card title="Architecture" icon="sitemap" href="/specification/draft/architecture/index">
+    Core architecture of the Model Context Protocol
+  </Card>
+  <Card title="Base Protocol" icon="code" href="/specification/draft/basic/index">
+    Foundation of the protocol including messages and transports
+  </Card>
+  <Card title="Server Features" icon="server" href="/specification/draft/server/index">
+    Capabilities servers provide like resources, prompts, and tools
+  </Card>
+  <Card title="Client Features" icon="user" href="/specification/draft/client/index">
+    Capabilities clients provide like file access and LLM sampling
+  </Card>
+  <Card title="Contributing" icon="pencil" href="/specification/draft/contributing/index">
+    How to get involved with the specification
+  </Card>
 </CardGroup>
