@@ -93,7 +93,6 @@
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/2024-11-05/basic/utilities/overview",
                       "specification/2024-11-05/basic/utilities/cancellation",
                       "specification/2024-11-05/basic/utilities/ping",
                       "specification/2024-11-05/basic/utilities/progress"
@@ -111,7 +110,6 @@
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/2024-11-05/server/utilities/overview",
                       "specification/2024-11-05/server/utilities/completion",
                       "specification/2024-11-05/server/utilities/logging",
                       "specification/2024-11-05/server/utilities/pagination"
@@ -154,7 +152,6 @@
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/draft/basic/utilities/overview",
                       "specification/draft/basic/utilities/cancellation",
                       "specification/draft/basic/utilities/ping",
                       "specification/draft/basic/utilities/progress"
@@ -172,7 +169,6 @@
                   {
                     "group": "Utilities",
                     "pages": [
-                      "specification/draft/server/utilities/overview",
                       "specification/draft/server/utilities/completion",
                       "specification/draft/server/utilities/logging",
                       "specification/draft/server/utilities/pagination"
