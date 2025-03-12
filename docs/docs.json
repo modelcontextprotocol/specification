@@ -81,12 +81,7 @@
             "group": "Specification (Latest)",
             "pages": [
               "specification/2024-11-05/index",
-              {
-                "group": "Architecture",
-                "pages": [
-                  "specification/2024-11-05/architecture/index"
-                ]
-              },
+              "specification/2024-11-05/architecture",
               {
                 "group": "Base Protocol",
                 "pages": [
@@ -132,12 +127,7 @@
                   "specification/2024-11-05/client/sampling"
                 ]
               },
-              {
-                "group": "Contributing",
-                "pages": [
-                  "specification/2024-11-05/contributing/index"
-                ]
-              },
+              "specification/2024-11-05/contributing",
               {
                 "group": "Revisions",
                 "pages": [
@@ -151,12 +141,7 @@
             "group": "Specification (Draft)",
             "pages": [
               "specification/draft/index",
-              {
-                "group": "Architecture",
-                "pages": [
-                  "specification/draft/architecture/index" 
-                ]
-              },
+              "specification/draft/architecture",
               {
                 "group": "Base Protocol",
                 "pages": [
@@ -203,12 +188,7 @@
                   "specification/draft/client/sampling"
                 ]
               },
-              {
-                "group": "Contributing",
-                "pages": [
-                  "specification/draft/contributing/index"
-                ]
-              },
+              "specification/draft/contributing",
               {
                 "group": "Revisions",
                 "pages": [
