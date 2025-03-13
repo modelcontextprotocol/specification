@@ -218,6 +218,10 @@ export interface ServerCapabilities {
    */
   logging?: object;
   /**
+   * Present if the server supports argument autocompletion suggestions.
+   */
+  completions?: object;
+  /**
    * Present if the server offers any prompt templates.
    */
   prompts?: {
