@@ -1,17 +1,13 @@
 # Contributing to Model Context Protocol
 
-Thank you for your interest in contributing to the Model Context Protocol specification!
-This document outlines how to contribute to this project.
+Thank you for your interest in contributing to the Model Context Protocol
+documentation and specification!  This document outlines how to contribute to
+this project.
 
 ## Prerequisites
 
 The following software is required to work on the spec:
-
 - Node.js 20 or above
-- TypeScript
-- TypeScript JSON Schema (for generating JSON schema)
-- [Hugo](https://gohugo.io/) (optional, for docs)
-- Go (optional, for docs)
 - nvm (optional, for managing Node versions)
 
 ## Getting Started
@@ -27,33 +23,32 @@ cd specification
 3. Install dependencies:
 
 ```bash
-nvm install  # install correct Node version
+nvm install  # optional: install correct Node version
 npm install  # install dependencies
 ```
 
-## Making Changes
-
-Note that schema changes are made to `schema.ts`. `schema.json` is generated from
-`schema.ts` using `npm run validate:schema`.
-
-1. Create a new branch:
+4. Create a new branch for your changes:
 
 ```bash
-git checkout -b feature/your-feature-name
+git checkout -b your-change-name
 ```
 
-2. Make your changes
-3. Validate your changes:
+## Documentation Changes
+
+The source files for the documentation live in the [docs](docs/) folder.
+
+Run `npm run serve:docs` to preview documentation changes locally.
+
+## Schema Changes
+
+Schema changes are made to `schema.ts` of the corresponding spec version, in the
+[specification/schema](specification/schema) folder. `schema.json` is generated from `schema.ts`.
+
+After making changes, validate the schema and generate the JSON Schema:
 
 ```bash
-npm run validate:schema    # validate schema
-npm run generate:json     # generate JSON schema
-```
-
-4. Run docs locally (optional):
-
-```bash
-npm run serve:docs
+npm run validate:schema  # validate schema
+npm run generate:json    # generate JSON schema
 ```
 
 ## Submitting Changes
