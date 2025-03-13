@@ -448,17 +448,20 @@
                     "type": "object"
                 },
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/TextContent"
+                            },
+                            {
+                                "$ref": "#/definitions/ImageContent"
+                            },
+                            {
+                                "$ref": "#/definitions/AudioContent"
+                            }
+                        ]
+                    },
+                    "type": "array"
                 },
                 "model": {
                     "description": "The name of the model that generated the message.",
@@ -1394,20 +1397,23 @@
             "description": "Describes a message returned as part of a prompt.\n\nThis is similar to `SamplingMessage`, but also supports the embedding of\nresources from the MCP server.",
             "properties": {
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        },
-                        {
-                            "$ref": "#/definitions/EmbeddedResource"
-                        }
-                    ]
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/TextContent"
+                            },
+                            {
+                                "$ref": "#/definitions/ImageContent"
+                            },
+                            {
+                                "$ref": "#/definitions/AudioContent"
+                            },
+                            {
+                                "$ref": "#/definitions/EmbeddedResource"
+                            }
+                        ]
+                    },
+                    "type": "array"
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
@@ -1767,17 +1773,20 @@
             "description": "Describes a message issued to or received from an LLM API.",
             "properties": {
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/TextContent"
+                            },
+                            {
+                                "$ref": "#/definitions/ImageContent"
+                            },
+                            {
+                                "$ref": "#/definitions/AudioContent"
+                            }
+                        ]
+                    },
+                    "type": "array"
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
