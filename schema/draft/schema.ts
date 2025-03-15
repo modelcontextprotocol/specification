@@ -836,6 +836,36 @@ export interface Annotated {
      * @maximum 1
      */
     priority?: number;
+
+    /**
+     * A human-readable title for the object or data.
+     */
+    title?: string;
+
+    icon?: {
+      data: string; // base64-encoded image data
+      contentType: string; // MIME type of the image
+    };
+
+    /**
+     * A URL from which a client can fetch an icon to represent this object.
+     */
+    icon_url?: string;
+
+    /**
+     * Name(s) of the origin(s) of the object or data.
+     */
+    source?: string[];
+
+    /**
+     * Describes the type of the object or data.
+     */
+    type?: string;
+
+    /**
+     * A URL to this object.
+     */
+    url?: string;
   }
 }
 
