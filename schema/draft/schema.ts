@@ -167,6 +167,17 @@ export interface InitializeResult extends Result {
   protocolVersion: string;
   capabilities: ServerCapabilities;
   serverInfo: Implementation;
+
+  /**
+   * A session ID, if the server assigns one. This can be used to implement
+   * resumable sessions; for an example, see the Streamable HTTP transport.
+   * 
+   * This string must only contain visible ASCII characters (ranging from 0x21 to 0x7E).
+   * 
+   * @TJS-pattern ^[\x21-\x7E]+$
+   */
+  sessionId?: string;
+
   /**
    * Instructions describing how to use the server and its features.
    *

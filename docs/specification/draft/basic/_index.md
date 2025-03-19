@@ -54,7 +54,7 @@ See the following pages for more details on the different components:
 ## Auth
 
 MCP provides an [Authorization]({{< ref "/specification/draft/basic/authorization" >}})
-framework for HTTP+SSE transport. Implementations using HTTP+SSE transport **SHOULD**
+framework for use with HTTP. Implementations using an HTTP-based transport **SHOULD**
 conform to this specification, whereas implementations using STDIO transport **SHOULD
 NOT** follow this specification, and instead retrieve credentials from the environment.
 

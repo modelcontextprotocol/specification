@@ -12,13 +12,13 @@ weight: 15
 
 The Model Context Protocol provides authorization capabilities at the transport level,
 enabling MCP clients to make requests to restricted MCP servers on behalf of resource
-owners. This specification defines the authorization flow for HTTP+SSE transport.
+owners. This specification defines the authorization flow for HTTP-based transports.
 
 ### 1.2 Protocol Requirements
 
 Authorization is **OPTIONAL** for MCP implementations. When supported:
 
-- Implementations using an HTTP+SSE transport **SHOULD** conform to this specification.
+- Implementations using an HTTP-based transport **SHOULD** conform to this specification.
 - Implementations using an STDIO transport **SHOULD NOT** follow this specification, and
   instead retrieve credentials from the environment.
 - Implementations using alternative transports **MUST** follow established security best
@@ -120,19 +120,17 @@ For example: `MCP-Protocol-Version: 2024-11-05`
 
 #### 2.3.2 Authorization Base URL
 
-The authorization base URL **MUST** be determined from the [SSE
-endpoint]({{< ref "specification/draft/basic/transports#http-with-sse" >}}) URL by
-discarding any existing `path` component. For example:
+The authorization base URL **MUST** be determined from the MCP server URL by discarding
+any existing `path` component. For example:
 
-If the SSE endpoint is `https://api.example.com/v1/sse`, then:
+If the MCP server URL is `https://api.example.com/v1/mcp`, then:
 
 - The authorization base URL is `https://api.example.com`
 - The metadata endpoint **MUST** be at
   `https://api.example.com/.well-known/oauth-authorization-server`
 
 This ensures authorization endpoints are consistently located at the root level of the
-domain serving the SSE endpoint, regardless of any path components in the SSE endpoint
-URL.
+domain hosting the MCP server, regardless of any path components in the MCP server URL.
 
 #### 2.3.3 Fallbacks for Servers without Metadata Discovery
 
@@ -147,7 +145,7 @@ For servers that do not implement OAuth 2.0 Authorization Server Metadata, clien
 | Token Endpoint         | /token       | Used for token exchange & refresh    |
 | Registration Endpoint  | /register    | Used for dynamic client registration |
 
-For example, with an SSE endpoint of `https://api.example.com/v1/sse`, the default
+For example, with an MCP server hosted at `https://api.example.com/v1/mcp`, the default
 endpoints would be:
 
 - `https://api.example.com/authorize`
@@ -252,6 +250,9 @@ requirements for resource requests. Specifically:
 ```
 Authorization: Bearer <access-token>
 ```
+
+Note that authorization **MUST** be included in every HTTP request from client to server,
+even if they are part of the same logical session.
 
 2. Access tokens **MUST NOT** be included in the URI query string
 
