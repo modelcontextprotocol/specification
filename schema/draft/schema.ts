@@ -697,6 +697,50 @@ export interface ToolListChangedNotification extends Notification {
 }
 
 /**
+ * Additional properties describing a Tool to clients.
+ */
+export interface ToolAnnotations {
+  /**
+   * A human-readable title for the tool.
+   */
+  title?: string;
+
+  /**
+   * Describes the effects a tool may have on its environment.
+   * 
+   * NOTE: these properties are **hints**. They do not guarantee tool behavior.
+   *
+   * If not set, this property is assumed to have the value:
+   *  { readOnly: false, destructive: true, idempotent: false }
+   */
+  effectHints?:
+    | {
+        /* Tool is read-only. */
+        readOnly: true;
+      }
+    | {
+        /* Tool is read-write. */
+        readOnly: false;
+        /* If true, tool may perform destructive updates to its environment, as opposed to only additive updates. Default: true */
+        destructive?: boolean;
+        /* If true, repeated calls with the same arguments will have no additional effects. Default: false */
+        idempotent?: boolean;
+      };
+
+  /**
+   * If true, this tool may interact with an "open world" of external
+   * entities. If false, the tool's domain of interaction is closed.
+   * For example, the world of a web search tool is open, whereas that
+   * of a memory tool is not.
+   *
+   * NOTE: this property is a **hint**. It does not guarantee tool behavior.
+   * 
+   * If not set, this is assumed to be true.
+   */
+  openWorldHint?: boolean;
+}
+
+/**
  * Definition for a tool the client can call.
  */
 export interface Tool {
@@ -704,10 +748,14 @@ export interface Tool {
    * The name of the tool.
    */
   name: string;
+
   /**
    * A human-readable description of the tool.
+   *
+   * This can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a "hint" to the model.
    */
   description?: string;
+
   /**
    * A JSON Schema object defining the expected parameters for the tool.
    */
@@ -716,6 +764,11 @@ export interface Tool {
     properties?: { [key: string]: object };
     required?: string[];
   };
+
+  /**
+   * Optional additional tool information.
+   */
+  annotations?: ToolAnnotations;
 }
 
 /* Logging */
@@ -833,14 +886,14 @@ export interface SamplingMessage {
 export interface Annotations {
   /**
    * Describes who the intended customer of this object or data is.
-   * 
+   *
    * It can include multiple entries to indicate content useful for multiple audiences (e.g., `["user", "assistant"]`).
    */
   audience?: Role[];
 
   /**
    * Describes how important this data is for operating the server.
-   * 
+   *
    * A value of 1 means "most important," and indicates that the data is
    * effectively required, while 0 means "least important," and indicates that
    * the data is entirely optional.
@@ -893,7 +946,6 @@ export interface ImageContent {
   annotations?: Annotations;
 }
 
-
 /**
  * Audio provided to or from an LLM.
  */
@@ -917,7 +969,6 @@ export interface AudioContent {
    */
   annotations?: Annotations;
 }
-
 
 /**
  * The server's preferences for model selection, requested of the client during sampling.

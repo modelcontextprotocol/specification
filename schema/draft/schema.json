@@ -1938,8 +1938,12 @@
         "Tool": {
             "description": "Definition for a tool the client can call.",
             "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/ToolAnnotations",
+                    "description": "Optional additional tool information."
+                },
                 "description": {
-                    "description": "A human-readable description of the tool.",
+                    "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
                 },
                 "inputSchema": {
@@ -1978,6 +1982,55 @@
                 "inputSchema",
                 "name"
             ],
+            "type": "object"
+        },
+        "ToolAnnotations": {
+            "description": "Additional properties describing a Tool to clients.",
+            "properties": {
+                "effectHints": {
+                    "anyOf": [
+                        {
+                            "properties": {
+                                "readOnly": {
+                                    "const": true,
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "readOnly"
+                            ],
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "destructive": {
+                                    "type": "boolean"
+                                },
+                                "idempotent": {
+                                    "type": "boolean"
+                                },
+                                "readOnly": {
+                                    "const": false,
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "readOnly"
+                            ],
+                            "type": "object"
+                        }
+                    ],
+                    "description": "Describes the effects a tool may have on its environment.\n\nNOTE: these properties are **hints**. They do not guarantee tool behavior.\n\nIf not set, this property is assumed to have the value:\n { readOnly: false, destructive: true, idempotent: false }"
+                },
+                "openWorldHint": {
+                    "description": "If true, this tool may interact with an \"open world\" of external\nentities. If false, the tool's domain of interaction is closed.\nFor example, the world of a web search tool is open, whereas that\nof a memory tool is not.\n\nNOTE: this property is a **hint**. It does not guarantee tool behavior.\n\nIf not set, this is assumed to be true.",
+                    "type": "boolean"
+                },
+                "title": {
+                    "description": "A human-readable title for the tool.",
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "ToolListChangedNotification": {
