@@ -50,14 +50,28 @@ while maintaining simplicity:
    Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)). Servers
    that do not support Authorization Server Metadata **MUST** follow the default URI
    schema.
+   
+OAuth specifies different flows or grant types, which in essence, are different ways of obtaining an access token.
+Each of these targets different use cases and scenarios.
 
-### 2.2 Basic OAuth 2.1 Authorization
+This specification focuses on two authorization scenarios:
+
+1. User to system: The client is operated by the end user (a human), allowing the client to operate on the user's behalf.
+2. System to system: The client is another application (LLM or not) 
+
+**NOTE**: For simplicity purposes, the following examples will assume the MCP server to also function as the authorization server. However, 
+in a real implementation the authorization server will probably be deployed as its own distinct service.
+
+### 2.2 OAuth 2.1 User to System through the Authorization Code Grant Type
+
+A human user completes the OAuth flow through a web browser, obtaining an access token that identifies them personally and allows the 
+client to act on their behalf.  
 
 When authorization is required and not yet proven by the client, servers **MUST** respond
 with _HTTP 401 Unauthorized_.
 
 Clients initiate the
-[OAuth 2.1 IETF DRAFT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12)
+[OAuth 2.1 IETF DRAFT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#name-authorization-code-grant)
 authorization flow after receiving the _HTTP 401 Unauthorized_.
 
 The following demonstrates the basic OAuth 2.1 for public clients using PKCE.
@@ -81,8 +95,32 @@ sequenceDiagram
     C->>M: MCP Request with Access Token
     Note over C,M: Begin standard MCP message exchange
 ```
+### 2.3 OAuth 2.1 System to System through the Client Credentials Grant Type
 
-### 2.3 Server Metadata Discovery
+In this case, the client acts not in behalf of a human user but a system. Therefore, the access token is obtained by only sharing the client 
+credentials and doesn't require browser interaction. 
+
+When authorization is required and not yet proven by the client, servers **MUST** respond
+with _HTTP 401 Unauthorized_.
+
+Clients initiate the
+[OAuth 2.1 IETF DRAFT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#name-client-credentials-grant)
+Client Credentials flow after receiving the _HTTP 401 Unauthorized_.
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant M as MCP Server
+
+    C->>M: MCP Request
+    M->>C: HTTP 401 Unauthorized
+    C->>M: Token Request with client_id + client_secret
+    M->>C: Access Token (+ Refresh Token)
+    C->>M: MCP Request with Access Token
+    Note over C,M: Begin standard MCP message exchange
+```
+
+### 2.4 Server Metadata Discovery
 
 For server capability discovery:
 
