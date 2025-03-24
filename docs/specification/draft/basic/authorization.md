@@ -57,10 +57,12 @@ Each of these targets different use cases and scenarios.
 This specification focuses on two authorization scenarios:
 
 1. User to system: The client is operated by the end user (a human), allowing the client to operate on the user's behalf.
-2. System to system: The client is another application (LLM or not) 
+   * For instance, an agent calls an MCP tool to get the weather forecast at a particular location. This tool is backed by a secure weather service with usage quotas. The user will first authenticate with the weather service, allowing the agent to query it on the user's behalf.  
+2. System to system: The client is another application (not a human)
+   * For instance, an agent calls a secure MCP tool to check inventory at a specific store.  
 
-**NOTE**: For simplicity purposes, the following examples will assume the MCP server to also function as the authorization server. However, 
-in a real implementation the authorization server will probably be deployed as its own distinct service.
+**NOTE**: For simplicity’s sake, the following examples will assume the MCP server to also function as the authorization server. However, 
+in a real implementation the authorization server may be deployed as its own distinct service.
 
 ### 2.2 OAuth 2.1 User to System through the Authorization Code Grant Type
 
