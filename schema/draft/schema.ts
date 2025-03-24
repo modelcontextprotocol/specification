@@ -204,6 +204,38 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client wants to advertise what content types it can handle.
+   * 
+   * Note: These lists are informative rather than restrictive. The absence of a MIME type
+   * does not guarantee the client cannot handle it - it simply means the capability
+   * is undeclared. Servers can use this information to optimize content delivery but
+   * should not rely on it as a strict constraint.
+   */
+  contentTypes?: {
+    /**
+     * MIME types the client can render to users.
+     * 
+     * For example: ["text/plain", "image/png", "video/mp4"]
+     * 
+     * This list is non-exclusive and intended to help servers make informed decisions
+     * about content format selection. Servers may use this information along with
+     * audience annotations to target content appropriately.
+     */
+    renderable?: string[];
+    /**
+     * MIME types the client can tokenize for LLM consumption.
+     * 
+     * For example: ["text/plain", "image/png"]
+     * 
+     * This list is non-exclusive and intended to help servers understand what content
+     * can potentially be included in the LLM's context window. Servers may adapt their
+     * responses based on this information, such as providing alternative formats or
+     * using audience annotations to indicate content that should be shown to the user
+     * when it cannot be processed by the model.
+     */
+    tokenizable?: string[];
+  };
 }
 
 /**

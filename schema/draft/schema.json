@@ -170,6 +170,26 @@
         "ClientCapabilities": {
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
+                "contentTypes": {
+                    "description": "Present if the client wants to advertise what content types it can handle.\n\nNote: These lists are informative rather than restrictive. The absence of a MIME type\ndoes not guarantee the client cannot handle it - it simply means the capability\nis undeclared. Servers can use this information to optimize content delivery but\nshould not rely on it as a strict constraint.",
+                    "properties": {
+                        "renderable": {
+                            "description": "MIME types the client can render to users.\n\nFor example: [\"text/plain\", \"image/png\", \"video/mp4\"]\n\nThis list is non-exclusive and intended to help servers make informed decisions\nabout content format selection. Servers may use this information along with\naudience annotations to target content appropriately.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "tokenizable": {
+                            "description": "MIME types the client can tokenize for LLM consumption.\n\nFor example: [\"text/plain\", \"image/png\"]\n\nThis list is non-exclusive and intended to help servers understand what content\ncan potentially be included in the LLM's context window. Servers may adapt their\nresponses based on this information, such as providing alternative formats or\nusing audience annotations to indicate content that should be shown to the user\nwhen it cannot be processed by the model.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
                 "experimental": {
                     "additionalProperties": {
                         "additionalProperties": true,
