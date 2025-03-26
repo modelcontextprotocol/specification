@@ -973,7 +973,6 @@ export interface Annotations {
    *
    * Allows users to navigate to the source material in its native context.
    * May require authentication if pointing to protected resources.   
-   * 
    */
   sourceUrl?: string;
 }
