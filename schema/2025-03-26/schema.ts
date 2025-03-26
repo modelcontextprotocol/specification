@@ -173,6 +173,22 @@ export interface InitializeRequest extends Request {
   };
 }
 
+
+export interface ServerAnnotations {
+  /**
+   * Identifier for the server instance or service.
+   * 
+   * Human-readable name used for server identification. Should be concise yet distinctive enough to identify 
+   * this specific server among multiple instances.
+   */
+  serverName?: string;
+
+  /**
+   * A URL from which a client can fetch an icon to represent the server.
+   */
+  iconUrl?: string;
+}
+
 /**
  * After receiving an initialize request from the client, the server sends this response.
  */
@@ -190,6 +206,11 @@ export interface InitializeResult extends Result {
    * This can be used by clients to improve the LLM's understanding of available tools, resources, etc. It can be thought of like a "hint" to the model. For example, this information MAY be added to the system prompt.
    */
   instructions?: string;
+
+  /**
+   * Optional annotations for the client.
+   */
+  annotations?: ServerAnnotations;
 }
 
 /**

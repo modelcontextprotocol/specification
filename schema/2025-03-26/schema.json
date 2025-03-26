@@ -661,6 +661,10 @@
                     "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
                     "type": "object"
                 },
+                "annotations": {
+                    "$ref": "#/definitions/ServerAnnotations",
+                    "description": "Optional annotations for the client."
+                },
                 "capabilities": {
                     "$ref": "#/definitions/ServerCapabilities"
                 },
@@ -1792,6 +1796,19 @@
                 "content",
                 "role"
             ],
+            "type": "object"
+        },
+        "ServerAnnotations": {
+            "properties": {
+                "iconUrl": {
+                    "description": "A URL from which a client can fetch an icon to represent the server.",
+                    "type": "string"
+                },
+                "serverName": {
+                    "description": "Identifier for the server instance or service.\n\nHuman-readable name used for server identification. Should be concise yet distinctive enough to identify \nthis specific server among multiple instances.",
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "ServerCapabilities": {
