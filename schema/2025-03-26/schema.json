@@ -11,11 +11,34 @@
                     },
                     "type": "array"
                 },
+                "contentSource": {
+                    "description": "Attribution information for the content provider(s).\n\nIdentifies the original platform, service, or content creator. Multiple sources\nindicate aggregated or compiled content. Used for attribution, filtering, and\nhelping users identify trusted content origins.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "contentType": {
+                    "description": "Semantic category of the object.\n\nRepresents the nature of the content in a user-facing format. Should use simple, recognizable terms\nthat categorize the data for users (e.g., \"Webpage\", \"Song\", \"Article\", \"Image\", \"Document\").\nThis helps clients render appropriate UI treatments and helps users understand what kind of\ncontent they're interacting with.",
+                    "type": "string"
+                },
+                "displayTitle": {
+                    "description": "Primary display name for the content.\n\nUsed for UI headings, navigation elements, content identification, etc.\nShould be concise yet descriptive enough to distinguish this content\nfrom others (e.g., webpage title, document name, media title).",
+                    "type": "string"
+                },
+                "iconUrl": {
+                    "description": "A URL from which a client can fetch an icon to represent this object.",
+                    "type": "string"
+                },
                 "priority": {
                     "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
                     "maximum": 1,
                     "minimum": 0,
                     "type": "number"
+                },
+                "sourceUrl": {
+                    "description": "Direct link to access the original content.\n\nAllows users to navigate to the source material in its native context.\nMay require authentication if pointing to protected resources.",
+                    "type": "string"
                 }
             },
             "type": "object"
