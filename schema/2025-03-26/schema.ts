@@ -934,6 +934,48 @@ export interface Annotations {
    * @maximum 1
    */
   priority?: number;
+
+  /**
+   * Primary display name for the content.
+   * 
+   * Used for UI headings, navigation elements, content identification, etc.
+   * Should be concise yet descriptive enough to distinguish this content
+   * from others (e.g., webpage title, document name, media title).
+   */
+  displayTitle?: string;
+
+  /**
+   * A URL from which a client can fetch an icon to represent this object.
+   */
+  iconUrl?: string;
+
+  /**
+   * Attribution information for the content provider(s).
+   * 
+   * Identifies the original platform, service, or content creator. Multiple sources
+   * indicate aggregated or compiled content. Used for attribution, filtering, and
+   * helping users identify trusted content origins.
+   */
+  contentSource?: string[];
+
+  /**
+   * Semantic category of the object.
+   * 
+   * Represents the nature of the content in a user-facing format. Should use simple, recognizable terms
+   * that categorize the data for users (e.g., "Webpage", "Song", "Article", "Image", "Document").
+   * This helps clients render appropriate UI treatments and helps users understand what kind of
+   * content they're interacting with.
+   */
+  contentType?: string;
+
+  /**
+   * Direct link to access the original content.
+   *
+   * Allows users to navigate to the source material in its native context.
+   * May require authentication if pointing to protected resources.   
+   * 
+   */
+  sourceUrl?: string;
 }
 
 /**
