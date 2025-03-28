@@ -31,9 +31,15 @@ model.
 Servers that support prompts **MUST** declare the `prompts` capability during
 [initialization]({{< ref "../basic/lifecycle#initialization" >}}):
 
-/draft`json { "capabilities": { "prompts": { "listChanged": true } } }
-
-````
+```json
+{
+  "capabilities": {
+    "prompts": {
+      "listChanged": true
+    }
+  }
+}
+```
 
 `listChanged` indicates whether the server will emit notifications when the list of
 available prompts changes.
