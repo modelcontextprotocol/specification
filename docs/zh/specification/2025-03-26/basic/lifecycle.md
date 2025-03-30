@@ -1,56 +1,54 @@
 ---
-title: Lifecycle
-type: docs
+title: 生命周期
+type: 文档
 weight: 30
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
+{{< callout type="info" >}} **协议修订版本**: 2025-03-26 {{< /callout >}}
 
-The Model Context Protocol (MCP) defines a rigorous lifecycle for client-server
-connections that ensures proper capability negotiation and state management.
+Model Context Protocol（MCP，模型上下文协议）定义了一个严谨的客户端-服务器连接生命周期，以确保正确的功能协商和状态管理。
 
-1. **Initialization**: Capability negotiation and protocol version agreement
-2. **Operation**: Normal protocol communication
-3. **Shutdown**: Graceful termination of the connection
+1. **初始化**: 功能协商和协议版本确认  
+2. **操作**: 正常的协议通信  
+3. **关闭**: 优雅地终止连接  
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant Server
+    participant 客户端
+    participant 服务器
 
-    Note over Client,Server: Initialization Phase
-    activate Client
-    Client->>+Server: initialize request
-    Server-->>Client: initialize response
-    Client--)Server: initialized notification
+    Note over 客户端,服务器: 初始化阶段
+    activate 客户端
+    客户端->>+服务器: 初始化请求
+    服务器-->>客户端: 初始化响应
+    客户端--)服务器: 初始化完成通知
 
-    Note over Client,Server: Operation Phase
+    Note over 客户端,服务器: 操作阶段
     rect rgb(200, 220, 250)
-        note over Client,Server: Normal protocol operations
+        note over 客户端,服务器: 正常的协议操作
     end
 
-    Note over Client,Server: Shutdown
-    Client--)-Server: Disconnect
-    deactivate Server
-    Note over Client,Server: Connection closed
+    Note over 客户端,服务器: 关闭阶段
+    客户端--)-服务器: 断开连接
+    deactivate 服务器
+    Note over 客户端,服务器: 连接已关闭
 ```
 
-## Lifecycle Phases
+## 生命周期阶段
 
-### Initialization
+### 初始化
 
-The initialization phase **MUST** be the first interaction between client and server.
-During this phase, the client and server:
+初始化阶段**必须**是客户端和服务器之间的第一个交互。在此阶段，客户端和服务器需要：
 
-- Establish protocol version compatibility
-- Exchange and negotiate capabilities
-- Share implementation details
+- 确认协议版本兼容性
+- 交换并协商功能
+- 共享实现细节
 
-The client **MUST** initiate this phase by sending an `initialize` request containing:
+客户端**必须**通过发送包含以下内容的 `initialize` 请求来启动此阶段：
 
-- Protocol version supported
-- Client capabilities
-- Client implementation information
+- 支持的协议版本
+- 客户端功能
+- 客户端实现信息
 
 ```json
 {
@@ -73,13 +71,9 @@ The client **MUST** initiate this phase by sending an `initialize` request conta
 }
 ```
 
-The initialize request **MUST NOT** be part of a JSON-RPC
-[batch](https://www.jsonrpc.org/specification#batch), as other requests and notifications
-are not possible until initialization has completed. This also permits backwards
-compatibility with prior protocol versions that do not explicitly support JSON-RPC
-batches.
+`initialize` 请求**不得**成为 JSON-RPC [批处理](https://www.jsonrpc.org/specification#batch)的一部分，因为在初始化完成之前，其他请求和通知是不可行的。这也确保了与不显式支持 JSON-RPC 批处理的早期协议版本的向后兼容性。
 
-The server **MUST** respond with its own capabilities and information:
+服务器**必须**以其自身的功能和信息进行响应：
 
 ```json
 {
@@ -108,8 +102,7 @@ The server **MUST** respond with its own capabilities and information:
 }
 ```
 
-After successful initialization, the client **MUST** send an `initialized` notification
-to indicate it is ready to begin normal operations:
+在初始化成功后，客户端**必须**发送一个 `initialized` 通知，表示已准备好开始正常操作：
 
 ```json
 {
@@ -118,110 +111,83 @@ to indicate it is ready to begin normal operations:
 }
 ```
 
-- The client **SHOULD NOT** send requests other than
-  [pings]({{< ref "utilities/ping" >}}) before the server has responded to the
-  `initialize` request.
-- The server **SHOULD NOT** send requests other than
-  [pings]({{< ref "utilities/ping" >}}) and
-  [logging]({{< ref "../server/utilities/logging" >}}) before receiving the `initialized`
-  notification.
+- 在服务器响应 `initialize` 请求之前，客户端**不应**发送除 [ping 请求]({{< ref "utilities/ping" >}})之外的其他请求。  
+- 在接收到 `initialized` 通知之前，服务器**不应**发送除 [ping 请求]({{< ref "utilities/ping" >}})和 [日志记录]({{< ref "../server/utilities/logging" >}})之外的其他请求。
 
-#### Version Negotiation
+#### 版本协商
 
-In the `initialize` request, the client **MUST** send a protocol version it supports.
-This **SHOULD** be the _latest_ version supported by the client.
+在 `initialize` 请求中，客户端**必须**发送其支持的协议版本。这**应当**是客户端支持的**最新**版本。
 
-If the server supports the requested protocol version, it **MUST** respond with the same
-version. Otherwise, the server **MUST** respond with another protocol version it
-supports. This **SHOULD** be the _latest_ version supported by the server.
+如果服务器支持请求的协议版本，则**必须**以相同的版本进行响应。否则，服务器**必须**以其支持的另一个协议版本响应。这**应当**是服务器支持的**最新**版本。
 
-If the client does not support the version in the server's response, it **SHOULD**
-disconnect.
+如果客户端不支持服务器响应中的协议版本，则客户端**应当**断开连接。
 
-#### Capability Negotiation
+#### 功能协商
 
-Client and server capabilities establish which optional protocol features will be
-available during the session.
+客户端和服务器的功能协商决定了会话期间可用的可选协议功能。
 
-Key capabilities include:
+主要功能包括：
 
-| Category | Capability     | Description                                                                |
-| -------- | -------------- | -------------------------------------------------------------------------- |
-| Client   | `roots`        | Ability to provide filesystem [roots]({{< ref "../client/roots" >}})       |
-| Client   | `sampling`     | Support for LLM [sampling]({{< ref "../client/sampling" >}}) requests      |
-| Client   | `experimental` | Describes support for non-standard experimental features                   |
-| Server   | `prompts`      | Offers [prompt templates]({{< ref "../server/prompts" >}})                 |
-| Server   | `resources`    | Provides readable [resources]({{< ref "../server/resources" >}})           |
-| Server   | `tools`        | Exposes callable [tools]({{< ref "../server/tools" >}})                    |
-| Server   | `logging`      | Emits structured [log messages]({{< ref "../server/utilities/logging" >}}) |
-| Server   | `experimental` | Describes support for non-standard experimental features                   |
+| 分类   | 功能            | 描述                                                                          |
+| ------ | --------------- | ----------------------------------------------------------------------------- |
+| 客户端 | `roots`         | 提供文件系统[根目录]({{< ref "../client/roots" >}})的能力                     |
+| 客户端 | `sampling`      | 支持 LLM [采样]({{< ref "../client/sampling" >}})请求                        |
+| 客户端 | `experimental`  | 描述对非标准实验性功能的支持                                                  |
+| 服务器 | `prompts`       | 提供[提示模板]({{< ref "../server/prompts" >}})                               |
+| 服务器 | `resources`     | 提供可读的[资源]({{< ref "../server/resources" >}})                           |
+| 服务器 | `tools`         | 暴露可调用的[工具]({{< ref "../server/tools" >}})                             |
+| 服务器 | `logging`       | 输出结构化的[日志消息]({{< ref "../server/utilities/logging" >}})             |
+| 服务器 | `experimental`  | 描述对非标准实验性功能的支持                                                  |
 
-Capability objects can describe sub-capabilities like:
+功能对象可以描述子功能，例如：
 
-- `listChanged`: Support for list change notifications (for prompts, resources, and
-  tools)
-- `subscribe`: Support for subscribing to individual items' changes (resources only)
+- `listChanged`: 支持列表更改通知（用于提示、资源和工具）  
+- `subscribe`: 支持订阅单个项目的更改（仅资源）  
 
-### Operation
+### 操作
 
-During the operation phase, the client and server exchange messages according to the
-negotiated capabilities.
+在操作阶段，客户端和服务器根据协商的功能交换消息。
 
-Both parties **SHOULD**:
+双方**应当**：
 
-- Respect the negotiated protocol version
-- Only use capabilities that were successfully negotiated
+- 遵守协商的协议版本  
+- 仅使用已成功协商的功能  
 
-### Shutdown
+### 关闭
 
-During the shutdown phase, one side (usually the client) cleanly terminates the protocol
-connection. No specific shutdown messages are defined—instead, the underlying transport
-mechanism should be used to signal connection termination:
+在关闭阶段，一方（通常是客户端）会优雅地终止协议连接。没有定义特定的关闭消息，而是使用底层传输机制来指示连接终止：
 
-#### stdio
+#### 标准输入输出（stdio）
 
-For the stdio [transport]({{< ref "transports" >}}), the client **SHOULD** initiate
-shutdown by:
+对于标准输入输出[传输方式]({{< ref "transports" >}})，客户端**应当**通过以下方式启动关闭：
 
-1. First, closing the input stream to the child process (the server)
-2. Waiting for the server to exit, or sending `SIGTERM` if the server does not exit
-   within a reasonable time
-3. Sending `SIGKILL` if the server does not exit within a reasonable time after `SIGTERM`
+1. 首先关闭子进程（服务器）的输入流  
+2. 等待服务器退出；如果服务器在合理时间内未退出，则发送 `SIGTERM`  
+3. 如果服务器在发送 `SIGTERM` 后的合理时间内仍未退出，则发送 `SIGKILL`  
 
-The server **MAY** initiate shutdown by closing its output stream to the client and
-exiting.
+服务器**可以**通过关闭其输出流并退出来启动关闭。
 
 #### HTTP
 
-For HTTP [transports]({{< ref "transports" >}}), shutdown is indicated by closing the
-associated HTTP connection(s).
+对于 HTTP [传输方式]({{< ref "transports" >}})，通过关闭相关的 HTTP 连接来指示关闭。
 
-## Timeouts
+## 超时
 
-Implementations **SHOULD** establish timeouts for all sent requests, to prevent hung
-connections and resource exhaustion. When the request has not received a success or error
-response within the timeout period, the sender **SHOULD** issue a [cancellation
-notification]({{< ref "utilities/cancellation" >}}) for that request and stop waiting for
-a response.
+实现**应当**为所有发送的请求设置超时，以防止连接挂起和资源耗尽。如果在超时时间内未收到成功或错误响应，发送方**应当**为该请求发出 [取消通知]({{< ref "utilities/cancellation" >}})，并停止等待响应。
 
-SDKs and other middleware **SHOULD** allow these timeouts to be configured on a
-per-request basis.
+SDK 和其他中间件**应当**允许按请求配置这些超时。
 
-Implementations **MAY** choose to reset the timeout clock when receiving a [progress
-notification]({{< ref "utilities/progress" >}}) corresponding to the request, as this
-implies that work is actually happening. However, implementations **SHOULD** always
-enforce a maximum timeout, regardless of progress notifications, to limit the impact of a
-misbehaving client or server.
+如果接收到与请求对应的 [进度通知]({{< ref "utilities/progress" >}})，表示工作正在进行，实现**可以**选择重置超时计时器。然而，实现**应当**始终强制执行最大超时时间，以限制不正常的客户端或服务器的影响。
 
-## Error Handling
+## 错误处理
 
-Implementations **SHOULD** be prepared to handle these error cases:
+实现**应当**准备处理以下错误情况：
 
-- Protocol version mismatch
-- Failure to negotiate required capabilities
-- Request [timeouts](#timeouts)
+- 协议版本不匹配  
+- 功能协商失败  
+- 请求[超时](#timeouts)  
 
-Example initialization error:
+初始化错误示例：
 
 ```json
 {
