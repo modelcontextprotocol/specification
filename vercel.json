@@ -1,0 +1,51 @@
+{
+  "buildCommand": "cd site && HUGO_BASEURL=$VERCEL_URL hugo --minify",
+  "outputDirectory": "site/public",
+  "framework": "hugo",
+  "build": {
+    "env": {
+      "HUGO_VERSION": "0.136.1"
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/docs",
+      "destination": "/docs/",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/zh/",
+      "permanent": false
+    },
+    {
+      "source": "/en",
+      "destination": "/en/specification/2025-03-26/",
+      "permanent": false
+    },
+    {
+      "source": "/zh",
+      "destination": "/zh/specification/2025-03-26/",
+      "permanent": false
+    }
+  ]
+} 
