@@ -50,14 +50,31 @@ while maintaining simplicity:
    Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)). Servers
    that do not support Authorization Server Metadata **MUST** follow the default URI
    schema.
+   
+OAuth specifies different flows or grant types, which in essence, are different ways of obtaining an access token.
+Each of these targets different use cases and scenarios.
 
-### 2.2 Basic OAuth 2.1 Authorization
+MCP servers **SHOULD** support the OAuth grant types that better align with the intended audience. For instance:  
+
+1. Authorization Code: Useful when the client is acting on behalf of a (human) end user. 
+   * For instance, an agent calls an MCP tool implemented by a SaaS system.    
+2. System to system: The client is another application (not a human)
+   * For instance, an agent calls a secure MCP tool to check inventory at a specific store. No need to impersonate the end user.  
+
+
+### 2.2 Example: OAuth 2.1 flow for the Authorization Code Grant Type (User to system)
+
+**NOTE**: For simplicity’s sake, the following examples will assume the MCP server to also function as the authorization server. However, 
+in real implementations the authorization server may be deployed as its own distinct service.
+
+A human user completes the OAuth flow through a web browser, obtaining an access token that identifies them personally and allows the 
+client to act on their behalf.  
 
 When authorization is required and not yet proven by the client, servers **MUST** respond
 with _HTTP 401 Unauthorized_.
 
 Clients initiate the
-[OAuth 2.1 IETF DRAFT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12)
+[OAuth 2.1 IETF DRAFT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#name-authorization-code-grant)
 authorization flow after receiving the _HTTP 401 Unauthorized_.
 
 The following demonstrates the basic OAuth 2.1 for public clients using PKCE.
@@ -82,7 +99,7 @@ sequenceDiagram
     Note over C,M: Begin standard MCP message exchange
 ```
 
-### 2.3 Server Metadata Discovery
+### 2.2 Server Metadata Discovery
 
 For server capability discovery:
 
