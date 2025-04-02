@@ -23,7 +23,7 @@
   },
   "scripts": {
     "validate:schema": "tsc --noEmit schema/**/*.ts",
-    "generate:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required \"$f\" \"*\" -o \"${f%ts}json\"; done",
+    "generate:json": "for f in schema/**/*.ts; do typescript-json-schema --defaultNumberType integer --required \"$f\" \"*\" -o \"${f%ts}json\"; done",
     "serve:docs": "hugo --source site/ server --logLevel debug --disableFastRender",
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check \"**/*.md\""
