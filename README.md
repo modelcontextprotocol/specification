@@ -2,9 +2,20 @@
 
 This repo contains the specification and protocol schema for the Model Context Protocol.
 
-The schema is [defined in TypeScript](schema/2024-11-05/schema.ts) first, but
-[made available as JSON Schema](schema/2024-11-05/schema.json) as well, for wider
-compatibility.
+The schema is available in two implementations:
+
+1. **JSON-RPC based implementation**:
+
+   - [TypeScript Schema](schema/2025-03-26/schema.ts)
+   - [JSON Schema](schema/2025-03-26/schema.json)
+
+2. **HTTP-based implementation**:
+   - [TypeScript Schema](schema/2025-03-26/http-schema.ts)
+   - [JSON Schema](schema/2025-03-26/http-schema.json)
+   - [Documentation](docs/http-protocol.md)
+
+The HTTP-based implementation simplifies the protocol by using standard HTTP methods and
+conventions rather than a custom JSON-RPC envelope.
 
 ## Contributing
 

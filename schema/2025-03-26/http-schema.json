@@ -1,0 +1,852 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "Annotations": {
+            "description": "Optional annotations for the client",
+            "properties": {
+                "audience": {
+                    "description": "Describes who the intended customer of this object or data is",
+                    "items": {
+                        "$ref": "#/definitions/Role"
+                    },
+                    "type": "array"
+                },
+                "priority": {
+                    "description": "Describes how important this data is (0-1)",
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "AudioContent": {
+            "description": "Audio content",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client"
+                },
+                "data": {
+                    "description": "Base64-encoded audio data",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of the audio",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "audio",
+                    "description": "Content type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "mimeType",
+                "type"
+            ],
+            "type": "object"
+        },
+        "BinaryResponse": {
+            "description": "Binary response",
+            "properties": {
+                "data": {
+                    "description": "Base64-encoded binary data",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "MIME type of the content",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "mimeType"
+            ],
+            "type": "object"
+        },
+        "CompletionResponse": {
+            "description": "Completion response",
+            "properties": {
+                "completion": {
+                    "description": "Completion information",
+                    "properties": {
+                        "hasMore": {
+                            "description": "Indicates whether there are additional completion options",
+                            "type": "boolean"
+                        },
+                        "total": {
+                            "description": "The total number of completion options available",
+                            "type": "integer"
+                        },
+                        "values": {
+                            "description": "Array of completion values",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "values"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "completion"
+            ],
+            "type": "object"
+        },
+        "ContentType": {
+            "description": "Content types that can be included in messages",
+            "enum": [
+                "audio",
+                "image",
+                "resource",
+                "text"
+            ],
+            "type": "string"
+        },
+        "CreateMessageRequest": {
+            "description": "Create message request",
+            "properties": {
+                "includeContext": {
+                    "description": "Request to include context",
+                    "enum": [
+                        "allServers",
+                        "none",
+                        "thisServer"
+                    ],
+                    "type": "string"
+                },
+                "maxTokens": {
+                    "description": "Maximum number of tokens to sample",
+                    "type": "integer"
+                },
+                "messages": {
+                    "description": "Messages to send to the LLM",
+                    "items": {
+                        "$ref": "#/definitions/SamplingMessage"
+                    },
+                    "type": "array"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/Record<string,unknown>",
+                    "description": "Optional metadata"
+                },
+                "modelPreferences": {
+                    "$ref": "#/definitions/ModelPreferences",
+                    "description": "Model preferences"
+                },
+                "stopSequences": {
+                    "description": "Stop sequences for sampling",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "systemPrompt": {
+                    "description": "Optional system prompt",
+                    "type": "string"
+                },
+                "temperature": {
+                    "description": "Temperature for sampling",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "maxTokens",
+                "messages"
+            ],
+            "type": "object"
+        },
+        "CreateMessageResponse": {
+            "description": "Create message response",
+            "properties": {
+                "content": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/TextContent"
+                        },
+                        {
+                            "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
+                        }
+                    ],
+                    "description": "The content of the message"
+                },
+                "model": {
+                    "description": "The name of the model that generated the message",
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/Role",
+                    "description": "The role of the message sender"
+                },
+                "stopReason": {
+                    "description": "The reason why sampling stopped, if known",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "content",
+                "model",
+                "role"
+            ],
+            "type": "object"
+        },
+        "ErrorResponse": {
+            "description": "Error response",
+            "properties": {
+                "code": {
+                    "description": "Error code",
+                    "type": "string"
+                },
+                "error": {
+                    "description": "Error type",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "Error message",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "code",
+                "error",
+                "message"
+            ],
+            "type": "object"
+        },
+        "GetPromptResponse": {
+            "description": "Get prompt response",
+            "properties": {
+                "description": {
+                    "description": "An optional description for the prompt",
+                    "type": "string"
+                },
+                "messages": {
+                    "description": "The messages in the prompt",
+                    "items": {
+                        "$ref": "#/definitions/PromptMessage"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "messages"
+            ],
+            "type": "object"
+        },
+        "ImageContent": {
+            "description": "Image content",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client"
+                },
+                "data": {
+                    "description": "Base64-encoded image data",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of the image",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "image",
+                    "description": "Content type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "mimeType",
+                "type"
+            ],
+            "type": "object"
+        },
+        "Implementation": {
+            "description": "Implementation information",
+            "properties": {
+                "name": {
+                    "description": "Name of the implementation",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version of the implementation",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "version"
+            ],
+            "type": "object"
+        },
+        "ListPromptsResponse": {
+            "description": "List prompts response",
+            "properties": {
+                "nextCursor": {
+                    "description": "Optional pagination token for fetching next page of results",
+                    "type": "string"
+                },
+                "prompts": {
+                    "description": "Array of available prompts",
+                    "items": {
+                        "$ref": "#/definitions/Prompt"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "prompts"
+            ],
+            "type": "object"
+        },
+        "ListResourcesResponse": {
+            "description": "List resources response",
+            "properties": {
+                "nextCursor": {
+                    "description": "Optional pagination token for fetching next page of results",
+                    "type": "string"
+                },
+                "resources": {
+                    "description": "Array of available resources",
+                    "items": {
+                        "$ref": "#/definitions/Resource"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "resources"
+            ],
+            "type": "object"
+        },
+        "ListRootsResponse": {
+            "description": "List roots response",
+            "properties": {
+                "roots": {
+                    "description": "Array of available roots",
+                    "items": {
+                        "$ref": "#/definitions/Root"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "roots"
+            ],
+            "type": "object"
+        },
+        "LogMessage": {
+            "description": "Log message",
+            "properties": {
+                "data": {
+                    "description": "The data to be logged"
+                },
+                "level": {
+                    "$ref": "#/definitions/LoggingLevel",
+                    "description": "The severity of this log message"
+                },
+                "logger": {
+                    "description": "An optional name of the logger issuing this message",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "level"
+            ],
+            "type": "object"
+        },
+        "LoggingLevel": {
+            "description": "Logging level",
+            "enum": [
+                "alert",
+                "critical",
+                "debug",
+                "emergency",
+                "error",
+                "info",
+                "notice",
+                "warning"
+            ],
+            "type": "string"
+        },
+        "MessageContent": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TextContent"
+                },
+                {
+                    "$ref": "#/definitions/ImageContent"
+                },
+                {
+                    "$ref": "#/definitions/AudioContent"
+                },
+                {
+                    "$ref": "#/definitions/ResourceContent"
+                }
+            ],
+            "description": "Message content union type"
+        },
+        "ModelHint": {
+            "description": "Model hint",
+            "properties": {
+                "name": {
+                    "description": "A hint for a model name",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ModelPreferences": {
+            "description": "Model preferences",
+            "properties": {
+                "costPriority": {
+                    "description": "How much to prioritize cost (0-1)",
+                    "type": "integer"
+                },
+                "hints": {
+                    "description": "Optional hints for model selection",
+                    "items": {
+                        "$ref": "#/definitions/ModelHint"
+                    },
+                    "type": "array"
+                },
+                "intelligencePriority": {
+                    "description": "How much to prioritize intelligence (0-1)",
+                    "type": "integer"
+                },
+                "speedPriority": {
+                    "description": "How much to prioritize speed (0-1)",
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "Notification": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/ResourceUpdatedNotification"
+                },
+                {
+                    "$ref": "#/definitions/ResourceListChangedNotification"
+                },
+                {
+                    "$ref": "#/definitions/PromptListChangedNotification"
+                },
+                {
+                    "$ref": "#/definitions/ToolListChangedNotification"
+                },
+                {
+                    "$ref": "#/definitions/ProgressNotification"
+                }
+            ],
+            "description": "Notification union type"
+        },
+        "NotificationType": {
+            "description": "Types of notifications that can be sent via WebSocket",
+            "enum": [
+                "progress",
+                "prompt_list_changed",
+                "resource_list_changed",
+                "resource_updated",
+                "tool_list_changed"
+            ],
+            "type": "string"
+        },
+        "ProgressNotification": {
+            "description": "Progress notification",
+            "properties": {
+                "message": {
+                    "description": "Optional message describing the current progress",
+                    "type": "string"
+                },
+                "progress": {
+                    "description": "Current progress value",
+                    "type": "integer"
+                },
+                "requestId": {
+                    "description": "ID of the request that is in progress",
+                    "type": "string"
+                },
+                "total": {
+                    "description": "Total progress required, if known",
+                    "type": "integer"
+                },
+                "type": {
+                    "const": "progress",
+                    "description": "Notification type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "progress",
+                "requestId",
+                "type"
+            ],
+            "type": "object"
+        },
+        "Prompt": {
+            "description": "Prompt definition",
+            "properties": {
+                "arguments": {
+                    "description": "A list of arguments to use for templating the prompt",
+                    "items": {
+                        "$ref": "#/definitions/PromptArgument"
+                    },
+                    "type": "array"
+                },
+                "description": {
+                    "description": "An optional description of what this prompt provides",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the prompt or prompt template",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "PromptArgument": {
+            "description": "Prompt argument definition",
+            "properties": {
+                "description": {
+                    "description": "A human-readable description of the argument",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the argument",
+                    "type": "string"
+                },
+                "required": {
+                    "description": "Whether this argument must be provided",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "PromptListChangedNotification": {
+            "description": "Prompt list changed notification",
+            "properties": {
+                "type": {
+                    "const": "prompt_list_changed",
+                    "description": "Notification type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
+        "PromptMessage": {
+            "description": "Prompt message",
+            "properties": {
+                "content": {
+                    "$ref": "#/definitions/MessageContent",
+                    "description": "The content of the message"
+                },
+                "role": {
+                    "$ref": "#/definitions/Role",
+                    "description": "The role of the message sender"
+                }
+            },
+            "required": [
+                "content",
+                "role"
+            ],
+            "type": "object"
+        },
+        "Record<string,Record<string,unknown>>": {
+            "type": "object"
+        },
+        "Record<string,unknown>": {
+            "type": "object"
+        },
+        "Resource": {
+            "description": "Resource definition",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client"
+                },
+                "description": {
+                    "description": "A description of what this resource represents",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of this resource, if known",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "A human-readable name for this resource",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI of this resource",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "uri"
+            ],
+            "type": "object"
+        },
+        "ResourceContent": {
+            "description": "Resource content",
+            "properties": {
+                "mimeType": {
+                    "description": "The MIME type of the resource, if known",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "resource",
+                    "description": "Content type",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "URI of the resource",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "uri"
+            ],
+            "type": "object"
+        },
+        "ResourceListChangedNotification": {
+            "description": "Resource list changed notification",
+            "properties": {
+                "type": {
+                    "const": "resource_list_changed",
+                    "description": "Notification type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
+        "ResourceUpdatedNotification": {
+            "description": "Resource updated notification",
+            "properties": {
+                "type": {
+                    "const": "resource_updated",
+                    "description": "Notification type",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "URI of the updated resource",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "uri"
+            ],
+            "type": "object"
+        },
+        "Role": {
+            "description": "Role in a conversation",
+            "enum": [
+                "assistant",
+                "user"
+            ],
+            "type": "string"
+        },
+        "Root": {
+            "description": "Root definition",
+            "properties": {
+                "name": {
+                    "description": "An optional name for the root",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI identifying the root",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "uri"
+            ],
+            "type": "object"
+        },
+        "SamplingMessage": {
+            "description": "Sampling message",
+            "properties": {
+                "content": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/TextContent"
+                        },
+                        {
+                            "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
+                        }
+                    ],
+                    "description": "The content of the message"
+                },
+                "role": {
+                    "$ref": "#/definitions/Role",
+                    "description": "The role of the message sender"
+                }
+            },
+            "required": [
+                "content",
+                "role"
+            ],
+            "type": "object"
+        },
+        "ServerCapabilities": {
+            "description": "Server capabilities",
+            "properties": {
+                "completions": {
+                    "$ref": "#/definitions/Record<string,unknown>",
+                    "description": "Completion capabilities"
+                },
+                "experimental": {
+                    "$ref": "#/definitions/Record<string,Record<string,unknown>>",
+                    "description": "Experimental capabilities"
+                },
+                "logging": {
+                    "$ref": "#/definitions/Record<string,unknown>",
+                    "description": "Logging capabilities"
+                },
+                "prompts": {
+                    "description": "Prompt capabilities",
+                    "properties": {
+                        "listChanged": {
+                            "description": "Whether the server supports notifications for changes to the prompt list",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "resources": {
+                    "description": "Resource capabilities",
+                    "properties": {
+                        "listChanged": {
+                            "description": "Whether the server supports notifications for changes to the resource list",
+                            "type": "boolean"
+                        },
+                        "subscribe": {
+                            "description": "Whether the server supports subscribing to resource updates",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "tools": {
+                    "description": "Tool capabilities",
+                    "properties": {
+                        "listChanged": {
+                            "description": "Whether the server supports notifications for changes to the tool list",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "SessionInitResponse": {
+            "description": "Session initialization response",
+            "properties": {
+                "capabilities": {
+                    "$ref": "#/definitions/ServerCapabilities",
+                    "description": "Server capabilities"
+                },
+                "instructions": {
+                    "description": "Instructions for using the server",
+                    "type": "string"
+                },
+                "prompts": {
+                    "description": "URL for accessing prompts",
+                    "type": "string"
+                },
+                "protocolVersion": {
+                    "description": "Protocol version being used",
+                    "type": "string"
+                },
+                "resources": {
+                    "description": "URL for accessing resources",
+                    "type": "string"
+                },
+                "serverInfo": {
+                    "$ref": "#/definitions/Implementation",
+                    "description": "Server implementation information"
+                },
+                "token": {
+                    "description": "Bearer token for authentication in subsequent requests",
+                    "type": "string"
+                },
+                "tools": {
+                    "description": "URL for accessing tools",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "prompts",
+                "resources",
+                "token",
+                "tools"
+            ],
+            "type": "object"
+        },
+        "TextContent": {
+            "description": "Text content",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client"
+                },
+                "text": {
+                    "description": "The text content",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "text",
+                    "description": "Content type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text",
+                "type"
+            ],
+            "type": "object"
+        },
+        "ToolListChangedNotification": {
+            "description": "Tool list changed notification",
+            "properties": {
+                "type": {
+                    "const": "tool_list_changed",
+                    "description": "Notification type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        }
+    }
+}
+
