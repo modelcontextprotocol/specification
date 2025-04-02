@@ -95,3 +95,15 @@ menu:
       name: "TypeScript SDK ↗"
       url: "https://github.com/modelcontextprotocol/typescript-sdk"
       weight: 5
+    - identifier: javaSdk
+      name: "Java SDK ↗"
+      url: "https://github.com/modelcontextprotocol/java-sdk"
+      weight: 6
+    - identifier: kotlinSdk
+      name: "Kotlin SDK ↗"
+      url: "https://github.com/modelcontextprotocol/kotlin-sdk"
+      weight: 7
+    - identifier: csharpSdk
+      name: "C# SDK ↗"
+      url: "https://github.com/modelcontextprotocol/csharp-sdk"
+      weight: 8
