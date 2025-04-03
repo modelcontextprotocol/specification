@@ -384,3 +384,11 @@ Since clients do not know the set of MCP servers in advance, we strongly recomme
 implementation of dynamic client registration. This allows applications to automatically
 register with the MCP server, and removes the need for users to obtain client ids
 manually.
+
+#### 3.4 Scope Management
+
+MCP servers **SHOULD** return the set of available OAuth scopes a Client may request 
+via the `scopes_supported` metadata field in the Authorization Server Metadata Document. 
+MCP clients **SHOULD** request the minimum set of scopes necessary for the particular 
+application or use case. MCP clients **MAY** perform subsequent authorization flows to 
+request additional scopes as needed. 
