@@ -3,7 +3,7 @@ title: Progress
 weight: 30
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 The Model Context Protocol (MCP) supports optional progress tracking for long-running
 operations through notification messages. Either side can send progress notifications to
@@ -36,6 +36,7 @@ The receiver **MAY** then send progress notifications containing:
 - The original progress token
 - The current progress value so far
 - An optional "total" value
+- An optional "message" value
 
 ```json
 {
@@ -44,7 +45,8 @@ The receiver **MAY** then send progress notifications containing:
   "params": {
     "progressToken": "abc123",
     "progress": 50,
-    "total": 100
+    "total": 100,
+    "message": "Reticulating splines..."
   }
 }
 ```
@@ -52,6 +54,7 @@ The receiver **MAY** then send progress notifications containing:
 - The `progress` value **MUST** increase with each notification, even if the total is
   unknown.
 - The `progress` and the `total` values **MAY** be floating point.
+- The `message` field **SHOULD** provide relevant human readable progress information.
 
 ## Behavior Requirements
 

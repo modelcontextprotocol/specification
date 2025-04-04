@@ -4,8 +4,7 @@ type: docs
 weight: 20
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: {{< param protocolRevision >}}
-{{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
 
 All messages in MCP **MUST** follow the
 [JSON-RPC 2.0](https://www.jsonrpc.org/specification) specification. The protocol defines

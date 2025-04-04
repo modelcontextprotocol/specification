@@ -4,7 +4,7 @@ type: docs
 weight: 40
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 The Model Context Protocol (MCP) provides a standardized way for clients to expose
 filesystem "roots" to servers. Roots define the boundaries of where servers can operate
@@ -27,7 +27,7 @@ interaction model.
 ## Capabilities
 
 Clients that support roots **MUST** declare the `roots` capability during
-[initialization]({{< ref "/specification/2024-11-05/basic/lifecycle#initialization" >}}):
+[initialization]({{< ref "../basic/lifecycle#initialization" >}}):
 
 ```json
 {

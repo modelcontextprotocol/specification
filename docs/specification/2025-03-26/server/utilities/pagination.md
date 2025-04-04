@@ -2,7 +2,7 @@
 title: Pagination
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 The Model Context Protocol (MCP) supports paginating list operations that may return
 large result sets. Pagination allows servers to yield results in smaller chunks rather

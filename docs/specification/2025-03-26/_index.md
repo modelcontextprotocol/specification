@@ -1,13 +1,15 @@
 ---
-linkTitle: 2024-11-05 (Final)
+linkTitle: 2025-03-26 (Latest)
 title: Model Context Protocol specification
 cascade:
   type: docs
 breadcrumbs: false
-weight: 2
+weight: 1
+aliases:
+  - /latest
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 [Model Context Protocol](https://modelcontextprotocol.io) (MCP) is an open protocol that
 enables seamless integration between LLM applications and external data sources and
@@ -17,7 +19,7 @@ they need.
 
 This specification defines the authoritative protocol requirements, based on the
 TypeScript schema in
-[schema.ts](https://github.com/modelcontextprotocol/specification/blob/main/schema/2024-11-05/schema.ts).
+[schema.ts](https://github.com/modelcontextprotocol/specification/blob/main/schema/2025-03-26/schema.ts).
 
 For implementation guides and examples, visit
 [modelcontextprotocol.io](https://modelcontextprotocol.io).
@@ -101,7 +103,9 @@ considerations that all implementors must carefully address.
 3. **Tool Safety**
 
    - Tools represent arbitrary code execution and must be treated with appropriate
-     caution
+     caution.
+     - In particular, descriptions of tool behavior such as annotations should be
+       considered untrusted, unless obtained from a trusted server.
    - Hosts must obtain explicit user consent before invoking any tool
    - Users should understand what each tool does before authorizing its use
 

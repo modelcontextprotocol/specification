@@ -2,10 +2,10 @@
 title: Client Features
 cascade:
   type: docs
-weight: 4
+weight: 40
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 Clients can implement additional features to enrich connected MCP servers:
 

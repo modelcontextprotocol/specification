@@ -26,7 +26,6 @@ params:
       link: /latest
       width: 204
       height: 30
-  protocolRevision: "2024-11-05"
 
 markup:
   goldmark:
@@ -58,21 +57,18 @@ enableInlineShortcodes: true
 
 menu:
   main:
-    - name: Specification (Draft)
-      pageRef: /draft
-      weight: 1
-    - name: Specification (Latest)
+    - name: Specification
       pageRef: /latest
-      weight: 2
+      weight: 1
     - name: Resources
       pageRef: /resources
-      weight: 3
+      weight: 2
     - name: Search
-      weight: 4
+      weight: 3
       params:
         type: search
     - name: GitHub
-      weight: 5
+      weight: 4
       url: "https://github.com/modelcontextprotocol/specification"
       params:
         icon: github

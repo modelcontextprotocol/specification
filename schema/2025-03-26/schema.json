@@ -1,28 +1,248 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "Annotated": {
-            "description": "Base for objects that include optional annotations for the client. The client can use annotations to inform how objects are used or displayed",
+        "Annotations": {
+            "description": "Optional annotations for the client. The client can use annotations to inform how objects are used or displayed",
+            "properties": {
+                "audience": {
+                    "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
+                    "items": {
+                        "$ref": "#/definitions/Role"
+                    },
+                    "type": "array"
+                },
+                "priority": {
+                    "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "AudioContent": {
+            "description": "Audio provided to or from an LLM.",
             "properties": {
                 "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
+                },
+                "data": {
+                    "description": "The base64-encoded audio data.",
+                    "format": "byte",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of the audio. Different providers may support different audio types.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "audio",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "mimeType",
+                "type"
+            ],
+            "type": "object"
+        },
+        "AugmentRequest": {
+            "description": "Request to augment context with additional information.",
+            "properties": {
+                "method": {
+                    "const": "augmentation/augment",
+                    "type": "string"
+                },
+                "params": {
                     "properties": {
-                        "audience": {
-                            "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
+                        "arguments": {
+                            "additionalProperties": {},
+                            "description": "Additional parameters for the augmentation.\nmaxResult and minRelevance are common parameters for augmentations that return multiple results, but the exact parameters are server-specific.",
+                            "properties": {
+                                "maxResults": {
+                                    "type": "integer"
+                                },
+                                "minRelevance": {
+                                    "type": "integer"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "context": {
+                            "description": "The context to augment. This can include text, images, or other resources.",
                             "items": {
-                                "$ref": "#/definitions/Role"
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/definitions/TextContent"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/ImageContent"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/AudioContent"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/EmbeddedResource"
+                                    }
+                                ]
                             },
                             "type": "array"
                         },
-                        "priority": {
-                            "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
-                            "maximum": 1,
-                            "minimum": 0,
-                            "type": "number"
+                        "name": {
+                            "description": "The name of the augmentation to perform.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "context",
+                        "name"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "AugmentResult": {
+            "description": "Response containing augmented context.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "content": {
+                    "description": "The augmented content. Each item in the array represents a single augmented result.\nIt is server-specific how to interpret the content.",
+                    "items": {
+                        "$ref": "#/definitions/AugmentedContent"
+                    },
+                    "type": "array"
+                },
+                "hint": {
+                    "description": "Hints for the client on how to interpret the augmented content.",
+                    "type": "string"
+                },
+                "metadata": {
+                    "additionalProperties": true,
+                    "description": "Optional metadata for the entire augmented result.",
+                    "properties": {},
+                    "type": "object"
+                }
+            },
+            "required": [
+                "content"
+            ],
+            "type": "object"
+        },
+        "Augmentation": {
+            "description": "Describes an augmentation capability offered by the server.",
+            "properties": {
+                "description": {
+                    "description": "A human-readable description of the augmentation.",
+                    "type": "string"
+                },
+                "inputSchema": {
+                    "description": "A JSON Schema object defining the expected additional parameters for the augmentation.",
+                    "properties": {
+                        "properties": {
+                            "additionalProperties": {
+                                "additionalProperties": true,
+                                "properties": {},
+                                "type": "object"
+                            },
+                            "type": "object"
+                        },
+                        "required": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "type": {
+                            "const": "object",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "type"
+                    ],
+                    "type": "object"
+                },
+                "name": {
+                    "description": "The name of the augmentation.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "inputSchema",
+                "name"
+            ],
+            "type": "object"
+        },
+        "AugmentationListChangedNotification": {
+            "description": "An optional notification from the server to the client, informing that the list\nof augmentations it offers has changed. This may be issued by servers without\nany previous subscription.",
+            "properties": {
+                "method": {
+                    "const": "notifications/augmentation/list_changed",
+                    "type": "string"
+                },
+                "params": {
+                    "additionalProperties": {},
+                    "properties": {
+                        "_meta": {
+                            "additionalProperties": {},
+                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "type": "object"
                         }
                     },
                     "type": "object"
                 }
             },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "AugmentedContent": {
+            "description": "A single piece of content returned from augmentation with its properties.",
+            "properties": {
+                "content": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/TextContent"
+                        },
+                        {
+                            "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
+                        },
+                        {
+                            "$ref": "#/definitions/EmbeddedResource"
+                        }
+                    ],
+                    "description": "The content part of the individual augmented result content."
+                },
+                "properties": {
+                    "additionalProperties": {},
+                    "description": "The properties of the individual augmented result content.",
+                    "properties": {
+                        "relevance": {
+                            "description": "Relevance of the content, as often used in RAG systems.",
+                            "type": "integer"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "content"
+            ],
             "type": "object"
         },
         "BlobResourceContents": {
@@ -93,6 +313,9 @@
                             },
                             {
                                 "$ref": "#/definitions/ImageContent"
+                            },
+                            {
+                                "$ref": "#/definitions/AudioContent"
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
@@ -198,9 +421,6 @@
                 },
                 {
                     "$ref": "#/definitions/ListResourcesRequest"
-                },
-                {
-                    "$ref": "#/definitions/ListResourceTemplatesRequest"
                 },
                 {
                     "$ref": "#/definitions/ReadResourceRequest"
@@ -412,6 +632,9 @@
                         },
                         {
                             "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
                         }
                     ]
                 },
@@ -442,22 +665,8 @@
             "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
             "properties": {
                 "annotations": {
-                    "properties": {
-                        "audience": {
-                            "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
-                            "items": {
-                                "$ref": "#/definitions/Role"
-                            },
-                            "type": "array"
-                        },
-                        "priority": {
-                            "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
-                            "maximum": 1,
-                            "minimum": 0,
-                            "type": "number"
-                        }
-                    },
-                    "type": "object"
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
                 },
                 "resource": {
                     "anyOf": [
@@ -544,22 +753,8 @@
             "description": "An image provided to or from an LLM.",
             "properties": {
                 "annotations": {
-                    "properties": {
-                        "audience": {
-                            "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
-                            "items": {
-                                "$ref": "#/definitions/Role"
-                            },
-                            "type": "array"
-                        },
-                        "priority": {
-                            "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
-                            "maximum": 1,
-                            "minimum": 0,
-                            "type": "number"
-                        }
-                    },
-                    "type": "object"
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
                 },
                 "data": {
                     "description": "The base64-encoded image data.",
@@ -686,6 +881,34 @@
             ],
             "type": "object"
         },
+        "JSONRPCBatchRequest": {
+            "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/JSONRPCRequest"
+                    },
+                    {
+                        "$ref": "#/definitions/JSONRPCNotification"
+                    }
+                ]
+            },
+            "type": "array"
+        },
+        "JSONRPCBatchResponse": {
+            "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/JSONRPCResponse"
+                    },
+                    {
+                        "$ref": "#/definitions/JSONRPCError"
+                    }
+                ]
+            },
+            "type": "array"
+        },
         "JSONRPCError": {
             "description": "A response to a request that indicates an error occurred.",
             "properties": {
@@ -733,12 +956,41 @@
                     "$ref": "#/definitions/JSONRPCNotification"
                 },
                 {
+                    "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/JSONRPCRequest"
+                            },
+                            {
+                                "$ref": "#/definitions/JSONRPCNotification"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                {
                     "$ref": "#/definitions/JSONRPCResponse"
                 },
                 {
                     "$ref": "#/definitions/JSONRPCError"
+                },
+                {
+                    "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/JSONRPCResponse"
+                            },
+                            {
+                                "$ref": "#/definitions/JSONRPCError"
+                            }
+                        ]
+                    },
+                    "type": "array"
                 }
-            ]
+            ],
+            "description": "Refers to any valid JSON-RPC object that can be decoded off the wire, or encoded to be sent."
         },
         "JSONRPCNotification": {
             "description": "A notification which does not expect a response.",
@@ -822,6 +1074,52 @@
                 "id",
                 "jsonrpc",
                 "result"
+            ],
+            "type": "object"
+        },
+        "ListAugmentationsRequest": {
+            "description": "Sent from the client to request a list of augmentations the server has.",
+            "properties": {
+                "method": {
+                    "const": "augmentation/list",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "ListAugmentationsResult": {
+            "description": "The server's response to an augmentation/list request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "augmentations": {
+                    "items": {
+                        "$ref": "#/definitions/Augmentation"
+                    },
+                    "type": "array"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "augmentations"
             ],
             "type": "object"
         },
@@ -1239,6 +1537,10 @@
                 },
                 "params": {
                     "properties": {
+                        "message": {
+                            "description": "An optional message describing the current progress.",
+                            "type": "string"
+                        },
                         "progress": {
                             "description": "The progress thus far. This should increase every time progress is made, even if the total is unknown.",
                             "type": "number"
@@ -1351,6 +1653,9 @@
                         },
                         {
                             "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
                         },
                         {
                             "$ref": "#/definitions/EmbeddedResource"
@@ -1476,22 +1781,8 @@
             "description": "A known resource that the server is capable of reading.",
             "properties": {
                 "annotations": {
-                    "properties": {
-                        "audience": {
-                            "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
-                            "items": {
-                                "$ref": "#/definitions/Role"
-                            },
-                            "type": "array"
-                        },
-                        "priority": {
-                            "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
-                            "maximum": 1,
-                            "minimum": 0,
-                            "type": "number"
-                        }
-                    },
-                    "type": "object"
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
                 },
                 "description": {
                     "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
@@ -1504,10 +1795,6 @@
                 "name": {
                     "description": "A human-readable name for this resource.\n\nThis can be used by clients to populate UI elements.",
                     "type": "string"
-                },
-                "size": {
-                    "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
-                    "type": "integer"
                 },
                 "uri": {
                     "description": "The URI of this resource.",
@@ -1586,22 +1873,8 @@
             "description": "A template description for resources available on the server.",
             "properties": {
                 "annotations": {
-                    "properties": {
-                        "audience": {
-                            "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
-                            "items": {
-                                "$ref": "#/definitions/Role"
-                            },
-                            "type": "array"
-                        },
-                        "priority": {
-                            "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
-                            "maximum": 1,
-                            "minimum": 0,
-                            "type": "number"
-                        }
-                    },
-                    "type": "object"
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
                 },
                 "description": {
                     "description": "A description of what this template is for.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
@@ -1725,6 +1998,9 @@
                         },
                         {
                             "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
                         }
                     ]
                 },
@@ -1741,6 +2017,12 @@
         "ServerCapabilities": {
             "description": "Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.",
             "properties": {
+                "completions": {
+                    "additionalProperties": true,
+                    "description": "Present if the server supports argument autocompletion suggestions.",
+                    "properties": {},
+                    "type": "object"
+                },
                 "experimental": {
                     "additionalProperties": {
                         "additionalProperties": true,
@@ -1843,9 +2125,6 @@
                     "$ref": "#/definitions/ListResourcesResult"
                 },
                 {
-                    "$ref": "#/definitions/ListResourceTemplatesResult"
-                },
-                {
                     "$ref": "#/definitions/ReadResourceResult"
                 },
                 {
@@ -1922,22 +2201,8 @@
             "description": "Text provided to or from an LLM.",
             "properties": {
                 "annotations": {
-                    "properties": {
-                        "audience": {
-                            "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
-                            "items": {
-                                "$ref": "#/definitions/Role"
-                            },
-                            "type": "array"
-                        },
-                        "priority": {
-                            "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
-                            "maximum": 1,
-                            "minimum": 0,
-                            "type": "number"
-                        }
-                    },
-                    "type": "object"
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
                 },
                 "text": {
                     "description": "The text content of the message.",
@@ -1979,8 +2244,12 @@
         "Tool": {
             "description": "Definition for a tool the client can call.",
             "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/ToolAnnotations",
+                    "description": "Optional additional tool information."
+                },
                 "description": {
-                    "description": "A human-readable description of the tool.",
+                    "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
                 },
                 "inputSchema": {
@@ -2019,6 +2288,32 @@
                 "inputSchema",
                 "name"
             ],
+            "type": "object"
+        },
+        "ToolAnnotations": {
+            "description": "Additional properties describing a Tool to clients.\n\nNOTE: all properties in ToolAnnotations are **hints**. \nThey are not guaranteed to provide a faithful description of \ntool behavior (including descriptive properties like `title`).\n\nClients should never make tool use decisions based on ToolAnnotations\nreceived from untrusted servers.",
+            "properties": {
+                "destructiveHint": {
+                    "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: true",
+                    "type": "boolean"
+                },
+                "idempotentHint": {
+                    "description": "If true, calling the tool repeatedly with the same arguments \nwill have no additional effect on the its environment.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: false",
+                    "type": "boolean"
+                },
+                "openWorldHint": {
+                    "description": "If true, this tool may interact with an \"open world\" of external\nentities. If false, the tool's domain of interaction is closed.\nFor example, the world of a web search tool is open, whereas that\nof a memory tool is not.\n\nDefault: true",
+                    "type": "boolean"
+                },
+                "readOnlyHint": {
+                    "description": "If true, the tool does not modify its environment.\n\nDefault: false",
+                    "type": "boolean"
+                },
+                "title": {
+                    "description": "A human-readable title for the tool.",
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "ToolListChangedNotification": {

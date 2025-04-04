@@ -4,7 +4,7 @@ type: docs
 weight: 30
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 The Model Context Protocol (MCP) defines a rigorous lifecycle for client-server
 connections that ensures proper capability negotiation and state management.
@@ -73,6 +73,12 @@ The client **MUST** initiate this phase by sending an `initialize` request conta
 }
 ```
 
+The initialize request **MUST NOT** be part of a JSON-RPC
+[batch](https://www.jsonrpc.org/specification#batch), as other requests and notifications
+are not possible until initialization has completed. This also permits backwards
+compatibility with prior protocol versions that do not explicitly support JSON-RPC
+batches.
+
 The server **MUST** respond with its own capabilities and information:
 
 ```json
@@ -113,12 +119,12 @@ to indicate it is ready to begin normal operations:
 ```
 
 - The client **SHOULD NOT** send requests other than
-  [pings]({{< ref "/specification/2024-11-05/basic/utilities/ping" >}}) before the server
-  has responded to the `initialize` request.
+  [pings]({{< ref "utilities/ping" >}}) before the server has responded to the
+  `initialize` request.
 - The server **SHOULD NOT** send requests other than
-  [pings]({{< ref "/specification/2024-11-05/basic/utilities/ping" >}}) and
-  [logging]({{< ref "/specification/2024-11-05/server/utilities/logging" >}}) before
-  receiving the `initialized` notification.
+  [pings]({{< ref "utilities/ping" >}}) and
+  [logging]({{< ref "../server/utilities/logging" >}}) before receiving the `initialized`
+  notification.
 
 #### Version Negotiation
 
@@ -139,16 +145,16 @@ available during the session.
 
 Key capabilities include:
 
-| Category | Capability     | Description                                                                                       |
-| -------- | -------------- | ------------------------------------------------------------------------------------------------- |
-| Client   | `roots`        | Ability to provide filesystem [roots]({{< ref "/specification/2024-11-05/client/roots" >}})       |
-| Client   | `sampling`     | Support for LLM [sampling]({{< ref "/specification/2024-11-05/client/sampling" >}}) requests      |
-| Client   | `experimental` | Describes support for non-standard experimental features                                          |
-| Server   | `prompts`      | Offers [prompt templates]({{< ref "/specification/2024-11-05/server/prompts" >}})                 |
-| Server   | `resources`    | Provides readable [resources]({{< ref "/specification/2024-11-05/server/resources" >}})           |
-| Server   | `tools`        | Exposes callable [tools]({{< ref "/specification/2024-11-05/server/tools" >}})                    |
-| Server   | `logging`      | Emits structured [log messages]({{< ref "/specification/2024-11-05/server/utilities/logging" >}}) |
-| Server   | `experimental` | Describes support for non-standard experimental features                                          |
+| Category | Capability     | Description                                                                |
+| -------- | -------------- | -------------------------------------------------------------------------- |
+| Client   | `roots`        | Ability to provide filesystem [roots]({{< ref "../client/roots" >}})       |
+| Client   | `sampling`     | Support for LLM [sampling]({{< ref "../client/sampling" >}}) requests      |
+| Client   | `experimental` | Describes support for non-standard experimental features                   |
+| Server   | `prompts`      | Offers [prompt templates]({{< ref "../server/prompts" >}})                 |
+| Server   | `resources`    | Provides readable [resources]({{< ref "../server/resources" >}})           |
+| Server   | `tools`        | Exposes callable [tools]({{< ref "../server/tools" >}})                    |
+| Server   | `logging`      | Emits structured [log messages]({{< ref "../server/utilities/logging" >}}) |
+| Server   | `experimental` | Describes support for non-standard experimental features                   |
 
 Capability objects can describe sub-capabilities like:
 
@@ -174,8 +180,8 @@ mechanism should be used to signal connection termination:
 
 #### stdio
 
-For the stdio [transport]({{< ref "/specification/2024-11-05/basic/transports" >}}), the
-client **SHOULD** initiate shutdown by:
+For the stdio [transport]({{< ref "transports" >}}), the client **SHOULD** initiate
+shutdown by:
 
 1. First, closing the input stream to the child process (the server)
 2. Waiting for the server to exit, or sending `SIGTERM` if the server does not exit
@@ -187,8 +193,25 @@ exiting.
 
 #### HTTP
 
-For HTTP [transports]({{< ref "/specification/2024-11-05/basic/transports" >}}), shutdown
-is indicated by closing the associated HTTP connection(s).
+For HTTP [transports]({{< ref "transports" >}}), shutdown is indicated by closing the
+associated HTTP connection(s).
+
+## Timeouts
+
+Implementations **SHOULD** establish timeouts for all sent requests, to prevent hung
+connections and resource exhaustion. When the request has not received a success or error
+response within the timeout period, the sender **SHOULD** issue a [cancellation
+notification]({{< ref "utilities/cancellation" >}}) for that request and stop waiting for
+a response.
+
+SDKs and other middleware **SHOULD** allow these timeouts to be configured on a
+per-request basis.
+
+Implementations **MAY** choose to reset the timeout clock when receiving a [progress
+notification]({{< ref "utilities/progress" >}}) corresponding to the request, as this
+implies that work is actually happening. However, implementations **SHOULD** always
+enforce a maximum timeout, regardless of progress notifications, to limit the impact of a
+misbehaving client or server.
 
 ## Error Handling
 
@@ -196,11 +219,7 @@ Implementations **SHOULD** be prepared to handle these error cases:
 
 - Protocol version mismatch
 - Failure to negotiate required capabilities
-- Initialize request timeout
-- Shutdown timeout
-
-Implementations **SHOULD** implement appropriate timeouts for all requests, to prevent
-hung connections and resource exhaustion.
+- Request [timeouts](#timeouts)
 
 Example initialization error:
 

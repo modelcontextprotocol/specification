@@ -2,7 +2,7 @@
 title: Completion
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 The Model Context Protocol (MCP) provides a standardized way for servers to offer
 argument autocompletion suggestions for prompts and resource URIs. This enables rich,
@@ -20,6 +20,18 @@ users type, with the ability to filter and select from available options.
 However, implementations are free to expose completion through any interface pattern that
 suits their needs&mdash;the protocol itself does not mandate any specific user
 interaction model.
+
+## Capabilities
+
+Servers that support completions **MUST** declare the `completions` capability:
+
+```json
+{
+  "capabilities": {
+    "completions": {}
+  }
+}
+```
 
 ## Protocol Messages
 
@@ -112,6 +124,15 @@ sequenceDiagram
   - `values`: Array of suggestions (max 100)
   - `total`: Optional total matches
   - `hasMore`: Additional results flag
+
+## Error Handling
+
+Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
+
+- Method not found: `-32601` (Capability not supported)
+- Invalid prompt name: `-32602` (Invalid params)
+- Missing required arguments: `-32602` (Invalid params)
+- Internal errors: `-32603` (Internal error)
 
 ## Implementation Considerations
 

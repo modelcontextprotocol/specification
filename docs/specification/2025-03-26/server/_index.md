@@ -2,10 +2,10 @@
 title: Server Features
 cascade:
   type: docs
-weight: 3
+weight: 30
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 Servers provide the fundamental building blocks for adding context to language models via
 MCP. These primitives enable rich interactions between clients, servers, and language

@@ -2,7 +2,7 @@
 title: Utilities
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 These optional features enhance the base protocol functionality with various utilities.
 

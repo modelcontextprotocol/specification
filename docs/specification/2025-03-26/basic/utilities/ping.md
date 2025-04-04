@@ -3,7 +3,7 @@ title: Ping
 weight: 5
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 The Model Context Protocol includes an optional ping mechanism that allows either party
 to verify that their counterpart is still responsive and the connection is alive.

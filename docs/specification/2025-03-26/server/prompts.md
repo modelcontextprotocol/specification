@@ -3,7 +3,7 @@ title: Prompts
 weight: 10
 ---
 
-{{< callout type="info" >}} **Protocol Revision**: 2024-11-05 {{< /callout >}}
+{{< callout type="info" >}} **Protocol Revision**: 2025-03-26 {{< /callout >}}
 
 The Model Context Protocol (MCP) provides a standardized way for servers to expose prompt
 templates to clients. Prompts allow servers to provide structured messages and
@@ -29,7 +29,8 @@ model.
 ## Capabilities
 
 Servers that support prompts **MUST** declare the `prompts` capability during
-[initialization]({{< ref "/specification/2024-11-05/basic/lifecycle#initialization" >}}):
+[initialization]({{< ref "../basic/lifecycle#initialization" >}}):
+
 
 ```json
 {
@@ -49,8 +50,7 @@ available prompts changes.
 ### Listing Prompts
 
 To retrieve available prompts, clients send a `prompts/list` request. This operation
-supports
-[pagination]({{< ref "/specification/2024-11-05/server/utilities/pagination" >}}).
+supports [pagination]({{< ref "utilities/pagination" >}}).
 
 **Request:**
 
@@ -93,8 +93,7 @@ supports
 ### Getting a Prompt
 
 To retrieve a specific prompt, clients send a `prompts/get` request. Arguments may be
-auto-completed through [the completion
-API]({{< ref "/specification/2024-11-05/server/utilities/completion" >}}).
+auto-completed through [the completion API]({{< ref "utilities/completion" >}}).
 
 **Request:**
 
@@ -212,6 +211,21 @@ Image content allows including visual information in messages:
 
 The image data **MUST** be base64-encoded and include a valid MIME type. This enables
 multi-modal interactions where visual context is important.
+
+#### Audio Content
+
+Audio content allows including audio information in messages:
+
+```json
+{
+  "type": "audio",
+  "data": "base64-encoded-audio-data",
+  "mimeType": "audio/wav"
+}
+```
+
+The audio data MUST be base64-encoded and include a valid MIME type. This enables
+multi-modal interactions where audio context is important.
 
 #### Embedded Resources
 
