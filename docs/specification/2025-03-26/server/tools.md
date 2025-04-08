@@ -240,10 +240,9 @@ or data, behind a URI that can be subscribed to or fetched again by the client l
 Tools use two error reporting mechanisms:
 
 1. **Protocol Errors**: Standard JSON-RPC errors for issues like:
-
-   - Unknown tools
-   - Invalid arguments
-   - Server errors
+   - Unknown tools: `-32602` (Invalid params)
+   - Missing required arguments: `-32602` (Invalid params)
+   - Server errors: `-32603` (Internal error)
 
 2. **Tool Execution Errors**: Reported in tool results with `isError: true`:
    - API failures
