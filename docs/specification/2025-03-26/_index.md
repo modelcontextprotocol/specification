@@ -136,4 +136,4 @@ Explore the detailed specification for each protocol component:
 {{< card link="basic" title="Base Protocol" icon="code" >}}
 {{< card link="server" title="Server Features" icon="server" >}}
 {{< card link="client" title="Client Features" icon="user" >}}
-{{< card link="contributing" title="Contributing" icon="pencil" >}} {{< /cards >}}
+{{< card link="../contributing" title="Contributing" icon="pencil" >}} {{< /cards >}}
