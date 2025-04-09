@@ -232,21 +232,6 @@ sequenceDiagram
     MC->>MC: Cache token
 ```
 
-#### 2.4.3 Implementing custom authorization servers
-
-MCP servers **MAY** implement their own AS.
-
-MCP servers that implement their own AS **MUST** host appropriate AS metadata, as outlined in
-[RFC 8414 Section 3](https://datatracker.ietf.org/doc/html/rfc8414#section-3).
-
-MCP servers that implement their own AS **MUST**:
-
-1. Maintain secure mapping between third-party tokens and issued client sessions, if used.  
-2. Validate token status before granting any data access.
-3. Implement appropriate token lifecycle management.  
-4. Provide appropriate responses to the client if re-authentication is needed. Please refer to
-   [RFC 9470 OAuth 2.0 Step Up Authentication Challenge Protocol](https://www.rfc-editor.org/rfc/rfc9470.html).
-
 #### 2.4.4 Security Considerations
 
 When implementing authorization with an existing AS, MCP servers **MUST**:
@@ -269,7 +254,63 @@ Authorization servers **MUST**:
 
 1. Verify that the resource identifier is registered for the audience of the access token issued.
 
-### 2.5 Implementing authorization server overrides
+### 2.5 Delegated authorization or colocated AS flows
+
+In limited scenarios, MCP servers **MAY** implement their own AS, refer to as a _colocated AS_ due
+to the MCP server _colocating_ itself, the resource server (RS) with the AS.
+
+MCP servers that implement their own AS **MUST** host appropriate AS metadata, as outlined in
+[RFC 8414 Section 3](https://datatracker.ietf.org/doc/html/rfc8414#section-3).
+
+MCP servers **MAY** support delegated authorization through third-party AS.
+In this flow, the MCP server acts as both an OAuth client (to the external AS) and an OAuth
+AS (to the MCP client).
+
+#### 2.5.1 Flow description
+
+The delegated authorization flow comprises these steps:
+
+1. MCP client initiates standard OAuth flow with MCP server
+2. MCP server redirects user to third-party authorization server
+3. User authorizes with third-party server
+4. Third-party server redirects back to MCP server with authorization code
+5. MCP server exchanges code for third-party access token
+6. MCP server generates its own access token bound to the third-party session
+7. MCP server completes original OAuth flow with MCP client
+
+```mermaid
+sequenceDiagram
+    participant UA as User-Agent (Browser)
+    participant MC as MCP Client
+    participant MS as MCP Server
+    participant T as Third-Party Auth Server
+
+    MC->>MS: Initial OAuth Request
+    MS->>UA: Redirect to Third-Party /authorize
+    UA->>T: Authorization Request
+    Note over T: User authorizes
+    T->>UA: Redirect to MCP Server callback
+    UA->>MS: Authorization code
+    MS->>T: Exchange code for token
+    T->>MS: Third-party access token
+    Note over MS: Generate bound MCP token
+    MS->>UA: Redirect to MCP Client callback
+    UA->>MC: MCP authorization code
+    MC->>MS: Exchange code for token
+    MS->>MC: MCP access token
+```
+
+#### 2.5.2 Special considerations
+
+MCP servers that use delegated authorization or implement a colocated AS **MUST**:
+
+1. Maintain secure mapping between third-party tokens and issued client sessions, if used.  
+2. Validate token status before granting any data access.
+3. Implement appropriate token lifecycle management.  
+4. Provide appropriate responses to the client if re-authentication is needed. Please refer to
+   [RFC 9470 OAuth 2.0 Step Up Authentication Challenge Protocol](https://www.rfc-editor.org/rfc/rfc9470.html).
+
+### 2.6 Implementing authorization server overrides
 
 In certain scenarios, AS might have limited capability support, such as no dynamic client registration, and
 MCP server developers may choose to implement those capabilities themselves.
@@ -280,13 +321,13 @@ that will be linked from the `WWW-Authenticate` header in the `HTTP 401 Unauthor
 The MCP server will need to be configured in accordance with
 [Section 2.4.3](#243-implementing-custom-authorization-servers) to act as an AS.
 
-#### 2.5.1 Discovery of server-driven overrides
+#### 2.6.1 Discovery of server-driven overrides
 
 Under all circumstances, the server **MUST** return a `WWW-Authenticate` with PRM document information,
 even if the server provides its own metadata document that overrides AS endpoints
 (such as `/authorize`, `/token`, or `/register`).
 
-### 2.6 Dynamic Client Registration
+### 2.7 Dynamic Client Registration
 
 MCP clients **SHOULD** support the
 [OAuth 2.0 Dynamic Client Registration Protocol](https://datatracker.ietf.org/doc/html/rfc7591) to
@@ -320,7 +361,7 @@ An MCP client **MAY** contain a configuration for common issuers, such as:
 Alternatively, an MCP client could allow the user to register the MCP client and provide those details
 to the MCP client through a UI.
 
-### 2.7 Authorization Flow Steps
+### 2.8 Authorization flow steps
 
 The complete authorization flow proceeds as follows:  
 
@@ -372,7 +413,7 @@ sequenceDiagram
     Note over MC, MS: Begin standard MCP message exchange
 ```
 
-#### 2.7.1 Decision Flow Overview
+#### 2.8.1 Decision Flow Overview
 
 ```mermaid
 flowchart TD
@@ -397,9 +438,9 @@ flowchart TD
     N --> O[Use access token]
 ```
 
-### 2.8 Access Token Usage
+### 2.9 Access Token Usage
 
-#### 2.8.1 Token Requirements
+#### 2.9.1 Token Requirements
 
 Access token handling **MUST** conform to
 [OAuth 2.1 Section 5](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5) or
@@ -425,7 +466,7 @@ DPoP: <DPoP proof>
 Note that `Authorization` header **MUST** be included in every HTTP request from client to server,
 even if they are part of the same logical session.
 
-#### 2.8.2 Token Handling
+#### 2.9.2 Token Handling
 
 Resource servers (MCP servers _or_ downstream APIs) **MUST** validate access tokens as described
 in [Section 5.2](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.2).
@@ -468,7 +509,16 @@ Servers **MUST** return appropriate HTTP status codes for authorization errors:
 
 ## 3. Best Practices
 
-### 3.1 Local clients as Public OAuth 2.1 Clients
+### 3.1 Authorization servers
+
+Almost universally, MCP server developers should prefer integrating with existing AS (as
+defined in [Section 2.4](#24-authorization-server-integration)) rather than colocate or
+support delegated authoriziation (as defined in
+[Section 2.5](#25-delegated-authorization-or-colocated-as-flows)). This significantly
+reduces the burden on developers and reduces the risk of incorrect token handling
+implementations.
+
+### 3.2 Local clients as Public OAuth 2.1 Clients
 
 We strongly recommend that local clients implement OAuth 2.1 as a public client:
 
@@ -477,7 +527,7 @@ We strongly recommend that local clients implement OAuth 2.1 as a public client:
 3. Following token refresh best practices to maintain sessions.  
 4. Properly handling token expiration and renewal.
 
-### 3.2 Dynamic Client Registration
+### 3.3 Dynamic Client Registration
 
 Since clients do not know the set of MCP servers in advance, we strongly recommend the implementation
 of dynamic client registration. This allows applications to automatically register with the MCP
