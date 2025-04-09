@@ -193,10 +193,6 @@ MCP-Protocol-Version: 2024-11-05
 
 #### 2.4.1 Overview
 
-MCP servers **MAY** override endpoints on an as-needed basis if the authorization server requires
-additional gestures that are not captured by the specification. This requires servers to become an AS
-and host all related metadata.
-
 MCP servers **MUST NOT** complete public client flows on behalf of the MCP client (e.g., take 
 authorization codes and exchange them for tokens with a public client ID, and then pass the tokens 
 back to the client).
@@ -251,7 +247,7 @@ When implementing authorization with an existing AS, MCP servers **MUST**:
 MCP clients **MUST**:
 
 1. Securely store Access and Refresh Tokens received from the AS.  
-2. Properly handle requests to re-authenticate users with expired or invalid tokens (using the
+2. Properly handle requests to renew and replace expired or invalid tokens (using the
    Refresh Token grant) or due to challenges (refer to
    [RFC 9470](https://www.rfc-editor.org/rfc/rfc9470.html)).
 3. Verify that the `resource` identifier in the PRM document matches the MCP server.
