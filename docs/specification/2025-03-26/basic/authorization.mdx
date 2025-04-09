@@ -127,6 +127,9 @@ A MCP client **MAY** use the AS-provided registration endpoint to register itsel
 
 A MCP client **MAY** be pre-registered with an AS and not require dynamic registration.
 
+A MCP client **MUST** send the `resource` identifier to the AS, following
+[RFC 8707](https://www.rfc-editor.org/rfc/rfc8707.html).
+
 A MCP client **MAY** implement Demonstrating Proof of Possession (DPoP) and use it to the extent
 supported by the AS. See
 [RFC 9449](https://datatracker.ietf.org/doc/html/rfc9449).
