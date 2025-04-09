@@ -116,8 +116,8 @@ A MCP client **MUST** verify that the `resource` value in the PRM document match
 fully-qualified domain name.
 
 A MCP client **SHOULD** evaluate or permit the user to evaluate the trustworthiness of AS
-discovered through the PRM document to prevent phishing. For example, an MCP client could prompt the user "Do you
-want to login with `https://authserver.example`?"
+discovered through the PRM document to prevent phishing. For example, an MCP client could prompt 
+the user "Do you want to login with `https://authserver.example`?"
 
 A MCP client **MUST** use `authorization_servers` values from the PRM document to construct
 the OAuth 2.0 metadata discovery document path, following
@@ -195,8 +195,9 @@ MCP servers **MAY** override endpoints on an as-needed basis if the authorizatio
 additional gestures that are not captured by the specification. This requires servers to become an AS
 and host all related metadata.
 
-MCP servers **MUST NOT** complete public client flows on behalf of the MCP client (e.g., take authorization
-codes and exchange them for tokens with a public client ID, and then pass the tokens back to the client).
+MCP servers **MUST NOT** complete public client flows on behalf of the MCP client (e.g., take 
+authorization codes and exchange them for tokens with a public client ID, and then pass the tokens 
+back to the client).
 
 #### 2.4.2 Flow Description
 
@@ -450,8 +451,8 @@ Access token handling **MUST** conform to
 [DPoP Section 7](https://datatracker.ietf.org/doc/html/rfc9449#section-7) (if client
 supports DPoP) requirements for resource requests.
 
-MCP client **MUST** use the `Authorization` request header field and **MUST NOT** use URI query string to transport Tokens
-[OAuth Section 5.1.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.1.1):
+MCP client **MUST** use the `Authorization` request header field and **MUST NOT** use URI query string 
+to transport tokens [OAuth Section 5.1.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.1.1):
 
 ```http
 Authorization: Bearer <access-token>
