@@ -23,10 +23,11 @@ This document **does not discuss server-to-server authorization patterns**.
 1. **MCP server developers are not security experts**. Developers should not be building their own
    authorization servers unless absolutely necessary. This introduces room for serious mistakes
    that can lead to compromise.
-1. **MCP clients are Authorization Server (AS)-agnostic**. We do not and will not expect clients to be
-   "enlightened" in any capacity to support a protected MCP server. This will fragment the ecosystem.
-   The specification explicitly assumes that clients are not enabled in any unique way to support
-   specific Authorization Servers.
+1. **MCP clients are Authorization Server (AS)-agnostic**. When developers build MCP servers and secure
+   them with an AS, they need to design them so that standard, off-the-shelf MCP clients can connect
+   without needing any special modifications for the server's authorization setup.
+   Not doing this will fragment the ecosystem. The specification explicitly assumes that clients are
+   not enabled in any unique way to support specific AS implementations beyond what is covered here.
     - **Note:** It is acceptable for clients to be enhanced for specific Authorization Servers,
       primarily through pre-registration.
 1. **User Authentication is not a MCP Server concern.** The MCP server can guide the client
