@@ -192,7 +192,8 @@ MCP servers **MAY** override endpoints on an as-needed basis if the authorizatio
 additional gestures that are not captured by the specification. This requires servers to become an AS
 and host all related metadata.
 
-MCP servers **MUST NOT** complete PKCE or other public client flows on behalf of the MCP client.
+MCP servers **MUST NOT** complete public client flows on behalf of the MCP client (e.g., take authorization
+codes and exchange them for tokens with a public client ID, and then pass the tokens back to the client).
 
 #### 2.4.2 Flow Description
 
