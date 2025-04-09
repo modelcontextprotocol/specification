@@ -98,9 +98,7 @@ the URL to the protected resource metadata document hosted by the MCP Server in
 the following format:
 
 ```http
-WWW-Authenticate: Bearer error="invalid_request",
-     error_description="No access token was provided in this request",
-     resource_metadata="https://resource.example.com/.well-known/oauth-protected-resource",
+WWW-Authenticate: Bearer resource_metadata="https://resource.example.com/.well-known/oauth-protected-resource",
      scope="mcp:read mcp:write"
 ```
 
