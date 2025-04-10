@@ -10,8 +10,7 @@ The following software is required to work on the spec:
 - Node.js 20 or above
 - TypeScript
 - TypeScript JSON Schema (for generating JSON schema)
-- [Hugo](https://gohugo.io/) (optional, for docs)
-- Go (optional, for docs)
+- [Mintlify](https://mintlify.com/) (optional, for docs)
 - nvm (optional, for managing Node versions)
 
 ## Getting Started
@@ -55,6 +54,21 @@ npm run generate:json     # generate JSON schema
 ```bash
 npm run serve:docs
 ```
+
+### Documentation Guidelines
+
+When contributing to the documentation:
+
+- Keep content clear, concise, and technically accurate
+- Follow the existing file structure and naming conventions
+- Include code examples where appropriate
+- Use proper MDX formatting and components
+- Test all links and code samples
+- Use appropriate headings: "When to use", "Steps", and "Tips" for tutorials
+- Place new pages in appropriate sections (concepts, tutorials, etc.)
+- Update docs.json when adding new pages
+- Follow existing file naming conventions (kebab-case.mdx)
+- Include proper frontmatter in MDX files
 
 ## Submitting Changes
 
