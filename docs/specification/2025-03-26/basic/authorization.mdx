@@ -194,6 +194,10 @@ MCP-Protocol-Version: 2024-11-05
 
 #### 2.4.1 Overview
 
+MCP clients **SHOULD** be considered _public clients_ and MCP servers **MUST** be
+considered _confidential clients_, as defined in
+[RFC 6749 Section 2.1](https://datatracker.ietf.org/doc/html/rfc6749#section-2.1).
+
 MCP servers **MUST NOT** complete public client flows on behalf of the MCP client (e.g., take 
 authorization codes and exchange them for tokens with a public client ID, and then pass the tokens 
 back to the client).
