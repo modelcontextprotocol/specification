@@ -276,48 +276,15 @@ MCP servers **MAY** support delegated authorization through third-party AS.
 In this flow, the MCP server acts as both an OAuth client (to the external AS) and an OAuth
 AS (to the MCP client).
 
-#### 2.5.1 Flow description
-
-The delegated authorization flow comprises these steps:
-
-1. MCP client initiates standard OAuth flow with MCP server
-2. MCP server redirects user to third-party authorization server
-3. User authorizes with third-party server
-4. Third-party server redirects back to MCP server with authorization code
-5. MCP server exchanges code for third-party access token
-6. MCP server generates its own access token bound to the third-party session
-7. MCP server completes original OAuth flow with MCP client
-
-```mermaid
-sequenceDiagram
-    participant UA as User-Agent (Browser)
-    participant MC as MCP Client
-    participant MS as MCP Server
-    participant T as Third-Party Auth Server
-
-    MC->>MS: Initial OAuth Request
-    MS->>UA: Redirect to Third-Party /authorize
-    UA->>T: Authorization Request
-    Note over T: User authorizes
-    T->>UA: Redirect to MCP Server callback
-    UA->>MS: Authorization code
-    MS->>T: Exchange code for token
-    T->>MS: Third-party access token
-    Note over MS: Generate bound MCP token
-    MS->>UA: Redirect to MCP Client callback
-    UA->>MC: MCP authorization code
-    MC->>MS: Exchange code for token
-    MS->>MC: MCP access token
-```
-
-#### 2.5.2 Special considerations
+#### 2.5.1 Special considerations
 
 MCP servers that use delegated authorization or implement a colocated AS **MUST**:
 
-1. Maintain secure mapping between third-party tokens and issued client sessions, if used.  
-2. Validate token status before granting any data access.
-3. Implement appropriate token lifecycle management.  
-4. Provide appropriate responses to the client if re-authentication is needed. Please refer to
+1. Maintain secure mapping between third-party tokens and issued client sessions.
+1. Never pass third-party tokens directly to the client.
+1. Validate token status before granting any data access.
+1. Implement appropriate token lifecycle management.  
+1. Provide appropriate responses to the client if re-authentication is needed. Please refer to
    [RFC 9470 OAuth 2.0 Step Up Authentication Challenge Protocol](https://www.rfc-editor.org/rfc/rfc9470.html).
 
 ### 2.6 Implementing authorization server overrides
