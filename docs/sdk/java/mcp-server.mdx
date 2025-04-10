@@ -49,13 +49,6 @@ syncServer.addTool(syncToolSpecification);
 syncServer.addResource(syncResourceSpecification);
 syncServer.addPrompt(syncPromptSpecification);
 
-// Send logging notifications
-syncServer.loggingNotification(LoggingMessageNotification.builder()
-    .level(LoggingLevel.INFO)
-    .logger("custom-logger")
-    .data("Server initialized")
-    .build());
-
 // Close the server when done
 syncServer.close();
 ```
@@ -86,13 +79,6 @@ asyncServer.addResource(asyncResourceSpecification)
 asyncServer.addPrompt(asyncPromptSpecification)
     .doOnSuccess(v -> logger.info("Prompt registered"))
     .subscribe();
-
-// Send logging notifications
-asyncServer.loggingNotification(LoggingMessageNotification.builder()
-    .level(LoggingLevel.INFO)
-    .logger("custom-logger")
-    .data("Server initialized")
-    .build());
 
 // Close the server when done
 asyncServer.close()
@@ -526,6 +512,60 @@ The `CreateMessageRequest` object allows you to specify: `Content` - the input t
 `Model Preferences` - hints and priorities for model selection, `System Prompt` - instructions for the model's behavior and 
 `Max Tokens` - maximum length of the generated response.
 
+### Logging Support
+
+The server provides structured logging capabilities that allow sending log messages to clients with different severity levels. The
+ log notifications can only be sent from within an existing client session, such as tools, resources, and prompts calls.
+
+For example, we can send a log message from within a tool handler function. 
+On the client side, you can register a logging consumer to receive log messages from the server and set the minimum logging level to filter messages.
+
+```java	
+var mcpClient = McpClient.sync(transport)
+        .loggingConsumer(notification -> {
+            System.out.println("Received log message: " + notification.data());
+        })
+        .build();
+
+mcpClient.initialize();
+
+mcpClient.setLoggingLevel(McpSchema.LoggingLevel.INFO);
+
+// Call the tool that sends logging notifications
+CallToolResult result = mcpClient.callTool(new McpSchema.CallToolRequest("logging-test", Map.of()));
+```
+
+The server can send log messages using the `McpAsyncServerExchange`/`McpSyncServerExchange` object in the tool/resource/prompt handler function:
+
+```java
+var tool = new McpServerFeatures.AsyncToolSpecification(
+    new McpSchema.Tool("logging-test", "Test logging notifications", emptyJsonSchema),
+    (exchange, request) -> {  
+
+      exchange.loggingNotification( // Use the exchange to send log messages
+          McpSchema.LoggingMessageNotification.builder()
+            .level(McpSchema.LoggingLevel.DEBUG)
+            .logger("test-logger")
+            .data("Debug message")
+            .build())
+        .block();
+
+      return Mono.just(new CallToolResult("Logging test completed", false));
+    });
+
+var mcpServer = McpServer.async(mcpServerTransportProvider)
+  .serverInfo("test-server", "1.0.0")
+  .capabilities(
+    ServerCapabilities.builder()
+      .logging() // Enable logging support
+      .tools(true)
+      .build())
+  .tools(tool)
+  .build();
+```
+
+Clients can control the minimum logging level they receive through the `mcpClient.setLoggingLevel(level)` request. Messages below the set level will be filtered out.
+Supported logging levels (in order of increasing severity): DEBUG (0), INFO (1), NOTICE (2), WARNING (3), ERROR (4), CRITICAL (5), ALERT (6), EMERGENCY (7)
 
 ## Error Handling
 
