@@ -198,6 +198,9 @@ MCP servers **MUST NOT** complete public client flows on behalf of the MCP clien
 authorization codes and exchange them for tokens with a public client ID, and then pass the tokens 
 back to the client).
 
+Public client flows **MUST** be completed by MCP Client using OAuth 2.1 Authorization
+Code Flow with PKCE.
+
 #### 2.4.2 Flow Description
 
 The third-party authorization flow comprises these steps:
