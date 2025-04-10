@@ -1,0 +1,282 @@
+@startuml Core Components
+
+' Core Interfaces
+interface McpTransport {
+  +Mono<Void> connect(Function<Mono<JSONRPCMessage>, Mono<JSONRPCMessage>> handler)
+  +Mono<Void> sendMessage(JSONRPCMessage message)
+  +void close()
+  +Mono<Void> closeGracefully()
+  +<T> T unmarshalFrom(Object data, TypeReference<T> typeRef)
+}
+
+interface McpSession {
+  +<T> Mono<T> sendRequest(String method, Object requestParams, TypeReference<T> typeRef)
+  +Mono<Void> sendNotification(String method, Map<String, Object> params)
+  +Mono<Void> closeGracefully()
+  +void close()
+}
+
+' Core Implementation Classes
+class DefaultMcpSession {
+  +interface RequestHandler
+  +interface NotificationHandler
+}
+
+' Client Classes
+class McpClient {
+  +{static} Builder using(ClientMcpTransport transport)
+}
+
+class McpAsyncClient {
+  +Mono<InitializeResult> initialize()
+  +ServerCapabilities getServerCapabilities()
+  +Implementation getServerInfo()
+  +ClientCapabilities getClientCapabilities()
+  +Implementation getClientInfo()
+  +void close()
+  +Mono<Void> closeGracefully()
+  +Mono<Object> ping()
+  +Mono<Void> addRoot(Root root)
+  +Mono<Void> removeRoot(String rootUri)
+  +Mono<Void> rootsListChangedNotification()
+  +Mono<CallToolResult> callTool(CallToolRequest request)
+  +Mono<ListToolsResult> listTools()
+  +Mono<ListResourcesResult> listResources()
+  +Mono<ReadResourceResult> readResource(ReadResourceRequest request)
+  +Mono<ListResourceTemplatesResult> listResourceTemplates()
+  +Mono<Void> subscribeResource(SubscribeRequest request)
+  +Mono<Void> unsubscribeResource(UnsubscribeRequest request)
+  +Mono<ListPromptsResult> listPrompts()
+  +Mono<GetPromptResult> getPrompt(GetPromptRequest request)
+  +Mono<Void> setLoggingLevel(LoggingLevel level)
+}
+
+class McpSyncClient {
+  +InitializeResult initialize()
+  +ServerCapabilities getServerCapabilities()
+  +Implementation getServerInfo()
+  +ClientCapabilities getClientCapabilities()
+  +Implementation getClientInfo()
+  +void close()
+  +boolean closeGracefully()
+  +Object ping()
+  +void addRoot(Root root)
+  +void removeRoot(String rootUri)
+  +void rootsListChangedNotification()
+  +CallToolResult callTool(CallToolRequest request)
+  +ListToolsResult listTools()
+  +ListResourcesResult listResources()
+  +ReadResourceResult readResource(ReadResourceRequest request)
+  +ListResourceTemplatesResult listResourceTemplates()
+  +void subscribeResource(SubscribeRequest request)
+  +void unsubscribeResource(UnsubscribeRequest request)
+  +ListPromptsResult listPrompts()
+  +GetPromptResult getPrompt(GetPromptRequest request)
+  +void setLoggingLevel(LoggingLevel level)
+}
+
+' Server Classes
+class McpServer {
+  +{static} Builder using(ServerMcpTransport transport)
+}
+
+class McpAsyncServer {
+  
+  +ServerCapabilities getServerCapabilities()
+  +Implementation getServerInfo()
+  +ClientCapabilities getClientCapabilities()
+  +Implementation getClientInfo()
+  +void close()
+  +Mono<Void> closeGracefully()
+  
+  ' Tool Management
+  +Mono<Void> addTool(ToolRegistration toolRegistration)
+  +Mono<Void> removeTool(String toolName)
+  +Mono<Void> notifyToolsListChanged()
+  
+  ' Resource Management
+  +Mono<Void> addResource(ResourceRegistration resourceHandler)
+  +Mono<Void> removeResource(String resourceUri)
+  +Mono<Void> notifyResourcesListChanged()
+  
+  ' Prompt Management
+  +Mono<Void> addPrompt(PromptRegistration promptRegistration)
+  +Mono<Void> removePrompt(String promptName)
+  +Mono<Void> notifyPromptsListChanged()
+  
+  ' Logging
+  +Mono<Void> loggingNotification(LoggingMessageNotification notification)
+  
+  ' Sampling
+  +Mono<CreateMessageResult> createMessage(CreateMessageRequest request)
+}
+
+class McpSyncServer {
+  +McpAsyncServer getAsyncServer()
+  
+  +ServerCapabilities getServerCapabilities()
+  +Implementation getServerInfo()
+  +ClientCapabilities getClientCapabilities()
+  +Implementation getClientInfo()
+  +void close()
+  +void closeGracefully()
+  
+  ' Tool Management
+  +void addTool(ToolRegistration toolHandler)
+  +void removeTool(String toolName)
+  +void notifyToolsListChanged()
+  
+  ' Resource Management
+  +void addResource(ResourceRegistration resourceHandler)
+  +void removeResource(String resourceUri)
+  +void notifyResourcesListChanged()
+  
+  ' Prompt Management
+  +void addPrompt(PromptRegistration promptRegistration)
+  +void removePrompt(String promptName)
+  +void notifyPromptsListChanged()
+  
+  ' Logging
+  +void loggingNotification(LoggingMessageNotification notification)
+  
+  ' Sampling
+  +CreateMessageResult createMessage(CreateMessageRequest request)
+}
+
+' Transport Implementations
+class StdioClientTransport implements ClientMcpTransport {  
+  +void setErrorHandler(Consumer<String> errorHandler)
+  +Sinks.Many<String> getErrorSink()
+}
+
+class StdioServerTransport implements ServerMcpTransport {
+}
+
+
+class HttpServletSseServerTransport implements ServerMcpTransport {
+}
+
+
+class HttpClientSseClientTransport implements ClientMcpTransport {  
+}
+
+
+class WebFluxSseClientTransport implements ClientMcpTransport {
+}
+
+
+class WebFluxSseServerTransport implements ServerMcpTransport {
+  +RouterFunction<?> getRouterFunction()
+}
+
+class WebMvcSseServerTransport implements ServerMcpTransport {
+  +RouterFunction<?> getRouterFunction()
+}
+
+
+' Schema and Error Classes
+class McpSchema {
+  +class ErrorCodes
+  +interface Request
+  +interface JSONRPCMessage
+  +interface ResourceContents
+  +interface Content
+  +interface ServerCapabilities
+  +{static} JSONRPCMessage deserializeJsonRpcMessage()
+}
+
+class McpError {
+}
+
+' Relationships
+McpTransport <|.. ClientMcpTransport
+McpTransport <|.. ServerMcpTransport
+
+McpSession <|.. DefaultMcpSession
+DefaultMcpSession --o McpAsyncClient
+DefaultMcpSession --o McpAsyncServer
+
+McpClient ..> McpAsyncClient : creates
+McpClient ..> McpSyncClient : creates
+McpSyncClient --> McpAsyncClient : delegates to
+
+McpServer ..> McpAsyncServer : creates
+McpServer ..> McpSyncServer : creates
+McpSyncServer o-- McpAsyncServer
+
+DefaultMcpSession o-- McpTransport
+McpSchema <.. McpSession : uses
+McpError ..> McpSession : throws
+
+@enduml
+
+@startuml Message Flow
+
+package "MCP Schema" {
+  interface JSONRPCMessage {
+    +String jsonrpc()
+  }
+  
+  interface Request {
+  }
+  
+  class InitializeRequest
+  class CallToolRequest
+  class ListToolsRequest
+  class ListResourcesRequest
+  class ReadResourceRequest
+  class ListResourceTemplatesRequest
+  class ListPromptsRequest
+  class GetPromptRequest
+}
+
+package "Resource Types" {
+  interface ResourceContents {
+    +String uri()
+    +String mimeType()
+  }
+  
+  class TextResourceContents
+  class BlobResourceContents
+  
+  interface Content {
+    +String type()
+  }
+  
+  class TextContent
+  class ImageContent
+  class EmbeddedResource
+  
+  interface Annotated {
+    +Annotations annotations()
+  }
+  
+  interface PromptOrResourceReference {
+    +String type()
+  }
+  
+  class PromptReference
+  class ResourceReference
+}
+
+JSONRPCMessage <|.. Request
+Request <|.. InitializeRequest
+Request <|.. CallToolRequest
+Request <|.. ListToolsRequest
+Request <|.. ListResourcesRequest
+Request <|.. ReadResourceRequest
+Request <|.. ListResourceTemplatesRequest
+Request <|.. ListPromptsRequest
+Request <|.. GetPromptRequest
+
+ResourceContents <|.. TextResourceContents
+ResourceContents <|.. BlobResourceContents
+
+Content <|.. TextContent
+Content <|.. ImageContent
+Content <|.. EmbeddedResource
+
+PromptOrResourceReference <|.. PromptReference
+PromptOrResourceReference <|.. ResourceReference
+
+@enduml
