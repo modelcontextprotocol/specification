@@ -122,8 +122,16 @@ sequenceDiagram
     participant Client
     participant Server
 
-    Note over Client: Client searches for tool
+    Note over Client,Server: Tools Search
     Client->>Server: tools/search
+    Server-->>Client: Search Results
+
+    Note over Client,Server: Resources Search
+    Client->>Server: resources/search
+    Server-->>Client: Search Results
+
+    Note over Client,Server: Prompts Search
+    Client->>Server: prompts/search
     Server-->>Client: Search Results
 ```
 
