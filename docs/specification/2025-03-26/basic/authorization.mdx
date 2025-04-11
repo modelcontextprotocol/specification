@@ -229,17 +229,17 @@ Code Flow with PKCE.
 
 The third-party authorization flow comprises these steps:
 
-1. MCP client requests data from the MCP server.  
+1. MCP client requests data from the MCP server.
 1. MCP server responds with `HTTP 401 Unauthorized` and `WWW-Authenticate` header containing the
-   URL to the PRM document. 
+   URL to the PRM document.
 1. MCP client retrieves and validates the PRM document.
-1. MCP client retrieves the AS endpoint from the PRM document.  
+1. MCP client retrieves the AS endpoint from the PRM document.
 1. MCP client redirects user to the AS authorization endpoint. MCP client can include scopes that
    are defined in the PRM document or other scopes, as supported by the MCP server.
 1. User authorizes with authorization server.
-1. Authorization server redirects back to MCP client with authorization code.  
-1. MCP client exchanges the code for the requested tokens.  
-1. MCP client stores the token.  
+1. Authorization server redirects back to MCP client with authorization code.
+1. MCP client exchanges the code for the requested tokens.
+1. MCP client stores the token.
 1. MCP client can now request data from the MCP server with the token attached in the `Authorization`
    header.
 
@@ -260,6 +260,7 @@ sequenceDiagram
     MC->>AS: Exchange code for token
     AS-->>MC: Access token
     MC->>MC: Cache token
+    MC->>MS: Request data</br>(with Authorization header)
 ```
 
 #### 2.4.4 Security Considerations
