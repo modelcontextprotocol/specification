@@ -131,8 +131,8 @@ sequenceDiagram
 
 ### SearchRequest
 
-- `query`: Text that expresses what is being searched for. This can be a keyword (e.g., 'weather'), a description (e.g., 'cities weather is available for'), or a use case (e.g., 'trying to generate weather reports').
-- `nextCursor`: An opaque pagination token
+- `query`: Arbitrary text that expresses what is being searched for. This can be a keyword (e.g., 'weather'), a description (e.g., 'cities weather is available for'), or a use case (e.g., 'trying to generate weather reports').
+- `cursor`: An opaque pagination token
 
 ### SearchResult
 Please see the list results in [Tools](/specification/2025-03-26/server/tools),
@@ -153,11 +153,12 @@ Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
    - Implement embedded vectorization when possible to enable better natural language results
    - Rate limit search results
    - Validate all inputs
+   - Resources **SHOULD** be deeply indexed (i.e. the content itself is indexed, not just the name and description)
 
 2. Clients **SHOULD**:
-   - Use batching if it's not clear whether a tool, resource, or prompt is being searched
-   - Cache results when possible
-   - Facilitate pagination through the `nextCursor` field
+   - Use batching if it's not clear whether a tool, resource, or prompt is appropriate for the situation
+   - Clients should avoid caching search results, or use a very short TTL
+   - Facilitate pagination through the `cursor` field
 
 ## Security
 

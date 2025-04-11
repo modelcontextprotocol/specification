@@ -927,7 +927,7 @@
                 "params": {
                     "properties": {
                         "query": {
-                            "description": "Text that expresses what prompts to search for. This can be a specific prompt type (e.g., 'summarization'), a capability description (e.g., 'writing in a professional tone'), or a task description (e.g., 'generating creative content'). The server will return prompts matching this query.",
+                            "description": "Arbitrary text that expresses what prompts to search for. This can be a specific prompt type (e.g., 'summarization'), a capability description (e.g., 'writing in a professional tone'), or a task description (e.g., 'generating creative content'). The server will return prompts matching this query.",
                             "type": "string"
                         },
                         "cursor": {
@@ -999,7 +999,7 @@
                 "params": {
                     "properties": {
                         "query": {
-                            "description": "Text that expresses what resource templates to search for. This can be a specific template type (e.g., 'document'), a format description (e.g., 'markdown templates'), or a use case (e.g., 'templates for scientific reports'). The server will return resource templates matching this query.",
+                            "description": "Arbitrary text that expresses what resource templates to search for. This can be a specific template type (e.g., 'document'), a format description (e.g., 'markdown templates'), or a use case (e.g., 'templates for scientific reports'). The server will return resource templates matching this query.",
                             "type": "string"
                         },
                         "cursor": {
@@ -1071,7 +1071,7 @@
                 "params": {
                     "properties": {
                         "query": {
-                            "description": "Text that expresses what resources to search for. This can be a specific resource type (e.g., 'image'), a content description (e.g., 'data about climate change'), or a usage intent (e.g., 'background information for an article'). The server will return resources matching this query.",
+                            "description": "Arbitrary text that expresses what resources to search for. This can be a specific resource type (e.g., 'image'), a content description (e.g., 'data about climate change'), or a usage intent (e.g., 'background information for an article'). The server will return resources matching this query.",
                             "type": "string"
                         },
                         "cursor": {
@@ -1191,7 +1191,7 @@
                 "params": {
                     "properties": {
                         "query": {
-                            "description": "Text that expresses what tools to search for. This can be a specific tool name (e.g., 'calculator'), a capability description (e.g., 'something that can analyze images'), or a task description (e.g., 'I need to process CSV data'). The server will return tools matching this query.",
+                            "description": "Arbitrary text that expresses what tools to search for. This can be a specific tool name (e.g., 'calculator'), a capability description (e.g., 'something that can analyze images'), or a task description (e.g., 'I need to process CSV data'). The server will return tools matching this query.",
                             "type": "string"
                         },
                         "cursor": {
