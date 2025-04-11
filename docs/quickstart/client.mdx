@@ -881,11 +881,15 @@ spring:
         stdio:
           root-change-notification: true
           servers-configuration: classpath:/mcp-servers-config.json
+        toolcallback:
+          enabled: true
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
 ```
 
 This activates the `spring-ai-starter-mcp-client` to create one or more `McpClient`s based on the provided server configuration.
+The `spring.ai.mcp.client.toolcallback.enabled=true` property enables the tool callback mechanism, that automatically registers all MCP tool as spring ai tools.
+It is disabled by default.
 
 3. MCP Server Configuration (`mcp-servers-config.json`):
 ```json
