@@ -141,6 +141,26 @@ A MCP clients **MUST** initiate an
 [OAuth 2.1 (draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12) authorization
 flow after receiving a *HTTP 401 Unauthorized* response.
 
+### 2.2.1 OAuth Grant Types
+
+OAuth specifies different flows or grant types, which are different ways of obtaining an
+access token. Each of these targets different use cases and scenarios.
+
+MCP servers **SHOULD** support the OAuth grant types that best align with the intended
+audience. For instance:
+
+1. Authorization Code: useful when the client is acting on behalf of a (human) end user.
+   - For instance, an agent calls an MCP tool implemented by a SaaS system.
+2. Client Credentials: the client is another application (not a human)
+   - For instance, an agent calls a secure MCP tool to check inventory at a specific
+     store. No need to impersonate the end user.
+
+MCP clients **MUST** support authorization code flow with PKCE, per
+OAuth 2.1 specification.
+
+MCP clients **MAY** choose to implement other authorization grant types
+in addition to authorization code flow with PKCE.
+
 ### 2.3 MCP Server Authorization Metadata Discovery
 
 MCP servers **MUST** return the full path to their PRM document in the `WWW-Authenticate` header
@@ -456,7 +476,9 @@ handling requirements. Invalid or expired tokens **MUST** receive a `HTTP 401` r
 
 The following security requirements **MUST** be implemented:
 
-1. Clients **MUST** securely store tokens following OAuth 2.1 best practices.  
+1. Clients **MUST** securely store tokens following OAuth 2.1 best practices, as
+   outlined in the
+   [OAuth 2.1 Authorization Framework](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12).
 1. Servers **MUST** validate all incoming tokens in one of the three ways:
   1. Token introspection, according to [RFC 7662](https://datatracker.ietf.org/doc/html/rfc7662).
      `aud` validation is a **MUST**.
