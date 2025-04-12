@@ -457,17 +457,19 @@ handling requirements. Invalid or expired tokens **MUST** receive a `HTTP 401` r
 
 The following security requirements **MUST** be implemented:
 
-1. Clients **MUST** securely store tokens following OAuth 2.1 best practices, as
+1. MCP clients **MUST** securely store tokens following OAuth 2.1 best practices, as
    outlined in the
    [OAuth 2.1 Authorization Framework](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12).
-1. Servers **MUST** validate all incoming tokens in one of the three ways:
+1. MCP servers **MUST** take all necessary steps to ensure no data is returned to unauthorized parties
+   and **MUST** ensure any credentials are valid before processing the request. For example, a MCP server
+   could validate inbound tokens through one of the following approaches:
   1. Token introspection, according to [RFC 7662](https://datatracker.ietf.org/doc/html/rfc7662).
      `aud` validation is a **MUST**.
   1. JWT validation, according to [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html).
-  1. Custom validation, according to the conventions established by the Authorization Server.
+  1. Custom validation, according to the conventions established by the AS.
 1. All authorization endpoints **MUST** be served over HTTPS.  
-1. Authorization servers **MUST** validate redirect URIs to prevent open redirect vulnerabilities.  
-1. Redirect URIs **MUST** be either `localhost` URLs or HTTPS URLs.  
+1. Authorization servers **MUST** validate redirect URIs to prevent open redirect vulnerabilities.
+1. Redirect URIs **MUST** be either `localhost` URLs or HTTPS URLs.
 1. Special considerations **MUST** be accounted for to prevent phishing through MCP servers.
 
 ### 2.10 Error Handling
