@@ -308,23 +308,6 @@ MCP servers that use delegated authorization or implement a colocated AS **MUST*
 1. Provide appropriate responses to the client if re-authentication is needed. Please refer to
    [RFC 9470 OAuth 2.0 Step Up Authentication Challenge Protocol](https://www.rfc-editor.org/rfc/rfc9470.html).
 
-### 2.6 Implementing authorization server overrides
-
-In certain scenarios, AS might have limited capability support, such as no dynamic client registration, and
-MCP server developers may choose to implement those capabilities themselves.
-
-In this scenario, the server **MUST** return its fully-qualified domain name as the AS in the PRM document,
-that will be linked from the `WWW-Authenticate` header in the `HTTP 401 Unauthorized` response.
-
-The MCP server will need to be configured in accordance with
-[Section 2.5](#25-delegated-authorization-or-colocated-as-flows) to act as an AS.
-
-#### 2.6.1 Discovery of server-driven overrides
-
-Under all circumstances, the server **MUST** return a `WWW-Authenticate` with PRM document information,
-even if the server provides its own metadata document that overrides AS endpoints
-(such as `/authorize`, `/token`, or `/register`).
-
 ### 2.7 Dynamic Client Registration
 
 MCP clients **SHOULD** support the
