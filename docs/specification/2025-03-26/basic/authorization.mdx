@@ -268,7 +268,7 @@ sequenceDiagram
 When implementing authorization with an existing AS, MCP servers **MUST**:
 
 1. Request the minimum number of required scopes.  
-2. Securely store any tokens obtained from the client and/or the authorization server.  
+2. Securely handle any tokens that need to be stored or otherwise managed by the MCP server.  
 3. Implement appropriate session timeout handling.  
 4. Consider security implications of token chaining.  
 5. Implement proper error handling for authorization failures.
@@ -378,10 +378,7 @@ sequenceDiagram
         MC->>AS: Request client registration
         AS-->>MC: Confirm client registration
     else Authorization server does not support dynamic client registration
-        MC->>MS: Request client registration
-        MS->>AS: Register client
-        AS-->>MS: Return client registration
-        MS-->>MC: Return client registration
+        MC->>MS: Provide UX to specify client ID
     end
 
     Note over MC: Generate PKCE artifacts
