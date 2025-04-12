@@ -214,9 +214,7 @@ MCP-Protocol-Version: 2024-11-05
 
 #### 2.4.1 Overview
 
-MCP clients **SHOULD** be considered _public clients_ and MCP servers **MUST** be
-considered _confidential clients_, as defined in
-[RFC 6749 Section 2.1](https://datatracker.ietf.org/doc/html/rfc6749#section-2.1).
+MCP clients **SHOULD** be considered _public clients_.
 
 MCP servers **MUST NOT** complete public client flows on behalf of the MCP client (e.g., take 
 authorization codes and exchange them for tokens with a public client ID, and then pass the tokens 
@@ -289,6 +287,9 @@ Authorization servers **MUST**:
 
 In limited scenarios, MCP servers **MAY** implement their own AS, refer to as a _colocated AS_ due
 to the MCP server _colocating_ itself, the resource server (RS) with the AS.
+
+MCP servers **MUST** be considered _confidential clients_, as defined in
+[RFC 6749 Section 2.1](https://datatracker.ietf.org/doc/html/rfc6749#section-2.1).
 
 MCP servers that implement their own AS **MUST** host appropriate AS metadata, as outlined in
 [RFC 8414 Section 3](https://datatracker.ietf.org/doc/html/rfc8414#section-3).
