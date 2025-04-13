@@ -18,7 +18,7 @@ resources, or any other capabilities.
 
 This document **does not discuss server-to-server authorization patterns**.
 
-### 1.2 Baseline tenets
+### 1.2 Baseline Tenets
 
 1. **MCP server developers are not security experts**. Developers should not be building their own
    authorization servers unless absolutely necessary. This introduces room for serious mistakes
@@ -210,7 +210,7 @@ For example:
 MCP-Protocol-Version: 2024-11-05
 ```
 
-### 2.4 Authorization server integration
+### 2.4 Authorization Server Integration
 
 #### 2.4.1 Overview
 
@@ -283,7 +283,7 @@ Authorization servers **MUST**:
 
 1. Verify that the resource identifier is registered for the audience of the access token issued.
 
-### 2.5 Delegated authorization or colocated AS flows
+### 2.5 Delegated Authorization or Colocated AS
 
 In limited scenarios, MCP servers **MAY** implement their own AS, refer to as a _colocated AS_ due
 to the MCP server _colocating_ itself, the resource server (RS) with the AS.
@@ -298,7 +298,7 @@ MCP servers **MAY** support delegated authorization through third-party AS.
 In this flow, the MCP server acts as both an OAuth client (to the external AS) and an OAuth
 AS (to the MCP client).
 
-#### 2.5.1 Special considerations
+#### 2.5.1 Special Considerations
 
 MCP servers that use delegated authorization or implement a colocated AS **MUST**:
 
@@ -343,7 +343,7 @@ An MCP client **MAY** contain a configuration for common issuers, such as:
 Alternatively, an MCP client could allow the user to register the MCP client and provide those details
 to the MCP client through a UI.
 
-### 2.8 Authorization flow steps
+### 2.8 Authorization Flow Steps
 
 The complete authorization flow proceeds as follows:  
 
@@ -454,7 +454,7 @@ If validation fails, servers **MUST** respond according to
 [Section 5.3](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.3) error
 handling requirements. Invalid or expired tokens **MUST** receive a `HTTP 401` response.
 
-### 2.9 Security Considerations
+### 2.10 Security Considerations
 
 The following security requirements **MUST** be implemented:
 
@@ -473,7 +473,7 @@ The following security requirements **MUST** be implemented:
 1. Redirect URIs **MUST** be either `localhost` URLs or HTTPS URLs.
 1. Special considerations **MUST** be accounted for to prevent phishing through MCP servers.
 
-### 2.10 Error Handling
+### 2.11 Error Handling
 
 Servers **MUST** return appropriate HTTP status codes for authorization errors:
 
@@ -483,7 +483,7 @@ Servers **MUST** return appropriate HTTP status codes for authorization errors:
 | 403         | Forbidden    | Invalid scopes or insufficient permissions |
 | 400         | Bad Request  | Malformed authorization request            |
 
-### 2.11 Implementation Requirements
+### 2.12 Implementation Requirements
 
 1. Implementations **MUST** follow OAuth 2.1 security best practices.  
 2. PKCE is **REQUIRED** for all clients.  
@@ -515,3 +515,27 @@ We strongly recommend that local clients implement OAuth 2.1 as a public client:
 Since clients do not know the set of MCP servers in advance, we strongly recommend the implementation
 of dynamic client registration. This allows applications to automatically register with the MCP
 server, and removes the need for users to obtain client IDs manually.
+
+### 3.4 Separation of Concerns
+
+To ensure the security of MCP servers and their customers, the following represent best practices
+in ensuring that the concerns of MCP clients, MCP servers, and AS are properly separated.
+
+A protected MCP server is responsible for hosting and protecting MCP-specific entities, such as tools,
+prompts, resources, cached data, or any other artifacts directly managed by it.
+
+MCP clients **MUST** present valid tokens with the protected MCP server as the audience and **MUST NOT**
+use the MCP server as a pass-through to channel tokens issued to different audiences through it.
+
+Protected MCP servers that receive tokens with an audience different than itself **MUST** reject
+them under all circumstances (see [Section 3.11](#210-security-considerations) for validation
+considerations).
+
+MCP clients are responsible for performing an OAuth authorization flow, as outlined in
+[Section 2.2.1](#221-oauth-grant-types) against the AS declared in the MCP server's PRM document.
+This is the only OAuth relationship the client participates in.
+
+Downstream OAuth calls (e.g., to third-party APIs) are implementation details left to the MCP
+server developers to design. For those scenarios, the MCP server itself becomes an OAuth client,
+and downstream interactions are handled entirely by the MCP server. The MCP client's authorization
+relationship remains solely between itself and the MCP server's declared AS.
