@@ -157,6 +157,8 @@ sequenceDiagram
     Note over Client,Server: Discovery
     Client->>Server: tools/list
     Server-->>Client: List of tools
+    Client->>Server: tools/search
+    Server-->>Client: Tools search results
 
     Note over Client,LLM: Tool Selection
     LLM->>Client: Select tool to use
