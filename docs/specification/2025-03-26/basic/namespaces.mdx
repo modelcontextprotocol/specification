@@ -4,9 +4,9 @@ title: Namespaces
 
 <Info>**Protocol Revision**: 2025-03-26</Info>
 
-As MCP servers grow in complexity and number of tools, resources, and users, it may
+As MCP servers grow in complexity and number of tools, resources, and prompts, it may
 be necessary to logically separate feature areas by namespace. MCP implements namespaces
-using a NPM model whereby a single directory style prefix is used to group related tools,
+using a single hierarchy model, where a specially annotated single preceding identifier is used to group related tools,
 prompts, and resources.
 
 ## Overview
@@ -14,8 +14,18 @@ prompts, and resources.
 Namespacing functionality is implemented through a simple, single depth hierarchy, `@weather`.
 This namespace is then optionally included in method calls and name parameters.
 
-## Namespace Format
+## Capability
+Although it is not required, since namespaces at a high level are backwards compatible with names, to indicate support
+for feature level advanced filtering, the server **MAY** expose a namespace capability:
+```json
+{
+  "capabilities": {
+    "namespaces": {}
+  }
+}
+```
 
+## Namespace Format
 A namespace must be a string of the form `@<namespace>` where `<namespace>` is a sequence of
 alphanumeric characters (A-Z, a-z, 0-9), underscores, and / or hyphens.
 
@@ -23,37 +33,52 @@ alphanumeric characters (A-Z, a-z, 0-9), underscores, and / or hyphens.
 As part of being in a namespace, a tool name, resource name, or prompt name **MUST** begin with the namespace
 `@weather/get_weather_forecast_by_location`.
 
-## Namespace Filtering
+## Namespace Prefixing
 
-### Namespacing Features
-Namespaces are optional, but well known, on the name property of tools, resources, and prompts.
+### Listing
+1. As an optionl capability (for backwards compatibility), the server **MAY** expose a namespace list feature.
+```json
+{
+  "capabilities": {
+    "namespaces": {
+      "list": true
+    }
+  }
+}
+```
 
 ### Filtering
-
-#### Namespace Prefix
-1. List commands can be invoked by prepending a namespace prefix to the method name `@weather/tools/list`
-
+1. List commands can be invoked by prepending a namespace prefix to the method name `@weather/tools/list`, which will
+return a paginated list of tools within the `@weather` namespace.
 
 ## Usage Patterns
 
 ```mermaid
 sequenceDiagram
-    participant Sender
-    participant Receiver
+    participant Client
+    participant Server
 
-    Sender->>Receiver: ping request
-    Receiver->>Sender: empty response
+    Note over Client,Server: Discovery
+    Client->>Server: namespaces/list
+    Server-->>Client: List of namespaces
+
+    Note over Client,Server: Tool Listing
+    Client->>Server: @namespace/tools/list
+    Server-->>Client: Tool list
+
+    Note over Client,Server: Prompt Listing
+    Client->>Server: @namespace/prompts/list
+    Server-->>Client: Tool list
+
+    Note over Client,Server: Resource Listing
+    Client->>Server: @namespace/resources/list
+    Server-->>Client: Resource list
+
+    Note over Client,Server: Resource Template Listing
+    Client->>Server: @namespace/resources/templates/list
+    Server-->>Client: Resource Template list
 ```
 
 ## Implementation Considerations
-
-- Implementations **SHOULD** periodically issue pings to detect connection health
-- The frequency of pings **SHOULD** be configurable
-- Timeouts **SHOULD** be appropriate for the network environment
-- Excessive pinging **SHOULD** be avoided to reduce network overhead
-
-## Error Handling
-
-- Timeouts **SHOULD** be treated as connection failures
-- Multiple failed pings **MAY** trigger connection reset
-- Implementations **SHOULD** log ping failures for diagnostics
+- Namespace registration and requirement enforcement is an implementation detail - in shared environments, it may be
+necessary to require tools have an approved namespaces, but this spec offers no guidance on this.
