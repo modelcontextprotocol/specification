@@ -106,8 +106,9 @@ WWW-Authenticate: Bearer resource_metadata="https://resource.example.com/.well-k
 A MCP server **MUST** host its Protected Resource Metadata (PRM) document, as outlined in
 [Section 3 of the RFC draft](https://www.ietf.org/archive/id/draft-ietf-oauth-resource-metadata-13.html#section-3).
 
-A MCP server **MUST** return a set of scopes in the `scope` parameter within the `WWW-Authenticate` header
-in the initial handshake as well as in subsequent responses that require incremental authorization.
+A MCP server **MUST** return the minimum required set of scopes in the `scope` parameter within the
+`WWW-Authenticate` header in the initial handshake as well as any additional scopes in subsequent responses
+that require incremental authorization.
 
 A MCP server **MUST** include its AS configuration in the PRM document as outlined in
 [Section 2 of the RFC draft](https://www.ietf.org/archive/id/draft-ietf-oauth-resource-metadata-13.html#section-2).
