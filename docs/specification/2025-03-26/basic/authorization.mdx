@@ -140,7 +140,7 @@ supported by the AS. See
 
 A MCP clients **MUST** initiate an
 [OAuth 2.1 (draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12) authorization
-flow after receiving a *HTTP 401 Unauthorized* response.
+flow after receiving a `HTTP 401 Unauthorized` response.
 
 ### 2.2.1 OAuth Grant Types
 
@@ -290,8 +290,10 @@ Authorization servers **MUST**:
 
 ### 2.5 Delegated Authorization or Colocated AS
 
-In limited scenarios, MCP servers **MAY** implement their own AS, referred to as a _colocated AS_ due
-to the MCP server _colocating_ itself, the resource server (RS) with the AS.
+MCP servers **MAY** implement their own AS, referred to as a _colocated AS_ due
+to the MCP server _colocating_ itself, the resource server (RS) with the AS. This approach should
+be limited to scenarios where existing AS implementations cannot be used, as it requires
+authorization and security expertise.
 
 MCP servers **MUST** be considered _confidential clients_, as defined in
 [RFC 6749 Section 2.1](https://datatracker.ietf.org/doc/html/rfc6749#section-2.1).
@@ -544,3 +546,35 @@ Downstream OAuth calls (e.g., to third-party APIs) are implementation details le
 server developers to design. For those scenarios, the MCP server itself becomes an OAuth client,
 and downstream interactions are handled entirely by the MCP server. The MCP client's authorization
 relationship remains solely between itself and the MCP server's declared AS.
+
+### 3.5 Third-Party API Access
+
+The third-party API connection process is done out-of-band and does not depend on the authorization
+flow outlined in this specification.
+
+If the MCP server connects to third-party APIs, the MCP client **MUST NOT** hold tokens for said
+third-party APIs and instead only the token for access to the MCP server.
+
+MCP server **MUST** make authorization decisions based solely on tokens with it as the audience,
+and it **MUST NOT** use third-party API tokens as a pass-through, as outlined in
+[Section 3.4](#34-separation-of-concerns).
+
+```mermaid
+sequenceDiagram
+   participant UA as User Agent
+   participant MC as MCP Client
+   participant MS as MCP Server
+   participant AS as Downstream API AS
+   participant API as Downstream API
+ 
+   MC->>MS: Request resource<br/>(e.g., tool call)
+   MS-->>MC: 401 Unauthorized (downstream authorization required) Message
+   MC-->>UA: Direct user for downstream authorization
+   UA->>AS: Authenticate & authorize
+   AS-->>UA: Authorization code
+   UA->>MS: Authorization code
+   MS->>AS: Exchange code for downstream API token
+   AS-->>MS: Access token
+   Note over MS: Stored downstream API access token
+   Note over MC, MS: Continue message exchange
+```
