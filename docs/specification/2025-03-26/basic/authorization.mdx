@@ -116,7 +116,7 @@ A MCP client **MUST** issue a `GET` request to the URL in `resource_metadata` to
 the AS.
 
 A MCP client **MUST** verify that the `resource` value in the PRM document matches the MCP server
-fully-qualified domain name.
+protocol and fully-qualified domain name (FQDN).
 
 A MCP client **SHOULD** evaluate or permit the user to evaluate the trustworthiness of AS
 discovered through the PRM document to prevent phishing. For example, an MCP client could prompt 
