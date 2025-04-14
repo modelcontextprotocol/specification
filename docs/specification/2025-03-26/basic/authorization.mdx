@@ -268,7 +268,10 @@ When implementing authorization with an existing AS, MCP servers **MUST**:
 1. Request the minimum number of required scopes.  
 2. Securely handle any tokens that need to be stored or otherwise managed by the MCP server.  
 3. Implement appropriate session timeout handling.  
-4. Consider security implications of token chaining.  
+4. Consider security implications of token chaining, such as ensuring that the appropriate
+   tokens are exposed to the right audiences (e.g., don't pass server-issued tokens to the
+   client), validating the original scopes and issuers, and looking for unintended privilege
+   escalation by virtue of token exchange.
 5. Implement proper error handling for authorization failures.
 
 MCP clients **MUST**:
