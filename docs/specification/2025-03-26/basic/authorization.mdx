@@ -328,6 +328,10 @@ way for clients to automatically register with new servers, which is crucial for
 - It enables seamless connection to new servers  
 - Servers can implement their own registration policies
 
+This approach also helps prevent rogue client impersonation attacks, requiring that all clients
+register their redirect URIs, as outlined in
+[Section 5 of RFC 7591](https://www.rfc-editor.org/rfc/rfc7591#section-5).
+
 MCP clients that want to dynamically register OAuth clients with an authorization server **MUST**
 provide the `software_id` and `software_version` parameters, as defined in the
 [Client Metadata](https://datatracker.ietf.org/doc/html/rfc7591#section-2) section of
