@@ -28,11 +28,12 @@ This authorization mechanism is based on established specifications listed below
 implements a selected subset of their features to ensure security and interoperability
 while maintaining simplicity:
 
-- [OAuth 2.1 IETF DRAFT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12)
+- OAuth 2.1 IETF DRAFT ([draft-ietf-oauth-v2-1-12](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12))
 - OAuth 2.0 Authorization Server Metadata
   ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414))
 - OAuth 2.0 Dynamic Client Registration Protocol
   ([RFC7591](https://datatracker.ietf.org/doc/html/rfc7591))
+- OAuth 2.0 Protected Resource Metadata IEFT DRAFT ([draft-ietf-oauth-resource-metadata-13](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13))
 
 ## 2. Authorization Flow
 
@@ -41,10 +42,12 @@ while maintaining simplicity:
 1. MCP auth implementations **MUST** implement OAuth 2.1 with appropriate security
    measures for both confidential and public clients.
 
-2. MCP auth implementations **SHOULD** support the OAuth 2.0 Dynamic Client Registration
+1. MCP auth implementations **SHOULD** support the OAuth 2.0 Dynamic Client Registration
    Protocol ([RFC7591](https://datatracker.ietf.org/doc/html/rfc7591)).
 
-3. MCP servers **SHOULD** and MCP clients **MUST** implement OAuth 2.0 Authorization
+1. MCP servers and clients **MUST** implement [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13)).
+
+1. MCP servers **SHOULD** and MCP clients **MUST** implement OAuth 2.0 Authorization
    Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)). Servers
    that do not support Authorization Server Metadata **MUST** follow the default URI
    schema.
@@ -63,119 +66,79 @@ audience. For instance:
    - For instance, an agent calls a secure MCP tool to check inventory at a specific
      store. No need to impersonate the end user.
 
-### 2.2 Example: authorization code grant
+### 2.2 Roles
+A protected MCP server acts as a [OAuth 2.1 resource server](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
+capable of accepting and responding to protected resource requests using access tokens.
 
-This demonstrates the OAuth 2.1 flow for the authorization code grant type, used for user
-auth.
+An MCP client acts a [OAuth 2.1 client](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
+making protected resource requests on behalf of a resource owner.
 
-**NOTE**: The following example assumes the MCP server is also functioning as the
-authorization server. However, the authorization server may be deployed as its own
-distinct service.
+The authorization server is beyond the scope of this specification. It may be the same server as the
+resource server or a separate entity. Section [2.3 Authorization Server Discovery](#2-3-authorizaton-server-discovery)
+specifies how an MCP server (OAuth 2.1 resource server) indicates the location of an OAuth 2.1 authorization server to an OAuth 2.1 client.
 
-A human user completes the OAuth flow through a web browser, obtaining an access token
-that identifies them personally and allows the client to act on their behalf.
+### 2.3 Authorization Server and Capability Discovery
+This section details how MCP servers can inform MCP clients of authorization servers, and how MCP clients discover authorization servers and their capabilities.
 
-When authorization is required and not yet proven by the client, servers **MUST** respond
-with _HTTP 401 Unauthorized_.
+### 2.3.1 Authorization Server Location
+MCP servers **MUST** implement the [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13)
+specification to indicate the locations of authorization servers. The Protected Resource Metadata document returned by the MCP server **MUST** include
+the `authorization_servers` field.
 
-Clients initiate the
-[OAuth 2.1 IETF DRAFT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#name-authorization-code-grant)
-authorization flow after receiving the _HTTP 401 Unauthorized_.
+The specific use of `authorization_servers` is beyond the scope of this specification; implementers should consult
+the [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13) documentation for
+comprehensive guidance on implementation details.
 
-The following demonstrates the basic OAuth 2.1 for public clients using PKCE.
+MCP servers **MAY** use the HTTP header `WWW-Authenticate` when returning a _401 Unauthorized_ to indicate the location of the authorization
+server as described in [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13).
 
-```mermaid
-sequenceDiagram
-    participant B as User-Agent (Browser)
-    participant C as Client
-    participant M as MCP Server
+MCP clients **MUST** handle the `WWW-Authenticate` header if present, and otherwise use direct discovery via the well-known URI if `WWW-Authenticate`.
 
-    C->>M: MCP Request
-    M->>C: HTTP 401 Unauthorized
-    Note over C: Generate code_verifier and code_challenge
-    C->>B: Open browser with authorization URL + code_challenge
-    B->>M: GET /authorize
-    Note over M: User logs in and authorizes
-    M->>B: Redirect to callback URL with auth code
-    B->>C: Callback with authorization code
-    C->>M: Token Request with code + code_verifier
-    M->>C: Access Token (+ Refresh Token)
-    C->>M: MCP Request with Access Token
-    Note over C,M: Begin standard MCP message exchange
-```
 
-### 2.3 Server Metadata Discovery
+#### 2.3.2 Server Metadata Discovery
 
-For server capability discovery:
+MCP clients **MUST** follow the OAuth 2.0 Authorization Server Metadata protocol defined
+  in [RFC8414](https://datatracker.ietf.org/doc/html/rfc8414) to obtain the information
+  required to interact with the authorization server.
 
-- MCP clients _MUST_ follow the OAuth 2.0 Authorization Server Metadata protocol defined
-  in [RFC8414](https://datatracker.ietf.org/doc/html/rfc8414).
-- MCP server _SHOULD_ follow the OAuth 2.0 Authorization Server Metadata protocol.
-- MCP servers that do not support the OAuth 2.0 Authorization Server Metadata protocol,
-  _MUST_ support fallback URLs.
+#### 2.3.3 MCP specific headers for discovery
 
-The discovery flow is illustrated below:
-
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant S as Server
-
-    C->>S: GET /.well-known/oauth-authorization-server
-    alt Discovery Success
-        S->>C: 200 OK + Metadata Document
-        Note over C: Use endpoints from metadata
-    else Discovery Failed
-        S->>C: 404 Not Found
-        Note over C: Fall back to default endpoints
-    end
-    Note over C: Continue with authorization flow
-```
-
-#### 2.3.1 Server Metadata Discovery Headers
-
-MCP clients _SHOULD_ include the header `MCP-Protocol-Version: <protocol-version>` during
+MCP clients **SHOULD** include the header `MCP-Protocol-Version: <protocol-version>` during
 Server Metadata Discovery to allow the MCP server to respond based on the MCP protocol
 version.
 
 For example: `MCP-Protocol-Version: 2024-11-05`
 
-#### 2.3.2 Authorization Base URL
+#### 2.3.4 Sequence Diagram
+The following diagram outlines an example flow:
 
-The authorization base URL **MUST** be determined from the MCP server URL by discarding
-any existing `path` component. For example:
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant M as MCP Server (Resource Server)
+    participant A as Authorization Server
 
-If the MCP server URL is `https://api.example.com/v1/mcp`, then:
+    C->>M: MCP Request without token
+    M->>C: HTTP 401 Unauthorized with WWW-Authenticate header
+    Note over C: Extract authorization_server from WWW-Authenticate
 
-- The authorization base URL is `https://api.example.com`
-- The metadata endpoint **MUST** be at
-  `https://api.example.com/.well-known/oauth-authorization-server`
+    alt WWW-Authenticate header not present
+        C->>M: GET /.well-known/oauth-protected-resource
+        M->>C: Resource metadata with authorization_server URL
+    end
 
-This ensures authorization endpoints are consistently located at the root level of the
-domain hosting the MCP server, regardless of any path components in the MCP server URL.
+    C->>A: GET /.well-known/oauth-authorization-server
+    A->>C: Authorization server metadata
 
-#### 2.3.3 Fallbacks for Servers without Metadata Discovery
+    Note over C,A: OAuth 2.1 authorization flow happens here
 
-For servers that do not implement OAuth 2.0 Authorization Server Metadata, clients
-**MUST** use the following default endpoint paths relative to the authorization base URL
-(as defined in [Section 2.3.2](#232-authorization-base-url)):
+    C->>A: Token Request
+    A->>C: Access Token
 
-| Endpoint               | Default Path | Description                          |
-| ---------------------- | ------------ | ------------------------------------ |
-| Authorization Endpoint | /authorize   | Used for authorization requests      |
-| Token Endpoint         | /token       | Used for token exchange & refresh    |
-| Registration Endpoint  | /register    | Used for dynamic client registration |
-
-For example, with an MCP server hosted at `https://api.example.com/v1/mcp`, the default
-endpoints would be:
-
-- `https://api.example.com/authorize`
-- `https://api.example.com/token`
-- `https://api.example.com/register`
-
-Clients **MUST** first attempt to discover endpoints via the metadata document before
-falling back to default paths. When using default paths, all other protocol requirements
-remain unchanged.
+    C->>M: MCP Request with Access Token
+    M->>C: Protected Resource Response
+    Note over C,M: MCP communication continues with valid token
+```
 
 ### 2.4 Dynamic Client Registration
 
@@ -208,53 +171,36 @@ The complete Authorization flow proceeds as follows:
 sequenceDiagram
     participant B as User-Agent (Browser)
     participant C as Client
-    participant M as MCP Server
+    participant M as MCP Server (Resource Server)
+    participant A as Authorization Server
 
-    C->>M: GET /.well-known/oauth-authorization-server
-    alt Server Supports Discovery
-        M->>C: Authorization Server Metadata
-    else No Discovery
-        M->>C: 404 (Use default endpoints)
+    C->>M: MCP Request without token
+    M->>C: HTTP 401 Unauthorized with WWW-Authenticate header
+    Note over C: Extract authorization_server from WWW-Authenticate
+
+    alt WWW-Authenticate header not present
+        C->>M: GET /.well-known/oauth-protected-resource
+        M->>C: Resource metadata with authorization_server URL
     end
 
+    C->>A: GET /.well-known/oauth-authorization-server
+    A->>C: Authorization server metadata
+
     alt Dynamic Client Registration
-        C->>M: POST /register
-        M->>C: Client Credentials
+        C->>A: POST /register
+        A->>C: Client Credentials
     end
 
     Note over C: Generate PKCE Parameters
     C->>B: Open browser with authorization URL + code_challenge
-    B->>M: Authorization Request
-    Note over M: User /authorizes
-    M->>B: Redirect to callback with authorization code
+    B->>A: Authorization Request
+    Note over A: User authorizes
+    A->>B: Redirect to callback with authorization code
     B->>C: Authorization code callback
-    C->>M: Token Request + code_verifier
-    M->>C: Access Token (+ Refresh Token)
-    C->>M: API Requests with Access Token
-```
-
-#### 2.5.1 Decision Flow Overview
-
-```mermaid
-flowchart TD
-    A[Start Auth Flow] --> B{Check Metadata Discovery}
-    B -->|Available| C[Use Metadata Endpoints]
-    B -->|Not Available| D[Use Default Endpoints]
-
-    C --> G{Check Registration Endpoint}
-    D --> G
-
-    G -->|Available| H[Perform Dynamic Registration]
-    G -->|Not Available| I[Alternative Registration Required]
-
-    H --> J[Start OAuth Flow]
-    I --> J
-
-    J --> K[Generate PKCE Parameters]
-    K --> L[Request Authorization]
-    L --> M[User Authorization]
-    M --> N[Exchange Code for Tokens]
-    N --> O[Use Access Token]
+    C->>A: Token Request + code_verifier
+    A->>C: Access Token (+ Refresh Token)
+    C->>M: MCP Request with Access Token
+    M->>C: Protected Resource Response
 ```
 
 ### 2.6 Access Token Usage
