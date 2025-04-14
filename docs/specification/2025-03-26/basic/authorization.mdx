@@ -272,7 +272,8 @@ When implementing authorization with an existing AS, MCP servers **MUST**:
 4. Consider security implications of token chaining, such as ensuring that the appropriate
    tokens are exposed to the right audiences (e.g., don't pass server-issued tokens to the
    client), validating the original scopes and issuers, and looking for unintended privilege
-   escalation by virtue of token exchange.
+   escalation by virtue of token exchange. Refer to the [Best Practices](#3-best-practices)
+   section for additional recommendations.
 5. Implement proper error handling for authorization failures.
 
 MCP clients **MUST**:
