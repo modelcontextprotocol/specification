@@ -62,9 +62,7 @@ The protocol layer handles message framing, request/response linking, and high-l
             request: RequestT,
             result_type: type[Result]
         ) -> Result:
-            """
-            Send request and wait for response. Raises McpError if response contains error.
-            """
+            """Send request and wait for response. Raises McpError if response contains error."""
             # Request handling implementation
 
         async def send_notification(

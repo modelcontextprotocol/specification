@@ -214,6 +214,28 @@ This capability allows:
 - Support for both text and image-based interactions
 - Optional inclusion of MCP server context in prompts
 
+
+### Logging Support
+
+The client can register a logging consumer to receive log messages from the server and set the minimum logging level to filter messages:
+
+```java	
+var mcpClient = McpClient.sync(transport)
+        .loggingConsumer(notification -> {
+            System.out.println("Received log message: " + notification.data());
+        })
+        .build();
+
+mcpClient.initialize();
+
+mcpClient.setLoggingLevel(McpSchema.LoggingLevel.INFO);
+
+// Call the tool that can sends logging notifications
+CallToolResult result = mcpClient.callTool(new McpSchema.CallToolRequest("logging-test", Map.of()));
+```
+Clients can control the minimum logging level they receive through the `mcpClient.setLoggingLevel(level)` request. Messages below the set level will be filtered out.
+Supported logging levels (in order of increasing severity): DEBUG (0), INFO (1), NOTICE (2), WARNING (3), ERROR (4), CRITICAL (5), ALERT (6), EMERGENCY (7)
+
 ## Using MCP Clients
 
 ### Tool Execution
