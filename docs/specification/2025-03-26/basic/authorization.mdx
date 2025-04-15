@@ -33,21 +33,21 @@ while maintaining simplicity:
   ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414))
 - OAuth 2.0 Dynamic Client Registration Protocol
   ([RFC7591](https://datatracker.ietf.org/doc/html/rfc7591))
-- OAuth 2.0 Protected Resource Metadata IEFT DRAFT ([draft-ietf-oauth-resource-metadata-13](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13))
+- OAuth 2.0 Protected Resource Metadata IETF DRAFT ([draft-ietf-oauth-resource-metadata-13](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13))
 
 ## 2. Authorization Flow
 
 ### 2.1 Overview
 
-1. MCP auth implementations **MUST** implement OAuth 2.1 with appropriate security
+1. MCP authorization servers **MUST** implement OAuth 2.1 with appropriate security
    measures for both confidential and public clients.
 
-1. MCP auth implementations **SHOULD** support the OAuth 2.0 Dynamic Client Registration
+1. MCP authorization servers **SHOULD** support the OAuth 2.0 Dynamic Client Registration
    Protocol ([RFC7591](https://datatracker.ietf.org/doc/html/rfc7591)).
 
 1. MCP servers and clients **MUST** implement [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13)).
 
-1. MCP servers **SHOULD** and MCP clients **MUST** implement OAuth 2.0 Authorization
+1. MCP authorization servers **SHOULD** and MCP clients **MUST** implement OAuth 2.0 Authorization
    Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)). Servers
    that do not support Authorization Server Metadata **MUST** follow the default URI
    schema.
@@ -73,7 +73,7 @@ capable of accepting and responding to protected resource requests using access 
 An MCP client acts a [OAuth 2.1 client](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
 making protected resource requests on behalf of a resource owner.
 
-The authorization server is beyond the scope of this specification. It may be the same server as the
+The authorization server is responsible for interacting with the user and issuing access tokens for use at the MCP server. The implementation details of the authorization server are beyond the scope of this specification. It may be the same server as the
 resource server or a separate entity. Section [2.3 Authorization Server Discovery](#2-3-authorizaton-server-discovery)
 specifies how an MCP server (OAuth 2.1 resource server) indicates the location of an OAuth 2.1 authorization server to an OAuth 2.1 client.
 
@@ -89,10 +89,10 @@ The specific use of `authorization_servers` is beyond the scope of this specific
 the [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13) documentation for
 comprehensive guidance on implementation details.
 
-MCP servers **MAY** use the HTTP header `WWW-Authenticate` when returning a _401 Unauthorized_ to indicate the location of the authorization
-server as described in [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13).
+MCP servers **MAY** use the HTTP header `WWW-Authenticate` when returning a _401 Unauthorized_ to indicate the location of the resource server metadata URL
+as described in [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13).
 
-MCP clients **MUST** handle the `WWW-Authenticate` header if present, and otherwise use direct discovery via the well-known URI if `WWW-Authenticate`.
+MCP clients **MUST** handle the `WWW-Authenticate` header if present, and otherwise use direct discovery via the well-known URI if no `WWW-Authenticate` header is present.
 
 
 #### 2.3.2 Server Metadata Discovery
@@ -120,11 +120,11 @@ sequenceDiagram
 
     C->>M: MCP Request without token
     M->>C: HTTP 401 Unauthorized with WWW-Authenticate header
-    Note over C: Extract authorization_server from WWW-Authenticate
+    Note over C: Extract resource_metadata from WWW-Authenticate
 
     alt WWW-Authenticate header not present
         C->>M: GET /.well-known/oauth-protected-resource
-        M->>C: Resource metadata with authorization_server URL
+        M->>C: Resource metadata with authorization server URL
     end
 
     C->>A: GET /.well-known/oauth-authorization-server
@@ -176,7 +176,7 @@ sequenceDiagram
 
     C->>M: MCP Request without token
     M->>C: HTTP 401 Unauthorized with WWW-Authenticate header
-    Note over C: Extract authorization_server from WWW-Authenticate
+    Note over C: Extract resource_metadata from WWW-Authenticate
 
     alt WWW-Authenticate header not present
         C->>M: GET /.well-known/oauth-protected-resource
