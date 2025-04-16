@@ -122,6 +122,9 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
+                            },
+                            {
+                                "$ref": "#/definitions/JsonContent"
                             }
                         ]
                     },
@@ -438,6 +441,9 @@
                         },
                         {
                             "$ref": "#/definitions/AudioContent"
+                        },
+                        {
+                            "$ref": "#/definitions/JsonContent"
                         }
                     ]
                 },
@@ -877,6 +883,44 @@
                 "id",
                 "jsonrpc",
                 "result"
+            ],
+            "type": "object"
+        },
+        "JsonContent": {
+            "description": "Text provided to or from an LLM.",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
+                },
+                "data": {
+                    "additionalProperties": true,
+                    "description": "The text content of the message.",
+                    "properties": {},
+                    "type": "object"
+                },
+                "schema": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": true,
+                            "properties": {},
+                            "type": "object"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "The schema reference or definition of the JSON content."
+                },
+                "type": {
+                    "const": "json",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "schema",
+                "type"
             ],
             "type": "object"
         },
@@ -1416,6 +1460,9 @@
                         },
                         {
                             "$ref": "#/definitions/EmbeddedResource"
+                        },
+                        {
+                            "$ref": "#/definitions/JsonContent"
                         }
                     ]
                 },
@@ -1762,6 +1809,9 @@
                         },
                         {
                             "$ref": "#/definitions/AudioContent"
+                        },
+                        {
+                            "$ref": "#/definitions/JsonContent"
                         }
                     ]
                 },
@@ -2043,6 +2093,33 @@
                 "name": {
                     "description": "The name of the tool.",
                     "type": "string"
+                },
+                "outputSchema": {
+                    "description": "A JSON Schema object defining the expected output for the tool's JSON content response.",
+                    "properties": {
+                        "properties": {
+                            "additionalProperties": {
+                                "additionalProperties": true,
+                                "properties": {},
+                                "type": "object"
+                            },
+                            "type": "object"
+                        },
+                        "required": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "type": {
+                            "const": "object",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "type"
+                    ],
+                    "type": "object"
                 }
             },
             "required": [

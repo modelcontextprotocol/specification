@@ -642,7 +642,7 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource | JsonContent;
 }
 
 /**
@@ -696,7 +696,7 @@ export interface ListToolsResult extends PaginatedResult {
  * should be reported as an MCP error response.
  */
 export interface CallToolResult extends Result {
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | JsonContent)[];
 
   /**
    * Whether the tool call ended in an error.
@@ -798,6 +798,15 @@ export interface Tool {
    * A JSON Schema object defining the expected parameters for the tool.
    */
   inputSchema: {
+    type: "object";
+    properties?: { [key: string]: object };
+    required?: string[];
+  };
+
+  /**
+   * A JSON Schema object defining the expected output for the tool's JSON content response.
+   */
+  outputSchema?: {
     type: "object";
     properties?: { [key: string]: object };
     required?: string[];
@@ -915,7 +924,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent;
+  content: TextContent | ImageContent | AudioContent | JsonContent;
 }
 
 /**
@@ -1001,6 +1010,28 @@ export interface AudioContent {
    * The MIME type of the audio. Different providers may support different audio types.
    */
   mimeType: string;
+
+  /**
+   * Optional annotations for the client.
+   */
+  annotations?: Annotations;
+}
+
+/**
+ * Text provided to or from an LLM.
+ */
+export interface JsonContent {
+  type: "json";
+
+  /**
+   * The text content of the message.
+   */
+  data: object;
+
+  /**
+   * The schema reference or definition of the JSON content.
+   */
+  schema: string | object;
 
   /**
    * Optional annotations for the client.
