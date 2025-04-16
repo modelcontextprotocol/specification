@@ -1,0 +1,264 @@
+---
+title: "Content Types"
+description: "Understanding data formats in the Model Context Protocol"
+---
+
+Content types define the format of data exchanged between clients and servers in the Model Context Protocol (MCP). These types enable rich multimodal interactions, allowing LLMs to process and generate various forms of content beyond just text.
+
+## Overview
+
+MCP supports several content types that can be used in different contexts:
+
+- **Text**: Plain text content
+- **Image**: Visual content as base64-encoded data
+- **Audio**: Sound content as base64-encoded data
+- **JSON**: Structured data with optional schema information
+- **Embedded Resources**: References to resources available on the server
+
+These content types allow for flexible interactions that combine different modalities, enabling a wide range of applications from simple text responses to complex multimodal interactions.
+
+## Text Content
+
+Text content is the most basic and commonly used content type, representing plain text data:
+
+```json
+{
+  "type": "text",
+  "text": "This is a text message."
+}
+```
+
+The `text` field contains the actual text content, which can include any valid string data.
+
+## Image Content
+
+Image content allows including visual information:
+
+```json
+{
+  "type": "image",
+  "data": "base64-encoded-image-data",
+  "mimeType": "image/png",
+  "annotations": {
+    "audience": ["user", "assistant"],
+    "priority": 0.8
+  }
+}
+```
+
+Key fields:
+- `data`: Base64-encoded image data
+- `mimeType`: MIME type of the image (e.g., `image/png`, `image/jpeg`)
+- `annotations`: Optional metadata about the image (e.g., intended audience, priority)
+
+## Audio Content
+
+Audio content enables the inclusion of sound information:
+
+```json
+{
+  "type": "audio",
+  "data": "base64-encoded-audio-data",
+  "mimeType": "audio/wav"
+}
+```
+
+Key fields:
+- `data`: Base64-encoded audio data
+- `mimeType`: MIME type of the audio (e.g., `audio/wav`, `audio/mp3`)
+
+## JSON Content
+
+JSON content allows structured data to be exchanged:
+
+```json
+{
+  "type": "json",
+  "data": {
+    "temperature": 72,
+    "conditions": "Partly cloudy",
+    "forecast": [
+      {"day": "Monday", "high": 75, "low": 58},
+      {"day": "Tuesday", "high": 80, "low": 62}
+    ]
+  },
+  "schema": "#/components/schemas/WeatherResponse"
+}
+```
+
+Key fields:
+- `data`: The JSON object containing structured data
+- `schema`: Optional reference to a JSON schema that describes the structure of the data
+
+The `schema` field can be one of the following:
+- Omitted (in which case the context might provide the schema, such as a tool's `outputSchema`)
+- A string (interpreted as a URI reference to a schema, which could be a local reference or a full URL)
+- An object (containing the complete schema definition)
+
+Example with inline schema:
+
+```json
+{
+  "type": "json",
+  "data": {
+    "count": 42
+  },
+  "schema": {
+    "type": "object",
+    "properties": {
+      "count": {
+        "type": "number",
+        "description": "The current count value"
+      }
+    }
+  }
+}
+```
+
+## Embedded Resources
+
+Embedded resources allow referencing server-side resources directly in messages:
+
+```json
+{
+  "type": "resource",
+  "resource": {
+    "uri": "file:///example.txt",
+    "mimeType": "text/plain",
+    "text": "This is the content of the file."
+  }
+}
+```
+
+For text resources, the `text` field contains the content. For binary resources, a `blob` field with base64-encoded data is used instead:
+
+```json
+{
+  "type": "resource",
+  "resource": {
+    "uri": "file:///example.png",
+    "mimeType": "image/png",
+    "blob": "base64-encoded-data"
+  }
+}
+```
+
+Key fields:
+- `resource`: An object containing resource metadata and content
+  - `uri`: The URI identifying the resource
+  - `mimeType`: The MIME type of the resource
+  - `text` or `blob`: The content of the resource
+
+## Usage in the Protocol
+
+Content types are used in multiple places in the MCP protocol:
+
+### Tool Results
+
+When a tool is called, it returns one or more content items:
+
+```json
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Weather information:"
+    },
+    {
+      "type": "json",
+      "data": {
+        "temperature": 72,
+        "conditions": "Partly cloudy"
+      }
+    }
+  ],
+  "isError": false
+}
+```
+
+### Prompt Messages
+
+Prompts can include different content types to provide context:
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": {
+        "type": "text",
+        "text": "Can you describe this image?"
+      }
+    },
+    {
+      "role": "user",
+      "content": {
+        "type": "image",
+        "data": "base64-encoded-image-data",
+        "mimeType": "image/jpeg"
+      }
+    }
+  ]
+}
+```
+
+### Sampling Messages
+
+When sampling from an LLM, content types can be included in both the request and response:
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": {
+        "type": "text",
+        "text": "What's happening in this image?"
+      }
+    },
+    {
+      "role": "user",
+      "content": {
+        "type": "image",
+        "data": "base64-encoded-image-data",
+        "mimeType": "image/jpeg"
+      }
+    }
+  ]
+}
+```
+
+## Annotations
+
+All content types can include optional annotations that provide additional metadata:
+
+```json
+"annotations": {
+  "audience": ["user", "assistant"],
+  "priority": 0.8
+}
+```
+
+Common annotations include:
+- `audience`: Indicates who the content is intended for (`"user"`, `"assistant"`, or both)
+- `priority`: A value between 0 and 1 indicating the importance of the content (1 being most important)
+
+## Best Practices
+
+When working with content types:
+
+1. **Choose the appropriate type**: Use the content type that best represents your data
+2. **Validate content**: Ensure the content adheres to the expected format
+3. **Handle multiple types**: Be prepared to process different content types in responses
+4. **Consider bandwidth**: For large binary data, consider using resources instead of embedding directly
+5. **Set proper annotations**: Use annotations to guide how content should be handled or displayed
+
+## Security Considerations
+
+When handling content types:
+
+1. **Validate all content**: Especially for binary data like images and audio
+2. **Limit data sizes**: Set reasonable limits on content sizes to prevent resource exhaustion
+3. **Sanitize text content**: Prevent injection attacks in text content
+4. **Verify schemas**: For JSON content, validate against the provided schema
+5. **Check MIME types**: Only allow expected MIME types for images and audio 

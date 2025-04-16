@@ -88,6 +88,19 @@ To discover available tools, clients send a `tools/list` request. This operation
             }
           },
           "required": ["location"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "type": "number",
+              "description": "Temperature in degrees Fahrenheit"
+            },
+            "conditions": {
+              "type": "string",
+              "description": "Weather conditions description"
+            }
+          }
         }
       }
     ],
@@ -181,6 +194,7 @@ A tool definition includes:
 - `name`: Unique identifier for the tool
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
+- `outputSchema`: Optional JSON Schema defining the structure of JSON responses
 - `annotations`: optional properties describing tool behavior
 
 <Warning>For trust & safety and security, clients **MUST** consider
@@ -218,6 +232,24 @@ Tool results can contain multiple content items of different types:
   "mimeType": "audio/wav"
 }
 ```
+
+#### JSON Content
+
+```json
+{
+  "type": "json",
+  "data": {
+    "temperature": 72,
+    "conditions": "Partly cloudy"
+  },
+  "schema": "#/components/schemas/WeatherResponse"
+}
+```
+
+The JSON content type allows structured data to be returned from tools. The `schema` field can be:
+- Omitted (in which case the tool's `outputSchema` is implied)
+- A string (which is interpreted as a URI reference to a schema)
+- An object (containing the full schema definition)
 
 #### Embedded Resources
 

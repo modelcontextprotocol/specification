@@ -41,6 +41,19 @@ Each tool is defined with the following structure:
 }
 ```
 
+Additional optional properties include:
+
+```typescript
+{
+  outputSchema?: {       // JSON Schema for the tool's JSON response (optional)
+    type: "object",
+    properties: { ... }  // Expected JSON structure
+  }
+}
+```
+
+The `outputSchema` property defines the expected structure for JSON content returned by the tool, which can be helpful for both clients and AI models to understand the tool's output format.
+
 ## Implementing tools
 
 Here's an example of implementing a basic tool in an MCP server:
@@ -128,6 +141,129 @@ Here's an example of implementing a basic tool in an MCP server:
   </Tab>
 </Tabs>
 
+### Example with outputSchema and JSON content
+
+Here's an example of a tool that uses `outputSchema` and returns JSON content:
+
+<Tabs>
+  <Tab title="TypeScript">
+    ```typescript
+    // Define available tools
+    server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return {
+        tools: [{
+          name: "get_weather",
+          description: "Get weather information for a location",
+          inputSchema: {
+            type: "object",
+            properties: {
+              location: { type: "string" }
+            },
+            required: ["location"]
+          },
+          outputSchema: {
+            type: "object",
+            properties: {
+              temperature: { type: "number" },
+              conditions: { type: "string" },
+              forecast: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    day: { type: "string" },
+                    high: { type: "number" },
+                    low: { type: "number" }
+                  }
+                }
+              }
+            }
+          }
+        }]
+      };
+    });
+
+    // Handle tool execution
+    server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      if (request.params.name === "get_weather") {
+        const { location } = request.params.arguments;
+        
+        // Fetch weather data
+        const weatherData = await fetchWeatherData(location);
+        
+        // Return as structured JSON
+        return {
+          content: [
+            {
+              type: "json",
+              data: weatherData,
+              // schema field is optional - if omitted, outputSchema is used
+            }
+          ]
+        };
+      }
+      throw new Error("Tool not found");
+    });
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    @app.list_tools()
+    async def list_tools() -> list[types.Tool]:
+        return [
+            types.Tool(
+                name="get_weather",
+                description="Get weather information for a location",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "location": {"type": "string"}
+                    },
+                    "required": ["location"]
+                },
+                outputSchema={
+                    "type": "object",
+                    "properties": {
+                        "temperature": {"type": "number"},
+                        "conditions": {"type": "string"},
+                        "forecast": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "day": {"type": "string"},
+                                    "high": {"type": "number"},
+                                    "low": {"type": "number"}
+                                }
+                            }
+                        }
+                    }
+                }
+            )
+        ]
+
+    @app.call_tool()
+    async def call_tool(
+        name: str,
+        arguments: dict
+    ) -> list[types.TextContent | types.ImageContent | types.JsonContent | types.EmbeddedResource]:
+        if name == "get_weather":
+            location = arguments["location"]
+            
+            # Fetch weather data
+            weather_data = await fetch_weather_data(location)
+            
+            # Return as structured JSON
+            return [types.JsonContent(
+                type="json",
+                data=weather_data
+                # schema field is optional - if omitted, outputSchema is used
+            )]
+        raise ValueError(f"Tool not found: {name}")
+    ```
+  </Tab>
+</Tabs>
+
 ## Example tool patterns
 
 Here are some examples of types of tools that a server could provide:
@@ -188,6 +324,140 @@ Tools that transform or analyze data:
         }
       }
     }
+  }
+}
+```
+
+### Tool with structured output
+
+Here's an example of a tool designed to return structured data:
+
+```typescript
+{
+  name: "search_products",
+  description: "Search for products in the catalog",
+  inputSchema: {
+    type: "object",
+    properties: {
+      query: { type: "string" },
+      category: { type: "string" },
+      maxResults: { type: "number" }
+    },
+    required: ["query"]
+  },
+  outputSchema: {
+    type: "object",
+    properties: {
+      totalResults: { type: "number" },
+      products: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            id: { type: "string" },
+            name: { type: "string" },
+            price: { type: "number" },
+            inStock: { type: "boolean" }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Content types for tool results
+
+When a tool is called, it can return multiple content items of different types:
+
+### Text Content
+
+```json
+{
+  "type": "text",
+  "text": "Tool result text"
+}
+```
+
+### Image Content
+
+```json
+{
+  "type": "image",
+  "data": "base64-encoded-data",
+  "mimeType": "image/png"
+}
+```
+
+### Audio Content
+
+```json
+{
+  "type": "audio",
+  "data": "base64-encoded-audio-data",
+  "mimeType": "audio/wav"
+}
+```
+
+### JSON Content
+
+```json
+{
+  "type": "json",
+  "data": {
+    "temperature": 72,
+    "conditions": "Partly cloudy"
+  },
+  "schema": "#/components/schemas/WeatherResponse"
+}
+```
+
+The JSON content type allows structured data to be returned from tools with several options:
+
+- If `schema` is omitted, the tool's `outputSchema` is implied
+- If `schema` is a string, it is interpreted as a URI reference to a schema
+- If `schema` is an object, it provides the full schema definition
+
+Example with an inline schema:
+
+```json
+{
+  "type": "json",
+  "data": {
+    "results": [
+      {"id": "product-1", "name": "Widget", "price": 9.99}
+    ]
+  },
+  "schema": {
+    "type": "object",
+    "properties": {
+      "results": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "price": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Embedded Resources
+
+Resources can be embedded directly in tool results:
+
+```json
+{
+  "type": "resource",
+  "resource": {
+    "uri": "resource://example",
+    "mimeType": "text/plain",
+    "text": "Resource content"
   }
 }
 ```
@@ -307,6 +577,88 @@ Here's an example of proper error handling for tools:
   </Tab>
 </Tabs>
 
+### Error handling with JSON content
+
+For tools that return JSON content, error handling can include structured error information:
+
+<Tabs>
+  <Tab title="TypeScript">
+    ```typescript
+    try {
+      // Tool operation
+      const data = await fetchData();
+      return {
+        content: [
+          {
+            type: "json",
+            data: data
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "json",
+            data: {
+              errorCode: error.code || "UNKNOWN_ERROR",
+              message: error.message,
+              details: error.details || {}
+            },
+            schema: {
+              type: "object",
+              properties: {
+                errorCode: { type: "string" },
+                message: { type: "string" },
+                details: { type: "object" }
+              }
+            }
+          }
+        ]
+      };
+    }
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    try:
+        # Tool operation
+        data = await fetch_data()
+        return types.CallToolResult(
+            content=[
+                types.JsonContent(
+                    type="json",
+                    data=data
+                )
+            ]
+        )
+    except Exception as error:
+        return types.CallToolResult(
+            isError=True,
+            content=[
+                types.JsonContent(
+                    type="json",
+                    data={
+                        "errorCode": getattr(error, "code", "UNKNOWN_ERROR"),
+                        "message": str(error),
+                        "details": getattr(error, "details", {})
+                    },
+                    schema={
+                        "type": "object",
+                        "properties": {
+                            "errorCode": {"type": "string"},
+                            "message": {"type": "string"},
+                            "details": {"type": "object"}
+                        }
+                    }
+                )
+            ]
+        )
+    ```
+  </Tab>
+</Tabs>
+
 This approach allows the LLM to see that an error occurred and potentially take corrective action or request human intervention.
 
 ## Tool annotations
@@ -395,6 +747,46 @@ Here's how to define tools with annotations for different scenarios:
     destructiveHint: false,
     idempotentHint: false,
     openWorldHint: false
+  }
+}
+```
+
+### Tool with outputSchema and annotations
+
+Here's an example combining outputSchema with annotations:
+
+```typescript
+{
+  name: "fetch_stock_data",
+  description: "Fetch current stock price and market data",
+  inputSchema: {
+    type: "object",
+    properties: {
+      symbol: { type: "string" },
+      metrics: { 
+        type: "array", 
+        items: { 
+          enum: ["price", "volume", "marketCap", "peRatio"] 
+        }
+      }
+    },
+    required: ["symbol"]
+  },
+  outputSchema: {
+    type: "object",
+    properties: {
+      symbol: { type: "string" },
+      price: { type: "number" },
+      volume: { type: "number" },
+      marketCap: { type: "number" },
+      peRatio: { type: "number" },
+      lastUpdated: { type: "string", format: "date-time" }
+    }
+  },
+  annotations: {
+    title: "Stock Data Lookup",
+    readOnlyHint: true,
+    openWorldHint: true
   }
 }
 ```
