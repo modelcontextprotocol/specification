@@ -37,10 +37,10 @@ The server supports both synchronous and asynchronous APIs, allowing for flexibl
 McpSyncServer syncServer = McpServer.sync(transportProvider)
     .serverInfo("my-server", "1.0.0")
     .capabilities(ServerCapabilities.builder()
-        .resources(true)     // Enable resource support
-        .tools(true)         // Enable tool support
-        .prompts(true)       // Enable prompt support
-        .logging()           // Enable logging support
+        .resources(false, true)     // Enable resource support
+        .tools(true)                // Enable tool support
+        .prompts(true)              // Enable prompt support
+        .logging()                  // Enable logging support
         .build())
     .build();
 
@@ -60,10 +60,10 @@ syncServer.close();
 McpAsyncServer asyncServer = McpServer.async(transportProvider)
     .serverInfo("my-server", "1.0.0")
     .capabilities(ServerCapabilities.builder()
-        .resources(true)     // Enable resource support
-        .tools(true)         // Enable tool support
-        .prompts(true)       // Enable prompt support
-        .logging()           // Enable logging support
+        .resources(false, true)     // Enable resource support
+        .tools(true)                // Enable tool support
+        .prompts(true)              // Enable prompt support
+        .logging()                  // Enable logging support
         .build())
     .build();
 
