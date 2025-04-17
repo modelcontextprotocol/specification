@@ -25,6 +25,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [GenAIScript][GenAIScript]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
+| [Lutra][Lutra]                              | ✅          | ✅        | ✅      | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                     |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
 | [OpenSumi][OpenSumi]                        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in OpenSumi                                                  |
@@ -55,6 +56,7 @@ This page provides an overview of applications that support the Model Context Pr
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
 [LibreChat]: https://github.com/danny-avila/LibreChat
+[Lutra]: https://lutra.ai
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
 [OpenSumi]: https://github.com/opensumi/core
@@ -211,6 +213,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Add tools to customizable [Agents](https://www.librechat.ai/docs/features/agents), using a variety of LLMs from top providers
 - Open-source and self-hostable, with secure multi-user support
 - Future roadmap includes expanded MCP feature support
+
+### Lutra
+[Lutra](https://lutra.ai) is an AI agent that transforms conversations into actionable, automated workflows.
+
+**Key features:**
+- Easy MCP Integration: Connecting Lutra to MCP servers is as simple as providing the server URL; Lutra handles the rest behind the scenes.
+- Chat to Take Action: Lutra understands your conversational context and goals, automatically integrating with your existing apps to perform tasks.
+- Reusable Playbooks: After completing a task, save the steps as reusable, automated workflows—simplifying repeatable processes and reducing manual effort.
+- Shareable Automations: Easily share your saved playbooks with teammates to standardize best practices and accelerate collaborative workflows.
+
+**Learn more:**
+- [Lutra AI agent explained](https://www.youtube.com/watch?v=W5ZpN0cMY70)
 
 ### mcp-agent
 [mcp-agent] is a simple, composable framework to build agents using Model Context Protocol.
