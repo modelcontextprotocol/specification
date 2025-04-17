@@ -520,7 +520,7 @@ The tool execution handler is responsible for actually executing the logic of ea
 ```typescript
 // Register weather tools
 server.tool(
-  "get-alerts",
+  "get_alerts",
   "Get weather alerts for a state",
   {
     state: z.string().length(2).describe("Two-letter state code (e.g. CA, NY)"),
@@ -568,7 +568,7 @@ server.tool(
 );
 
 server.tool(
-  "get-forecast",
+  "get_forecast",
   "Get weather forecast for a location",
   {
     latitude: z.number().min(-90).max(90).describe("Latitude of the location"),
@@ -747,12 +747,12 @@ Save the file, and restart **Claude for Desktop**.
 <Tab title='Java'>
 
 <Note>
-This is a quickstart demo based on Spring AI MCP auto-configuration and boot starters. 
+This is a quickstart demo based on Spring AI MCP auto-configuration and boot starters.
 To learn how to create sync and async MCP Servers, manually, consult the [Java SDK Server](/sdk/java/mcp-server) documentation.
 </Note>
 
 
-Let's get started with building our weather server! 
+Let's get started with building our weather server!
 [You can find the complete code for what we'll be building here.](https://github.com/spring-projects/spring-ai-examples/tree/main/model-context-protocol/weather/starter-stdio-server)
 
 For more information, see the [MCP Server Boot Starter](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html) reference documentation.
@@ -789,7 +789,7 @@ You will need to add the following dependencies:
   ```groovy
   dependencies {
     implementation platform("org.springframework.ai:spring-ai-starter-mcp-server")
-    implementation platform("org.springframework:spring-web")   
+    implementation platform("org.springframework:spring-web")
   }
   ```
   </Tab>
@@ -848,7 +848,7 @@ public class WeatherService {
       // - Wind speed and direction
       // - Detailed forecast description
   }
-	
+
   @Tool(description = "Get weather alerts for a US state")
   public String getAlerts(
       @ToolParam(description = "Two-letter US state code (e.g. CA, NY)" String state
@@ -868,7 +868,7 @@ public class WeatherService {
 The `@Service` annotation with auto-register the service in your application context.
 The Spring AI `@Tool` annotation, making it easy to create and maintain MCP tools.
 
-The auto-configuration will automatically register these tools with the MCP server. 
+The auto-configuration will automatically register these tools with the MCP server.
 
 ### Create your Boot Application
 
@@ -907,11 +907,11 @@ Let's now test your server from an existing MCP host, Claude for Desktop.
 Claude for Desktop is not yet available on Linux.
 </Note>
 
-First, make sure you have Claude for Desktop installed. 
+First, make sure you have Claude for Desktop installed.
 [You can install the latest version here.](https://claude.ai/download) If you already have Claude for Desktop, **make sure it's updated to the latest version.**
 
-We'll need to configure Claude for Desktop for whichever MCP servers you want to use. 
-To do this, open your Claude for Desktop App configuration at `~/Library/Application Support/Claude/claude_desktop_config.json` in a text editor. 
+We'll need to configure Claude for Desktop for whichever MCP servers you want to use.
+To do this, open your Claude for Desktop App configuration at `~/Library/Application Support/Claude/claude_desktop_config.json` in a text editor.
 Make sure to create the file if it doesn't exist.
 
 For example, if you have [VS Code](https://code.visualstudio.com/) installed:
@@ -929,7 +929,7 @@ For example, if you have [VS Code](https://code.visualstudio.com/) installed:
   </Tab>
 </Tabs>
 
-You'll then add your servers in the `mcpServers` key. 
+You'll then add your servers in the `mcpServers` key.
 The MCP UI elements will only show up in Claude for Desktop if at least one server is properly configured.
 
 In this case, we'll add our single weather server like so:
@@ -1033,7 +1033,7 @@ For more information, see the [MCP Client Boot Starters](https://docs.spring.io/
 
 ## More Java MCP Server examples
 
-The [starter-webflux-server](https://github.com/spring-projects/spring-ai-examples/tree/main/model-context-protocol/weather/starter-webflux-server) demonstrates how to create a MCP server using SSE transport. 
+The [starter-webflux-server](https://github.com/spring-projects/spring-ai-examples/tree/main/model-context-protocol/weather/starter-webflux-server) demonstrates how to create a MCP server using SSE transport.
 It showcases how to define and register MCP Tools, Resources, and Prompts, using the Spring Boot's auto-configuration capabilities.
 
 </Tab>
