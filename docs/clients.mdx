@@ -21,6 +21,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Daydreams Agents][Daydreams]               | ✅          | ✅        | ✅      | ❌         | ❌    | Support for drop in Servers to Daydreams agents                             |
 | [Emacs Mcp][Mcp.el]                         | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in Emacs.                                                    |
 | [fast-agent][fast-agent]                    | ✅          | ✅        | ✅      | ✅         | ✅    | Full multimodal MCP support, with end-to-end tests                          |
+| [FLUJO][FLUJO]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Support for resources, Prompts and Roots are coming soon                    |
 | [Genkit][Genkit]                            | ⚠️          | ✅        | ✅      | ❌         | ❌    | Supports resource list and lookup through tools.                            |
 | [GenAIScript][GenAIScript]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
@@ -51,6 +52,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Daydreams]: https://github.com/daydreamsai/daydreams
 [Mcp.el]: https://github.com/lizqwerscott/mcp.el
 [fast-agent]: https://github.com/evalstate/fast-agent
+[FLUJO]: https://github.com/mario-andreschak/flujo
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
@@ -176,6 +178,16 @@ The Claude desktop application provides comprehensive support for MCP, enabling 
 - Interactive front-end to develop and diagnose Agent applications, including passthrough and playback simulators 
 - Built in support for "Building Effective Agents" workflows.
 - Deploy Agents as MCP Servers
+
+### FLUJO
+Think n8n + ChatGPT. FLUJO is an desktop application that integrates with MCP to provide a workflow-builder interface for AI interactions. Built with Next.js and React, it supports both online and offline (ollama) models, it manages API Keys and environment variables centrally and can install MCP Servers from GitHub. FLUJO has an ChatCompletions endpoint and flows can be executed from other AI applications like Cline, Roo or Claude.
+
+**Key features:**
+- Environment & API Key Management
+- Model Management
+- MCP Server Integration
+- Workflow Orchestration
+- Chat Interface
 
 ### Genkit
 [Genkit](https://github.com/firebase/genkit) is a cross-language SDK for building and integrating GenAI features into applications. The [genkitx-mcp](https://github.com/firebase/genkit/tree/main/js/plugins/mcp) plugin enables consuming MCP servers as a client or creating MCP servers from Genkit tools and prompts.
