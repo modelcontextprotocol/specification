@@ -169,7 +169,7 @@ negotiated capabilities.
 Both parties **SHOULD**:
 
 - Respect the negotiated protocol version
-- Only use capabilities that were successfully negotiated
+- Only use capabilities that were successfully negotiated. Attempts to use methods associated with non-negotiated capabilities SHOULD result in error.
 
 ### Shutdown
 
