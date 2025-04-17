@@ -42,7 +42,7 @@ while maintaining simplicity:
 1. MCP authorization servers **MUST** implement OAuth 2.1 with appropriate security
    measures for both confidential and public clients.
 
-1. MCP authorization servers **SHOULD** support the OAuth 2.0 Dynamic Client Registration
+1. MCP authorization servers and MCP servers **SHOULD** support the OAuth 2.0 Dynamic Client Registration
    Protocol ([RFC7591](https://datatracker.ietf.org/doc/html/rfc7591)).
 
 1. MCP servers and clients **MUST** implement [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13)).
@@ -77,7 +77,7 @@ The authorization server is responsible for interacting with the user and issuin
 resource server or a separate entity. Section [2.3 Authorization Server Discovery](#2-3-authorizaton-server-discovery)
 specifies how an MCP server (OAuth 2.1 resource server) indicates the location of an OAuth 2.1 authorization server to an OAuth 2.1 client.
 
-### 2.3 Authorization Server and Capability Discovery
+### 2.3 Authorization Server Discovery
 This section details how MCP servers can inform MCP clients of authorization servers, and how MCP clients discover authorization servers and their capabilities.
 
 ### 2.3.1 Authorization Server Location
@@ -89,10 +89,10 @@ The specific use of `authorization_servers` is beyond the scope of this specific
 the [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13) documentation for
 comprehensive guidance on implementation details.
 
-MCP servers **MAY** use the HTTP header `WWW-Authenticate` when returning a _401 Unauthorized_ to indicate the location of the resource server metadata URL
+MCP servers **MUST** use the HTTP header `WWW-Authenticate` when returning a _401 Unauthorized_ to indicate the location of the resource server metadata URL
 as described in [OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-resource-metadata-13).
 
-MCP clients **MUST** handle the `WWW-Authenticate` header if present, and otherwise use direct discovery via the well-known URI if no `WWW-Authenticate` header is present.
+MCP clients **MUST** handle the `WWW-Authenticate` header.
 
 
 #### 2.3.2 Server Metadata Discovery
@@ -105,7 +105,7 @@ MCP clients **MUST** follow the OAuth 2.0 Authorization Server Metadata protocol
 
 MCP clients **SHOULD** include the header `MCP-Protocol-Version: <protocol-version>` during
 Server Metadata Discovery to allow the MCP server to respond based on the MCP protocol
-version.
+version. MCP servers **SHOULD** use the `MCP-Protocol-Version` header to determine compatibility with the MCP client.
 
 For example: `MCP-Protocol-Version: 2024-11-05`
 
@@ -119,24 +119,23 @@ sequenceDiagram
     participant A as Authorization Server
 
     C->>M: MCP Request without token
-    M->>C: HTTP 401 Unauthorized with WWW-Authenticate header
-    Note over C: Extract resource_metadata from WWW-Authenticate
+    M-->>C: HTTP 401 Unauthorized with WWW-Authenticate header
+    Note over C: Extract resource_metadata<br />from WWW-Authenticate
 
-    alt WWW-Authenticate header not present
-        C->>M: GET /.well-known/oauth-protected-resource
-        M->>C: Resource metadata with authorization server URL
-    end
+    C->>M: GET /.well-known/oauth-protected-resource
+    M-->>C: Resource metadata with authorization server URL
+    Note over C: Validate RS Metadata,<br />build AS metadata URL
 
     C->>A: GET /.well-known/oauth-authorization-server
-    A->>C: Authorization server metadata
+    A-->>C: Authorization server metadata
 
     Note over C,A: OAuth 2.1 authorization flow happens here
 
     C->>A: Token Request
-    A->>C: Access Token
+    A-->>C: Access Token
 
     C->>M: MCP Request with Access Token
-    M->>C: Protected Resource Response
+    M-->>C: Protected Resource Response
     Note over C,M: MCP communication continues with valid token
 ```
 
@@ -238,7 +237,9 @@ Resource servers **MUST** validate access tokens as described in
 If validation fails, servers **MUST** respond according to
 [Section 5.3](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.3)
 error handling requirements. Invalid or expired tokens **MUST** receive a HTTP 401
-response.
+response. MCP client **MUST NOT** send tokens other than issues by the MCP server.
+MCP servers **MUST** issue tokens only for valid for the MCP server. They **MUST NOT** pass
+on any third-party token.
 
 ### 2.7 Security Considerations
 
@@ -266,67 +267,6 @@ Servers **MUST** return appropriate HTTP status codes for authorization errors:
 2. PKCE is **REQUIRED** for all clients
 3. Token rotation **SHOULD** be implemented for enhanced security
 4. Token lifetimes **SHOULD** be limited based on security requirements
-
-### 2.10 Third-Party Authorization Flow
-
-#### 2.10.1 Overview
-
-MCP servers **MAY** support delegated authorization through third-party authorization
-servers. In this flow, the MCP server acts as both an OAuth client (to the third-party
-auth server) and an OAuth authorization server (to the MCP client).
-
-#### 2.10.2 Flow Description
-
-The third-party authorization flow comprises these steps:
-
-1. MCP client initiates standard OAuth flow with MCP server
-2. MCP server redirects user to third-party authorization server
-3. User authorizes with third-party server
-4. Third-party server redirects back to MCP server with authorization code
-5. MCP server exchanges code for third-party access token
-6. MCP server generates its own access token bound to the third-party session
-7. MCP server completes original OAuth flow with MCP client
-
-```mermaid
-sequenceDiagram
-    participant B as User-Agent (Browser)
-    participant C as MCP Client
-    participant M as MCP Server
-    participant T as Third-Party Auth Server
-
-    C->>M: Initial OAuth Request
-    M->>B: Redirect to Third-Party /authorize
-    B->>T: Authorization Request
-    Note over T: User authorizes
-    T->>B: Redirect to MCP Server callback
-    B->>M: Authorization code
-    M->>T: Exchange code for token
-    T->>M: Third-party access token
-    Note over M: Generate bound MCP token
-    M->>B: Redirect to MCP Client callback
-    B->>C: MCP authorization code
-    C->>M: Exchange code for token
-    M->>C: MCP access token
-```
-
-#### 2.10.3 Session Binding Requirements
-
-MCP servers implementing third-party authorization **MUST**:
-
-1. Maintain secure mapping between third-party tokens and issued MCP tokens
-2. Validate third-party token status before honoring MCP tokens
-3. Implement appropriate token lifecycle management
-4. Handle third-party token expiration and renewal
-
-#### 2.10.4 Security Considerations
-
-When implementing third-party authorization, servers **MUST**:
-
-1. Validate all redirect URIs
-2. Securely store third-party credentials
-3. Implement appropriate session timeout handling
-4. Consider security implications of token chaining
-5. Implement proper error handling for third-party auth failures
 
 ## 3. Best Practices
 
