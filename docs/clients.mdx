@@ -24,6 +24,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Genkit][Genkit]                            | ⚠️          | ✅        | ✅      | ❌         | ❌    | Supports resource list and lookup through tools.                            |
 | [GenAIScript][GenAIScript]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [gptme][gptme]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                        |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
@@ -66,6 +67,7 @@ This page provides an overview of applications that support the Model Context Pr
 [TheiaAI/TheiaIDE]: https://eclipsesource.com/blogs/2024/12/19/theia-ide-and-theia-ai-support-mcp/
 [VS Code]: https://code.visualstudio.com/
 [Windsurf]: https://codeium.com/windsurf
+[gptme]: https://github.com/gptme/gptme
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
@@ -202,6 +204,15 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - MCPs can be installed directly via the [extensions directory](https://block.github.io/goose/v1/extensions/), CLI, or UI.
 - Goose allows you to extend its functionality by [building your own MCP servers](https://block.github.io/goose/docs/tutorials/custom-extensions).
 - Includes built-in tools for development, web scraping, automation, memory, and integrations with JetBrains and Google Drive.
+
+### gptme
+[gptme](https://github.com/gptme/gptme) is a open-source terminal-based personal AI assistant/agent, designed to assist with programming tasks and general knowledge work.
+
+**Key features:**
+- CLI-first design with a focus on simplicity and ease of use
+- Rich set of built-in tools for shell commands, Python execution, file operations, and web browsing
+- Local-first approach with support for multiple LLM providers
+- Open-source, built to be extensible and easy to modify
 
 ### LibreChat
 [LibreChat](https://github.com/danny-avila/LibreChat) is an open-source, customizable AI chat UI that supports multiple AI providers, now including MCP integration.
