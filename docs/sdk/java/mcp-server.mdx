@@ -511,7 +511,7 @@ var calculatorTool = new McpServerFeatures.SyncToolSpecification(
         // Create a sampling request
         McpSchema.CreateMessageRequest request = McpSchema.CreateMessageRequest.builder()
             .messages(List.of(new McpSchema.SamplingMessage(McpSchema.Role.USER,
-                new McpSchema.TextContent("Calculate: " + arguments.get("expression")))
+                new McpSchema.TextContent("Calculate: " + arguments.get("expression")))))
             .modelPreferences(McpSchema.ModelPreferences.builder()
                 .hints(List.of(
                     McpSchema.ModelHint.of("claude-3-sonnet"),
@@ -573,7 +573,7 @@ var calculatorTool = new McpServerFeatures.AsyncToolSpecification(
         return exchange.createMessage(request)
             .map(result -> {
                 // Process the result
-                String answer = result.content().text();
+                String answer = ((McpSchema.TextContent) result.content()).text();
                 return new CallToolResult(answer, false);
             });
     }
