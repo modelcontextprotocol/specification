@@ -79,6 +79,17 @@
         "icon": "book",
         "groups": [
           {
+            "group": "draft",
+            "pages": [
+              {
+                "group": "Server Features",
+                "pages": [
+                  "specification/draft/server/tools"
+                ]
+              }
+            ]
+          },
+          {
             "group": "2025-03-26 (Latest)",
             "pages": [
               "specification/2025-03-26/index",
