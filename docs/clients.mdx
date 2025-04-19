@@ -24,6 +24,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Genkit][Genkit]                            | ⚠️          | ✅        | ✅      | ❌         | ❌    | Supports resource list and lookup through tools.                            |
 | [GenAIScript][GenAIScript]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [Jiki][Jiki]                                | ✅          | ✅        | ✅      | ✅         | ✅    | Orchestration framework with dynamic tool/roots discovery |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
@@ -54,6 +55,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
+[Jiki]: https://github.com/teilomillet/jiki
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
@@ -202,6 +204,14 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - MCPs can be installed directly via the [extensions directory](https://block.github.io/goose/v1/extensions/), CLI, or UI.
 - Goose allows you to extend its functionality by [building your own MCP servers](https://block.github.io/goose/docs/tutorials/custom-extensions).
 - Includes built-in tools for development, web scraping, automation, memory, and integrations with JetBrains and Google Drive.
+
+### Jiki
+[Jiki](https://github.com/teilomillet/jiki) is a flexible LLM orchestration framework designed for building applications that leverage tool calling via the Multi-Capability Protocol (MCP).
+
+**Key features:**
+- Orchestration framework [docs](https://docs.jiki.dev)
+- Auto-discover tools from MCP servers (stdio and SSE).
+- Detailed interaction data with tool_calls and raw traces.
 
 ### LibreChat
 [LibreChat](https://github.com/danny-avila/LibreChat) is an open-source, customizable AI chat UI that supports multiple AI providers, now including MCP integration.
