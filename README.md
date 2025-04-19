@@ -2,9 +2,12 @@
 
 This repo contains the specification and protocol schema for the Model Context Protocol.
 
-The schema is [defined in TypeScript](schema/2024-11-05/schema.ts) first, but
-[made available as JSON Schema](schema/2024-11-05/schema.json) as well, for wider
+The schema is [defined in TypeScript](schema/2025-03-26/schema.ts) first, but
+[made available as JSON Schema](schema/2025-03-26/schema.json) as well, for wider
 compatibility.
+
+The official MCP documentation is built using Mintlify and available at
+[modelcontextprotocol.io](https://modelcontextprotocol.io).
 
 ## Contributing
 
