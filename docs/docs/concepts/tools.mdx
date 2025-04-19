@@ -45,14 +45,14 @@ Additional optional properties include:
 
 ```typescript
 {
-  outputSchema?: {       // JSON Schema for the tool's JSON response (optional)
+  outputSchema?: {       // JSON Schema for the tool's response (optional)
     type: "object",
-    properties: { ... }  // Expected JSON structure
+    properties: { ... }  // Expected structure
   }
 }
 ```
 
-The `outputSchema` property defines the expected structure for JSON content returned by the tool, which can be helpful for both clients and AI models to understand the tool's output format.
+The `outputSchema` property defines the expected structure for data content returned by the tool, which can be helpful for both clients and AI models to understand the tool's output format.
 
 ## Implementing tools
 
@@ -195,9 +195,9 @@ Here's an example of a tool that uses `outputSchema` and returns JSON content:
         return {
           content: [
             {
-              type: "json",
+              type: "data",
               data: weatherData,
-              // schema field is optional - if omitted, outputSchema is used
+              // schema field is optional - if omitted, the tool's outputSchema is implied
             }
           ]
         };
@@ -246,7 +246,7 @@ Here's an example of a tool that uses `outputSchema` and returns JSON content:
     async def call_tool(
         name: str,
         arguments: dict
-    ) -> list[types.TextContent | types.ImageContent | types.JsonContent | types.EmbeddedResource]:
+    ) -> list[types.TextContent | types.ImageContent | types.DataContent | types.EmbeddedResource]:
         if name == "get_weather":
             location = arguments["location"]
             
@@ -254,10 +254,10 @@ Here's an example of a tool that uses `outputSchema` and returns JSON content:
             weather_data = await fetch_weather_data(location)
             
             # Return as structured JSON
-            return [types.JsonContent(
-                type="json",
+            return [types.DataContent(
+                type="data",
                 data=weather_data
-                # schema field is optional - if omitted, outputSchema is used
+                # schema field is optional - if omitted, the tool's outputSchema is implied
             )]
         raise ValueError(f"Tool not found: {name}")
     ```
@@ -399,11 +399,11 @@ When a tool is called, it can return multiple content items of different types:
 }
 ```
 
-### JSON Content
+### Data Content
 
 ```json
 {
-  "type": "json",
+  "type": "data",
   "data": {
     "temperature": 72,
     "conditions": "Partly cloudy"
@@ -412,7 +412,7 @@ When a tool is called, it can return multiple content items of different types:
 }
 ```
 
-The JSON content type allows structured data to be returned from tools with several options:
+The data content type allows structured data to be returned from tools with several options:
 
 - If `schema` is omitted, the tool's `outputSchema` is implied
 - If `schema` is a string, it is interpreted as a URI reference to a schema
@@ -422,7 +422,7 @@ Example with an inline schema:
 
 ```json
 {
-  "type": "json",
+  "type": "data",
   "data": {
     "results": [
       {"id": "product-1", "name": "Widget", "price": 9.99}
@@ -590,7 +590,7 @@ For tools that return JSON content, error handling can include structured error 
       return {
         content: [
           {
-            type: "json",
+            type: "data",
             data: data
           }
         ]
@@ -600,7 +600,7 @@ For tools that return JSON content, error handling can include structured error 
         isError: true,
         content: [
           {
-            type: "json",
+            type: "data",
             data: {
               errorCode: error.code || "UNKNOWN_ERROR",
               message: error.message,
@@ -627,8 +627,8 @@ For tools that return JSON content, error handling can include structured error 
         data = await fetch_data()
         return types.CallToolResult(
             content=[
-                types.JsonContent(
-                    type="json",
+                types.DataContent(
+                    type="data",
                     data=data
                 )
             ]
@@ -637,8 +637,8 @@ For tools that return JSON content, error handling can include structured error 
         return types.CallToolResult(
             isError=True,
             content=[
-                types.JsonContent(
-                    type="json",
+                types.DataContent(
+                    type="data",
                     data={
                         "errorCode": getattr(error, "code", "UNKNOWN_ERROR"),
                         "message": str(error),

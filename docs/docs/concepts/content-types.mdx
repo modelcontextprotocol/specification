@@ -12,7 +12,7 @@ MCP supports several content types that can be used in different contexts:
 - **Text**: Plain text content
 - **Image**: Visual content as base64-encoded data
 - **Audio**: Sound content as base64-encoded data
-- **JSON**: Structured data with optional schema information
+- **Data**: Structured data with optional schema information
 - **Embedded Resources**: References to resources available on the server
 
 These content types allow for flexible interactions that combine different modalities, enabling a wide range of applications from simple text responses to complex multimodal interactions.
@@ -67,13 +67,13 @@ Key fields:
 - `data`: Base64-encoded audio data
 - `mimeType`: MIME type of the audio (e.g., `audio/wav`, `audio/mp3`)
 
-## JSON Content
+## Data Content
 
-JSON content allows structured data to be exchanged:
+Data content allows structured data to be exchanged:
 
 ```json
 {
-  "type": "json",
+  "type": "data",
   "data": {
     "temperature": 72,
     "conditions": "Partly cloudy",
@@ -87,7 +87,7 @@ JSON content allows structured data to be exchanged:
 ```
 
 Key fields:
-- `data`: The JSON object containing structured data
+- `data`: The JSON serializable object containing structured data
 - `schema`: Optional reference to a JSON schema that describes the structure of the data
 
 The `schema` field can be one of the following:
@@ -99,7 +99,7 @@ Example with inline schema:
 
 ```json
 {
-  "type": "json",
+  "type": "data",
   "data": {
     "count": 42
   },
@@ -165,7 +165,7 @@ When a tool is called, it returns one or more content items:
       "text": "Weather information:"
     },
     {
-      "type": "json",
+      "type": "data",
       "data": {
         "temperature": 72,
         "conditions": "Partly cloudy"
@@ -260,5 +260,5 @@ When handling content types:
 1. **Validate all content**: Especially for binary data like images and audio
 2. **Limit data sizes**: Set reasonable limits on content sizes to prevent resource exhaustion
 3. **Sanitize text content**: Prevent injection attacks in text content
-4. **Verify schemas**: For JSON content, validate against the provided schema
+4. **Verify schemas**: For data content, validate against the provided schema
 5. **Check MIME types**: Only allow expected MIME types for images and audio 

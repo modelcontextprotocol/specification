@@ -124,7 +124,7 @@
                                 "$ref": "#/definitions/EmbeddedResource"
                             },
                             {
-                                "$ref": "#/definitions/JsonContent"
+                                "$ref": "#/definitions/DataContent"
                             }
                         ]
                     },
@@ -443,7 +443,7 @@
                             "$ref": "#/definitions/AudioContent"
                         },
                         {
-                            "$ref": "#/definitions/JsonContent"
+                            "$ref": "#/definitions/DataContent"
                         }
                     ]
                 },
@@ -469,6 +469,44 @@
         "Cursor": {
             "description": "An opaque token used to represent a cursor for pagination.",
             "type": "string"
+        },
+        "DataContent": {
+            "description": "Text provided to or from an LLM.",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
+                },
+                "data": {
+                    "additionalProperties": true,
+                    "description": "The text content of the message.",
+                    "properties": {},
+                    "type": "object"
+                },
+                "schema": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": true,
+                            "properties": {},
+                            "type": "object"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "The schema reference or definition of the JSON content."
+                },
+                "type": {
+                    "const": "json",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "schema",
+                "type"
+            ],
+            "type": "object"
         },
         "EmbeddedResource": {
             "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
@@ -883,44 +921,6 @@
                 "id",
                 "jsonrpc",
                 "result"
-            ],
-            "type": "object"
-        },
-        "JsonContent": {
-            "description": "Text provided to or from an LLM.",
-            "properties": {
-                "annotations": {
-                    "$ref": "#/definitions/Annotations",
-                    "description": "Optional annotations for the client."
-                },
-                "data": {
-                    "additionalProperties": true,
-                    "description": "The text content of the message.",
-                    "properties": {},
-                    "type": "object"
-                },
-                "schema": {
-                    "anyOf": [
-                        {
-                            "additionalProperties": true,
-                            "properties": {},
-                            "type": "object"
-                        },
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "description": "The schema reference or definition of the JSON content."
-                },
-                "type": {
-                    "const": "json",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "data",
-                "schema",
-                "type"
             ],
             "type": "object"
         },
@@ -1462,7 +1462,7 @@
                             "$ref": "#/definitions/EmbeddedResource"
                         },
                         {
-                            "$ref": "#/definitions/JsonContent"
+                            "$ref": "#/definitions/DataContent"
                         }
                     ]
                 },
@@ -1811,7 +1811,7 @@
                             "$ref": "#/definitions/AudioContent"
                         },
                         {
-                            "$ref": "#/definitions/JsonContent"
+                            "$ref": "#/definitions/DataContent"
                         }
                     ]
                 },

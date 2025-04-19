@@ -642,7 +642,7 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource | JsonContent;
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource | DataContent;
 }
 
 /**
@@ -696,7 +696,7 @@ export interface ListToolsResult extends PaginatedResult {
  * should be reported as an MCP error response.
  */
 export interface CallToolResult extends Result {
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | JsonContent)[];
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | DataContent)[];
 
   /**
    * Whether the tool call ended in an error.
@@ -924,7 +924,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | JsonContent;
+  content: TextContent | ImageContent | AudioContent | DataContent;
 }
 
 /**
@@ -1020,8 +1020,8 @@ export interface AudioContent {
 /**
  * Text provided to or from an LLM.
  */
-export interface JsonContent {
-  type: "json";
+export interface DataContent {
+  type: "data";
 
   /**
    * The text content of the message.
