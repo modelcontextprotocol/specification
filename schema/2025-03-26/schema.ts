@@ -220,6 +220,19 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client advertises content types it can handle.
+   */
+  contentTypes?: {
+    /**
+     * Optional non-exclusive List of MIME types that the client can render to Users.
+     */
+    renders?: string[];
+    /**
+     * Optional non-exclusive list of MIME types that the client can tokenize for the LLM.
+     */
+    tokenizes?: string[];
+  };
 }
 
 /**
@@ -268,6 +281,13 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
+  };
+
+  contentTypes?: {
+    /**
+     * Optional list  of MIME types that the Server may produce in a CallToolResult.
+     */
+    generates?: string[];
   };
 }
 
@@ -726,11 +746,11 @@ export interface ToolListChangedNotification extends Notification {
 
 /**
  * Additional properties describing a Tool to clients.
- * 
- * NOTE: all properties in ToolAnnotations are **hints**. 
- * They are not guaranteed to provide a faithful description of 
+ *
+ * NOTE: all properties in ToolAnnotations are **hints**.
+ * They are not guaranteed to provide a faithful description of
  * tool behavior (including descriptive properties like `title`).
- * 
+ *
  * Clients should never make tool use decisions based on ToolAnnotations
  * received from untrusted servers.
  */
@@ -742,7 +762,7 @@ export interface ToolAnnotations {
 
   /**
    * If true, the tool does not modify its environment.
-   * 
+   *
    * Default: false
    */
   readOnlyHint?: boolean;
@@ -750,19 +770,19 @@ export interface ToolAnnotations {
   /**
    * If true, the tool may perform destructive updates to its environment.
    * If false, the tool performs only additive updates.
-   * 
+   *
    * (This property is meaningful only when `readOnlyHint == false`)
-   * 
+   *
    * Default: true
    */
   destructiveHint?: boolean;
 
   /**
-   * If true, calling the tool repeatedly with the same arguments 
+   * If true, calling the tool repeatedly with the same arguments
    * will have no additional effect on the its environment.
-   * 
+   *
    * (This property is meaningful only when `readOnlyHint == false`)
-   * 
+   *
    * Default: false
    */
   idempotentHint?: boolean;
@@ -772,7 +792,7 @@ export interface ToolAnnotations {
    * entities. If false, the tool's domain of interaction is closed.
    * For example, the world of a web search tool is open, whereas that
    * of a memory tool is not.
-   * 
+   *
    * Default: true
    */
   openWorldHint?: boolean;
