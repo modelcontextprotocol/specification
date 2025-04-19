@@ -222,11 +222,6 @@ export interface ClientCapabilities {
   sampling?: object;
   /**
    * Present if the client advertises content types it can handle.
-   *
-   * Note: These lists are informative rather than restrictive. The absence of a MIME type
-   * does not guarantee the client cannot handle it - it simply means the capability
-   * is undeclared. Servers can use this information to optimize content delivery but
-   * should not rely on it as a strict constraint.
    */
   contentTypes?: {
     /**

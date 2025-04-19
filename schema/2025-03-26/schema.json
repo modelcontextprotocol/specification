@@ -171,7 +171,7 @@
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
                 "contentTypes": {
-                    "description": "Present if the client advertises content types it can handle.\n\nNote: These lists are informative rather than restrictive. The absence of a MIME type\ndoes not guarantee the client cannot handle it - it simply means the capability\nis undeclared. Servers can use this information to optimize content delivery but\nshould not rely on it as a strict constraint.",
+                    "description": "Present if the client advertises content types it can handle.",
                     "properties": {
                         "renders": {
                             "description": "Optional non-exclusive List of MIME types that the client can render to Users.",
