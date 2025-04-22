@@ -22,6 +22,8 @@ the previous revision, [2024-11-05](/specification/2024-11-05).
 ## Other schema changes
 
 - Added `message` field to `ProgressNotification` to provide descriptive status updates
+- Added `partialResult` field to `ProgressNotification` to support streaming incremental results
+- Added `partialResults` flag to request metadata to enable streaming results via progress notifications
 - Added support for audio data, joining the existing text and image content types
 - Added `completions` capability to explicitly indicate support for argument
   autocompletion suggestions
