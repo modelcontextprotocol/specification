@@ -24,6 +24,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Genkit][Genkit]                            | ⚠️          | ✅        | ✅      | ❌         | ❌    | Supports resource list and lookup through tools.                            |
 | [GenAIScript][GenAIScript]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [HighlightAI][HighlightAI]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
 | [MCPHub][MCPHub]                            | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, and prompts in Neovim
@@ -55,6 +56,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
+[HighlightAI]: https://highlightai.com
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [MCPHub]: https://github.com/ravitemer/mcphub.nvim
@@ -204,6 +206,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - MCPs can be installed directly via the [extensions directory](https://block.github.io/goose/v1/extensions/), CLI, or UI.
 - Goose allows you to extend its functionality by [building your own MCP servers](https://block.github.io/goose/docs/tutorials/custom-extensions).
 - Includes built-in tools for development, web scraping, automation, memory, and integrations with JetBrains and Google Drive.
+
+### HighlightAI
+[HighlightAI](https://highlightai.com) lets you get instant answers about anything you've seen, heard or said. HighlightAI is an desktop app that runs on macOS and Windows.
+
+**Key features:**
+- Local audio and mic transcription: Automatically capture and share meeting notes, saving hours of manual work
+- Hold command anywhere to talk: Control apps, dictate content, and ask questions completely hands-free
+- Follows your actions on any app: Select text anywhere and instantly summarize, translate, or analyze it
+- Use Apps & Your Screen as input: Capture any part of your screen for instant insights and explanations
+- One-Click MCP Server: We take care of the MCP setup, you can set your environment variables and start using it in seconds
+- [Open source bundler](https://github.com/highlight-ing/mcp-bundler): We open sourced our bundler so any client can use it to add MCP support to their app
+- [Public registry](https://mcpservers.com/): We maintain a public registry of MCP servers that you can use in Highlight or your own MCP clients
 
 ### LibreChat
 [LibreChat](https://github.com/danny-avila/LibreChat) is an open-source, customizable AI chat UI that supports multiple AI providers, now including MCP integration.
