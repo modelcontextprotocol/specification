@@ -985,7 +985,11 @@
                 "params": {
                     "properties": {
                         "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "description": "An opaque token used to represent a cursor for pagination.",
+                            "type": "string"
+                        },
+                        "path": {
+                            "description": "An optional path to filter resources by.\nIf provided, the server should return only resources under this path.",
                             "type": "string"
                         }
                     },

@@ -342,6 +342,14 @@ export interface PaginatedResult extends Result {
  */
 export interface ListResourcesRequest extends PaginatedRequest {
   method: "resources/list";
+  params?: {
+    cursor?: Cursor;
+    /**
+     * An optional path to filter resources by.
+     * If provided, the server should return only resources under this path.
+     */
+    path?: string;
+  };
 }
 
 /**
