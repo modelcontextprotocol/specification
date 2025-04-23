@@ -38,6 +38,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [VS Code GitHub Copilot][VS Code]           | ❌          | ❌        | ✅      | ❌         | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
 | [Windsurf Editor][Windsurf]                 | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools with AI Flow for collaborative development.                  |
 | [Witsy][Witsy]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in Witsy.                                                    |
+| [Mcp Client Chatbot][Mcp Client Chatbot]    | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                    |
 | [Zed][Zed]                                  | ❌          | ✅        | ❌      | ❌         | ❌    | Prompts appear as slash commands                                            |
 
 [5ire]: https://github.com/nanbingxyz/5ire
@@ -69,6 +70,7 @@ This page provides an overview of applications that support the Model Context Pr
 [VS Code]: https://code.visualstudio.com/
 [Windsurf]: https://codeium.com/windsurf
 [Witsy]: https://github.com/nbonamy/witsy
+[Mcp Client Chatbot]: https://github.com/cgoinglove/mcp-client-chatbot
 [Zed]: https://zed.dev
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
 [Prompts]: https://modelcontextprotocol.io/docs/concepts/prompts
@@ -329,6 +331,14 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Local server connections for enhanced privacy and security
 - Easy-install from Smithery.ai
 - Open-source, available for macOS, Windows and Linux
+
+### mcp-client-chatbot
+
+[mcp-client-chatbot](https://github.com/cgoinglove/mcp-client-chatbot) is a local-first chatbot built with Vercel’s Next.js, AI SDK, and Shadcn UI.
+
+**Key features:**
+- It supports standard MCP tool calling and includes both a custom MCP server and a standalone UI for testing MCP tools outside the chat flow.  
+- All MCP tools are provided to the LLM by default, but the project also includes an optional `@toolname` mention feature to make tool invocation more explicit—particularly useful when connecting to multiple MCP servers with many tools.
 
 ### Zed
 [Zed](https://zed.dev/docs/assistant/model-context-protocol) is a high-performance code editor with built-in MCP support, focusing on prompt templates and tool integration.
