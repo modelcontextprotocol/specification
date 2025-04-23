@@ -26,6 +26,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
+| [MCPHub][MCPHub]                            | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, and prompts in Neovim
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
 | [OpenSumi][OpenSumi]                        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in OpenSumi                                                  |
 | [oterm][oterm]                              | ❌          | ✅        | ✅      | ✅         | ❌    | Supports tools, prompts and sampling for Ollama.                                                 |
@@ -56,6 +57,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
+[MCPHub]: https://github.com/ravitemer/mcphub.nvim
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
 [OpenSumi]: https://github.com/opensumi/core
 [oterm]: https://github.com/ggozad/oterm
@@ -220,6 +222,15 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Expose tools from multiple servers to an LLM.
 - Implements every pattern defined in [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents).
 - Supports workflow pause/resume signals, such as waiting for human feedback.
+
+### MCPHub
+[MCPHub] is a powerful Neovim plugin that integrates MCP (Model Context Protocol) servers into your workflow. 
+
+**Key features**
+- Install, configure and manage MCP servers with an intuitive UI.
+- Built-in Neovim MCP server with support for file operations (read, write, search, replace), command execution, terminal integration, LSP integration, buffers, and diagnostics.
+- Create Lua-based MCP servers directly in Neovim.
+- Inegrates with popular Neovim chat plugins Avante.nvim and CodeCompanion.nvim 
 
 ### Microsoft Copilot Studio
 [Microsoft Copilot Studio]  is a robust SaaS platform designed for building custom AI-driven applications and intelligent agents, empowering developers to create, deploy, and manage sophisticated AI solutions.
