@@ -163,6 +163,42 @@ Sampling messages can contain:
 }
 ```
 
+#### JSON Content
+
+```json
+{
+  "type": "data",
+  "data": {
+    "name": "Weather Report",
+    "details": {
+      "temperature": 72,
+      "conditions": "Partly cloudy"
+    }
+  },
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "details": {
+        "type": "object",
+        "properties": {
+          "temperature": { "type": "number" },
+          "conditions": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+```
+
+The JSON content type (DataContent) allows structured data to be included in messages. This is especially useful when:
+
+- The server or client needs to exchange precisely structured information
+- The information has a well-defined schema
+- The data might be processed programmatically rather than just displayed
+
+The schema field is optional but recommended to help receivers understand and validate the structure.
+
 ### Model Preferences
 
 Model selection in MCP requires careful abstraction since servers and clients may use

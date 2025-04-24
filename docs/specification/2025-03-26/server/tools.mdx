@@ -139,7 +139,18 @@ To invoke a tool, clients send a `tools/call` request:
     "content": [
       {
         "type": "text",
-        "text": "Current weather in New York:\nTemperature: 72°F\nConditions: Partly cloudy"
+        "text": "Here's the current weather for New York:"
+      },
+      {
+        "type": "data",
+        "data": {
+          "temperature": 72,
+          "conditions": "Partly cloudy",
+          "forecast": [
+            {"day": "Monday", "high": 75, "low": 65},
+            {"day": "Tuesday", "high": 80, "low": 68}
+          ]
+        }
       }
     ],
     "isError": false
@@ -194,11 +205,80 @@ A tool definition includes:
 - `name`: Unique identifier for the tool
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
-- `outputSchema`: Optional JSON Schema defining the structure of JSON responses
 - `annotations`: optional properties describing tool behavior
+- `output`: Optional configuration defining what content types the tool can return:
+  - `strict`: If true, only declared content types will appear in responses
+  - `content`: Configuration object for each supported content type:
+    - `text`: Text response configuration
+    - `image`: Image response configuration
+    - `audio`: Audio response configuration
+    - `resource`: Resource response configuration
+    - `data`: JSON data response configuration
+
+Each content type configuration can include:
+- `count`: Whether the content type returns 'single' or 'multiple' items
+- `description`: Human-readable description of the returned content
+- For image/audio/resource: `mimeTypes`: Array of supported MIME types
+- For data: `schema` and `strict` options for JSON schema validation
 
 <Warning>For trust & safety and security, clients **MUST** consider
 tool annotations to be untrusted unless they come from trusted servers.</Warning>
+
+#### Example Tool Definition
+
+```json
+{
+  "name": "get_weather",
+  "description": "Get current weather information for a location",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "location": {
+        "type": "string",
+        "description": "City name or zip code"
+      }
+    },
+    "required": ["location"]
+  },
+  "output": {
+    "strict": false,
+    "content": {
+      "text": {
+        "count": "single",
+        "description": "Human-readable weather description"
+      },
+      "data": {
+        "count": "single",
+        "description": "Structured weather data",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "type": "number",
+              "description": "Temperature in degrees Fahrenheit"
+            },
+            "conditions": {
+              "type": "string",
+              "description": "Weather conditions description"
+            },
+            "forecast": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "day": {"type": "string"},
+                  "high": {"type": "number"},
+                  "low": {"type": "number"}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 ### Tool Result
 
@@ -233,23 +313,81 @@ Tool results can contain multiple content items of different types:
 }
 ```
 
-#### JSON Content
+#### JSON Content (DataContent)
 
 ```json
 {
   "type": "data",
   "data": {
     "temperature": 72,
-    "conditions": "Partly cloudy"
+    "conditions": "Partly cloudy",
+    "forecast": [
+      {"day": "Monday", "high": 75, "low": 65},
+      {"day": "Tuesday", "high": 80, "low": 68}
+    ]
   },
   "schema": "#/components/schemas/WeatherResponse"
 }
 ```
 
-The JSON content type allows structured data to be returned from tools. The `schema` field can be:
-- Omitted (in which case the tool's `outputSchema` is implied)
-- A string (which is interpreted as a URI reference to a schema)
-- An object (containing the full schema definition)
+The JSON content type (DataContent) allows structured data to be returned from tools. This enables more precise communication of complex, structured information that can be programmatically processed by the client or presented to the LLM.
+
+The content includes:
+- `type`: Must be "data"
+- `data`: A JSON object containing the structured data
+- `schema` (optional): Can be one of:
+  - Omitted (in which case the tool's `output.content.data.schema` is implied)
+  - A string URI reference to a schema
+  - An inline object containing the full schema definition
+
+Schema validation behavior:
+- If `output.content.data.strict` is true, the data must validate against the entire schema
+- Otherwise, partial schemas or schema fragments can be provided with the DataContent instance
+
+#### Sample Tool Call with Structured Data Response
+
+Request:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "get_weather",
+    "arguments": {
+      "location": "New York"
+    }
+  }
+}
+```
+
+Response with structured data:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Here's the current weather for New York:"
+      },
+      {
+        "type": "data",
+        "data": {
+          "temperature": 72,
+          "conditions": "Partly cloudy",
+          "forecast": [
+            {"day": "Monday", "high": 75, "low": 65},
+            {"day": "Tuesday", "high": 80, "low": 68}
+          ]
+        }
+      }
+    ],
+    "isError": false
+  }
+}
+```
 
 #### Embedded Resources
 
