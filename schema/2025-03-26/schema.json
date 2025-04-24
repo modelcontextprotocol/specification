@@ -1807,18 +1807,6 @@
                     "properties": {},
                     "type": "object"
                 },
-                "contentTypes": {
-                    "properties": {
-                        "generates": {
-                            "description": "Optional list  of MIME types that the Server may produce in a CallToolResult.",
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        }
-                    },
-                    "type": "object"
-                },
                 "experimental": {
                     "additionalProperties": {
                         "additionalProperties": true,
@@ -2095,6 +2083,13 @@
                 "destructiveHint": {
                     "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: true",
                     "type": "boolean"
+                },
+                "generatesHint": {
+                    "description": "Optional list of MIME types that this Tool may produce in a CallToolResult.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "idempotentHint": {
                     "description": "If true, calling the tool repeatedly with the same arguments\nwill have no additional effect on the its environment.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: false",
