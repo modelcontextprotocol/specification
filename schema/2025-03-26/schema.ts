@@ -803,13 +803,94 @@ export interface Tool {
     required?: string[];
   };
 
-  /**
-   * A JSON Schema object defining the expected output for the tool's JSON content response.
-   */
-  outputSchema?: {
-    type: "object";
-    properties?: { [key: string]: object };
-    required?: string[];
+  output?: {
+    /**
+     * If true, omitted content types in `Tool.output.content` will not appear in the response.
+     * 
+     * Default: false
+     */
+    strict?: boolean;
+    content?: {
+      text?: {
+        /**
+         * If true, the tool will return a single item.
+         * 
+         * Default: false
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+      };
+
+      image?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * The MIME types of the image.
+         */
+        mimeTypes?: string[];
+      };
+
+      audio?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * The MIME types of the audio.
+         */
+        mimeTypes?: string[];
+      };
+     
+      resource?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * The MIME types of the resource.
+         */
+        mimeTypes?: string[];
+      };
+
+      data?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * A JSON Schema object defining the expected output for the tool's JSON content response.
+         */
+        schema?: string | object;
+        /**
+         * If true, `DataContent.data` must always be valid against the whole schema.
+         * Otherwise `DataContent.schema` may reference `$defs` in the root schema or provide its own schema.
+         * 
+         * Default: false
+         */
+        strict?: boolean;
+      };
+    };
   };
 
   /**
@@ -1031,7 +1112,7 @@ export interface DataContent {
   /**
    * The schema reference or definition of the JSON content.
    */
-  schema: string | object;
+  schema?: string | object;
 
   /**
    * Optional annotations for the client.
