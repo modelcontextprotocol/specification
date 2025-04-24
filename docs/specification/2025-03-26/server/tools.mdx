@@ -218,7 +218,7 @@ A tool definition includes:
 Each content type configuration can include:
 - `count`: Whether the content type returns 'single' or 'multiple' items
 - `description`: Human-readable description of the returned content
-- For image/audio/resource: `mimeTypes`: Array of supported MIME types
+- For image/audio/resource: `mimeType`: String or array of strings specifying supported MIME type(s)
 - For data: `schema` and `strict` options for JSON schema validation
 
 <Warning>For trust & safety and security, clients **MUST** consider
@@ -246,6 +246,21 @@ tool annotations to be untrusted unless they come from trusted servers.</Warning
       "text": {
         "count": "single",
         "description": "Human-readable weather description"
+      },
+      "image": {
+        "count": "single",
+        "description": "Weather radar image",
+        "mimeType": ["image/png", "image/jpeg"]
+      },
+      "audio": {
+        "count": "single",
+        "description": "Weather forecast audio",
+        "mimeType": "audio/mp3"
+      },
+      "resource": {
+        "count": "multiple",
+        "description": "Related weather resources",
+        "mimeType": "application/pdf"
       },
       "data": {
         "count": "single",
