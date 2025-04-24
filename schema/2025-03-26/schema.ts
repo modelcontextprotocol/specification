@@ -1111,8 +1111,11 @@ export interface DataContent {
 
   /**
    * The schema reference or definition of the JSON content.
+   * - `string` is a reference path in the tool's `output.content.data.schema`
+   * - `object` is a JSON Schema object, helpful for dynamic schemas or usage in sampling/prompts
+   * - `false` is an escape hatch for tools with a data output schema
    */
-  schema?: string | object;
+  schema?: string | object | false;
 
   /**
    * Optional annotations for the client.

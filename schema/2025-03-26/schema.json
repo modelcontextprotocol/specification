@@ -491,10 +491,14 @@
                             "type": "object"
                         },
                         {
+                            "const": false,
+                            "type": "boolean"
+                        },
+                        {
                             "type": "string"
                         }
                     ],
-                    "description": "The schema reference or definition of the JSON content."
+                    "description": "The schema reference or definition of the JSON content.\n- `string` is a reference path in the tool's `output.content.data.schema`\n- `object` is a JSON Schema object, helpful for dynamic schemas or usage in sampling/prompts\n- `false` is an escape hatch for tools with a data output schema"
                 },
                 "type": {
                     "const": "data",
