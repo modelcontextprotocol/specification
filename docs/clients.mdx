@@ -21,11 +21,16 @@ This page provides an overview of applications that support the Model Context Pr
 | [Daydreams Agents][Daydreams]               | ✅          | ✅        | ✅      | ❌         | ❌    | Support for drop in Servers to Daydreams agents                             |
 | [Emacs Mcp][Mcp.el]                         | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in Emacs.                                                    |
 | [fast-agent][fast-agent]                    | ✅          | ✅        | ✅      | ✅         | ✅    | Full multimodal MCP support, with end-to-end tests                          |
+| [FLUJO][FLUJO]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Support for resources, Prompts and Roots are coming soon                    |
 | [Genkit][Genkit]                            | ⚠️          | ✅        | ✅      | ❌         | ❌    | Supports resource list and lookup through tools.                            |
 | [GenAIScript][GenAIScript]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [gptme][gptme]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [Klavis AI Slack/Discord/Web][Klavis AI]    | ✅          | ❌        | ✅      | ❌         | ❌    | Supports tools and resources.                                               |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
+| [MCPHub][MCPHub]                            | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, and prompts in Neovim
+| [MCPOmni-Connect][MCPOmni-Connect]          | ✅          | ✅        | ✅      | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.     |
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
 | [OpenSumi][OpenSumi]                        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in OpenSumi                                                  |
 | [oterm][oterm]                              | ❌          | ✅        | ✅      | ✅         | ❌    | Supports tools, prompts and sampling for Ollama.                                                 |
@@ -34,6 +39,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [SpinAI][SpinAI]                            | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Typescript AI Agents                                     |
 | [Superinterface][Superinterface]            | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
 | [TheiaAI/TheiaIDE][TheiaAI/TheiaIDE]        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents in Theia AI and the AI-powered Theia IDE          |
+| [TypingMind App][TypingMind App]            | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools at app-level (appear as plugins) or when assigned to Agents  |
 | [VS Code GitHub Copilot][VS Code]           | ❌          | ❌        | ✅      | ❌         | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
 | [Windsurf Editor][Windsurf]                 | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools with AI Flow for collaborative development.                  |
 | [Witsy][Witsy]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in Witsy.                                                    |
@@ -49,13 +55,17 @@ This page provides an overview of applications that support the Model Context Pr
 [CopilotMCP]: https://github.com/VikashLoomba/copilot-mcp
 [Cursor]: https://cursor.com
 [Daydreams]: https://github.com/daydreamsai/daydreams
+[Klavis AI]: https://www.klavis.ai/
 [Mcp.el]: https://github.com/lizqwerscott/mcp.el
 [fast-agent]: https://github.com/evalstate/fast-agent
+[FLUJO]: https://github.com/mario-andreschak/flujo
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
+[MCPHub]: https://github.com/ravitemer/mcphub.nvim
+[MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
 [OpenSumi]: https://github.com/opensumi/core
 [oterm]: https://github.com/ggozad/oterm
@@ -64,8 +74,10 @@ This page provides an overview of applications that support the Model Context Pr
 [SpinAI]: https://spinai.dev
 [Superinterface]: https://superinterface.ai
 [TheiaAI/TheiaIDE]: https://eclipsesource.com/blogs/2024/12/19/theia-ide-and-theia-ai-support-mcp/
+[TypingMind App]: https://www.typingmind.com
 [VS Code]: https://code.visualstudio.com/
 [Windsurf]: https://codeium.com/windsurf
+[gptme]: https://github.com/gptme/gptme
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
@@ -177,6 +189,16 @@ The Claude desktop application provides comprehensive support for MCP, enabling 
 - Built in support for "Building Effective Agents" workflows.
 - Deploy Agents as MCP Servers
 
+### FLUJO
+Think n8n + ChatGPT. FLUJO is an desktop application that integrates with MCP to provide a workflow-builder interface for AI interactions. Built with Next.js and React, it supports both online and offline (ollama) models, it manages API Keys and environment variables centrally and can install MCP Servers from GitHub. FLUJO has an ChatCompletions endpoint and flows can be executed from other AI applications like Cline, Roo or Claude.
+
+**Key features:**
+- Environment & API Key Management
+- Model Management
+- MCP Server Integration
+- Workflow Orchestration
+- Chat Interface
+
 ### Genkit
 [Genkit](https://github.com/firebase/genkit) is a cross-language SDK for building and integrating GenAI features into applications. The [genkitx-mcp](https://github.com/firebase/genkit/tree/main/js/plugins/mcp) plugin enables consuming MCP servers as a client or creating MCP servers from Genkit tools and prompts.
 
@@ -203,6 +225,28 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Goose allows you to extend its functionality by [building your own MCP servers](https://block.github.io/goose/docs/tutorials/custom-extensions).
 - Includes built-in tools for development, web scraping, automation, memory, and integrations with JetBrains and Google Drive.
 
+### gptme
+[gptme](https://github.com/gptme/gptme) is a open-source terminal-based personal AI assistant/agent, designed to assist with programming tasks and general knowledge work.
+
+**Key features:**
+- CLI-first design with a focus on simplicity and ease of use
+- Rich set of built-in tools for shell commands, Python execution, file operations, and web browsing
+- Local-first approach with support for multiple LLM providers
+- Open-source, built to be extensible and easy to modify
+
+### Klavis AI Slack/Discord/Web
+[Klavis AI](https://www.klavis.ai/) is an Open-Source Infra to Use, Build & Scale MCPs with ease.
+
+**Key features:**
+- Slack/Discord/Web MCP clients for using MCPs directly
+- Simple web UI dashboard for easy MCP configuration
+- Direct OAuth integration with Slack & Discord Clients and MCP Servers for secure user authentication
+- SSE transport support
+- Open-source infrastructure ([GitHub repository](https://github.com/Klavis-AI/klavis))
+
+**Learn more:**
+- [Demo video showing MCP usage in Slack/Discord](https://youtu.be/9-QQAhrQWw8)
+
 ### LibreChat
 [LibreChat](https://github.com/danny-avila/LibreChat) is an open-source, customizable AI chat UI that supports multiple AI providers, now including MCP integration.
 
@@ -220,6 +264,26 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Expose tools from multiple servers to an LLM.
 - Implements every pattern defined in [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents).
 - Supports workflow pause/resume signals, such as waiting for human feedback.
+
+### MCPHub
+[MCPHub] is a powerful Neovim plugin that integrates MCP (Model Context Protocol) servers into your workflow. 
+
+**Key features**
+- Install, configure and manage MCP servers with an intuitive UI.
+- Built-in Neovim MCP server with support for file operations (read, write, search, replace), command execution, terminal integration, LSP integration, buffers, and diagnostics.
+- Create Lua-based MCP servers directly in Neovim.
+- Inegrates with popular Neovim chat plugins Avante.nvim and CodeCompanion.nvim 
+
+### MCPOmni-Connect
+[MCPOmni-Connect](https://github.com/Abiorh001/mcp_omni_connect) is a versatile command-line interface (CLI) client designed to connect to various Model Context Protocol (MCP) servers using both stdio and SSE transport.
+
+**Key features:**
+- Support for resources, prompts, tools, and sampling
+- Agentic mode with ReAct and orchestrator capabilities
+- Seamless integration with OpenAI models and other LLMs
+- Dynamic tool and resource management across multiple servers
+- Support for both stdio and SSE transport protocols
+- Comprehensive tool orchestration and resource analysis capabilities
 
 ### Microsoft Copilot Studio
 [Microsoft Copilot Studio]  is a robust SaaS platform designed for building custom AI-driven applications and intelligent agents, empowering developers to create, deploy, and manage sophisticated AI solutions.
@@ -290,6 +354,18 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 **Learn more:**
 - [Theia IDE and Theia AI MCP Announcement](https://eclipsesource.com/blogs/2024/12/19/theia-ide-and-theia-ai-support-mcp/)
 - [Download the AI-powered Theia IDE](https://theia-ide.org/)
+
+### TypingMind App
+[TypingMind](https://www.typingmind.com) is an advanced frontend for LLMs with MCP support. TypingMind supports all popular LLM providers like OpenAI, Gemini, Claude, and users can use with their own API keys.
+
+**Key features:**
+- **MCP Tool Integration**: Once MCP is configured, MCP tools will show up as plugins that can be enabled/disabled easily via the main app interface.
+- **Assign MCP Tools to Agents**: TypingMind allows users to create AI agents that have a set of MCP servers assigned.
+- **Remote MCP servers**: Allows users to customize where to run the MCP servers via its MCP Connector configuration, allowing the use of MCP tools across multiple devices (laptop, mobile devices, etc.) or control MCP servers from a remote private server.
+
+**Learn more:**
+- [TypingMind MCP Document](https://www.typingmind.com/mcp)
+- [Download TypingMind (PWA)](https://www.typingmind.com/)
 
 ### VS Code GitHub Copilot
 [VS Code](https://code.visualstudio.com/) integrates MCP with GitHub Copilot through [agent mode](https://code.visualstudio.com/docs/copilot/chat/chat-agent-mode), allowing direct interaction with MCP-provided tools within your agentic coding workflow. Configure servers in Claude Desktop, workspace or user settings, with guided MCP installation and secure handling of keys in input variables to avoid leaking hard-coded keys.
