@@ -347,3 +347,40 @@ client.executePrompt("echo", Map.of(
   </Tab>
 </Tabs>
 
+### Using Completion
+
+As part of the [Completion capabilities](/specification/2025-03-26/server/utilities/completion), MCP provides a provides a standardized way for servers to offer argument autocompletion suggestions for prompts and resource URIs.
+
+Check the [Server Completion capabilities](/sdk/java/mcp-server#completion-specification) to learn how to enable and configure completions on the server side.
+
+On the client side, the MCP client provides methods to request auto-completions:
+
+<Tabs>
+  <Tab title="Sync API">
+
+```java
+
+CompleteRequest request = new CompleteRequest(
+        new PromptReference("code_review"),
+        new CompleteRequest.CompleteArgument("language", "py"));
+
+CompleteResult result = syncMcpClient.completeCompletion(request);
+
+```
+  </Tab>
+
+  <Tab title="Async API">
+
+```java
+
+CompleteRequest request = new CompleteRequest(
+        new PromptReference("code_review"),
+        new CompleteRequest.CompleteArgument("language", "py"));
+
+Mono<CompleteResult> result = mcpClient.completeCompletion(request);
+
+```
+
+  </Tab>
+</Tabs>
+
