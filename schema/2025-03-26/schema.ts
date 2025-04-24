@@ -283,12 +283,6 @@ export interface ServerCapabilities {
     listChanged?: boolean;
   };
 
-  contentTypes?: {
-    /**
-     * Optional list  of MIME types that the Server may produce in a CallToolResult.
-     */
-    generates?: string[];
-  };
 }
 
 /**
@@ -796,6 +790,12 @@ export interface ToolAnnotations {
    * Default: true
    */
   openWorldHint?: boolean;
+
+
+  /**
+   * Optional list of MIME types that this Tool may produce in a CallToolResult.
+   */
+  generatesHint?: string[];
 }
 
 /**
