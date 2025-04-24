@@ -27,6 +27,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Klavis AI Slack/Discord/Web][Klavis AI]    | ✅          | ❌        | ✅      | ❌         | ❌    | Supports tools and resources.                                               |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
+| [LLM as a Service][LLMAsAService]           | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for browser-based Agents using SSE, Streaming HTTP transport |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
 | [MCPHub][MCPHub]                            | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, and prompts in Neovim
 | [MCPOmni-Connect][MCPOmni-Connect]          | ✅          | ✅        | ✅      | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.     |
@@ -62,6 +63,7 @@ This page provides an overview of applications that support the Model Context Pr
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
 [LibreChat]: https://github.com/danny-avila/LibreChat
+[LLMAsAService]: https://llmasaservice.io
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [MCPHub]: https://github.com/ravitemer/mcphub.nvim
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
@@ -244,6 +246,17 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Add tools to customizable [Agents](https://www.librechat.ai/docs/features/agents), using a variety of LLMs from top providers
 - Open-source and self-hostable, with secure multi-user support
 - Future roadmap includes expanded MCP feature support
+
+### LLM as a Service
+LLM as a Service allows customers to create, deploy, and manage LLM features and chat agents in applications and websites through a unified control panel. MCP servers (using SSE/Streaming HTTP transport) can be attached to agents, extending their capabilities on the fly—no code changes or redeployments required.
+
+**Key features:**
+- Seamlessly add MCP server capabilities to chat agents
+- Real-time SSE/Streaming HTTP transport for dynamic tool invocation
+- Instantly add/change MCP agent functionality without redeployment 
+
+Learn more:
+[Demo video](https://youtu.be/ucEHsxuPNFo) and [Website](https://llmasaservice.io)
 
 ### mcp-agent
 [mcp-agent] is a simple, composable framework to build agents using Model Context Protocol.
