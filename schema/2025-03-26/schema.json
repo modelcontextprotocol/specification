@@ -2111,12 +2111,19 @@
                                             "description": "A description of the data the tool will return.",
                                             "type": "string"
                                         },
-                                        "mimeTypes": {
-                                            "description": "The MIME types of the audio.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": "array"
+                                        "mimeType": {
+                                            "anyOf": [
+                                                {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ],
+                                            "description": "The MIME type(s) of the audio."
                                         }
                                     },
                                     "type": "object"
@@ -2169,12 +2176,19 @@
                                             "description": "A description of the data the tool will return.",
                                             "type": "string"
                                         },
-                                        "mimeTypes": {
-                                            "description": "The MIME types of the image.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": "array"
+                                        "mimeType": {
+                                            "anyOf": [
+                                                {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ],
+                                            "description": "The MIME type(s) of the image."
                                         }
                                     },
                                     "type": "object"
@@ -2193,12 +2207,19 @@
                                             "description": "A description of the data the tool will return.",
                                             "type": "string"
                                         },
-                                        "mimeTypes": {
-                                            "description": "The MIME types of the resource.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": "array"
+                                        "mimeType": {
+                                            "anyOf": [
+                                                {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ],
+                                            "description": "The MIME type(s) of the resource."
                                         }
                                     },
                                     "type": "object"

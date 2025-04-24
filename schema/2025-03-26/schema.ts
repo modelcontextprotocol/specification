@@ -834,9 +834,9 @@ export interface Tool {
          */
         description?: string;
         /**
-         * The MIME types of the image.
+         * The MIME type(s) of the image.
          */
-        mimeTypes?: string[];
+        mimeType?: string | string[];
       };
 
       audio?: {
@@ -849,9 +849,9 @@ export interface Tool {
          */
         description?: string;
         /**
-         * The MIME types of the audio.
+         * The MIME type(s) of the audio.
          */
-        mimeTypes?: string[];
+        mimeType?: string | string[];
       };
      
       resource?: {
@@ -864,9 +864,9 @@ export interface Tool {
          */
         description?: string;
         /**
-         * The MIME types of the resource.
+         * The MIME type(s) of the resource.
          */
-        mimeTypes?: string[];
+        mimeType?: string | string[];
       };
 
       data?: {
