@@ -584,12 +584,20 @@
             "type": "object"
         },
         "Implementation": {
-            "description": "Describes the name and version of an MCP implementation.",
+            "description": "Describes the MCP implementation.",
             "properties": {
+                "iconUrl": {
+                    "description": "The optional URL, pointing to an icon for this implementation. The URL should be accessible over the public internet, and should return a square (1:1 aspect ratio) PNG, with recommended dimensions of 512x512.",
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "version": {
+                    "type": "string"
+                },
+                "websiteUrl": {
+                    "description": "An optional URL of the website for this implementation.",
                     "type": "string"
                 }
             },

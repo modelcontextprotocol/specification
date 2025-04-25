@@ -272,11 +272,19 @@ export interface ServerCapabilities {
 }
 
 /**
- * Describes the name and version of an MCP implementation.
+ * Describes the MCP implementation.
  */
 export interface Implementation {
   name: string;
   version: string;
+  /**
+   * An optional URL of the website for this implementation.
+   */
+  websiteUrl?: string;
+  /**
+   * The optional URL, pointing to an icon for this implementation. The URL should be accessible over the public internet, and should return a square (1:1 aspect ratio) PNG, with recommended dimensions of 512x512.
+   */
+  iconUrl?: string;
 }
 
 /* Ping */
