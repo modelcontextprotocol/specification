@@ -279,6 +279,8 @@ export interface Implementation {
   version: string;
   /**
    * An optional URL of the website for this implementation.
+   *
+   * @format: uri
    */
   websiteUrl?: string;
   /**
