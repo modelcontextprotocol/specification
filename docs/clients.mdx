@@ -25,8 +25,10 @@ This page provides an overview of applications that support the Model Context Pr
 | [Genkit][Genkit]                            | ⚠️          | ✅        | ✅      | ❌         | ❌    | Supports resource list and lookup through tools.                            |
 | [GenAIScript][GenAIScript]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Goose][Goose]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [gptme][gptme]                              | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Klavis AI Slack/Discord/Web][Klavis AI]    | ✅          | ❌        | ✅      | ❌         | ❌    | Supports tools and resources.                                               |
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
+| [Lutra][Lutra]                              | ✅          | ✅        | ✅      | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                     |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
 | [MCPHub][MCPHub]                            | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, and prompts in Neovim
 | [MCPOmni-Connect][MCPOmni-Connect]          | ✅          | ✅        | ✅      | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.     |
@@ -62,6 +64,7 @@ This page provides an overview of applications that support the Model Context Pr
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
 [LibreChat]: https://github.com/danny-avila/LibreChat
+[Lutra]: https://lutra.ai
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [MCPHub]: https://github.com/ravitemer/mcphub.nvim
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
@@ -76,6 +79,7 @@ This page provides an overview of applications that support the Model Context Pr
 [TypingMind App]: https://www.typingmind.com
 [VS Code]: https://code.visualstudio.com/
 [Windsurf]: https://codeium.com/windsurf
+[gptme]: https://github.com/gptme/gptme
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
@@ -223,6 +227,15 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Goose allows you to extend its functionality by [building your own MCP servers](https://block.github.io/goose/docs/tutorials/custom-extensions).
 - Includes built-in tools for development, web scraping, automation, memory, and integrations with JetBrains and Google Drive.
 
+### gptme
+[gptme](https://github.com/gptme/gptme) is a open-source terminal-based personal AI assistant/agent, designed to assist with programming tasks and general knowledge work.
+
+**Key features:**
+- CLI-first design with a focus on simplicity and ease of use
+- Rich set of built-in tools for shell commands, Python execution, file operations, and web browsing
+- Local-first approach with support for multiple LLM providers
+- Open-source, built to be extensible and easy to modify
+
 ### Klavis AI Slack/Discord/Web
 [Klavis AI](https://www.klavis.ai/) is an Open-Source Infra to Use, Build & Scale MCPs with ease.
 
@@ -244,6 +257,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Add tools to customizable [Agents](https://www.librechat.ai/docs/features/agents), using a variety of LLMs from top providers
 - Open-source and self-hostable, with secure multi-user support
 - Future roadmap includes expanded MCP feature support
+
+### Lutra
+[Lutra](https://lutra.ai) is an AI agent that transforms conversations into actionable, automated workflows.
+
+**Key features:**
+- Easy MCP Integration: Connecting Lutra to MCP servers is as simple as providing the server URL; Lutra handles the rest behind the scenes.
+- Chat to Take Action: Lutra understands your conversational context and goals, automatically integrating with your existing apps to perform tasks.
+- Reusable Playbooks: After completing a task, save the steps as reusable, automated workflows—simplifying repeatable processes and reducing manual effort.
+- Shareable Automations: Easily share your saved playbooks with teammates to standardize best practices and accelerate collaborative workflows.
+
+**Learn more:**
+- [Lutra AI agent explained](https://www.youtube.com/watch?v=W5ZpN0cMY70)
 
 ### mcp-agent
 [mcp-agent] is a simple, composable framework to build agents using Model Context Protocol.
