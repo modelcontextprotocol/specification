@@ -269,6 +269,15 @@ export interface ServerCapabilities {
      */
     listChanged?: boolean;
   };
+  /**
+   * Present if the server namespacing
+   */
+  namespaces?: {
+    /**
+     * Whether this server supports listing namespaces.
+     */
+    list?: boolean;
+  };
 }
 
 /**
@@ -809,6 +818,42 @@ export interface Tool {
   annotations?: ToolAnnotations;
 }
 
+
+/* Namespaces */
+/**
+ * A known resource that the server is capable of reading.
+ */
+export interface Namespace {
+  /**
+   * The structured and formatted name for this namespace.
+   *
+   * Must begin with an @, and can be any combination of a-z, A-Z, 0-9, _, -, and .
+   */
+  name: string;
+
+  /**
+   * A description of what tools, prompts, and resources are available in this namespace.
+   *
+   * This can be used by clients to improve the LLM's understanding of available namespaces and how they might be used. The client may display this information or allow selecting of namespaces to work within.
+   */
+  description?: string;
+}
+
+/**
+ * Sent from the client to request a list of tools the server has.
+ */
+export interface ListNamespacesRequest extends PaginatedRequest {
+  method: "namespaces/list";
+}
+
+/**
+ * The server's response to a tools/list request from the client.
+ */
+export interface ListNamespacesResult extends PaginatedResult {
+  namespaces: Namespace[];
+}
+
+
 /* Logging */
 /**
  * A request from the client to the server, to enable or adjust logging.
@@ -1222,7 +1267,8 @@ export type ClientRequest =
   | SubscribeRequest
   | UnsubscribeRequest
   | CallToolRequest
-  | ListToolsRequest;
+  | ListToolsRequest
+  | ListNamespacesRequest;
 
 export type ClientNotification =
   | CancelledNotification
@@ -1257,4 +1303,5 @@ export type ServerResult =
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
-  | ListToolsResult;
+  | ListToolsResult
+  | ListNamespacesResult;

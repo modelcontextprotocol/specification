@@ -36,7 +36,9 @@ As part of being in a namespace, a tool name, resource name, or prompt name **MU
 ## Namespace Prefixing
 
 ### Listing
-1. As an optional capability (for backwards compatibility), the server **MAY** expose a namespace list feature.
+
+As an optional capability (for backwards compatibility), the server **MAY** expose a namespace list feature.
+
 ```json
 {
   "capabilities": {
@@ -46,6 +48,36 @@ As part of being in a namespace, a tool name, resource name, or prompt name **MU
   }
 }
 ```
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "namespaces/list"
+}
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "resourceTemplates": [
+      {
+        "name": "@weather",
+        "description": "Collection of tools, resources, and prompts to help with weather based queries. Includes tools to retrieve current weather by location, weather forecasts by location, and more."
+      }
+    ]
+  }
+}
+```
+
+
+2. List commands can be invoked by prepending a namespace prefix to the method name `@weather/namespaces/list`, which
 
 ### Filtering
 1. List commands can be invoked by prepending a namespace prefix to the method name `@weather/tools/list`, which will
