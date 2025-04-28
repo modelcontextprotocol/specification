@@ -47,8 +47,9 @@ Requests are sent from the client to the server or vice versa, to initiate an op
 - The request ID **MUST NOT** have been previously used by the requestor within the same
   session.
 - Params **MAY** include a `_meta` key with value type `[key: string]: unknown;`. This
-  allows propagation of metadata from client to server. For example, OpenTelemetry SDKs
-  [default](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_propagators) to propagate W3C `traceparent`, `tracestate` and `baggage` fields.
+  allows propagation of metadata from client to server, such as [`progressToken`](./utilities/progress.mdx).
+  OpenTelemetry SDKs [default](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_propagators) to propagate W3C `traceparent`,`tracestate` and `baggage`
+  fields inside `_meta` as well.
 
 ### Responses
 
