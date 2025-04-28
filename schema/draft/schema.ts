@@ -692,6 +692,23 @@ export interface ListToolsResult extends PaginatedResult {
   tools: Tool[];
 }
 
+/* Tools */
+/**
+ * Sent from the client to request a list of tools the server has.
+ */
+export interface NamespacedListToolsRequest extends PaginatedRequest {
+  method: "@{namespace}/tools/list";
+}
+
+/**
+ * The server's response to a tools/list request from the client.
+ */
+export interface NamespacedListToolsResult extends PaginatedResult {
+  'namespace': {
+    tools: Tool[]
+  }
+}
+
 /**
  * The server's response to a tool call.
  *
@@ -1268,6 +1285,7 @@ export type ClientRequest =
   | UnsubscribeRequest
   | CallToolRequest
   | ListToolsRequest
+  | NamespacedListToolsRequest
   | ListNamespacesRequest;
 
 export type ClientNotification =
@@ -1304,4 +1322,5 @@ export type ServerResult =
   | ReadResourceResult
   | CallToolResult
   | ListToolsResult
+  | NamespacedListToolsResult
   | ListNamespacesResult;

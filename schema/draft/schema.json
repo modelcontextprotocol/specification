@@ -247,6 +247,9 @@
                     "$ref": "#/definitions/ListToolsRequest"
                 },
                 {
+                    "$ref": "#/definitions/NamespacedListToolsRequest"
+                },
+                {
                     "$ref": "#/definitions/CallToolRequest"
                 },
                 {
@@ -1270,6 +1273,60 @@
             ],
             "type": "object"
         },
+        "NamespacedListToolsRequest": {
+            "description": "Sent from the client to request a list of tools the server has.",
+            "properties": {
+                "method": {
+                    "const": "@{namespace}/tools/list",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "NamespacedListToolsResult": {
+            "description": "The server's response to a tools/list request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "namespace": {
+                    "properties": {
+                        "tools": {
+                            "items": {
+                                "$ref": "#/definitions/Tool"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "tools"
+                    ],
+                    "type": "object"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "namespace"
+            ],
+            "type": "object"
+        },
         "Notification": {
             "properties": {
                 "method": {
@@ -1978,6 +2035,9 @@
                 },
                 {
                     "$ref": "#/definitions/ListToolsResult"
+                },
+                {
+                    "$ref": "#/definitions/NamespacedListToolsResult"
                 },
                 {
                     "$ref": "#/definitions/CallToolResult"
