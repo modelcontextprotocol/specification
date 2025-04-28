@@ -41,6 +41,7 @@ McpSyncServer syncServer = McpServer.sync(transportProvider)
         .tools(true)         // Enable tool support
         .prompts(true)       // Enable prompt support
         .logging()           // Enable logging support
+        .completions()      // Enable completions support
         .build())
     .build();
 
@@ -335,7 +336,7 @@ Example resource specification:
   <Tab title="Sync">
 ```java
 // Sync resource specification
-var syncResourceSpecification = new McpServerFeatures.syncResourceSpecification(
+var syncResourceSpecification = new McpServerFeatures.SyncResourceSpecification(
     new Resource("custom://resource", "name", "description", "mime-type", null),
     (exchange, request) -> {
         // Resource read implementation
@@ -348,7 +349,7 @@ var syncResourceSpecification = new McpServerFeatures.syncResourceSpecification(
   <Tab title="Async">
 ```java
 // Async resource specification
-var asyncResourceSpecification = new McpServerFeatures.asyncResourceSpecification(
+var asyncResourceSpecification = new McpServerFeatures.AsyncResourceSpecification(
     new Resource("custom://resource", "name", "description", "mime-type", null),
     (exchange, request) -> {
         // Resource read implementation
@@ -374,7 +375,7 @@ The Prompt Specification is a structured template for AI model interactions that
   <Tab title="Sync">
 ```java
 // Sync prompt specification
-var syncPromptSpecification = new McpServerFeatures.syncPromptSpecification(
+var syncPromptSpecification = new McpServerFeatures.SyncPromptSpecification(
     new Prompt("greeting", "description", List.of(
         new PromptArgument("name", "description", true)
     )),
@@ -389,7 +390,7 @@ var syncPromptSpecification = new McpServerFeatures.syncPromptSpecification(
   <Tab title="Async">
 ```java
 // Async prompt specification
-var asyncPromptSpecification = new McpServerFeatures.asyncPromptSpecification(
+var asyncPromptSpecification = new McpServerFeatures.AsyncPromptSpecification(
     new Prompt("greeting", "description", List.of(
         new PromptArgument("name", "description", true)
     )),
@@ -405,6 +406,82 @@ var asyncPromptSpecification = new McpServerFeatures.asyncPromptSpecification(
 The prompt definition includes name (identifier for the prompt), description (purpose of the prompt), and list of arguments (parameters for templating).
 The handler function processes requests and returns formatted templates. 
 The first argument is `McpAsyncServerExchange` for client interaction, and the second argument is a `GetPromptRequest` instance.
+
+### Completion Specification
+
+As part of the [Completion capabilities](/specification/2025-03-26/server/utilities/completion), MCP provides a provides a standardized way for servers to offer argument autocompletion suggestions for prompts and resource URIs.
+
+<Tabs>
+  <Tab title="Sync">
+```java
+// Sync completion specification
+var syncCompletionSpecification = new McpServerFeatures.SyncCompletionSpecification(
+			new McpSchema.PromptReference("code_review"), (exchange, request) -> {
+        
+        // completion implementation ...
+        
+        return new McpSchema.CompleteResult(
+            new CompleteResult.CompleteCompletion(
+              List.of("python", "pytorch", "pyside"), 
+              10, // total
+              false // hasMore
+            ));
+      }
+);
+
+// Create a sync server with completion capabilities
+var mcpServer = McpServer.sync(mcpServerTransportProvider)
+  .capabilities(ServerCapabilities.builder()
+    .completions() // enable completions support
+      // ...
+    .build())
+  // ...
+  .completions(new McpServerFeatures.SyncCompletionSpecification( // register completion specification
+      new McpSchema.PromptReference("code_review"), syncCompletionSpecification))
+  .build();
+
+```
+  </Tab>
+
+  <Tab title="Async">
+```java
+// Async prompt specification
+var asyncCompletionSpecification = new McpServerFeatures.AsyncCompletionSpecification(
+			new McpSchema.PromptReference("code_review"), (exchange, request) -> {
+
+        // completion implementation ...
+
+        return Mono.just(new McpSchema.CompleteResult(
+            new CompleteResult.CompleteCompletion(
+              List.of("python", "pytorch", "pyside"), 
+              10, // total
+              false // hasMore
+            )));
+      }
+);
+
+// Create a async server with completion capabilities
+var mcpServer = McpServer.async(mcpServerTransportProvider)
+  .capabilities(ServerCapabilities.builder()
+    .completions() // enable completions support
+      // ...
+    .build())
+  // ...
+  .completions(new McpServerFeatures.AsyncCompletionSpecification( // register completion specification
+      new McpSchema.PromptReference("code_review"), asyncCompletionSpecification))
+  .build();
+
+```
+  </Tab>
+</Tabs>
+
+The `McpSchema.CompletionReference` definition defines the type (`PromptRefernce` or `ResourceRefernce`) and the identifier for the completion specification (e.g handler).
+The handler function processes requests and returns the complition response. 
+The first argument is `McpAsyncServerExchange` for client interaction, and the second argument is a `CompleteRequest` instance.
+
+
+Check the [using completion](/sdk/java/mcp-client#using-completion) to learn how to use the completion capabilities on the client side.
+
 
 ### Using Sampling from a Server
 
