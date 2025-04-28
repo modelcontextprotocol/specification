@@ -1274,7 +1274,7 @@
             "type": "object"
         },
         "NamespacedListToolsRequest": {
-            "description": "Sent from the client to request a list of tools the server has.",
+            "description": "Sent from the client to request a scoped list of tools the server has for a specific namespace.",
             "properties": {
                 "method": {
                     "const": "@{namespace}/tools/list",
@@ -1296,7 +1296,7 @@
             "type": "object"
         },
         "NamespacedListToolsResult": {
-            "description": "The server's response to a tools/list request from the client.",
+            "description": "The server's response to a",
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
