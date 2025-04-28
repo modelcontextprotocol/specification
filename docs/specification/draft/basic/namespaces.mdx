@@ -26,8 +26,8 @@ for feature level advanced filtering, the server **MAY** expose a namespace capa
 ```
 
 ## Namespace Format
-A namespace must be a string of the form `@<namespace>` where `<namespace>` is a sequence of
-alphanumeric characters (A-Z, a-z, 0-9), underscores, and / or hyphens.
+A namespace must be a string of the form `@<namespace>` where `<namespace>` is any of alphanumeric characters
+(A-Z, a-z, 0-9), underscores, dots (.), and hyphens. For instance, @com.github would be an acceptable namespace.
 
 ### Tool, Resource, and Prompt Names
 As part of being in a namespace, a tool name, resource name, or prompt name **MUST** begin with the namespace
