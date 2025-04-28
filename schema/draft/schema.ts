@@ -21,7 +21,7 @@ export type JSONRPCBatchRequest = (JSONRPCRequest | JSONRPCNotification)[];
  */
 export type JSONRPCBatchResponse = (JSONRPCResponse | JSONRPCError)[];
 
-export const LATEST_PROTOCOL_VERSION = "2025-03-26";
+export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v2";
 export const JSONRPC_VERSION = "2.0";
 
 /**
