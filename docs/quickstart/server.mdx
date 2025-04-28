@@ -238,9 +238,11 @@ if __name__ == "__main__":
     mcp.run(transport='stdio')
 ```
 
-Your server is complete! Run `uv run weather.py` to confirm that everything's working.
+Your server is complete! Run `uv run weather.py` to verify that the script can be executed without immediate errors.
+If there is no error, the server will start and listen for instructions via standard input/output (stdio).
+It will appear idle in the terminal because it's waiting for a client connection. Press Ctrl+C to stop it.
 
-Let's now test your server from an existing MCP host, Claude for Desktop.
+We're now ready to test your server from an existing MCP host, Claude for Desktop.
 
 ## Testing your server with Claude for Desktop
 
