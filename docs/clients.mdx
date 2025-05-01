@@ -13,6 +13,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [AgenticFlow][AgenticFlow]                  | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, prompts, and resources for no-code AI agents and multi-agent workflows.             |
 | [Amazon Q CLI][Amazon Q CLI]                | ❌          | ✅        | ✅      | ❌         | ❌    | Supports prompts and tools.                                                 |
 | [Apify MCP Tester][Apify MCP Tester]        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
+| [Asari.com][Asari.com]                      | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, prompts, and resources in chat-first interface              |
 | [BeeAI Framework][BeeAI Framework]          | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in agentic workflows.                                        |
 | [BoltAI][BoltAI]                            | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
 | [Claude Code][Claude Code]                  | ❌          | ✅        | ✅      | ❌         | ❌    | Supports prompts and tools                                                  |
@@ -59,6 +60,7 @@ This page provides an overview of applications that support the Model Context Pr
 [AgenticFlow]: https://agenticflow.ai/mcp
 [Amazon Q CLI]: https://github.com/aws/amazon-q-developer-cli
 [Apify MCP Tester]: https://apify.com/jiri.spilka/tester-mcp-client
+[Asari.com]: https://app.asari.com/signup
 [BeeAI Framework]: https://i-am-bee.github.io/beeai-framework
 [BoltAI]: https://boltai.com
 [Claude Code]: https://claude.ai/code
@@ -153,6 +155,14 @@ It uses plain JavaScript (old-school style) and is hosted on Apify, allowing you
 - Connects to any MCP server via SSE.
 - Works with the [Apify MCP Server](https://apify.com/apify/actors-mcp-server) to interact with one or more Apify [Actors](https://apify.com/store).
 - Dynamically utilizes tools based on context and user queries (if supported by the server).
+
+### Asari.com
+[Asari](https://app.asari.com/signup) is a web-based MCP client which uses Claude on the backend. It’s designed to be accessible to a broad user base - no setup, no installation, and no technical background needed. Users can install, configure, and use MCPs for one-time and triggered workflows purely via chat.
+
+**Key features:**
+- Asari manages the server connections so users don’t need to configure or install npm packages, or even touch any JSON
+- Chat-first interface
+- Reusable templates
 
 ### BeeAI Framework
 [BeeAI Framework](https://i-am-bee.github.io/beeai-framework) is an open-source framework for building, deploying, and serving powerful agentic workflows at scale. The framework includes the **MCP Tool**, a native feature that simplifies the integration of MCP servers into agentic workflows.
