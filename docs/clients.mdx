@@ -10,6 +10,7 @@ This page provides an overview of applications that support the Model Context Pr
 | Client                                      | [Resources] | [Prompts] | [Tools] | [Sampling] | Roots | Notes                                                                        |
 |---------------------------------------------|-------------|-----------|---------|------------|--------|-----------------------------------------------------------------------------|
 | [5ire][5ire]                                | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [AgentAI][AgentAI]                          | ❌          | ❌        | ✅      | ❌         | ❌    | Agent Library written in Rust with tools support                            |
 | [AgenticFlow][AgenticFlow]                  | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, prompts, and resources for no-code AI agents and multi-agent workflows.             |
 | [Amazon Q CLI][Amazon Q CLI]                | ❌          | ✅        | ✅      | ❌         | ❌    | Supports prompts and tools.                                                 |
 | [Apify MCP Tester][Apify MCP Tester]        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
@@ -36,6 +37,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
 | [Lutra][Lutra]                              | ✅          | ✅        | ✅      | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                     |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
+| [mcp-use][mcp-use]                          | ✅          | ❌        | ✅      | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.       | 
 | [MCPHub][MCPHub]                            | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, and prompts in Neovim                            |
 | [MCPOmni-Connect][MCPOmni-Connect]          | ✅          | ✅        | ✅      | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.     |
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
@@ -57,6 +59,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Zed][Zed]                                  | ❌          | ✅        | ❌      | ❌         | ❌    | Prompts appear as slash commands                                            |
 
 [5ire]: https://github.com/nanbingxyz/5ire
+[AgentAI]: https://github.com/AdamStrojek/rust-agentai
 [AgenticFlow]: https://agenticflow.ai/mcp
 [Amazon Q CLI]: https://github.com/aws/amazon-q-developer-cli
 [Apify MCP Tester]: https://apify.com/jiri.spilka/tester-mcp-client
@@ -81,6 +84,7 @@ This page provides an overview of applications that support the Model Context Pr
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [Lutra]: https://lutra.ai
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
+[mcp-use]: https://github.com/pietrozullo/mcp-use
 [MCPHub]: https://github.com/ravitemer/mcphub.nvim
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
@@ -117,6 +121,17 @@ This page provides an overview of applications that support the Model Context Pr
 - Users can add more servers by modifying the configuration file.
 - It is open-source and user-friendly, suitable for beginners.
 - Future support for MCP will be continuously improved.
+
+### AgentAI
+
+[AgentAI](https://github.com/AdamStrojek/rust-agentai) is a Rust library designed to simplify the creation of AI agents. The library includes seamless integration with MCP Servers.
+
+[Example of MCP Server integration](https://github.com/AdamStrojek/rust-agentai/blob/master/examples/tools_mcp.rs)
+
+**Key features:**
+- Multi-LLM – We support most LLM APIs (OpenAI, Anthropic, Gemini, Ollama, and all OpenAI API Compatible).
+- Built-in support for MCP Servers.
+- Create agentic flows in a type- and memory-safe language like Rust.
 
 ### AgenticFlow
 [AgenticFlow](https://agenticflow.ai/) is a no-code AI platform that helps you build agents that handle sales, marketing, and creative tasks around the clock. Connect 2,500+ APIs and 10,000+ tools securely via MCP.
@@ -370,6 +385,16 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Expose tools from multiple servers to an LLM.
 - Implements every pattern defined in [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents).
 - Supports workflow pause/resume signals, such as waiting for human feedback.
+
+### mcp-use
+[mcp-use] is an open source python library to very easily connect any LLM to any MCP server both locally and remotely.
+
+**Key features:**
+- Very simple interface to connect any LLM to any MCP.
+- Support the creation of custom agents, workflows.
+- Supports connection to multiple MCP servers simultaneously.
+- Supports all langchain supported models, also locally.
+- Offers efficient tool orchestration and search functionalities.
 
 ### MCPHub
 [MCPHub] is a powerful Neovim plugin that integrates MCP (Model Context Protocol) servers into your workflow. 
