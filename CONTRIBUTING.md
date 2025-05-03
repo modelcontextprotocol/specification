@@ -19,8 +19,8 @@ The following software is required to work on the spec:
 2. Clone your fork:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/specification.git
-cd specification
+git clone https://github.com/YOUR-USERNAME/modelcontextprotocol.git
+cd modelcontextprotocol
 ```
 
 3. Install dependencies:
