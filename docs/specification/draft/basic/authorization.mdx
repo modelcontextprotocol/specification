@@ -99,7 +99,6 @@ as described in OAuth 2.0 Protected Resource Metadata ([RFC9728](https://datatra
 
 MCP clients **MUST** be able to parse `WWW-Authenticate` headers and respond appropriately to `HTTP 401 Unauthorized` responses from the MCP server.
 
-
 #### 2.3.2 Server Metadata Discovery
 
 MCP clients **MUST** follow the OAuth 2.0 Authorization Server Metadata protocol defined
@@ -247,17 +246,8 @@ own resources.
 
 MCP servers **MUST NOT** accept or transit any other tokens.
 
-### 2.8 Security Considerations
 
-The following security requirements **MUST** be implemented:
-
-1. Clients **MUST** securely store tokens following OAuth 2.0 best practices
-2. Servers **SHOULD** enforce token expiration and rotation
-3. All authorization endpoints **MUST** be served over HTTPS
-4. Servers **MUST** validate redirect URIs to prevent open redirect vulnerabilities
-5. Redirect URIs **MUST** be either localhost URLs or HTTPS URLs
-
-### 2.9 Error Handling
+### 2.8 Error Handling
 
 Servers **MUST** return appropriate HTTP status codes for authorization errors:
 
@@ -267,35 +257,50 @@ Servers **MUST** return appropriate HTTP status codes for authorization errors:
 | 403         | Forbidden    | Invalid scopes or insufficient permissions |
 | 400         | Bad Request  | Malformed authorization request            |
 
-### 2.10 Implementation Requirements
+## 3. Security Considerations
 
-1. Implementations **MUST** follow OAuth 2.1 security best practices
-1. PKCE is **REQUIRED** for all MCP clients and authorization servers
-1. MCP servers that also act as an AS:
-    1. **SHOULD** implement token rotation for enhanced security
-    1. **SHOULD** restrict token lifetimes based on security requirements
+Implementations **MUST** follow OAuth 2.1 security best practices as laid out in [Section 7. Security Considerations](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#name-security-considerations).
 
-## 3. Best Practices
+### 3.1 Token Theft
+Attackers who obtain tokens stored by the client, or tokens cached or logged on the server can access protected resources with
+requests that appear legitimate to resource servers.
 
-#### 3.1 Local clients as Public OAuth 2.1 Clients
+Clients **MUST** implement secure token storage and follow OAuth best practices,
+as outlined in [OAuth 2.1, section 7.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-7.1).
 
-We strongly recommend that local clients implement OAuth 2.1 as a public client:
+MCP authorization servers SHOULD issue short-lived access tokens token to reduce the impact of leaked tokens. For public clients, MCP authorization servers MUST rotate refresh tokens as described in [Section 4.3.1 of OAuth 2.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-4.3.1).
 
-1. Utilizing code challenges (PKCE) for authorization requests to prevent interception
-   attacks
-2. Implementing secure token storage appropriate for the local system
-3. Following token refresh best practices to maintain sessions
-4. Properly handling token expiration and renewal
+### 3.2 Communication Security
+Implementations MUST follow [OAuth 2.1 section 1.5](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-1.5).
 
-#### 3.2 Authorization Metadata Discovery
+Specifically:
+1. All authorization server endpoints **MUST** be served over HTTPS.
+1. All redirect URIs **MUST** be either `localhost` or use HTTPS.
 
-We strongly recommend that all clients implement metadata discovery. This reduces the
-need for users to provide endpoints manually or clients to fallback to the defined
-defaults.
+### 3.3 Authorization Code Protection
 
-#### 3.3 Dynamic Client Registration
+An attacker who has gained access to an authorization code contained in an authorization response can try to redeem the authorization code for an access token or otherwise make use of the authorization code. (Further described in [OAuth 2.1, section 7.5](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-7.5))
 
-Since clients do not know the set of MCP servers in advance, we strongly recommend the
-implementation of dynamic client registration. This allows applications to automatically
-register with the MCP server, and removes the need for users to obtain client ids
-manually.
+MCP clients **MUST** implement PKCE according to [OAuth 2.1 section 7.5.2](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-7.5.2). PKCE helps prevent authorization code interception and injection attacks by requiring clients to create a secret verifier-challenge pair, ensuring that only the original requestor can exchange an authorization code for tokens.
+
+
+### 3.3 Open Redirection
+An attacker may craft malicious redirect URIs to direct users to phishing sites.
+
+MCP clients **MUST** have redirect URIs registered with the authorization server.
+
+Authorization servers **MUST** validate exact redirect URIs against pre-registered values to prevent redirection attacks.
+
+MCP clients **SHOULD** use and verify state parameters in the authorization code flow
+and discard any results that do not include or have a mis-match with the original state.
+
+Authorization servers **MUST** take precautions to prevent redirecting user agents to untrusted URI's, following suggestions laid out in [OAuth 2.1, Section 7.12.2](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-7.12.2)
+
+Authorization servers **SHOULD** only automatically redirect the user agent if it trusts the redirection URI. If the URI is not trusted, the authorization server MAY inform the user and rely on the user to make the correct decision.
+
+### 3.4 Confused Deputy Problem
+
+Attackers can exploit MCP servers acting as intermediaries to third-party APIs, leading to confused deputy vulnerabilities. By using stolen authorization codes, they can obtain access tokens without user consent. See [Security Best Practices 2.1](/specification/draft/basic/security_best_practices) for details.
+
+MCP proxy servers using static client IDs **MUST** obtain user consent for each dynamically
+registered client before forwarding to third-party authorization servers (which may require additional consent).

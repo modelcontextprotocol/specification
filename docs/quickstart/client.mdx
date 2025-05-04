@@ -39,6 +39,9 @@ source .venv/bin/activate
 uv add mcp anthropic python-dotenv
 
 # Remove boilerplate files
+# On Windows:
+del main.py
+# On Unix or MacOS:
 rm main.py
 
 # Create our main file
