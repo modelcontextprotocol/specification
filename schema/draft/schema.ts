@@ -220,6 +220,10 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client supports user interaction.
+   */
+  userInteraction?: object;
 }
 
 /**
@@ -1208,6 +1212,65 @@ export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
 }
 
+/* User Interaction */
+/**
+ * A request from the server to the client, to create a user interaction.
+ */
+export interface CreateUserInteractionRequest extends Request {
+  method: "interaction/create";
+  params: {
+    /**
+     * The ID of the interaction.
+     */
+    id: string;
+    /**
+     * The type of interaction.
+     */
+    type: string;
+    /**
+     * The interaction object. The schema of the interaction object is dependent on the type of
+     * interaction.
+     */
+    interaction: object;
+    /**
+     * Whether progress is available for the interaction.
+     */
+    progressAvailable?: boolean;
+  };
+}
+
+
+/**
+ * The client's response to a user interaction/create request from the server.
+ */
+export interface CreateUserInteractionResult extends Result {
+  /**
+   * The user's response to a prompt interaction. The schema of the content is dependent on the
+   * requested schema within the prompt interaction.
+   */
+  content?: { [key: string]: unknown };
+}
+
+/**
+ * A request from the client to the server, requesting progress notifications for a user
+ * interaction.
+ */
+export interface NotifyUserInteractionProgressRequest extends Notification {
+  method: "interaction/notify";
+  params: {
+    id: string;
+    _meta: {
+      progressToken: ProgressToken;
+    };
+  };
+}
+
+/**
+ * A result from the server to the client, containing the progress of a user interaction.
+ */
+export interface UserInteractionProgressResult extends Result {
+}
+
 /* Client messages */
 export type ClientRequest =
   | PingRequest
@@ -1222,7 +1285,8 @@ export type ClientRequest =
   | SubscribeRequest
   | UnsubscribeRequest
   | CallToolRequest
-  | ListToolsRequest;
+  | ListToolsRequest
+  | NotifyUserInteractionProgressRequest;
 
 export type ClientNotification =
   | CancelledNotification
@@ -1230,13 +1294,14 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult;
+export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | CreateUserInteractionResult;
 
 /* Server messages */
 export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
-  | ListRootsRequest;
+  | ListRootsRequest
+  | CreateUserInteractionRequest;
 
 export type ServerNotification =
   | CancelledNotification
@@ -1257,4 +1322,5 @@ export type ServerResult =
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
-  | ListToolsResult;
+  | ListToolsResult
+  | UserInteractionProgressResult;

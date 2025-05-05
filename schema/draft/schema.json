@@ -194,6 +194,12 @@
                     "description": "Present if the client supports sampling from an LLM.",
                     "properties": {},
                     "type": "object"
+                },
+                "userInteraction": {
+                    "additionalProperties": true,
+                    "description": "Present if the client supports user interaction.",
+                    "properties": {},
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -254,6 +260,9 @@
                 },
                 {
                     "$ref": "#/definitions/CompleteRequest"
+                },
+                {
+                    "$ref": "#/definitions/NotifyUserInteractionProgressRequest"
                 }
             ]
         },
@@ -267,6 +276,9 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsResult"
+                },
+                {
+                    "$ref": "#/definitions/CreateUserInteractionResult"
                 }
             ]
         },
@@ -461,6 +473,64 @@
                 "model",
                 "role"
             ],
+            "type": "object"
+        },
+        "CreateUserInteractionRequest": {
+            "description": "A request from the server to the client, to create a user interaction.",
+            "properties": {
+                "method": {
+                    "const": "interaction/create",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "id": {
+                            "description": "The ID of the interaction.",
+                            "type": "string"
+                        },
+                        "interaction": {
+                            "additionalProperties": true,
+                            "description": "The interaction object. The schema of the interaction object is dependent on the type of\ninteraction.",
+                            "properties": {},
+                            "type": "object"
+                        },
+                        "progressAvailable": {
+                            "description": "Whether progress is available for the interaction.",
+                            "type": "boolean"
+                        },
+                        "type": {
+                            "description": "The type of interaction.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "interaction",
+                        "type"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "CreateUserInteractionResult": {
+            "description": "The client's response to a user interaction/create request from the server.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "content": {
+                    "additionalProperties": {},
+                    "description": "The user's response to a prompt interaction. The schema of the content is dependent on the\nrequested schema within the prompt interaction.",
+                    "type": "object"
+                }
+            },
             "type": "object"
         },
         "Cursor": {
@@ -1226,6 +1296,43 @@
             ],
             "type": "object"
         },
+        "NotifyUserInteractionProgressRequest": {
+            "description": "A request from the client to the server, requesting progress notifications for a user\ninteraction.",
+            "properties": {
+                "method": {
+                    "const": "interaction/notify",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "_meta": {
+                            "properties": {
+                                "progressToken": {
+                                    "$ref": "#/definitions/ProgressToken"
+                                }
+                            },
+                            "required": [
+                                "progressToken"
+                            ],
+                            "type": "object"
+                        },
+                        "id": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "_meta",
+                        "id"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
         "PaginatedRequest": {
             "properties": {
                 "method": {
@@ -1874,6 +1981,9 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsRequest"
+                },
+                {
+                    "$ref": "#/definitions/CreateUserInteractionRequest"
                 }
             ]
         },
@@ -1908,6 +2018,9 @@
                 },
                 {
                     "$ref": "#/definitions/CompleteResult"
+                },
+                {
+                    "$ref": "#/definitions/UserInteractionProgressResult"
                 }
             ]
         },
@@ -2132,6 +2245,17 @@
                 "method",
                 "params"
             ],
+            "type": "object"
+        },
+        "UserInteractionProgressResult": {
+            "description": "A result from the server to the client, containing the progress of a user interaction.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                }
+            },
             "type": "object"
         }
     }
