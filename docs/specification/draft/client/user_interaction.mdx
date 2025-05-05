@@ -10,11 +10,11 @@ interactions and data sharing while dynamically gathering necessary information.
 
 The details of the interaction itself are fully under the control of the MCP server, and the MCP
 client is only responsible for facilitating the interaction (typically by presenting a URL or
-instructions to the end-user). By modeling interactions in this way, the client's responsibilities
-remain minimal and the server has the flexibility to implement a wide range of interactions
-involving the end-user. For example:
+instructions to the end-user, or by rendering a form for non-sensitive information). With this model,
+the client's responsibilities remain minimal and the server has the flexibility to implement a wide
+range of interactions involving the end-user. For example:
 
-- A productivity MCP server might request a user to authorize access to a third-party service to
+- A productivity MCP server might request a user to authorize a third-party service to
   access their documents.
 - A news MCP server might request a user to upgrade their subscription to access more features.
 - A banking MCP server might request a user to verify their account to access a new feature.
@@ -25,8 +25,31 @@ involving the end-user. For example:
 ## Terminology
 
 - **User agent**: Most familiarly a Web browser, the user agent is a client that is capable of
-  initiating a request. Broadly, it is used as defined in
+  interacting with the end-user. Broadly, it is used as defined in
   [RFC 9110 Section 3.5](https://datatracker.ietf.org/doc/html/rfc9110#section-3.5).
+
+## Capabilities
+
+Clients that support user interaction **MUST** declare the `userInteraction` capability during
+[initialization](/specification/draft/basic/lifecycle#initialization):
+
+```json
+{
+  "capabilities": {
+    "userInteraction": {
+      "types": ["ua", "prompt", "oob"],
+      "progress": true
+    }
+  }
+}
+```
+
+Clients supporting the `userInteraction` capability **MUST** support at least one interaction type
+and list all supported types in the `types` array.
+
+The MCP server **MUST NOT** send an interaction request to the client of a type that is not
+supported by the client.
+
 
 ## User Interaction Flow
 
@@ -36,8 +59,8 @@ specific to the interaction type.
 
 This specification defines the following types of user interactions:
 
-- **`ua`**: A User Agent interaction is a user interaction that involves making a request via a
-  User Agent.
+- **`ua`**: A user agent interaction is a user interaction that involves making a request via a
+  User Agent (e.g. a Web browser).
 - **`prompt`**: A prompt interaction is a user interaction that involves the MCP client prompting
   the user for information.
 - **`oob`**: An out-of-band interaction is a user interaction that occurs outside of the MCP
@@ -45,6 +68,7 @@ This specification defines the following types of user interactions:
 
 There may be other interaction types that a client and server **MAY** negotiate beyond those
 outlined above.
+
 
 When the client presents a user interaction to the user, it **SHOULD** provide UI that:
 
@@ -54,10 +78,9 @@ When the client presents a user interaction to the user, it **SHOULD** provide U
 ### User agent interactions
 
 A user agent interaction is a user interaction that involves the MCP client facilitating opening
-a URL in a User Agent. This provides a way for the MCP server to obtain data from the user by
-redirecting them to a URL that they can interact with and submit data back to the MCP server
-without involving the MCP client. The MCP server can, as a result, control the entire interaction
-from start to finish including the user experience.
+a URL in a User Agent (e.g. a Web browser). This provides a way for the MCP server to obtain data without involving the MCP client.
+ The MCP server can, as a result, control the entire interaction
+from start to finish, including the user experience, and guarantee the security of sensitive data (e.g. API keys or authorization grants).
 
 ```mermaid
 sequenceDiagram
@@ -83,6 +106,23 @@ sequenceDiagram
 ```
 
 The MCP client **MUST** facilitate the opening of the URL in a User Agent.
+
+This requires the client to support the `ua` user interaction type.
+
+```json
+{
+  "capabilities": {
+    "userInteraction": {
+      "types": ["ua"]
+    }
+  }
+}
+```
+
+
+
+
+
 
 ### Prompt interactions
 
@@ -111,6 +151,18 @@ sequenceDiagram
     Note over S: Continue operations with new information
 ```
 
+This requires the client to support the `prompt` user interaction type.
+
+```json
+{
+  "capabilities": {
+    "userInteraction": {
+      "types": ["prompt"]
+    }
+  }
+}
+```
+
 Implementations are free to expose user interactions through any interface pattern that suits
 their needs&mdash;the protocol itself does not mandate any specific user interaction model.
 
@@ -126,6 +178,8 @@ MCP clients **SHOULD**:
 - Respect user privacy and provide clear cancel options
 
 </Warning>
+
+
 
 ### Out-of-band interactions
 
@@ -154,65 +208,6 @@ sequenceDiagram
     Note over S: Continue operations
 ```
 
-## Capabilities
-
-Clients that support user interaction **MUST** declare the `userInteraction` capability during
-[initialization](/specification/draft/basic/lifecycle#initialization):
-
-```json
-{
-  "capabilities": {
-    "userInteraction": {
-      "types": ["ua", "prompt", "oob"],
-      "progress": true
-    }
-  }
-}
-```
-
-Clients supporting the `userInteraction` capability **MUST** support at least one interaction type
-and list all supported types in the `types` array.
-
-### User agent interactions
-
-Sometimes the MCP server may need to obtain data from the user directly, without involving the MCP
-client, via a User Agent (commonly a Web browser). This requires the client to support the `ua`
-interaction type.
-
-```json
-{
-  "capabilities": {
-    "userInteraction": {
-      "types": ["ua"]
-    }
-  }
-}
-```
-
-The MCP server **MUST NOT** create an interaction with a `ua` type if the client does not support
-the `ua` type as negotiated during initialization.
-
-### Prompt interactions
-
-Sometimes the MCP server may need to obtain data from the user via the MCP client. This requires
-the client to support the `prompt` interaction type.
-
-```json
-{
-  "capabilities": {
-    "userInteraction": {
-      "types": ["prompt"]
-    }
-  }
-}
-```
-
-The MCP server **MUST NOT** create an interaction with a `prompt` type if the client does not
-support the `prompt` type as negotiated during initialization.
-
-### Out-of-band interactions
-
-Sometimes the MCP server may need to obtain data from the user out-of-band with the MCP operations.
 This requires the client to support the `oob` interaction type.
 
 ```json
@@ -225,12 +220,11 @@ This requires the client to support the `oob` interaction type.
 }
 ```
 
-The MCP server **MUST NOT** create an interaction with a `oob` type if the client does not support
-the `oob` type as negotiated during initialization.
 
-### Progress tracking
 
-The MCP client **MAY** optionally support progress tracking for interactions. This can be used to
+## Progress Tracking
+
+The MCP client **MAY** support progress tracking for interactions. This can be used to
 provide feedback to the user about the progress of the interaction in the MCP client UI. This is
 particularly useful for interactions where the user will be interacting out-of-band with the MCP
 client, such as `ua` or `oob` interactions, and the MCP client desires some way to update its UI.
@@ -238,7 +232,7 @@ client, such as `ua` or `oob` interactions, and the MCP client desires some way 
 This leverages the [Progress capability](/specification/draft/basic/utilities/progress) in the base
 protocol. It requires the MCP server to support the `progress` capability during initialization.
 
-Note that the MCP server may choose to not send progress notifications for an interaction, even if
+Note that the MCP server may choose to not send progress notifications for a given interaction, even if
 the client supports progress tracking and the server supports the progress capability generally.
 Therefore, the client **SHOULD NOT** assume that progress notifications will be sent for an
 interaction, and should be prepared to handle the case where no progress notifications are sent.
@@ -291,7 +285,7 @@ The following is an example of a `interaction/create` message for a `ua` interac
 For `ua` interactions, the `interaction` object has the following properties:
 
 - `url`: The URL that the user should interact with.
-- `message`: An optional `TextContent` used to provide context to the user about the interaction.
+- `message`: An optional `TextContent` used to provide an explanation to the user about the interaction.
 
 ```json
 {
