@@ -66,7 +66,9 @@ The request includes the following fields as part of the `params` object:
   interactions.
 - `type`: The type of interaction, which **MUST** be one of the types negotiated during
   initialization.
-- `interaction`: The interaction object, the schema of which depends on the type of interaction. Each schema is defined in the [User Interaction Flow](#interaction-flow) section below.
+- `interaction`: The interaction object, the schema of which depends on the type of
+  interaction. Each schema is defined in the [User Interaction Flow](#interaction-flow)
+  section below.
 
 The following is an example of a `interaction/create` message for a `ua` interaction:
 
@@ -344,8 +346,6 @@ When the user provides their response, the client **MUST** send a response to th
 }
 ```
 
-
-
 ## Progress Tracking
 
 The MCP client **MAY** support progress tracking for interactions. This can be used to
@@ -421,8 +421,6 @@ for example:
   "result": {}
 }
 ```
-
-
 
 ## Cancelling an Interaction
 
