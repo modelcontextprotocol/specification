@@ -5,7 +5,7 @@ title: User Interaction
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) provides a standardized way for servers to interact directly with
-users without involving the client or the LLM. This allows servers to maintain control over user
+end-users without data passing through the client or the LLM. This allows servers to maintain control over user
 interactions and data sharing while dynamically gathering necessary information.
 
 The details of the interaction itself are fully under the control of the MCP server, and the MCP
@@ -24,6 +24,7 @@ range of interactions involving the end-user. For example:
 
 ## Terminology
 
+- **End-user**: The human who is interacting with the MCP client (and, by extension, the MCP server).
 - **User agent**: Most familiarly a Web browser, the user agent is a client that is capable of
   interacting with the end-user. Broadly, it is used as defined in
   [RFC 9110 Section 3.5](https://datatracker.ietf.org/doc/html/rfc9110#section-3.5).
@@ -37,54 +38,145 @@ Clients that support user interaction **MUST** declare the `userInteraction` cap
 {
   "capabilities": {
     "userInteraction": {
-      "types": ["ua", "prompt", "oob"],
+      "types": ["ua", "prompt"],
       "progress": true
     }
   }
 }
 ```
 
-Clients supporting the `userInteraction` capability **MUST** support at least one interaction type
-and list all supported types in the `types` array.
+Clients supporting the `userInteraction` capability **MUST** list all supported interaction types
+in the `types` array, and **MUST** support at least one interaction type.
 
 The MCP server **MUST NOT** send an interaction request to the client of a type that is not
 supported by the client.
 
 
-## User Interaction Flow
+## Protocol Messages
 
-When a user interaction is requested and supported by the client, the MCP client **MUST** present
-the user with a user interaction flow. The type of flow is defined by the MCP server and is
-specific to the interaction type.
+### Server-Initiated Interaction Requests
+
+When the MCP client indicates support for user interactions, the MCP server **MAY** request a user
+interaction from the client at any time. To request a user interaction, the server sends an
+`interaction/create` message to the client.
+
+The request includes the following fields as part of the `params` object:
+
+- `id`: The ID of the interaction that **MUST** be unique across the server's concurrent
+  interactions.
+- `type`: The type of interaction, which **MUST** be one of the types negotiated during
+  initialization.
+- `interaction`: The interaction object, the schema of which depends on the type of interaction. Each schema is defined in the [User Interaction Flow](#interaction-flow) section below.
+
+The following is an example of a `interaction/create` message for a `ua` interaction:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "interaction/create",
+  "params": {
+    "id": "c8ec9a71-c475-4a88-a774-e9cd154bc7f8",
+    "type": "ua",
+    "interaction": {
+      "url": "https://oauth.example.com/authorize?client_id=abc123&...",
+      "message": {
+        "type": "text",
+        "text": "Authorization is required to access your Example Co files."
+      }
+    }
+  }
+}
+```
+
+
+### Requiring Interaction as an Error Response
+
+The MCP server **MAY** require a user interaction as an error response to a client request.
+This is useful when interaction is required as a pre-condition for a request (e.g. step-up authorization).
+
+The MCP server **MUST** send an
+[error response](/specification/draft/basic/lifecycle#error-handling) with the `code` equal to
+`-32003` and the `message` equal to `interaction_required`.
+
+The error response **MUST** include an `data` object consistent with one of the defined
+[interaction schemas](#interaction-flow).
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "abc-123",
+  "error": {
+    "code": -32003,
+    "message": "interaction_required",
+    "data": {
+      "id": "c8ec9a71-c475-4a88-a774-e9cd154bc7f8",
+      "type": "ua",
+      "url": "https://oauth.example.com/authorize?client_id=abc123&...",
+      "message": {
+        "type": "text",
+        "text": "Authorization is required to access your Example Co files."
+      }
+    }
+  }
+}
+```
+
+
+## Interaction Flow
+
+When a user interaction is requested by the server and supported by the client, the MCP client **MUST** present
+the user with an interaction flow. The type of flow is defined by the MCP server, and the client's behavior
+is specific to the interaction type.
 
 This specification defines the following types of user interactions:
 
 - **`ua`**: A user agent interaction is a user interaction that involves making a request via a
   User Agent (e.g. a Web browser).
 - **`prompt`**: A prompt interaction is a user interaction that involves the MCP client prompting
-  the user for information.
-- **`oob`**: An out-of-band interaction is a user interaction that occurs outside of the MCP
-  operations.
+  the user for structured information (e.g. rendering a form).
 
-There may be other interaction types that a client and server **MAY** negotiate beyond those
-outlined above.
+The  client and server **MAY** negotiate additional interaction types.
 
+<Warning>
 
-When the client presents a user interaction to the user, it **SHOULD** provide UI that:
+For trust and safety, there **SHOULD** always
+be a human in the loop with the ability to deny interaction requests.
 
-- Makes it clear which server is requesting information.
-- Provides a way for the user to cancel the interaction.
+MCP clients **SHOULD**:
+
+- Provide UI that makes it clear which server is requesting information
+- Allow users to review and modify their responses before sending
+- Respect user privacy and provide clear cancel options
+
+</Warning>
 
 ### User agent interactions
 
-A user agent interaction is a user interaction that involves the MCP client facilitating opening
-a URL in a User Agent (e.g. a Web browser). This provides a way for the MCP server to obtain data without involving the MCP client.
+A user agent interaction is a user interaction that involves the MCP client facilitating navigating to
+a URL in a User Agent (e.g. a Web browser). This allows the MCP server to obtain data without involving the MCP client.
  The MCP server can, as a result, control the entire interaction
 from start to finish, including the user experience, and guarantee the security of sensitive data (e.g. API keys or authorization grants).
 
+This flow requires the client to support the `ua` user interaction type.
+
+```json
+{
+  "capabilities": {
+    "userInteraction": {
+      "types": ["ua"]
+    }
+  }
+}
+```
+
+The MCP client **MUST** facilitate the opening of the URL in a User Agent.
+
+#### Flow Diagram
+
 ```mermaid
 sequenceDiagram
-    participant U as User
+    participant U as End-User
     participant B as User Agent (Browser)
     participant C as Client
     participant S as Server
@@ -105,187 +197,12 @@ sequenceDiagram
     Note over S: Continue operations
 ```
 
-The MCP client **MUST** facilitate the opening of the URL in a User Agent.
-
-This requires the client to support the `ua` user interaction type.
-
-```json
-{
-  "capabilities": {
-    "userInteraction": {
-      "types": ["ua"]
-    }
-  }
-}
-```
-
-
-
-
-
-
-### Prompt interactions
-
-A prompt interaction is a user interaction that involves the MCP client prompting the user for
-information within the MCP client UI. This provides a way for the MCP server to obtain data from
-the user without needing to host a URL or create any UI for the user to interact with. The MCP
-server can, as a result, receive information from the user with little effort, at the expense of
-data privacy.
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant C as Client
-    participant S as Server
-
-    Note over S,C: Server initiates prompt interaction
-    S->>C: interaction/create type=prompt
-
-    C->>U: Present user interaction UI
-    Note over C,U: Human interaction
-    U-->>C: Provide requested information
-
-    Note over S,C: Complete request
-    C->>S: Return user response
-
-    Note over S: Continue operations with new information
-```
-
-This requires the client to support the `prompt` user interaction type.
-
-```json
-{
-  "capabilities": {
-    "userInteraction": {
-      "types": ["prompt"]
-    }
-  }
-}
-```
-
-Implementations are free to expose user interactions through any interface pattern that suits
-their needs&mdash;the protocol itself does not mandate any specific user interaction model.
-
-<Warning>
-
-For trust & safety and security, there **SHOULD** always
-be a human in the loop with the ability to deny interaction requests.
-
-MCP clients **SHOULD**:
-
-- Provide UI that makes it clear which server is requesting information
-- Allow users to review and modify their responses before sending
-- Respect user privacy and provide clear cancel options
-
-</Warning>
-
-
-
-### Out-of-band interactions
-
-An out-of-band interaction is a user interaction that occurs outside of the MCP operations. This
-provides a way for the MCP server to obtain data from the user by initiating a separate
-communication channel with the user, such as email or SMS. The MCP server can, as a result, receive
-information from the user asynchronously and without involving the MCP client, while informing the
-user that they should check that communication channel for further instructions.
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant C as Client
-    participant S as Server
-
-    Note over S,C: Server initiates prompt interaction
-    S->>C: interaction/create type=oob
-
-    C->>U: Present message to user
-    U-->>S: Perform interaction out-of-band
-
-
-    Note over S: Completed interaction
-    S-->>C: Send response
-
-    Note over S: Continue operations
-```
-
-This requires the client to support the `oob` interaction type.
-
-```json
-{
-  "capabilities": {
-    "userInteraction": {
-      "types": ["oob"]
-    }
-  }
-}
-```
-
-
-
-## Progress Tracking
-
-The MCP client **MAY** support progress tracking for interactions. This can be used to
-provide feedback to the user about the progress of the interaction in the MCP client UI. This is
-particularly useful for interactions where the user will be interacting out-of-band with the MCP
-client, such as `ua` or `oob` interactions, and the MCP client desires some way to update its UI.
-
-This leverages the [Progress capability](/specification/draft/basic/utilities/progress) in the base
-protocol. It requires the MCP server to support the `progress` capability during initialization.
-
-Note that the MCP server may choose to not send progress notifications for a given interaction, even if
-the client supports progress tracking and the server supports the progress capability generally.
-Therefore, the client **SHOULD NOT** assume that progress notifications will be sent for an
-interaction, and should be prepared to handle the case where no progress notifications are sent.
-
-## Protocol Messages
-
-### Server-initiated interaction requests
-
-When the MCP client indicates support for user interactions, the MCP server can request a user
-interaction from the client. To request a user interaction, the server sends an
-`interaction/create` message to the client.
-
-The request includes the following fields as part of the `params` object:
-
-- `id`: The ID of the interaction that **MUST** be unique across the server's concurrent
-  interactions.
-- `type`: The type of interaction, which **MUST** be one of the types negotiated during
-  initialization.
-- `interaction`: The interaction object, the schema of which depends on the type of interaction.
-- `progressAvailable`: An optional boolean indicating whether progress can be tracked for this
-  interaction. This acts as a hint to the client about whether to expect a response to the
-  `interaction/notify` request, described in the [Tracking progress](#tracking-progress) section.
-
-The following is an example of a `interaction/create` message for a `ua` interaction:
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "interaction/create",
-  "params": {
-    "id": "c8ec9a71-c475-4a88-a774-e9cd154bc7f8",
-    "type": "ua",
-    "interaction": {
-      "url": "https://oauth.example.com/authorize?client_id=abc123&...",
-      "message": {
-        "type": "text",
-        "text": "Authorization is required to access your Example Co files."
-      }
-    },
-    "progressAvailable": true
-  }
-}
-```
-
-#### User agent interaction schema
-
-**Server Request:**
+#### Server Request
 
 For `ua` interactions, the `interaction` object has the following properties:
 
 - `url`: The URL that the user should interact with.
-- `message`: An optional `TextContent` used to provide an explanation to the user about the interaction.
+- `message`: An optional `TextContent` object used to provide an explanation to the user about the interaction.
 
 ```json
 {
@@ -306,9 +223,9 @@ For `ua` interactions, the `interaction` object has the following properties:
 }
 ```
 
-**Client Response:**
+#### Client Response
 
-When the client opens the URL, it **MUST** send a response to the server:
+When the client facilitates the opening of the URL, it **MUST** send a response to the server:
 
 ```json
 {
@@ -318,9 +235,53 @@ When the client opens the URL, it **MUST** send a response to the server:
 }
 ```
 
-#### Prompt interaction schema
 
-**Server Request:**
+
+### Prompt interactions
+
+A prompt interaction is a user interaction that involves the MCP client prompting the user for
+information within the MCP client UI. This provides a way for the MCP server to obtain data from
+the user without needing to host a URL or create any UI for the user to interact with. The MCP
+server can, as a result, receive non-sensitive information from the user with little effort.
+
+This flow requires the client to support the `prompt` user interaction type.
+
+```json
+{
+  "capabilities": {
+    "userInteraction": {
+      "types": ["prompt"]
+    }
+  }
+}
+```
+
+The MCP client **MUST** present the user with a prompt UI consistent with the `schema` object.
+
+#### Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant C as Client
+    participant S as Server
+
+    Note over S,C: Server initiates prompt interaction
+    S->>C: interaction/create type=prompt
+
+    C->>U: Present user interaction UI
+    Note over C,U: Human interaction
+    U-->>C: Provide requested information
+
+    Note over S,C: Complete request
+    C->>S: Return user response
+
+    Note over S: Continue operations with new information
+```
+
+
+
+#### Server Request
 
 For `prompt` interactions, the `interaction` object has the following properties:
 
@@ -365,7 +326,7 @@ For `prompt` interactions, the `interaction` object has the following properties
 }
 ```
 
-**Client Response:**
+#### Client Response
 
 When the user provides their response, the client **MUST** send a response to the server:
 
@@ -383,89 +344,30 @@ When the user provides their response, the client **MUST** send a response to th
 }
 ```
 
-##### Out-of-band interactions
 
-**Server Request:**
 
-For `oob` interactions, the `interaction` object has the following properties:
+## Progress Tracking
 
-- `message`: A `TextContent` used to provide context to the user about the interaction.
+The MCP client **MAY** support progress tracking for interactions. This can be used to
+provide feedback to the user about the progress of the interaction in the MCP client's UI. This is
+particularly useful for interactions where the user will be interacting out-of-band with the MCP
+client, such as `ua` interactions, and the MCP client desires some way to update its UI.
 
-```json
-{
-  "interaction": {
-    "message": {
-      "type": "text",
-      "text": "Please check your email for a verification link."
-    }
-  }
-}
-```
-
-**Client Response:**
-
-When the client displays the message to the user, it **MUST** send a response to the server:
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {}
-}
-```
-
-### Requiring interaction as an error response
-
-Sometimes the MCP server may need to require a user interaction as an error response to a client
-request. This can be useful when the MCP server or the transport does not support Server-Side
-events. It can also be used to require a user interaction as a pre-condition for a request.
-
-The MCP server **MUST** send an
-[error response](/specification/draft/basic/lifecycle#error-handling) with the `code` set to
-`-32003` and the `message` set to `interaction_required`.
-
-The error response **MUST** include an `data` object consistent with an the
-[`interaction` schema](#Server-initiated-interaction-requests), defined above.
-
-In addition, when the transport is **Streamable HTTP**, the error response **MAY** include an
-optional `Retry-After` header. This header **MUST** conform to the
-[HTTP `Retry-After` header field semantics](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After).
-It allows the server to provide a hint to the client about how long to wait before retrying the
-request.
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": "abc-123",
-  "error": {
-    "code": -32003,
-    "message": "User interaction required",
-    "data": {
-      "id": "c8ec9a71-c475-4a88-a774-e9cd154bc7f8",
-      "type": "ua",
-      "url": "https://oauth.example.com/authorize?client_id=abc123&...",
-      "message": {
-        "type": "text",
-        "text": "Authorization is required to access your Example Co files."
-      },
-      "progressAvailable": false
-    }
-  }
-}
-```
-
-### Tracking progress
-
-This section is intended to leverage the
-[Progress capability](/specification/draft/basic/utilities/progress) to provide a way for MCP
-clients to track progress for user interactions.
+This leverages the [Progress capability](/specification/draft/basic/utilities/progress) in the base
+protocol. It requires the MCP server to support the `progress` capability during initialization.
 
 Tracking progress for user interactions is optional. If the MCP server does not support progress
 tracking, it **MUST NOT** respond to the `interaction/notify` message, in keeping with the
 requirements of the
 [Progress capability](/specification/draft/basic/utilities/progress#behavior-requirements).
 
-MCP clients send an `interaction/notify` message to the server to initiate progress tracking for a
+
+Note that the MCP server may choose to not send progress notifications for a given interaction, even if
+the client supports progress tracking and the server supports the progress capability generally.
+Therefore, the client **SHOULD NOT** assume that progress notifications will be sent for an
+interaction, and should be prepared to handle the case where no progress notifications are sent.
+
+MCP clients **MAY** send an `interaction/notify` message to the server to initiate progress tracking for a
 particular interaction. The MCP client **MUST** include the interaction ID in the `id` field that
 it wants to track progress for. This `id` **MUST** be an interaction that the server created via
 the `interaction/create` message.
@@ -520,46 +422,49 @@ for example:
 }
 ```
 
-### Cancelling an interaction
 
-A user may choose to cancel an interaction, for example, by cancelling submitting a form rendered
-by the MCP client as part of a `prompt` interaction or by not consenting to open a URL as part of
-a `ua` interaction. In such cases, the MCP client **MAY** cancel an interaction at any time by
-sending a `notifications/cancelled` message to the server. Cancellations will be consistent with
-the [Cancellation capability](/specification/draft/basic/utilities/cancellation).
 
-The `requestId` **MUST** be the `id` of the original `interaction/create` request that the
-client wants to cancel.
+## Cancelling an Interaction
+
+### Server-Initiated Cancellation
+
+The MCP server **MAY** cancel an interaction at any time by sending a `notifications/cancelled`
+message to the client. The MCP client **SHOULD NOT** send a response. This is consistent with the
+[Cancellation capability](/specification/draft/basic/utilities/cancellation).
+
+### Client-Initiated Cancellation
+
+The end-user may choose to decline or cancel an interaction themselves. For example, the user may decline to submit a form rendered by
+the MCP client as part of a `prompt` interaction, or not consent to open a URL as part of a
+`ua` interaction. The MCP client **MAY** indicate at any time that the server should abandon (cancel) the interaction by returning an error response:
 
 ```json
 {
   "jsonrpc": "2.0",
-  "method": "notifications/cancelled",
-  "params": {
-    "requestId": 1,
-    "reason": "User requested cancellation"
+  "id": 1,
+  "error": {
+    "code": -1,
+    "message": "User did not consent to the interaction"
   }
 }
 ```
 
-TODO: @nbarettini decide what we want to do for cancellation. Define server to client notification?
-      e.g. timeout, "link expired", etc.
+The `id` of the request **MUST** be the `id` of the original `interaction/create` request that the
+client wants to cancel.
 
 ## Identifying the User
 
-It is often useful for the MCP server to have some persistent identifier for the user. For the
-purposes of this specification, the user identifier is an opaque string that is associated with the
-user throughout the duration of the interaction. Obtaining verified information about the user, such
-as their name or email address, is out of scope for this specification.
+Most MCP servers will need a persistent identifier for the end-user. The MCP server **MUST NOT**
+rely on input from the client or end-user to identify the end-user, as this can be forged and lead to impersonation attacks.
+Instead, the MCP server **SHOULD** identify the end-user in trusted (server) code. For example,
 
-- Implementations using an HTTP-based transport **SHOULD** use the subject claim (`sub`) from the
-  OAuth 2 Access Token as the user identifier, if present.
-- Implementations using an STDIO transport **SHOULD** acquire the user identifier from the
-  environment.
+- Implementations using an HTTP transport and [MCP authorization](/specification/draft/basic/authorization)
+  **MAY** use the subject claim (`sub`) from the OAuth 2.1 Access Token as the user identifier, if present.
+- Implementations using an stdio transport **MAY** acquire the user identifier from the environment.
 
 ## Security Considerations
 
-### Handling sensitive information
+### Handling Sensitive Information
 
 One mechanism for which user interaction may be leveraged is passing a user's auth credentials, or
 other secret and sensitive data to the MCP server. The specifics of the sensitive data is out of
@@ -600,8 +505,7 @@ authenticity of the URL and the destination of the request.
 
 Since MCP enables clients to interoperate with MCP servers it has no prior knowledge of, this opens
 a risk for impersonation attacks by malicious MCP clients. MCP servers **SHOULD** take appropriate
-precautions against impersonation attacks, such as implementing the
-[Authorization](/specification/draft/basic/authorization) capabilities and properly validating
-interaction IDs that are requested for progress tracking.
+precautions against impersonation attacks, such as implementing
+[Authorization](/specification/draft/basic/authorization) and ensuring that user interaction requests are bound
+to the MCP session to prevent Insecure Direct Object Reference (IDOR) attacks.
 
-TODO: @nbarettini categorize this as Improper Resource Authorization???
