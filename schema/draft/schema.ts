@@ -223,7 +223,17 @@ export interface ClientCapabilities {
   /**
    * Present if the client supports user interaction.
    */
-  userInteraction?: object;
+  userInteraction?: {
+    /**
+     * An array of supported user interaction types. Clients must support at least one type.
+     *
+     * This specification defines one interaction type:
+     * - "ua": A user agent interaction involving making a request via a User Agent (e.g. a Web browser)
+     *
+     * Additional interaction types may be negotiated between client and server.
+     */
+    types: string[];
+  };
 }
 
 /**
@@ -1231,45 +1241,31 @@ export interface CreateUserInteractionRequest extends Request {
      * The interaction object. The schema of the interaction object is dependent on the type of
      * interaction.
      */
-    interaction: object;
-    /**
-     * Whether progress is available for the interaction.
-     */
-    progressAvailable?: boolean;
+    interaction: UAInteraction | object;
   };
 }
 
+/**
+ * Defines the interaction object for "ua" (user agent) type interactions.
+ */
+export interface UAInteraction {
+  /**
+   * The URL that the user should interact with.
+   *
+   * @format uri
+   */
+  url: string;
+
+  /**
+   * An optional message to provide an explanation to the user about the interaction.
+   */
+  message?: TextContent;
+}
 
 /**
  * The client's response to a user interaction/create request from the server.
  */
-export interface CreateUserInteractionResult extends Result {
-  /**
-   * The user's response to a prompt interaction. The schema of the content is dependent on the
-   * requested schema within the prompt interaction.
-   */
-  content?: { [key: string]: unknown };
-}
-
-/**
- * A request from the client to the server, requesting progress notifications for a user
- * interaction.
- */
-export interface NotifyUserInteractionProgressRequest extends Notification {
-  method: "interaction/notify";
-  params: {
-    id: string;
-    _meta: {
-      progressToken: ProgressToken;
-    };
-  };
-}
-
-/**
- * A result from the server to the client, containing the progress of a user interaction.
- */
-export interface UserInteractionProgressResult extends Result {
-}
+export interface CreateUserInteractionResult extends Result { }
 
 /* Client messages */
 export type ClientRequest =
@@ -1285,8 +1281,7 @@ export type ClientRequest =
   | SubscribeRequest
   | UnsubscribeRequest
   | CallToolRequest
-  | ListToolsRequest
-  | NotifyUserInteractionProgressRequest;
+  | ListToolsRequest;
 
 export type ClientNotification =
   | CancelledNotification
@@ -1322,5 +1317,4 @@ export type ServerResult =
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
-  | ListToolsResult
-  | UserInteractionProgressResult;
+  | ListToolsResult;
