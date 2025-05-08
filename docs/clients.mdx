@@ -16,8 +16,9 @@ This page provides an overview of applications that support the Model Context Pr
 | [Apify MCP Tester][Apify MCP Tester]        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
 | [BeeAI Framework][BeeAI Framework]          | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in agentic workflows.                                        |
 | [BoltAI][BoltAI]                            | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools.                                                             |
+| [Claude.ai][Claude.ai]                      | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, prompts, and resources for remote MCP servers.                                     |
 | [Claude Code][Claude Code]                  | ❌          | ✅        | ✅      | ❌         | ❌    | Supports prompts and tools                                                  |
-| [Claude Desktop App][Claude Desktop]        | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, prompts, and resources.                                     |
+| [Claude Desktop App][Claude Desktop]        | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, prompts, and resources for local and remote MCP servers.    |
 | [Cline][Cline]                              | ✅          | ❌        | ✅      | ❌         | ❌    | Supports tools and resources.                                               |
 | [Continue][Continue]                        | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, prompts, and resources.                                     |
 | [Copilot-MCP][CopilotMCP]                   | ✅          | ❌        | ✅      | ❌         | ❌    | Supports tools and resources.                                               |
@@ -36,11 +37,12 @@ This page provides an overview of applications that support the Model Context Pr
 | [LibreChat][LibreChat]                      | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for Agents                                                   |
 | [Lutra][Lutra]                              | ✅          | ✅        | ✅      | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                     |
 | [mcp-agent][mcp-agent]                      | ❌          | ❌        | ✅      | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.          |
-| [mcp-use][mcp-use]                          | ✅          | ❌        | ✅      | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.       | 
+| [mcp-use][mcp-use]                          | ✅          | ✅        | ✅      | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.       | 
 | [MCPHub][MCPHub]                            | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, and prompts in Neovim                            |
 | [MCPOmni-Connect][MCPOmni-Connect]          | ✅          | ✅        | ✅      | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.     |
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
 | [MindPal][MindPal]                          | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools for no-code AI agents and multi-agent workflows.             |
+| [Msty Studio][Msty Studio]                  | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools                                                              |
 | [OpenSumi][OpenSumi]                        | ❌          | ❌        | ✅      | ❌         | ❌    | Supports tools in OpenSumi                                                  |
 | [oterm][oterm]                              | ❌          | ✅        | ✅      | ✅         | ❌    | Supports tools, prompts and sampling for Ollama.                                                 |
 | [Postman][postman]                          | ✅          | ✅        | ✅      | ❌         | ❌    | Supports tools, resources, prompts, and sampling                                                 |
@@ -64,6 +66,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Apify MCP Tester]: https://apify.com/jiri.spilka/tester-mcp-client
 [BeeAI Framework]: https://i-am-bee.github.io/beeai-framework
 [BoltAI]: https://boltai.com
+[Claude.ai]: https://claude.ai
 [Claude Code]: https://claude.ai/code
 [Claude Desktop]: https://claude.ai/download
 [Cline]: https://github.com/cline/cline
@@ -87,6 +90,7 @@ This page provides an overview of applications that support the Model Context Pr
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
 [MindPal]: https://mindpal.io
+[Msty Studio]: https://msty.ai
 [OpenSumi]: https://github.com/opensumi/core
 [oterm]: https://github.com/ggozad/oterm
 [Postman]: https://postman.com/downloads
@@ -426,6 +430,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 
 **Learn more:**
 - [MindPal MCP Documentation](https://docs.mindpal.io/agent/mcp)
+
+### Msty Studio
+[Msty Studio](https://msty.ai) is a privacy-first AI productivity platform that seamlessly integrates local and online language models (LLMs) into customizable workflows. Designed for both technical and non-technical users, Msty Studio offers a suite of tools to enhance AI interactions, automate tasks, and maintain full control over data and model behavior.
+
+**Key features:**
+- **Toolbox & Toolsets**: Connect AI models to local tools and scripts using MCP-compliant configurations. Group tools into Toolsets to enable dynamic, multi-step workflows within conversations.
+- **Turnstiles**: Create automated, multi-step AI interactions, allowing for complex data processing and decision-making flows.
+- **Real-Time Data Integration**: Enhance AI responses with up-to-date information by integrating real-time web search capabilities.
+- **Split Chats & Branching**: Engage in parallel conversations with multiple models simultaneously, enabling comparative analysis and diverse perspectives.
+
+**Learn more:**
+- [Msty Studio Documentation](https://docs.msty.studio/features/toolbox/tools)
 
 ### OpenSumi
 [OpenSumi](https://github.com/opensumi/core) is a framework helps you quickly build AI Native IDE products.
