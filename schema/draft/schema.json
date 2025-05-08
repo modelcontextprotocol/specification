@@ -2164,6 +2164,10 @@
         "ToolAnnotations": {
             "description": "Additional properties describing a Tool to clients.\n\nNOTE: all properties in ToolAnnotations are **hints**.\nThey are not guaranteed to provide a faithful description of\ntool behavior (including descriptive properties like `title`).\n\nClients should never make tool use decisions based on ToolAnnotations\nreceived from untrusted servers.",
             "properties": {
+                "asyncHint": {
+                    "description": "If true, this tool accepts a request and continues to work\nasynchronously to generate responses.\n\nDefault: false",
+                    "type": "boolean"
+                },
                 "destructiveHint": {
                     "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: true",
                     "type": "boolean"
@@ -2178,6 +2182,14 @@
                 },
                 "readOnlyHint": {
                     "description": "If true, the tool does not modify its environment.\n\nDefault: false",
+                    "type": "boolean"
+                },
+                "statelessHint": {
+                    "description": "If true, this tool does not maintain state based on previous requests.\nIf false, the tool may maintain state base on previous interactions\nand the context from the previous requests might influence the next\nresponse.\n\nDefault: true",
+                    "type": "boolean"
+                },
+                "streamingHint": {
+                    "description": "If true, this tool streams its responses.\n\nDefault: false",
                     "type": "boolean"
                 },
                 "title": {

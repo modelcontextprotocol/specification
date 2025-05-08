@@ -820,6 +820,31 @@ export interface ToolAnnotations {
    * Default: true
    */
   openWorldHint?: boolean;
+
+  /**
+   * If true, this tool does not maintain state based on previous requests.
+   * If false, the tool may maintain state base on previous interactions
+   * and the context from the previous requests might influence the next
+   * response.
+   *
+   * Default: true
+   */
+  statelessHint?: boolean;
+
+  /**
+   * If true, this tool streams its responses.
+   *
+   * Default: false
+   */
+  streamingHint?: boolean;
+
+  /**
+   * If true, this tool accepts a request and continues to work
+   * asynchronously to generate responses.
+   *
+   * Default: false
+   */
+  asyncHint?: boolean;
 }
 
 /**
