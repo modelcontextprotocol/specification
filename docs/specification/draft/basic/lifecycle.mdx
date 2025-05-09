@@ -61,7 +61,8 @@ The client **MUST** initiate this phase by sending an `initialize` request conta
       "roots": {
         "listChanged": true
       },
-      "sampling": {}
+      "sampling": {},
+      "elicitation": {}
     },
     "clientInfo": {
       "name": "ExampleClient",
@@ -148,6 +149,7 @@ Key capabilities include:
 | -------- | -------------- | -------------------------------------------------------------------------- |
 | Client   | `roots`        | Ability to provide filesystem [roots](/specification/draft/client/roots)       |
 | Client   | `sampling`     | Support for LLM [sampling](/specification/draft/client/sampling) requests      |
+| Client   | `elicitation`  | Support for server [elicitation](/specification/draft/client/elicitation) requests |
 | Client   | `experimental` | Describes support for non-standard experimental features                   |
 | Server   | `prompts`      | Offers [prompt templates](/specification/draft/server/prompts)                 |
 | Server   | `resources`    | Provides readable [resources](/specification/draft/server/resources)           |
