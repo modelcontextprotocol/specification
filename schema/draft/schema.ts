@@ -823,11 +823,11 @@ export interface ToolAnnotations {
 
   /**
    * If true, this tool does not maintain state based on previous requests.
-   * If false, the tool may maintain state base on previous interactions
+   * If false, the tool may maintain state based on previous interactions
    * and the context from the previous requests might influence the next
    * response.
    *
-   * Default: true
+   * Default: false
    */
   statelessHint?: boolean;
 

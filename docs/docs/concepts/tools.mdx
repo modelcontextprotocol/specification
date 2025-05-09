@@ -336,7 +336,7 @@ The MCP specification defines the following annotations for tools:
 | `destructiveHint` | boolean | true | If true, the tool may perform destructive updates (only meaningful when `readOnlyHint` is false) |
 | `idempotentHint` | boolean | false | If true, calling the tool repeatedly with the same arguments has no additional effect (only meaningful when `readOnlyHint` is false) |
 | `openWorldHint` | boolean | true | If true, the tool may interact with an "open world" of external entities |
-| `statelessHint` | boolean | true | If true, this tool does not maintain state based on previous requests |
+| `statelessHint` | boolean | false | If true, this tool does not maintain state based on previous requests |
 | `streamingHint` | boolean | false | If true, this tool may stream its responses |
 | `asyncHint` | boolean | false | If true, this tool accepts a request and continues to work asynchronously to generate responses |
 
