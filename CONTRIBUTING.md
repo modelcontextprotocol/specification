@@ -19,8 +19,8 @@ The following software is required to work on the spec:
 2. Clone your fork:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/specification.git
-cd specification
+git clone https://github.com/YOUR-USERNAME/modelcontextprotocol.git
+cd modelcontextprotocol
 ```
 
 3. Install dependencies:
@@ -69,6 +69,24 @@ When contributing to the documentation:
 - Update docs.json when adding new pages
 - Follow existing file naming conventions (kebab-case.mdx)
 - Include proper frontmatter in MDX files
+
+### Specification Proposal Guidelines
+
+#### Principles of MCP
+
+1. **Simple + Minimal**: It is much easier to add things to a specification than it is to
+   remove them. To maintain simplicity, we keep a high bar for adding new concepts and
+   primitives as each addition requires maintenance and compatibility consideration.
+2. **Concrete**: Specification changes need to be based on specific implementation
+   challenges and not on speculative ideas.
+
+### Stages of a specification proposal
+
+1. **Define**: Explore the problem space, validate that other MCP users face a similar
+   issue, and then clearly define the problem.
+2. **Prototype**: Build an example solution to the problem and demonstrate its practical
+   application.
+3. **Write**: Based on the prototype, write a specification proposal.
 
 ## Submitting Changes
 
