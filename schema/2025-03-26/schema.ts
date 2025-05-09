@@ -683,6 +683,60 @@ export interface ListToolsResult extends PaginatedResult {
   tools: Tool[];
 }
 
+
+
+/**
+ * A resource representing an asynchronous operation.
+ */
+export interface AsyncResource extends Resource {
+  /**
+   * The current status of the asynchronous operation.
+   */
+  status: string;
+  
+  /**
+   * The current progress of the operation.
+   */
+  progress: number;
+  
+  /**
+   * The total progress required for completion, if known.
+   */
+  total?: number;
+  
+  /**
+   * Error message if the operation failed.
+   */
+  error?: string;
+  
+  /**
+   * Timestamp when the resource was created.
+   */
+  created_at: number;
+  
+  /**
+   * Timestamp when the operation started.
+   */
+  started_at?: number;
+  
+  /**
+   * Timestamp when the operation completed.
+   */
+  completed_at?: number;
+  
+  /**
+   * The type of operation being performed.
+   */
+  operation_type?: string;
+  
+  /**
+   * The result of the operation, once completed.
+   * This will only be present if the status is "completed".
+   */
+  result?: any;
+}
+
+
 /**
  * The server's response to a tool call.
  *
@@ -696,7 +750,7 @@ export interface ListToolsResult extends PaginatedResult {
  * should be reported as an MCP error response.
  */
 export interface CallToolResult extends Result {
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | AsyncResource)[];
 
   /**
    * Whether the tool call ended in an error.
@@ -807,6 +861,12 @@ export interface Tool {
    * Optional additional tool information.
    */
   annotations?: ToolAnnotations;
+
+   /**
+   * Whether this tool supports asynchronous execution.
+   * If true, the tool can be executed asynchronously, and the result will be returned as a resource reference.
+   */
+  async_supported?: boolean;
 }
 
 /* Logging */
