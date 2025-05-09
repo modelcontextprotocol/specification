@@ -182,6 +182,7 @@ A tool definition includes:
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
 - `annotations`: optional properties describing tool behavior
+- `async_supported`: optional property describing tool asynchronous behavior
 
 <Warning>For trust & safety and security, clients **MUST** consider
 tool annotations to be untrusted unless they come from trusted servers.</Warning>
@@ -232,6 +233,16 @@ or data, behind a URI that can be subscribed to or fetched again by the client l
     "mimeType": "text/plain",
     "text": "Resource content"
   }
+}
+```
+
+#### Async Resource
+
+```json
+{
+ "type": "resource",
+ "uri": "resource://example",
+ "status": "PENDING"
 }
 ```
 

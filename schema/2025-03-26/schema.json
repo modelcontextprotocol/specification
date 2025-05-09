@@ -122,6 +122,9 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
+                            },
+                            {
+                                "$ref": "#/definitions/AsyncResource"
                             }
                         ]
                     },
@@ -1572,6 +1575,53 @@
             ],
             "type": "object"
         },
+        "AsyncResource": {
+            "allOf": [
+                {
+                "$ref": "#/definitions/Resource"
+                }
+            ],
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "The current status of the asynchronous operation."
+                },
+                "progress": {
+                    "type": "number",
+                    "description": "The current progress of the operation."
+                },
+                "total": {
+                    "type": "number",
+                    "description": "The total progress required for completion, if known."
+                },
+                "error": {
+                    "type": "string",
+                    "description": "Error message if the operation failed."
+                },
+                "created_at": {
+                    "type": "number",
+                    "description": "Timestamp when the resource was created."
+                },
+                "started_at": {
+                    "type": "number",
+                    "description": "Timestamp when the operation started."
+                },
+                "completed_at": {
+                    "type": "number",
+                    "description": "Timestamp when the operation completed."
+                },
+                "operation_type": {
+                    "type": "string",
+                    "description": "The type of operation being performed."
+                    },
+                "result": {
+                    "description": "The result of the operation, once completed. This will only be present if the status is \"completed\"."
+                }
+            },
+            "required": ["status", "progress", "created_at"],
+            "description": "A resource representing an asynchronous operation."
+        },
         "ResourceContents": {
             "description": "The contents of a specific resource or sub-resource.",
             "properties": {
@@ -2049,6 +2099,10 @@
                 "name": {
                     "description": "The name of the tool.",
                     "type": "string"
+                },
+                "async_supported": {
+                    "description": "Whether this tool supports asynchronous execution. If true, the tool can be executed asynchronously, and the result will be returned as a resource reference.",
+                    "type": "boolean"
                 }
             },
             "required": [

@@ -37,7 +37,8 @@ Each tool is defined with the following structure:
     destructiveHint?: boolean; // If true, the tool may perform destructive updates
     idempotentHint?: boolean;  // If true, repeated calls with same args have no additional effect
     openWorldHint?: boolean;   // If true, tool interacts with external entities
-  }
+  },
+  async_supported?: boolean   // If true, tool is run in async mode
 }
 ```
 
