@@ -261,6 +261,11 @@
           "anchor": "C# SDK",
           "href": "https://github.com/modelcontextprotocol/csharp-sdk",
           "icon": "square-c"
+        },
+        {
+          "anchor": "Swift SDK",
+          "href": "https://github.com/modelcontextprotocol/swift-sdk",
+          "icon": "swift"
         }
       ]
     }
