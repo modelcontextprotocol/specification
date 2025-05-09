@@ -65,6 +65,12 @@
         "icon": "book-open",
         "groups": [
           {
+            "group": "Overview",
+            "pages": [
+              "sdk/index"
+            ]
+          },
+          {
             "group": "Java",
             "pages": [
               "sdk/java/mcp-overview",
