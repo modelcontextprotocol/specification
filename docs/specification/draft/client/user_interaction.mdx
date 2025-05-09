@@ -267,35 +267,25 @@ When the client facilitates the opening of the URL, it **MUST** send a response 
 }
 ```
 
-## Cancelling an Interaction
+Alternatively, if the end-user cancels or declines the interaction, the client **MUST**
+send an error response to the server:
 
-### Server-Initiated Cancellation
-
-The MCP server **MAY** cancel an interaction at any time by sending a
-`notifications/cancelled` message to the client, as described in [Cancellation](/specification/draft/basic/utilities/cancellation).
-The MCP client **SHOULD NOT** send a response.
-
-### Client-Initiated Cancellation
-
-The end-user may cancel an interaction at any time. For example, the user may decline
-consent to open a URL as part of a `ua` interaction.
-
-The MCP client **MAY** indicate at
-any time that the server should abandon (cancel) the interaction by returning an error
-response:
 ```json
 {
   "jsonrpc": "2.0",
   "id": 123,
   "error": {
-    "code": -1,
-    "message": "User did not consent to the interaction"
+    "code": -32099,
+    "message": "User did not consent to the interaction."
   }
 }
 ```
 
-The `id` of the request **MUST** be the `id` of the original `interaction/create` request that the
-client wants to cancel.
+## Cancelling an Interaction
+
+The MCP server **MAY** cancel an interaction at any time by sending a
+`notifications/cancelled` message to the client, as described in [Cancellation](/specification/draft/basic/utilities/cancellation).
+The MCP client **SHOULD NOT** send a response.
 
 
 ## Security Considerations
