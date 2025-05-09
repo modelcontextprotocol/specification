@@ -45,6 +45,7 @@
               "docs/concepts/resources",
               "docs/concepts/prompts",
               "docs/concepts/tools",
+              "docs/concepts/content-types",
               "docs/concepts/sampling",
               "docs/concepts/roots",
               "docs/concepts/transports"

@@ -122,6 +122,9 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
+                            },
+                            {
+                                "$ref": "#/definitions/DataContent"
                             }
                         ]
                     },
@@ -441,6 +444,9 @@
                         },
                         {
                             "$ref": "#/definitions/AudioContent"
+                        },
+                        {
+                            "$ref": "#/definitions/DataContent"
                         }
                     ]
                 },
@@ -466,6 +472,47 @@
         "Cursor": {
             "description": "An opaque token used to represent a cursor for pagination.",
             "type": "string"
+        },
+        "DataContent": {
+            "description": "Text provided to or from an LLM.",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
+                },
+                "data": {
+                    "additionalProperties": true,
+                    "description": "The text content of the message.",
+                    "properties": {},
+                    "type": "object"
+                },
+                "schema": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": true,
+                            "properties": {},
+                            "type": "object"
+                        },
+                        {
+                            "const": false,
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "The schema reference or definition of the JSON content.\n- `string` is a reference path in the tool's `output.content.data.schema`\n- `object` is a JSON Schema object, helpful for dynamic schemas or usage in sampling/prompts\n- `false` is an escape hatch for tools with a data output schema"
+                },
+                "type": {
+                    "const": "data",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "type"
+            ],
+            "type": "object"
         },
         "EmbeddedResource": {
             "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
@@ -1419,6 +1466,9 @@
                         },
                         {
                             "$ref": "#/definitions/EmbeddedResource"
+                        },
+                        {
+                            "$ref": "#/definitions/DataContent"
                         }
                     ]
                 },
@@ -1765,6 +1815,9 @@
                         },
                         {
                             "$ref": "#/definitions/AudioContent"
+                        },
+                        {
+                            "$ref": "#/definitions/DataContent"
                         }
                     ]
                 },
@@ -2049,6 +2102,164 @@
                 "name": {
                     "description": "The name of the tool.",
                     "type": "string"
+                },
+                "output": {
+                    "properties": {
+                        "content": {
+                            "properties": {
+                                "audio": {
+                                    "properties": {
+                                        "count": {
+                                            "description": "The number of items the tool will return, if left empty, one or more is assumed.",
+                                            "enum": [
+                                                "multiple",
+                                                "single"
+                                            ],
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "description": "A description of the data the tool will return.",
+                                            "type": "string"
+                                        },
+                                        "mimeType": {
+                                            "anyOf": [
+                                                {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ],
+                                            "description": "The MIME type(s) of the audio."
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "data": {
+                                    "properties": {
+                                        "count": {
+                                            "description": "The number of items the tool will return, if left empty, one or more is assumed.",
+                                            "enum": [
+                                                "multiple",
+                                                "single"
+                                            ],
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "description": "A description of the data the tool will return.",
+                                            "type": "string"
+                                        },
+                                        "schema": {
+                                            "anyOf": [
+                                                {
+                                                    "additionalProperties": true,
+                                                    "properties": {},
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ],
+                                            "description": "A JSON Schema object defining the expected output for the tool's JSON content response."
+                                        },
+                                        "strict": {
+                                            "description": "If true, `DataContent.data` must always be valid against the whole schema.\nOtherwise `DataContent.schema` may reference `$defs` in the root schema or provide its own schema.\n\nDefault: false",
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "image": {
+                                    "properties": {
+                                        "count": {
+                                            "description": "The number of items the tool will return, if left empty, one or more is assumed.",
+                                            "enum": [
+                                                "multiple",
+                                                "single"
+                                            ],
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "description": "A description of the data the tool will return.",
+                                            "type": "string"
+                                        },
+                                        "mimeType": {
+                                            "anyOf": [
+                                                {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ],
+                                            "description": "The MIME type(s) of the image."
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "resource": {
+                                    "properties": {
+                                        "count": {
+                                            "description": "The number of items the tool will return, if left empty, one or more is assumed.",
+                                            "enum": [
+                                                "multiple",
+                                                "single"
+                                            ],
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "description": "A description of the data the tool will return.",
+                                            "type": "string"
+                                        },
+                                        "mimeType": {
+                                            "anyOf": [
+                                                {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ],
+                                            "description": "The MIME type(s) of the resource."
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "text": {
+                                    "properties": {
+                                        "count": {
+                                            "description": "If true, the tool will return a single item.\n\nDefault: false",
+                                            "enum": [
+                                                "multiple",
+                                                "single"
+                                            ],
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "description": "A description of the data the tool will return.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "strict": {
+                            "description": "If true, omitted content types in `Tool.output.content` will not appear in the response.\n\nDefault: false",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
                 }
             },
             "required": [

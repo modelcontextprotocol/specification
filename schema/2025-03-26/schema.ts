@@ -642,7 +642,7 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource | DataContent;
 }
 
 /**
@@ -696,7 +696,7 @@ export interface ListToolsResult extends PaginatedResult {
  * should be reported as an MCP error response.
  */
 export interface CallToolResult extends Result {
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | DataContent)[];
 
   /**
    * Whether the tool call ended in an error.
@@ -801,6 +801,96 @@ export interface Tool {
     type: "object";
     properties?: { [key: string]: object };
     required?: string[];
+  };
+
+  output?: {
+    /**
+     * If true, omitted content types in `Tool.output.content` will not appear in the response.
+     * 
+     * Default: false
+     */
+    strict?: boolean;
+    content?: {
+      text?: {
+        /**
+         * If true, the tool will return a single item.
+         * 
+         * Default: false
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+      };
+
+      image?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * The MIME type(s) of the image.
+         */
+        mimeType?: string | string[];
+      };
+
+      audio?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * The MIME type(s) of the audio.
+         */
+        mimeType?: string | string[];
+      };
+     
+      resource?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * The MIME type(s) of the resource.
+         */
+        mimeType?: string | string[];
+      };
+
+      data?: {
+        /**
+         * The number of items the tool will return, if left empty, one or more is assumed.
+         */
+        count?: 'single' | 'multiple';
+        /**
+         * A description of the data the tool will return.
+         */
+        description?: string;
+        /**
+         * A JSON Schema object defining the expected output for the tool's JSON content response.
+         */
+        schema?: string | object;
+        /**
+         * If true, `DataContent.data` must always be valid against the whole schema.
+         * Otherwise `DataContent.schema` may reference `$defs` in the root schema or provide its own schema.
+         * 
+         * Default: false
+         */
+        strict?: boolean;
+      };
+    };
   };
 
   /**
@@ -915,7 +1005,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent;
+  content: TextContent | ImageContent | AudioContent | DataContent;
 }
 
 /**
@@ -1001,6 +1091,31 @@ export interface AudioContent {
    * The MIME type of the audio. Different providers may support different audio types.
    */
   mimeType: string;
+
+  /**
+   * Optional annotations for the client.
+   */
+  annotations?: Annotations;
+}
+
+/**
+ * Text provided to or from an LLM.
+ */
+export interface DataContent {
+  type: "data";
+
+  /**
+   * The text content of the message.
+   */
+  data: object;
+
+  /**
+   * The schema reference or definition of the JSON content.
+   * - `string` is a reference path in the tool's `output.content.data.schema`
+   * - `object` is a JSON Schema object, helpful for dynamic schemas or usage in sampling/prompts
+   * - `false` is an escape hatch for tools with a data output schema
+   */
+  schema?: string | object | false;
 
   /**
    * Optional annotations for the client.

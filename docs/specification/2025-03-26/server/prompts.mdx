@@ -225,6 +225,53 @@ Audio content allows including audio information in messages:
 The audio data MUST be base64-encoded and include a valid MIME type. This enables
 multi-modal interactions where audio context is important.
 
+#### JSON Content
+
+```json
+{
+  "type": "data",
+  "data": {
+    "query": {
+      "id": "12345",
+      "parameters": {
+        "limit": 10,
+        "orderBy": "relevance"
+      }
+    }
+  },
+  "schema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "limit": { "type": "number" },
+              "orderBy": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+The JSON content type (DataContent) allows structured data to be included in prompt messages.
+This enables precise communication of complex information that would be unwieldy to represent
+as plain text. Key benefits include:
+
+- Preserving exact data structures without formatting loss
+- Enabling programmatic data processing by tools or models
+- Maintaing type information for numeric, boolean, or structured values
+- Supporting validation via schema definitions
+
+The schema field provides a JSON Schema definition to help the client understand
+and potentially validate the structure before passing it to the LLM.
+
 #### Embedded Resources
 
 Embedded resources allow referencing server-side resources directly in messages:
