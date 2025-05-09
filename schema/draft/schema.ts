@@ -220,6 +220,20 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client supports user interaction.
+   */
+  userInteraction?: {
+    /**
+     * An array of supported user interaction types. Clients must support at least one type.
+     *
+     * This specification defines one interaction type:
+     * - "ua": A user agent interaction involving making a request via a User Agent (e.g. a Web browser)
+     *
+     * Additional interaction types may be negotiated between client and server.
+     */
+    types: string[];
+  };
 }
 
 /**
@@ -1260,6 +1274,51 @@ export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
 }
 
+/* User Interaction */
+/**
+ * A request from the server to the client, to create a user interaction.
+ */
+export interface CreateUserInteractionRequest extends Request {
+  method: "interaction/create";
+  params: {
+    /**
+     * The ID of the interaction.
+     */
+    id: string;
+    /**
+     * The type of interaction.
+     */
+    type: string;
+    /**
+     * The interaction object. The schema of the interaction object is dependent on the type of
+     * interaction.
+     */
+    interaction: UAInteraction | object;
+  };
+}
+
+/**
+ * Defines the interaction object for "ua" (user agent) type interactions.
+ */
+export interface UAInteraction {
+  /**
+   * The URL that the user should interact with.
+   *
+   * @format uri
+   */
+  url: string;
+
+  /**
+   * An optional message to provide an explanation to the user about the interaction.
+   */
+  message?: TextContent;
+}
+
+/**
+ * The client's response to a user interaction/create request from the server.
+ */
+export interface CreateUserInteractionResult extends Result { }
+
 /* Client messages */
 export type ClientRequest =
   | PingRequest
@@ -1282,13 +1341,14 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult;
+export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | CreateUserInteractionResult;
 
 /* Server messages */
 export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
-  | ListRootsRequest;
+  | ListRootsRequest
+  | CreateUserInteractionRequest;
 
 export type ServerNotification =
   | CancelledNotification

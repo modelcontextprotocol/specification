@@ -249,6 +249,22 @@
                     "description": "Present if the client supports sampling from an LLM.",
                     "properties": {},
                     "type": "object"
+                },
+                "userInteraction": {
+                    "description": "Present if the client supports user interaction.",
+                    "properties": {
+                        "types": {
+                            "description": "An array of supported user interaction types. Clients must support at least one type.\n\nThis specification defines one interaction type:\n- \"ua\": A user agent interaction involving making a request via a User Agent (e.g. a Web browser)\n\nAdditional interaction types may be negotiated between client and server.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "types"
+                    ],
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -322,6 +338,9 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsResult"
+                },
+                {
+                    "$ref": "#/definitions/CreateUserInteractionResult"
                 }
             ]
         },
@@ -535,6 +554,62 @@
                 "model",
                 "role"
             ],
+            "type": "object"
+        },
+        "CreateUserInteractionRequest": {
+            "description": "A request from the server to the client, to create a user interaction.",
+            "properties": {
+                "method": {
+                    "const": "interaction/create",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "id": {
+                            "description": "The ID of the interaction.",
+                            "type": "string"
+                        },
+                        "interaction": {
+                            "anyOf": [
+                                {
+                                    "additionalProperties": true,
+                                    "properties": {},
+                                    "type": "object"
+                                },
+                                {
+                                    "$ref": "#/definitions/UAInteraction"
+                                }
+                            ],
+                            "description": "The interaction object. The schema of the interaction object is dependent on the type of\ninteraction."
+                        },
+                        "type": {
+                            "description": "The type of interaction.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "interaction",
+                        "type"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "CreateUserInteractionResult": {
+            "description": "The client's response to a user interaction/create request from the server.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                }
+            },
             "type": "object"
         },
         "Cursor": {
@@ -1948,6 +2023,9 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsRequest"
+                },
+                {
+                    "$ref": "#/definitions/CreateUserInteractionRequest"
                 }
             ]
         },
@@ -2187,6 +2265,24 @@
             },
             "required": [
                 "method"
+            ],
+            "type": "object"
+        },
+        "UAInteraction": {
+            "description": "Defines the interaction object for \"ua\" (user agent) type interactions.",
+            "properties": {
+                "message": {
+                    "$ref": "#/definitions/TextContent",
+                    "description": "An optional message to provide an explanation to the user about the interaction."
+                },
+                "url": {
+                    "description": "The URL that the user should interact with.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url"
             ],
             "type": "object"
         },
