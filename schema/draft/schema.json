@@ -2185,7 +2185,7 @@
                     "type": "boolean"
                 },
                 "statelessHint": {
-                    "description": "If true, this tool does not maintain state based on previous requests.\nIf false, the tool may maintain state base on previous interactions\nand the context from the previous requests might influence the next\nresponse.\n\nDefault: true",
+                    "description": "If true, this tool does not maintain state based on previous requests.\nIf false, the tool may maintain state based on previous interactions\nand the context from the previous requests might influence the next\nresponse.\n\nDefault: false",
                     "type": "boolean"
                 },
                 "streamingHint": {
