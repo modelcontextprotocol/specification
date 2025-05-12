@@ -52,20 +52,6 @@ while maintaining simplicity:
    Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)).
    MCP clients **MUST** use the OAuth 2.0 Authorization Server Metadata.
 
-### 2.1.1 OAuth Grant Types
-
-OAuth specifies different flows or grant types, which are different ways of obtaining an
-access token. Each of these targets different use cases and scenarios.
-
-MCP servers **SHOULD** support the OAuth grant types that best align with the intended
-audience. For instance:
-
-1. Authorization Code: useful when the client is acting on behalf of a (human) end user.
-   - For instance, an agent calls an MCP tool implemented by a SaaS system.
-2. Client Credentials: the client is another application (not a human)
-   - For instance, an agent calls a secure MCP tool to check inventory at a specific
-     store. No need to impersonate the end user.
-
 ### 2.2 Roles
 A protected MCP server acts as a [OAuth 2.1 resource server](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
 capable of accepting and responding to protected resource requests using access tokens.
@@ -162,8 +148,8 @@ Any MCP authorization servers that _do not_ support Dynamic Client Registration 
 alternative ways to obtain a client ID (and, if applicable, client credentials). For one of
 these authorization servers, MCP clients will have to either:
 
-1. Hardcode a client ID (and, if applicable, client credentials) specifically for that MCP
-   server, or
+1. Hardcode a client ID (and, if applicable, client credentials) specifically for the MCP client to use when
+   interacting with that authorization server, or
 2. Present a UI to users that allows them to enter these details, after registering an
    OAuth client themselves (e.g., through a configuration interface hosted by the
    server).

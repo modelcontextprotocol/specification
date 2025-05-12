@@ -181,6 +181,7 @@ A tool definition includes:
 - `name`: Unique identifier for the tool
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
+- `outputSchema`: Optional JSON Schema defining expected output structure
 - `annotations`: optional properties describing tool behavior
 
 <Warning>For trust & safety and security, clients **MUST** consider
@@ -188,7 +189,11 @@ tool annotations to be untrusted unless they come from trusted servers.</Warning
 
 ### Tool Result
 
-Tool results can contain multiple content items of different types:
+Tool results may be **structured** or **unstructured**, depending on whether the tool definition specifies an [output schema](#output-schema).
+
+**Structured** tool results are JSON objects that are valid with respect to the tool's output schema.
+
+**Unstructured** tool results can contain multiple content items of different types:
 
 #### Text Content
 
@@ -234,6 +239,150 @@ or data, behind a URI that can be subscribed to or fetched again by the client l
   }
 }
 ```
+
+### Output Schema
+
+Tools that produce structured results can use the `outputSchema` property to provide a JSON Schema describing the expected structure of their output. 
+
+When a tool specifies an `outputSchema`:
+
+1. Clients **MUST** validate that results from that tool contain a `structuredContent` field whose contents validate against the declared `outputSchema`.
+
+2. Servers **MUST** provide structured results in `structuredContent` that conform to the declared `outputSchema` of the tool.
+
+<Info>
+For backwards compatibility, a tool that declares an `outputSchema` may also return unstructured results in the `content` field.
+* If present, the unstructured result should be functionally equivalent to the structured result. (For example, serialized JSON can be returned in a `TextContent` block.)
+* Clients that support `structuredContent` should ignore the `content` field if present.
+</Info>
+
+Example tool with output schema:
+
+```json
+{
+  "name": "get_weather_data",
+  "description": "Get current weather conditions and forecast data for a location",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "location": {
+        "type": "string",
+        "description": "City name or zip code"
+      },
+      "units": {
+        "type": "string",
+        "enum": ["celsius", "fahrenheit"],
+        "default": "celsius",
+        "description": "Temperature unit"
+      }
+    },
+    "required": ["location"]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "current": {
+        "type": "object",
+        "properties": {
+          "temperature": { "type": "number" },
+          "humidity": { "type": "number" },
+          "conditions": { "type": "string" },
+          "wind": {
+            "type": "object",
+            "properties": {
+              "speed": { "type": "number" },
+              "direction": { "type": "string" }
+            },
+            "required": ["speed", "direction"]
+          }
+        },
+        "required": ["temperature", "humidity", "conditions", "wind"]
+      },
+      "forecast": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string", "format": "date" },
+            "high": { "type": "number" },
+            "low": { "type": "number" },
+            "conditions": { "type": "string" }
+          },
+          "required": ["date", "high", "low", "conditions"]
+        }
+      },
+      "location": {
+        "type": "object",
+        "properties": {
+          "city": { "type": "string" },
+          "country": { "type": "string" },
+          "coordinates": {
+            "type": "object",
+            "properties": {
+              "latitude": { "type": "number" },
+              "longitude": { "type": "number" }
+            },
+            "required": ["latitude", "longitude"]
+          }
+        },
+        "required": ["city", "country", "coordinates"]
+      }
+    },
+    "required": ["current", "forecast", "location"]
+  }
+}
+```
+
+Example valid response for this tool:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "result": {
+    "structuredContent": {
+      "current": {
+        "temperature": 22.5,
+        "humidity": 65,
+        "conditions": "Partly cloudy",
+        "wind": {
+          "speed": 12,
+          "direction": "NW"
+        }
+      },
+      "forecast": [
+        {
+          "date": "2024-03-28",
+          "high": 25,
+          "low": 18,
+          "conditions": "Sunny"
+        },
+        {
+          "date": "2024-03-29",
+          "high": 23,
+          "low": 17,
+          "conditions": "Cloudy"
+        }
+      ],
+      "location": {
+        "city": "San Francisco",
+        "country": "US",
+        "coordinates": {
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        }
+      }
+    }
+  }
+}
+```
+
+The `outputSchema` helps clients and LLMs understand and properly handle structured tool outputs by:
+
+- Enabling strict schema validation of responses
+- Providing type information for better integration with programming languages
+- Guiding clients and LLMs to properly parse and utilize the returned data
+- Supporting better documentation and developer experience
 
 ## Error Handling
 
