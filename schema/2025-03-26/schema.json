@@ -226,13 +226,7 @@
                     "$ref": "#/definitions/ListResourcesRequest"
                 },
                 {
-                    "$ref": "#/definitions/SearchResourcesRequest"
-                },
-                {
                     "$ref": "#/definitions/ListResourceTemplatesRequest"
-                },
-                {
-                    "$ref": "#/definitions/SearchResourceTemplatesRequest"
                 },
                 {
                     "$ref": "#/definitions/ReadResourceRequest"
@@ -247,16 +241,10 @@
                     "$ref": "#/definitions/ListPromptsRequest"
                 },
                 {
-                    "$ref": "#/definitions/SearchPromptsRequest"
-                },
-                {
                     "$ref": "#/definitions/GetPromptRequest"
                 },
                 {
                     "$ref": "#/definitions/ListToolsRequest"
-                },
-                {
-                    "$ref": "#/definitions/SearchToolsRequest"
                 },
                 {
                     "$ref": "#/definitions/CallToolRequest"
@@ -917,32 +905,6 @@
             ],
             "type": "object"
         },
-        "SearchPromptsRequest": {
-            "description": "Search for prompts and prompt templates the server provides, given a natural language or keyword query.",
-            "properties": {
-                "method": {
-                    "const": "prompts/search",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "query": {
-                            "description": "Arbitrary text that expresses what prompts to search for. This can be a specific prompt type (e.g., 'summarization'), a capability description (e.g., 'writing in a professional tone'), or a task description (e.g., 'generating creative content'). The server will return prompts matching this query.",
-                            "type": "string"
-                        },
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method"
-            ],
-            "type": "object"
-        },
         "ListPromptsResult": {
             "description": "The server's response to a prompts/list request from the client.",
             "properties": {
@@ -989,32 +951,6 @@
             ],
             "type": "object"
         },
-        "SearchResourceTemplatesRequest": {
-            "description": "Search for resource templates the server provides, given a natural language or keyword query.",
-            "properties": {
-                "method": {
-                    "const": "resources/templates/search",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "query": {
-                            "description": "Arbitrary text that expresses what resource templates to search for. This can be a specific template type (e.g., 'document'), a format description (e.g., 'markdown templates'), or a use case (e.g., 'templates for scientific reports'). The server will return resource templates matching this query.",
-                            "type": "string"
-                        },
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method"
-            ],
-            "type": "object"
-        },
         "ListResourceTemplatesResult": {
             "description": "The server's response to a resources/templates/list request from the client.",
             "properties": {
@@ -1048,32 +984,6 @@
                 },
                 "params": {
                     "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method"
-            ],
-            "type": "object"
-        },
-        "SearchResourcesRequest": {
-            "description": "Search for resources the server provides, given a natural language or keyword query.",
-            "properties": {
-                "method": {
-                    "const": "resources/search",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "query": {
-                            "description": "Arbitrary text that expresses what resources to search for. This can be a specific resource type (e.g., 'image'), a content description (e.g., 'data about climate change'), or a usage intent (e.g., 'background information for an article'). The server will return resources matching this query.",
-                            "type": "string"
-                        },
                         "cursor": {
                             "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
                             "type": "string"
@@ -1168,32 +1078,6 @@
                 },
                 "params": {
                     "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method"
-            ],
-            "type": "object"
-        },
-        "SearchToolsRequest": {
-            "description": "Search for tools the server provides, given a natural language or keyword query.",
-            "properties": {
-                "method": {
-                    "const": "tools/search",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "query": {
-                            "description": "Arbitrary text that expresses what tools to search for. This can be a specific tool name (e.g., 'calculator'), a capability description (e.g., 'something that can analyze images'), or a task description (e.g., 'I need to process CSV data'). The server will return tools matching this query.",
-                            "type": "string"
-                        },
                         "cursor": {
                             "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
                             "type": "string"
@@ -2252,3 +2136,4 @@
         }
     }
 }
+

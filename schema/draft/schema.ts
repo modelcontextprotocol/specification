@@ -352,6 +352,38 @@ export interface ListResourcesResult extends PaginatedResult {
 }
 
 /**
+ * Sent from the client to request a list of resources the server has.
+ */
+export interface SearchResourcesRequest extends PaginatedRequest {
+  method: "resources/search";
+  params: {
+    /**
+     * Natural language query resources. This can either be a deep query of resource contents or a high level query of resource descriptions. Most useful on large servers where paginating large resource lists can be unreliable.
+     */
+    query: string;
+    /**
+     * An opaque token representing the current pagination position.
+     * If provided, the server should return results starting after this cursor.
+     */
+    cursor?: Cursor;
+  };
+}
+
+/**
+ * The server's response to a resources/search request from the client.
+ */
+export interface SearchResourcesResult extends PaginatedResult {
+  resources: Resource[];
+}
+
+/**
+ * The server's response to a resources/list request from the client.
+ */
+export interface ListResourcesResult extends PaginatedResult {
+  resources: Resource[];
+}
+
+/**
  * Sent from the client to request a list of resource templates the server has.
  */
 export interface ListResourceTemplatesRequest extends PaginatedRequest {
@@ -363,6 +395,31 @@ export interface ListResourceTemplatesRequest extends PaginatedRequest {
  */
 export interface ListResourceTemplatesResult extends PaginatedResult {
   resourceTemplates: ResourceTemplate[];
+}
+
+/**
+ * Sent from the client to request a list of resources the server has.
+ */
+export interface SearchResourceTemplatesRequest extends PaginatedRequest {
+  method: "resources/templates/search";
+  params: {
+    /**
+     * Natural language query for resource templates. This will query template names and descriptions. Most useful on large servers where paginating large resource lists can be unreliable.
+     */
+    query: string;
+    /**
+     * An opaque token representing the current pagination position.
+     * If provided, the server should return results starting after this cursor.
+     */
+    cursor?: Cursor;
+  };
+}
+
+/**
+ * The server's response to a resources/search request from the client.
+ */
+export interface SearchResourceTemplatesResult extends PaginatedResult {
+  resources: Resource[];
 }
 
 /**
@@ -566,6 +623,32 @@ export interface ListPromptsResult extends PaginatedResult {
 }
 
 /**
+ * Optional capability, sent from the client to query the server's prompt list by natural language or keyword search.
+ */
+export interface SearchPromptsRequest extends PaginatedRequest {
+  method: "prompts/search";
+  params: {
+    /**
+     * Natural language query to filter down the list of prompts based on a particular use case. Most useful on large servers where paginating large prompts lists can be unreliable.
+     */
+    query: string;
+    /**
+     * An opaque token representing the current pagination position.
+     * If provided, the server should return results starting after this cursor.
+     */
+    cursor?: Cursor;
+  };
+}
+
+/**
+ * The server's response to a tools/list request from the client.
+ */
+export interface SearchPromptsResult extends PaginatedResult {
+  prompts: Prompt[];
+}
+
+
+/**
  * Used by the client to get a prompt provided by the server.
  */
 export interface GetPromptRequest extends Request {
@@ -680,6 +763,31 @@ export interface ListToolsRequest extends PaginatedRequest {
  * The server's response to a tools/list request from the client.
  */
 export interface ListToolsResult extends PaginatedResult {
+  tools: Tool[];
+}
+
+/**
+ * Optional capability, sent from the client to query the server's tool list by natural language or keyword search.
+ */
+export interface SearchToolsRequest extends PaginatedRequest {
+  method: "tools/search";
+  params: {
+    /**
+     * Natural language query to filter down the list of tools based on a particular use case or capability. Most useful on large servers where paginating large tool lists can be unreliable.
+     */
+    query: string;
+    /**
+     * An opaque token representing the current pagination position.
+     * If provided, the server should return results starting after this cursor.
+     */
+    cursor?: Cursor;
+  };
+}
+
+/**
+ * The server's response to a tools/search request from the client.
+ */
+export interface SearchToolsResult extends PaginatedResult {
   tools: Tool[];
 }
 
@@ -1274,7 +1382,11 @@ export type ClientRequest =
   | SubscribeRequest
   | UnsubscribeRequest
   | CallToolRequest
-  | ListToolsRequest;
+  | ListToolsRequest
+  | SearchToolsRequest
+  | SearchResourcesRequest
+  | SearchResourceTemplatesRequest
+  | SearchPromptsRequest;
 
 export type ClientNotification =
   | CancelledNotification
@@ -1309,4 +1421,8 @@ export type ServerResult =
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
-  | ListToolsResult;
+  | ListToolsResult
+  | SearchToolsResult
+  | SearchResourcesResult
+  | SearchResourceTemplatesResult
+  | SearchPromptsResult;
