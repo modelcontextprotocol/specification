@@ -695,8 +695,25 @@ export interface ListToolsResult extends PaginatedResult {
  * server does not support tool calls, or any other exceptional conditions,
  * should be reported as an MCP error response.
  */
-export interface CallToolResult extends Result {
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+export type CallToolResult = CallToolUnstructuredResult | CallToolStructuredResult;
+
+export type ContentList = (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+
+/**
+ * Tool result for tools that do not declare an outputSchema.
+ */
+export interface CallToolUnstructuredResult extends Result {
+  /**
+   * A list of content objects that represent the result of the tool call.
+   *
+   * If the Tool does not define an outputSchema, this field MUST be present in the result.
+   */
+  content: ContentList;
+
+  /**
+   * Structured output must not be provided in an unstructured tool result.
+   */
+  structuredContent: never;
 
   /**
    * Whether the tool call ended in an error.
@@ -705,6 +722,33 @@ export interface CallToolResult extends Result {
    */
   isError?: boolean;
 }
+
+/**
+ * Tool result for tools that do declare an outputSchema.
+ */
+export interface CallToolStructuredResult extends Result {
+  /**
+   * An object containing structured tool output.
+   *
+   * If the Tool defines an outputSchema, this field MUST be present in the result, and contain a JSON object that matches the schema.
+   */
+  structuredContent: { [key: string]: unknown };
+
+  /**
+   * If the Tool defines an outputSchema, this field MAY be present in the result.
+   * Tools should use this field to provide compatibility with older clients that do not support structured content.
+   * Clients that support structured content should ignore this field.
+   */
+  content?: ContentList;
+
+  /**
+   * Whether the tool call ended in an error.
+   *
+   * If not set, this is assumed to be false (the call was successful).
+   */
+  isError?: boolean;
+}
+
 
 /**
  * Used by the client to invoke a tool provided by the server.
@@ -802,6 +846,14 @@ export interface Tool {
     properties?: { [key: string]: object };
     required?: string[];
   };
+
+  /**
+   * An optional JSON Schema object defining the structure of the tool's output.
+   *
+   * If set, a CallToolResult for this Tool MUST contain a structuredContent field whose contents validate against this schema.
+   * If not set, a CallToolResult for this Tool MUST contain a content field.
+   */
+  outputSchema?: object;
 
   /**
    * Optional additional tool information.

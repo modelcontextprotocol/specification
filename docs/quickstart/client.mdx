@@ -39,6 +39,9 @@ source .venv/bin/activate
 uv add mcp anthropic python-dotenv
 
 # Remove boilerplate files
+# On Windows:
+del main.py
+# On Unix or MacOS:
 rm main.py
 
 # Create our main file
@@ -916,16 +919,21 @@ The chatbot is implemented using Spring AI's ChatClient with MCP tool integratio
 ```java
 var chatClient = chatClientBuilder
     .defaultSystem("You are useful assistant, expert in AI and Java.")
-    .defaultTools((Object[]) mcpToolAdapter.toolCallbacks())
+    .defaultToolCallbacks((Object[]) mcpToolAdapter.toolCallbacks())
     .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
     .build();
 ```
+
+<Warning>
+Breaking change: From SpringAI 1.0.0-M8 onwards, use `.defaultToolCallbacks(...)` instead of `.defaultTool(...)` to register MCP tools.
+</Warning>
 
 Key features:
 - Uses Claude AI model for natural language understanding
 - Integrates Brave Search through MCP for real-time web search capabilities
 - Maintains conversation memory using InMemoryChatMemory
 - Runs as an interactive command-line application
+
 
 ### Build and run
 

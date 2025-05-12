@@ -188,6 +188,7 @@
                   "specification/draft/basic/lifecycle",
                   "specification/draft/basic/transports",
                   "specification/draft/basic/authorization",
+                  "specification/draft/basic/security_best_practices",
                   {
                     "group": "Utilities",
                     "pages": [
@@ -260,6 +261,11 @@
           "anchor": "C# SDK",
           "href": "https://github.com/modelcontextprotocol/csharp-sdk",
           "icon": "square-c"
+        },
+        {
+          "anchor": "Swift SDK",
+          "href": "https://github.com/modelcontextprotocol/swift-sdk",
+          "icon": "swift"
         }
       ]
     }
