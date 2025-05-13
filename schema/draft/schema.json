@@ -126,7 +126,18 @@
             "type": "object"
         },
         "CallToolResult": {
-            "description": "The server's response to a tool call.",
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/CallToolUnstructuredResult"
+                },
+                {
+                    "$ref": "#/definitions/CallToolStructuredResult"
+                }
+            ],
+            "description": "The server's response to a tool call.\n\nAny errors that originate from the tool SHOULD be reported inside the result\nobject, with `isError` set to true, _not_ as an MCP protocol-level error\nresponse. Otherwise, the LLM would not be able to see that an error occurred\nand self-correct.\n\nHowever, any errors in _finding_ the tool, an error indicating that the\nserver does not support tool calls, or any other exceptional conditions,\nshould be reported as an MCP error response."
+        },
+        "CallToolStructuredResult": {
+            "description": "Tool result for tools that do declare an outputSchema.",
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
@@ -134,20 +145,45 @@
                     "type": "object"
                 },
                 "content": {
-                    "description": "A list of content objects that represent the unstructured result of the tool call.",
+                    "description": "If the Tool defines an outputSchema, this field MAY be present in the result.\nTools should use this field to provide compatibility with older clients that do not support structured content.\nClients that support structured content should ignore this field.",
                     "items": {
                         "$ref": "#/definitions/ContentBlock"
                     },
                     "type": "array"
                 },
                 "isError": {
-                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).\n\nAny errors that originate from the tool SHOULD be reported inside the result\nobject, with `isError` set to true, _not_ as an MCP protocol-level error\nresponse. Otherwise, the LLM would not be able to see that an error occurred\nand self-correct.\n\nHowever, any errors in _finding_ the tool, an error indicating that the\nserver does not support tool calls, or any other exceptional conditions,\nshould be reported as an MCP error response.",
+                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).",
                     "type": "boolean"
                 },
                 "structuredContent": {
                     "additionalProperties": {},
-                    "description": "An optional JSON object that represents the structured result of the tool call.",
+                    "description": "An object containing structured tool output.\n\nIf the Tool defines an outputSchema, this field MUST be present in the result, and contain a JSON object that matches the schema.",
                     "type": "object"
+                }
+            },
+            "required": [
+                "structuredContent"
+            ],
+            "type": "object"
+        },
+        "CallToolUnstructuredResult": {
+            "description": "Tool result for tools that do not declare an outputSchema.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "content": {
+                    "description": "A list of content objects that represent the result of the tool call.\n\nIf the Tool does not define an outputSchema, this field MUST be present in the result.",
+                    "items": {
+                        "$ref": "#/definitions/ContentBlock"
+                    },
+                    "type": "array"
+                },
+                "isError": {
+                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).",
+                    "type": "boolean"
                 }
             },
             "required": [
@@ -491,17 +527,7 @@
                     "type": "object"
                 },
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "$ref": "#/definitions/ContentBlock"
                 },
                 "model": {
                     "description": "The name of the model that generated the message.",
@@ -1948,17 +1974,7 @@
             "description": "Describes a message issued to or received from an LLM API.",
             "properties": {
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "$ref": "#/definitions/ContentBlock"
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
@@ -2099,7 +2115,10 @@
                     "$ref": "#/definitions/ListToolsResult"
                 },
                 {
-                    "$ref": "#/definitions/CallToolResult"
+                    "$ref": "#/definitions/CallToolUnstructuredResult"
+                },
+                {
+                    "$ref": "#/definitions/CallToolStructuredResult"
                 },
                 {
                     "$ref": "#/definitions/CompleteResult"
