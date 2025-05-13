@@ -122,20 +122,7 @@
                 "content": {
                     "description": "If the Tool defines an outputSchema, this field MAY be present in the result.\nTools should use this field to provide compatibility with older clients that do not support structured content.\nClients that support structured content should ignore this field.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/TextContent"
-                            },
-                            {
-                                "$ref": "#/definitions/ImageContent"
-                            },
-                            {
-                                "$ref": "#/definitions/AudioContent"
-                            },
-                            {
-                                "$ref": "#/definitions/EmbeddedResource"
-                            }
-                        ]
+                        "$ref": "#/definitions/Content"
                     },
                     "type": "array"
                 },
@@ -165,20 +152,7 @@
                 "content": {
                     "description": "A list of content objects that represent the result of the tool call.\n\nIf the Tool does not define an outputSchema, this field MUST be present in the result.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/TextContent"
-                            },
-                            {
-                                "$ref": "#/definitions/ImageContent"
-                            },
-                            {
-                                "$ref": "#/definitions/AudioContent"
-                            },
-                            {
-                                "$ref": "#/definitions/EmbeddedResource"
-                            }
-                        ]
+                        "$ref": "#/definitions/Content"
                     },
                     "type": "array"
                 },
@@ -413,22 +387,25 @@
             ],
             "type": "object"
         },
+        "Content": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TextContent"
+                },
+                {
+                    "$ref": "#/definitions/ImageContent"
+                },
+                {
+                    "$ref": "#/definitions/AudioContent"
+                },
+                {
+                    "$ref": "#/definitions/EmbeddedResource"
+                }
+            ]
+        },
         "ContentList": {
             "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/definitions/TextContent"
-                    },
-                    {
-                        "$ref": "#/definitions/ImageContent"
-                    },
-                    {
-                        "$ref": "#/definitions/AudioContent"
-                    },
-                    {
-                        "$ref": "#/definitions/EmbeddedResource"
-                    }
-                ]
+                "$ref": "#/definitions/Content"
             },
             "type": "array"
         },
@@ -506,17 +483,7 @@
                     "type": "object"
                 },
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "$ref": "#/definitions/Content"
                 },
                 "model": {
                     "description": "The name of the model that generated the message.",
@@ -1830,17 +1797,7 @@
             "description": "Describes a message issued to or received from an LLM API.",
             "properties": {
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "$ref": "#/definitions/Content"
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
