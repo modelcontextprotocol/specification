@@ -853,7 +853,11 @@ export interface Tool {
    * If set, a CallToolResult for this Tool MUST contain a structuredContent field whose contents validate against this schema.
    * If not set, a CallToolResult for this Tool MUST contain a content field.
    */
-  outputSchema?: object;
+  outputSchema?: {
+    type: "object";
+    properties?: { [key: string]: object };
+    required?: string[];
+  };
 
   /**
    * Optional additional tool information.
