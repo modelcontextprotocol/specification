@@ -5,8 +5,8 @@ title: Roots
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) provides a standardized way for clients to expose
-filesystem "roots" to servers. Roots define the boundaries of where servers can operate
-within the filesystem, allowing them to understand which directories and files they have
+system "roots" to servers. Roots define the boundaries of where servers can operate
+within the system, allowing them to understand which directories and files they have
 access to. Servers can request the list of roots from supporting clients and receive
 notifications when that list changes.
 
@@ -107,8 +107,7 @@ sequenceDiagram
 
 A root definition includes:
 
-- `uri`: Unique identifier for the root. This **MUST** be a `file://` URI in the current
-  specification.
+- `uri`: Unique identifier for the root.
 - `name`: Optional human-readable name for display purposes.
 
 Example roots for different use cases:
