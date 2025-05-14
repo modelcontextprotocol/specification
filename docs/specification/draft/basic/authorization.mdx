@@ -169,6 +169,11 @@ sequenceDiagram
     M->>C: HTTP 401 Unauthorized with WWW-Authenticate header
     Note over C: Extract resource_metadata URL from WWW-Authenticate
 
+    C->>M: Request Protected Resource Metadata
+    M->>C: Return metadata
+
+    Note over C: Parse metadata and extract authorization server(s)<br/>Client determines AS to use
+
     C->>A: GET /.well-known/oauth-authorization-server
     A->>C: Authorization server metadata response
 
