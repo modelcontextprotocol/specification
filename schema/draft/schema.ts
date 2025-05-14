@@ -42,6 +42,12 @@ export interface Request {
        * If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
        */
       progressToken?: ProgressToken;
+      /**
+       * If true, the caller is requesting that results be streamed via progress notifications.
+       * When this is set to true, the final response may be empty as the complete result
+       * will have been delivered through progress notifications.
+       */
+      partialResults?: boolean;
     };
     [key: string]: unknown;
   };
@@ -314,6 +320,26 @@ export interface ProgressNotification extends Notification {
      * An optional message describing the current progress.
      */
     message?: string;
+    /**
+     * If present, contains a partial result chunk for the operation.
+     * This is used to stream results incrementally while an operation is still in progress.
+     */
+    partialResult?: {
+      /**
+       * The partial result data chunk.
+       */
+      chunk: { [key: string]: unknown; };
+      /**
+       * If true, this chunk should be appended to previously received chunks.
+       * If false, this chunk replaces any previously received chunks.
+       */
+      append: boolean;
+      /**
+       * If true, this is the final chunk of the result.
+       * No further chunks will be sent for this operation.
+       */
+      lastChunk: boolean;
+    };
   };
 }
 
