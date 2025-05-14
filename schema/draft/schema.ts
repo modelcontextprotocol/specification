@@ -695,9 +695,17 @@ export interface ListToolsResult extends PaginatedResult {
  * server does not support tool calls, or any other exceptional conditions,
  * should be reported as an MCP error response.
  */
-export type CallToolResult = CallToolUnstructuredResult | CallToolStructuredResult;
+export type CallToolResult =
+  | CallToolUnstructuredResult
+  | CallToolStructuredResult;
 
-export type ContentList = (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+export type Content =
+  | TextContent
+  | ImageContent
+  | AudioContent
+  | EmbeddedResource;
+
+export type ContentList = Content[];
 
 /**
  * Tool result for tools that do not declare an outputSchema.
@@ -748,7 +756,6 @@ export interface CallToolStructuredResult extends Result {
    */
   isError?: boolean;
 }
-
 
 /**
  * Used by the client to invoke a tool provided by the server.
@@ -971,7 +978,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent;
+  content: Content;
 }
 
 /**
