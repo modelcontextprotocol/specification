@@ -3,26 +3,21 @@ title: "Roots"
 description: "Understanding roots in MCP"
 ---
 
-Roots are a concept in MCP that define the boundaries where servers can operate. They provide a way for clients to inform servers about relevant resources and their locations.
+Roots are a concept in MCP that define the boundaries where servers can operate. They provide a way for clients to inform servers about relevant filesystem resources and their locations.
 
 ## What are Roots?
 
-A root is a URI that a client suggests a server should focus on. When a client connects to a server, it declares which roots the server should work with. While primarily used for filesystem paths, roots can be any valid URI including HTTP URLs.
+A root is a file URI that a client suggests a server should focus on. When a client connects to a server, it declares which roots the server should work with. Roots must be valid file URIs.
 
-For example, roots could be:
-
-```
-file:///home/user/projects/myapp
-https://api.example.com/v1
-```
+For example, roots could be `file:///home/user/projects/myapp`.
 
 ## Why Use Roots?
 
 Roots serve several important purposes:
 
-1. **Guidance**: They inform servers about relevant resources and locations
+1. **Guidance**: They inform servers about relevant filesystem resources and locations
 2. **Clarity**: Roots make it clear which resources are part of your workspace
-3. **Organization**: Multiple roots let you work with different resources simultaneously
+3. **Organization**: Multiple roots let you work with different filesystem resources simultaneously
 
 ## How Roots Work
 
@@ -35,7 +30,7 @@ When a client supports roots, it:
 While roots are informational and not strictly enforcing, servers should:
 
 1. Respect the provided roots
-2. Use root URIs to locate and access resources
+2. Use root URIs to locate and access filesystem resources
 3. Prioritize operations within root boundaries
 
 ## Common Use Cases
@@ -44,7 +39,6 @@ Roots are commonly used to define:
 
 - Project directories
 - Repository locations
-- API endpoints
 - Configuration locations
 - Resource boundaries
 
@@ -52,7 +46,7 @@ Roots are commonly used to define:
 
 When working with roots:
 
-1. Only suggest necessary resources
+1. Only suggest necessary filesystem resources
 2. Use clear, descriptive names for roots
 3. Monitor root accessibility
 4. Handle root changes gracefully
@@ -69,11 +63,11 @@ Here's how a typical MCP client might expose roots:
       "name": "Frontend Repository"
     },
     {
-      "uri": "https://api.example.com/v1",
-      "name": "API Endpoint"
+      "uri": "file:///home/user/projects/backend",
+      "name": "Backend Repository"
     }
   ]
 }
 ```
 
-This configuration suggests the server focus on both a local repository and an API endpoint while keeping them logically separated.
+This configuration suggests the server focus on two local repositories while keeping them logically separated.
