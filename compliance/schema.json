@@ -1,0 +1,83 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MCP SDK Support Manifest",
+    "description": "Defines which MCP specification features are supported by an SDK",
+    "type": "object",
+    "required": ["schema_version", "sdk_platform", "sdk_version", "mcp_spec_support", "last_updated"],
+    "properties": {
+      "schema_version": {
+        "type": "string",
+        "description": "The version of the schema this manifest complies with",
+        "pattern": "^[0-9]+(\\.[0-9]+)*(-[a-zA-Z0-9]+)?(\\+[a-zA-Z0-9]+)?$"
+      },
+      "sdk_platform": {
+        "type": "string",
+        "description": "The language or platform of the SDK",
+        "enum": ["python", "typescript", "java", "csharp", "kotlin", "go", "ruby", "rust", "swift"]
+      },
+      "sdk_version": {
+        "type": "string",
+        "description": "The version of the SDK",
+        "pattern": "^[0-9]+(\\.[0-9]+)*(-[a-zA-Z0-9]+)?(\\+[a-zA-Z0-9]+)?$"
+      },
+      "mcp_spec_support": {
+        "type": "object",
+        "description": "Support status for each MCP protocol version",
+        "patternProperties": {
+          "^[0-9]{4}-[0-9]{2}-[0-9]{2}$": {
+            "type": "object",
+            "properties": {
+              "transport": {
+                "type": "object",
+                "properties": {
+                  "stdio": { "type": "boolean" },
+                  "streamable_http": { "type": "boolean" },
+                  "http_sse": { "type": "boolean" }
+                }
+              },
+              "client": {
+                "type": "object",
+                "properties": {
+                  "roots": { "type": "boolean" },
+                  "sampling": { "type": "boolean" }
+                }
+              },
+              "server": {
+                "type": "object",
+                "properties": {
+                  "prompts": { "type": "boolean" },
+                  "resources": { "type": "boolean" },
+                  "tools": { "type": "boolean" }
+                }
+              },
+              "utilities": {
+                "type": "object",
+                "properties": {
+                  "cancellation": { "type": "boolean" },
+                  "ping": { "type": "boolean" },
+                  "completion": { "type": "boolean" },
+                  "logging": { "type": "boolean" },
+                  "pagination": { "type": "boolean" },
+                  "progress": { "type": "boolean" }
+                }
+              },
+              "authorization": {
+                "type": "object",
+                "properties": {
+                  "oauth_client_auth": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "last_updated": {
+        "type": "string",
+        "description": "The date when this manifest was last updated",
+        "format": "date",
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+      }
+    },
+    "additionalProperties": false
+}
