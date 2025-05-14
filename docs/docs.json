@@ -203,7 +203,8 @@
                 "group": "Client Features",
                 "pages": [
                   "specification/draft/client/roots",
-                  "specification/draft/client/sampling"
+                  "specification/draft/client/sampling",
+                  "specification/draft/client/elicitation"
                 ]
               },
               {

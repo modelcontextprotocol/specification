@@ -220,6 +220,10 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client supports elicitation from the server.
+   */
+  elicitation?: object;
 }
 
 /**
@@ -1264,6 +1268,40 @@ export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
 }
 
+/* Elicitation */
+/**
+ * A request from the server to elicit additional information from the user via the client.
+ */
+export interface ElicitRequest extends Request {
+  method: "elicitation/create";
+  params: {
+    /**
+     * The message to present to the user.
+     */
+    message: string;
+    /**
+     * A JSON Schema object defining the expected structure of the response.
+     * This follows the same pattern as the inputSchema in Tool interface.
+     */
+    requestedSchema: {
+      type: "object";
+      properties?: { [key: string]: object };
+      required?: string[];
+    };
+  };
+}
+
+/**
+ * The client's response to an elicitation request.
+ */
+export interface ElicitResult extends Result {
+  /**
+   * The user's response to the elicitation request.
+   * This follows the same pattern as arguments in tool calls.
+   */
+  content: { [key: string]: unknown };
+}
+
 /* Client messages */
 export type ClientRequest =
   | PingRequest
@@ -1286,13 +1324,14 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult;
+export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
-  | ListRootsRequest;
+  | ListRootsRequest
+  | ElicitRequest;
 
 export type ServerNotification =
   | CancelledNotification
