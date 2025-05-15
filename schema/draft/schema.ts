@@ -711,9 +711,9 @@ export interface CallToolUnstructuredResult extends Result {
   content: ContentList;
 
   /**
-   * Structured output must not be provided in an unstructured tool result.
+   * Structured content may be provided in an unstructured tool result.
    */
-  structuredContent: never;
+  structuredContent?: { [key: string]: unknown };
 
   /**
    * Whether the tool call ended in an error.
@@ -736,7 +736,9 @@ export interface CallToolStructuredResult extends Result {
 
   /**
    * If the Tool defines an outputSchema, this field MAY be present in the result.
+   *
    * Tools should use this field to provide compatibility with older clients that do not support structured content.
+   *
    * Clients that support structured content should ignore this field.
    */
   content?: ContentList;

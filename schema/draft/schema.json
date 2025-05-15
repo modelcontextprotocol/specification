@@ -120,7 +120,7 @@
                     "type": "object"
                 },
                 "content": {
-                    "description": "If the Tool defines an outputSchema, this field MAY be present in the result.\nTools should use this field to provide compatibility with older clients that do not support structured content.\nClients that support structured content should ignore this field.",
+                    "description": "If the Tool defines an outputSchema, this field MAY be present in the result.\n\nTools should use this field to provide compatibility with older clients that do not support structured content.\n\nClients that support structured content should ignore this field.",
                     "items": {
                         "anyOf": [
                             {
@@ -185,6 +185,11 @@
                 "isError": {
                     "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).",
                     "type": "boolean"
+                },
+                "structuredContent": {
+                    "additionalProperties": {},
+                    "description": "Structured content may be provided in an unstructured tool result.",
+                    "type": "object"
                 }
             },
             "required": [
