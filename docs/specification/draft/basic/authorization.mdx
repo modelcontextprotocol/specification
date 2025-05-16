@@ -281,7 +281,7 @@ An attacker who has gained access to an authorization code contained in an autho
 To mitigate this, MCP clients **MUST** implement PKCE according to [OAuth 2.1 Section 7.5.2](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-7.5.2).
 PKCE helps prevent authorization code interception and injection attacks by requiring clients to create a secret verifier-challenge pair, ensuring that only the original requestor can exchange an authorization code for tokens.
 
-### 3.3 Open Redirection
+### 3.4 Open Redirection
 
 An attacker may craft malicious redirect URIs to direct users to phishing sites.
 
@@ -296,7 +296,7 @@ Authorization servers **MUST** take precautions to prevent redirecting user agen
 
 Authorization servers **SHOULD** only automatically redirect the user agent if it trusts the redirection URI. If the URI is not trusted, the authorization server MAY inform the user and rely on the user to make the correct decision.
 
-### 3.4 Confused Deputy Problem
+### 3.5 Confused Deputy Problem
 
 Attackers can exploit MCP servers acting as intermediaries to third-party APIs, leading to confused deputy vulnerabilities.
 By using stolen authorization codes, they can obtain access tokens without user consent.
