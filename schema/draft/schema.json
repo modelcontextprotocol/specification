@@ -134,6 +134,9 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
+                            },
+                            {
+                                "$ref": "#/definitions/Resource"
                             }
                         ]
                     },
@@ -177,6 +180,9 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
+                            },
+                            {
+                                "$ref": "#/definitions/Resource"
                             }
                         ]
                     },
@@ -1620,6 +1626,16 @@
                 },
                 "description": {
                     "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "The status of this resource.",
+                    "enum": [
+                        "pending",
+                        "ready",
+                        "error",
+                        "deleted"
+                    ],
                     "type": "string"
                 },
                 "mimeType": {
