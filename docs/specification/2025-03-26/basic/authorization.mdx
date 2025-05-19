@@ -132,15 +132,7 @@ sequenceDiagram
     Note over C: Continue with authorization flow
 ```
 
-#### 2.3.1 Server Metadata Discovery Headers
-
-MCP clients _SHOULD_ include the header `MCP-Protocol-Version: <protocol-version>` during
-Server Metadata Discovery to allow the MCP server to respond based on the MCP protocol
-version.
-
-For example: `MCP-Protocol-Version: 2024-11-05`
-
-#### 2.3.2 Authorization Base URL
+#### 2.3.1 Authorization Base URL
 
 The authorization base URL **MUST** be determined from the MCP server URL by discarding
 any existing `path` component. For example:
@@ -154,7 +146,7 @@ If the MCP server URL is `https://api.example.com/v1/mcp`, then:
 This ensures authorization endpoints are consistently located at the root level of the
 domain hosting the MCP server, regardless of any path components in the MCP server URL.
 
-#### 2.3.3 Fallbacks for Servers without Metadata Discovery
+#### 2.3.2 Fallbacks for Servers without Metadata Discovery
 
 For servers that do not implement OAuth 2.0 Authorization Server Metadata, clients
 **MUST** use the following default endpoint paths relative to the authorization base URL

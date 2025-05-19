@@ -137,6 +137,13 @@ supports. This **SHOULD** be the _latest_ version supported by the server.
 If the client does not support the version in the server's response, it **SHOULD**
 disconnect.
 
+If using HTTP, the client **MUST** include the `MCP-Protocol-Version:
+<protocol-version>` HTTP header during any subsequent requests to the MCP
+server, allowing the MCP server to respond based on the MCP protocol version. 
+
+If the server receives a request with a missing, invalid, or unsupported
+MCP-Protocol-VERSION, it **MUST** respond with `400 Bad Request`.
+
 #### Capability Negotiation
 
 Client and server capabilities establish which optional protocol features will be
