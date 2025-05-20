@@ -27,8 +27,7 @@ Requests are sent from the client to the server or vice versa.
 
 - Requests **MUST** include a string or integer ID.
 - Unlike base JSON-RPC, the ID **MUST NOT** be `null`.
-- The request ID **MUST NOT** have been previously used by the requestor within the same
-  session.
+- The request ID **MUST** be unique within the same session.
 
 ## Responses
 
