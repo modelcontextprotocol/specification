@@ -242,6 +242,8 @@ sequenceDiagram
     Note over Client,Server: Resource Discovery
     Client->>Server: resources/list
     Server-->>Client: List of resources
+    Client->>Server: resources/search
+    Server-->>Client: Result of resources search
 
     Note over Client,Server: Resource Access
     Client->>Server: resources/read
