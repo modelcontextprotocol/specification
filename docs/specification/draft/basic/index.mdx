@@ -91,13 +91,6 @@ The receiver **MUST NOT** send a response.
 
 - Notifications **MUST NOT** include an ID.
 
-### Batching
-
-JSON-RPC also defines a means to
-[batch multiple requests and notifications](https://www.jsonrpc.org/specification#batch),
-by sending them in an array. MCP implementations **MAY** support sending JSON-RPC
-batches, but **MUST** support receiving JSON-RPC batches.
-
 ## Auth
 
 MCP provides an [Authorization](/specification/draft/basic/authorization) framework for use with HTTP.
