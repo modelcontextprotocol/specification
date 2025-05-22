@@ -18,6 +18,12 @@
           "printWidth": 89,
           "proseWrap": "always"
         }
+      },
+      {
+        "files": "*.json",
+        "options": {
+          "tabWidth": 4
+        }
       }
     ]
   },
