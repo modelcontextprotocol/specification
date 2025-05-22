@@ -71,6 +71,27 @@
             ],
             "type": "object"
         },
+        "BooleanSchema": {
+            "properties": {
+                "default": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "const": "boolean",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
         "CallToolRequest": {
             "description": "Used by the client to invoke a tool provided by the server.",
             "properties": {
@@ -176,6 +197,12 @@
         "ClientCapabilities": {
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
+                "elicitation": {
+                    "additionalProperties": true,
+                    "description": "Present if the client supports elicitation from the server.",
+                    "properties": {},
+                    "type": "object"
+                },
                 "experimental": {
                     "additionalProperties": {
                         "additionalProperties": true,
@@ -273,6 +300,9 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsResult"
+                },
+                {
+                    "$ref": "#/definitions/ElicitResult"
                 }
             ]
         },
@@ -473,6 +503,87 @@
             "description": "An opaque token used to represent a cursor for pagination.",
             "type": "string"
         },
+        "ElicitRequest": {
+            "description": "A request from the server to elicit additional information from the user via the client.",
+            "properties": {
+                "method": {
+                    "const": "elicitation/create",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "message": {
+                            "description": "The message to present to the user.",
+                            "type": "string"
+                        },
+                        "requestedSchema": {
+                            "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.",
+                            "properties": {
+                                "properties": {
+                                    "additionalProperties": {
+                                        "$ref": "#/definitions/PrimitiveSchemaDefinition"
+                                    },
+                                    "type": "object"
+                                },
+                                "required": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "type": {
+                                    "const": "object",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "properties",
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "message",
+                        "requestedSchema"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "ElicitResult": {
+            "description": "The client's response to an elicitation request.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "action": {
+                    "description": "The user action in response to the elicitation.\n- \"accept\": User submitted the form/confirmed the action\n- \"decline\": User explicitly declined the action\n- \"cancel\": User dismissed without making an explicit choice",
+                    "enum": [
+                        "accept",
+                        "cancel",
+                        "decline"
+                    ],
+                    "type": "string"
+                },
+                "content": {
+                    "additionalProperties": {},
+                    "description": "The submitted form data, only present when action is \"accept\".\nContains values matching the requested schema.",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "action"
+            ],
+            "type": "object"
+        },
         "EmbeddedResource": {
             "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
             "properties": {
@@ -503,6 +614,37 @@
         },
         "EmptyResult": {
             "$ref": "#/definitions/Result"
+        },
+        "EnumSchema": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "enum": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "enumNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "const": "string",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "enum",
+                "type"
+            ],
+            "type": "object"
         },
         "GetPromptRequest": {
             "description": "Used by the client to get a prompt provided by the server.",
@@ -1232,6 +1374,33 @@
             ],
             "type": "object"
         },
+        "NumberSchema": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "maximum": {
+                    "type": "integer"
+                },
+                "minimum": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "integer",
+                        "number"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
         "PaginatedRequest": {
             "properties": {
                 "method": {
@@ -1293,6 +1462,23 @@
                 "method"
             ],
             "type": "object"
+        },
+        "PrimitiveSchemaDefinition": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/StringSchema"
+                },
+                {
+                    "$ref": "#/definitions/NumberSchema"
+                },
+                {
+                    "$ref": "#/definitions/BooleanSchema"
+                },
+                {
+                    "$ref": "#/definitions/EnumSchema"
+                }
+            ],
+            "description": "Restricted schema definitions that only allow primitive types\nwithout nested objects or arrays."
         },
         "ProgressNotification": {
             "description": "An out-of-band notification used to inform the receiver of a progress update for a long-running request.",
@@ -1880,6 +2066,9 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsRequest"
+                },
+                {
+                    "$ref": "#/definitions/ElicitRequest"
                 }
             ]
         },
@@ -1940,6 +2129,39 @@
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "StringSchema": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "format": {
+                    "enum": [
+                        "date",
+                        "date-time",
+                        "email",
+                        "uri"
+                    ],
+                    "type": "string"
+                },
+                "maxLength": {
+                    "type": "integer"
+                },
+                "minLength": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "const": "string",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
             ],
             "type": "object"
         },
