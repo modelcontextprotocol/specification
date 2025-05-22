@@ -446,7 +446,7 @@ export interface ResourceUpdatedNotification extends Notification {
  */
 export type ResourceStatus =
   | "pending"
-  | "ready"
+  | "available"
   | "error"
   | "deleted"
 

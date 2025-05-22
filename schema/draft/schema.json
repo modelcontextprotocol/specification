@@ -124,6 +124,9 @@
                     "items": {
                         "anyOf": [
                             {
+                                "$ref": "#/definitions/Resource"
+                            },
+                            {
                                 "$ref": "#/definitions/TextContent"
                             },
                             {
@@ -134,9 +137,6 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
-                            },
-                            {
-                                "$ref": "#/definitions/Resource"
                             }
                         ]
                     },
@@ -170,6 +170,9 @@
                     "items": {
                         "anyOf": [
                             {
+                                "$ref": "#/definitions/Resource"
+                            },
+                            {
                                 "$ref": "#/definitions/TextContent"
                             },
                             {
@@ -180,9 +183,6 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
-                            },
-                            {
-                                "$ref": "#/definitions/Resource"
                             }
                         ]
                     },
@@ -422,6 +422,9 @@
         "ContentList": {
             "items": {
                 "anyOf": [
+                    {
+                        "$ref": "#/definitions/Resource"
+                    },
                     {
                         "$ref": "#/definitions/TextContent"
                     },
@@ -1628,16 +1631,6 @@
                     "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
                 },
-                "status": {
-                    "description": "The status of this resource.",
-                    "enum": [
-                        "pending",
-                        "ready",
-                        "error",
-                        "deleted"
-                    ],
-                    "type": "string"
-                },
                 "mimeType": {
                     "description": "The MIME type of this resource, if known.",
                     "type": "string"
@@ -1649,6 +1642,10 @@
                 "size": {
                     "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
                     "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/ResourceStatus",
+                    "description": "The status of this resource.\n\nThis can be used by clients to determine whether the resource is available for use."
                 },
                 "uri": {
                     "description": "The URI of this resource.",
@@ -1722,6 +1719,16 @@
                 "uri"
             ],
             "type": "object"
+        },
+        "ResourceStatus": {
+            "description": "The status of this resource.\n\nThis can be used by clients to determine whether the resource is available for use.",
+            "enum": [
+                "available",
+                "deleted",
+                "error",
+                "pending"
+            ],
+            "type": "string"
         },
         "ResourceTemplate": {
             "description": "A template description for resources available on the server.",
