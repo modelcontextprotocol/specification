@@ -45,6 +45,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools                                                              |
 | [MindPal][MindPal]                          | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools for no-code AI agents and multi-agent workflows.             |
 | [Msty Studio][Msty Studio]                  | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools                                                              |
+| [NVIDIA Agent Intelligence toolkit][AIQ toolkit] | ❌     | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools in agentic workflows.                                        |
 | [OpenSumi][OpenSumi]                        | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools in OpenSumi                                                  |
 | [oterm][oterm]                              | ❌          | ✅        | ✅      | ❓                     | ✅          | ❌    | Supports tools, prompts and sampling for Ollama.                                                 |
 | [Postman][postman]                          | ✅          | ✅        | ✅      | ❓                     | ❌          | ❌    | Supports tools, resources, prompts, and sampling                                                 |
@@ -64,6 +65,7 @@ This page provides an overview of applications that support the Model Context Pr
 [5ire]: https://github.com/nanbingxyz/5ire
 [AgentAI]: https://github.com/AdamStrojek/rust-agentai
 [AgenticFlow]: https://agenticflow.ai/mcp
+[AIQ toolkit]: https://github.com/NVIDIA/AIQToolkit
 [Amazon Q CLI]: https://github.com/aws/amazon-q-developer-cli
 [Apify MCP Tester]: https://apify.com/jiri.spilka/tester-mcp-client
 [BeeAI Framework]: https://i-am-bee.github.io/beeai-framework
@@ -115,6 +117,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Sampling]: https://modelcontextprotocol.io/docs/concepts/sampling
 [HyperAgent]: https://github.com/hyperbrowserai/HyperAgent
 [Discovery]: /docs/concepts/tools#tool-discovery-and-updates
+
 
 </div>
 
@@ -447,6 +450,19 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 
 **Learn more:**
 - [Msty Studio Documentation](https://docs.msty.studio/features/toolbox/tools)
+
+### NVIDIA Agent Intelligence (AIQ) toolkit
+[NVIDIA Agent Intelligence (AIQ) toolkit](https://github.com/NVIDIA/AIQToolkit) is a flexible, lightweight, and unifying library that allows you to easily connect existing enterprise agents to data sources and tools across any framework.
+
+**Key features:**
+- Acts as an MCP **client** to consume remote tools
+- Acts as an MCP **server** to expose tools
+- Framework agnostic and compatible with LangChain, CrewAI, Semantic Kernel, and custom agents
+- Includes built-in observability and evaluation tools
+
+**Learn more:**
+- [AIQ toolkit GitHub repository](https://github.com/NVIDIA/AIQToolkit)
+- [AIQ toolkit MCP documentation](https://docs.nvidia.com/aiqtoolkit/latest/workflows/mcp/index.html)
 
 ### OpenSumi
 [OpenSumi](https://github.com/opensumi/core) is a framework helps you quickly build AI Native IDE products.
