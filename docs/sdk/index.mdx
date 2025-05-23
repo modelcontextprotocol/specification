@@ -1,0 +1,243 @@
+---
+title: "Official SDKs"
+description: "A comprehensive list of official SDKs for the Model Context Protocol with their feature support"
+---
+
+# Official SDKs
+
+The Model Context Protocol (MCP) provides official SDK implementations in multiple programming languages. These SDKs enable developers to build MCP clients and servers, expose data and functionality through MCP servers, and integrate LLM capabilities into their applications.
+
+## Feature Support Matrix
+
+The following table shows the feature support across different MCP SDK implementations, organized by protocol version:
+
+| Feature | [TypeScript SDK] | [Python SDK] | [Java SDK] | [Kotlin SDK] | [Rust SDK] | [C# SDK] | Notes |
+|---------|-----------------|--------------|------------|--------------|------------|----------|-------|
+| **Protocol Version 2024-11-05** | | | | | | | |
+| Resources | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Basic resource management |
+| Prompts | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Prompt templates |
+| Tools | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Function execution |
+| Sampling | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | LLM interactions |
+| Roots | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | Filesystem boundaries |
+| Logging | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Structured logging |
+| Progress | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Progress tracking |
+| Cancellation | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Request cancellation |
+| stdio Transport | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Process communication |
+| HTTP+SSE Transport | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Server-sent events |
+| **Protocol Version 2025-03-26** | | | | | | | |
+| OAuth 2.1 Authorization | ✅ | ✅ | ❌ | ⚠️ | ✅ | ⚠️ | Dynamic client registration |
+| Streamable HTTP Transport | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | Replaces HTTP+SSE |
+| JSON-RPC Batching | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | Multiple requests |
+| Tool Annotations | ✅ | ✅ | ❌ | ⚠️ | ✅ | ✅ | Enhanced metadata |
+| Audio Content | ✅ | ✅ | ❌ | ⚠️ | ✅ | ✅ | Audio support in resources |
+| Completions Capability | ✅ | ✅ | ❌ | ⚠️ | ✅ | ✅ | Explicit autocompletion |
+| **Protocol Version Draft** | | | | | | | |
+| Security Best Practices | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | Enhanced security guidance |
+| ~~JSON-RPC Batching~~ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Removed in draft |
+
+Legend:
+- ✅ Full support
+- ⚠️ Partial support or unclear from documentation
+- ❌ Not supported
+
+## SDK Details
+
+### TypeScript SDK
+
+**Repository**: [modelcontextprotocol/typescript-sdk](https://github.com/modelcontextprotocol/typescript-sdk)  
+**Package**: [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)  
+**Version**: 1.11.1  
+**Protocol Support**: 2024-11-05, 2025-03-26, draft
+
+The TypeScript SDK is the most mature implementation, offering comprehensive support for all MCP features.
+
+**Key Features**:
+- Full protocol implementation across all versions
+- Type-safe API with TypeScript support
+- Built-in transport implementations (stdio, SSE, streamable HTTP)
+- OAuth proxy support
+- Comprehensive testing utilities
+- Backwards compatibility support
+
+**Installation**:
+```bash
+npm install @modelcontextprotocol/sdk
+```
+
+[View Documentation →](https://github.com/modelcontextprotocol/typescript-sdk#readme)
+
+### Python SDK
+
+**Repository**: [modelcontextprotocol/python-sdk](https://github.com/modelcontextprotocol/python-sdk)  
+**Package**: [mcp](https://pypi.org/project/mcp/)  
+**Version**: Dynamic (git-based)  
+**Protocol Support**: 2024-11-05, 2025-03-26, draft
+
+The Python SDK provides a high-level FastMCP interface for easy server development alongside low-level protocol implementation.
+
+**Key Features**:
+- FastMCP for declarative server development
+- Async/await support with asyncio
+- Built-in transports (stdio, SSE, streamable HTTP)
+- OAuth 2.0 server interface
+- CLI tools for development and installation
+- Uvicorn-based server hosting
+
+**Installation**:
+```bash
+pip install mcp[cli]
+# or using uv
+uv add "mcp[cli]"
+```
+
+[View Documentation →](https://github.com/modelcontextprotocol/python-sdk#readme)
+
+### Java SDK
+
+**Repository**: [modelcontextprotocol/java-sdk](https://github.com/modelcontextprotocol/java-sdk)  
+**Maven**: io.modelcontextprotocol.sdk:mcp  
+**Version**: 0.10.0-SNAPSHOT  
+**Protocol Support**: 2024-11-05
+
+The Java SDK supports core MCP features with Spring framework integration options.
+
+**Key Features**:
+- Session-based architecture
+- Multiple transport implementations
+- Spring Framework integration (WebFlux, WebMVC)
+- BOM for dependency management
+- Java 17+ support
+
+**Migration Note**: Version 0.8.x introduced breaking changes - see the [migration guide](https://github.com/modelcontextprotocol/java-sdk/blob/main/migration-0.8.0.md).
+
+**Installation**:
+```xml
+<dependency>
+    <groupId>io.modelcontextprotocol.sdk</groupId>
+    <artifactId>mcp</artifactId>
+    <version>0.10.0</version>
+</dependency>
+```
+
+[View Documentation →](https://modelcontextprotocol.io/sdk/java/mcp-overview)
+
+### Kotlin SDK
+
+**Repository**: [modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk)  
+**Package**: io.modelcontextprotocol:kotlin-sdk  
+**Version**: 0.5.0  
+**Protocol Support**: 2024-11-05 (full extent unclear)
+
+The Kotlin SDK provides idiomatic Kotlin implementations for both MCP clients and servers.
+
+**Key Features**:
+- Coroutine-based async support
+- Ktor integration for SSE transport
+- Multiplatform ready
+- Type-safe builders
+- WebSocket support
+
+**Installation**:
+```kotlin
+dependencies {
+    implementation("io.modelcontextprotocol:kotlin-sdk:0.5.0")
+}
+```
+
+[View Documentation →](https://github.com/modelcontextprotocol/kotlin-sdk#readme)
+
+### Rust SDK
+
+**Repository**: [modelcontextprotocol/rust-sdk](https://github.com/modelcontextprotocol/rust-sdk)  
+**Crate**: [rmcp](https://crates.io/crates/rmcp)  
+**Version**: 0.1.5  
+**Protocol Support**: 2024-11-05, partial 2025-03-26
+
+The Rust SDK provides an async implementation built on tokio runtime with macro-based tool definitions.
+
+**Key Features**:
+- Async/await with tokio runtime
+- Macro-based tool definition system  
+- OAuth support
+- Multiple transport implementations
+- Type-safe API
+- Easy service composition
+
+**Installation**:
+```toml
+[dependencies]
+rmcp = { version = "0.1", features = ["server"] }
+```
+
+[View Documentation →](https://docs.rs/rmcp/latest/rmcp)
+
+### C# SDK
+
+**Repository**: [modelcontextprotocol/csharp-sdk](https://github.com/modelcontextprotocol/csharp-sdk)  
+**Package**: [ModelContextProtocol](https://www.nuget.org/packages/ModelContextProtocol)  
+**Version**: Preview  
+**Protocol Support**: 2024-11-05, partial 2025-03-26
+
+The C# SDK is currently in preview with comprehensive feature support and ASP.NET Core integration.
+
+**Key Features**:
+- Attribute-based tool and prompt definitions
+- ASP.NET Core integration
+- Dependency injection support
+- Built-in transport implementations
+- Integration with AI function calling
+
+**Installation**:
+```bash
+dotnet add package ModelContextProtocol --prerelease
+```
+
+[View Documentation →](https://modelcontextprotocol.github.io/csharp-sdk/api/ModelContextProtocol.html)
+
+## Transport Support Details
+
+| Transport | TypeScript | Python | Java | Kotlin | Rust | C# | Notes |
+|-----------|------------|---------|------|--------|------|----|-------|
+| stdio | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Standard in/out |
+| HTTP+SSE (2024-11-05) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Deprecated in 2025-03-26 |
+| Streamable HTTP (2025-03-26) | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | Flexible HTTP streaming |
+| WebSocket | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | Kotlin SDK only |
+| Custom Transport API | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ | Extensibility support |
+
+## Development Status
+
+| SDK | Status | Notes |
+|-----|--------|-------|
+| TypeScript | Production-ready | Most mature, reference implementation |
+| Python | Production-ready | Full feature parity with TypeScript |
+| Java | Stable | Protocol 2024-11-05 only |
+| Kotlin | Beta | Core features stable |
+| Rust | Early Release | v0.1.x, rapidly evolving |
+| C# | Preview | Breaking changes expected |
+
+## Choosing an SDK
+
+When selecting an SDK for your project, consider:
+
+1. **Language ecosystem**: Choose an SDK that matches your existing stack
+2. **Protocol version**: Ensure the SDK supports the protocol version you need
+3. **Feature requirements**: Verify the SDK supports required features (OAuth, specific transports, etc.)
+4. **Maturity level**: Consider if you need a stable SDK or can work with preview versions
+5. **Integration needs**: Some SDKs offer better framework integration (Spring, ASP.NET Core, etc.)
+
+## Contributing
+
+All MCP SDKs are open source and welcome contributions. Please refer to each SDK's repository for specific contribution guidelines.
+
+## Related Resources
+
+- [Model Context Protocol documentation](https://modelcontextprotocol.io)
+- [MCP Specification](https://spec.modelcontextprotocol.io)
+- [GitHub Organization](https://github.com/modelcontextprotocol)
+
+[TypeScript SDK]: https://github.com/modelcontextprotocol/typescript-sdk
+[Python SDK]: https://github.com/modelcontextprotocol/python-sdk
+[Java SDK]: https://github.com/modelcontextprotocol/java-sdk
+[Kotlin SDK]: https://github.com/modelcontextprotocol/kotlin-sdk
+[Rust SDK]: https://github.com/modelcontextprotocol/rust-sdk
+[C# SDK]: https://github.com/modelcontextprotocol/csharp-sdk
