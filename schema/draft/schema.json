@@ -111,20 +111,7 @@
                 "content": {
                     "description": "A list of content objects that represent the unstructured result of the tool call.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/TextContent"
-                            },
-                            {
-                                "$ref": "#/definitions/ImageContent"
-                            },
-                            {
-                                "$ref": "#/definitions/AudioContent"
-                            },
-                            {
-                                "$ref": "#/definitions/EmbeddedResource"
-                            }
-                        ]
+                        "$ref": "#/definitions/Content"
                     },
                     "type": "array"
                 },
@@ -364,6 +351,28 @@
             ],
             "type": "object"
         },
+        "Content": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TextContent"
+                },
+                {
+                    "$ref": "#/definitions/ImageContent"
+                },
+                {
+                    "$ref": "#/definitions/AudioContent"
+                },
+                {
+                    "$ref": "#/definitions/EmbeddedResource"
+                }
+            ]
+        },
+        "ContentList": {
+            "items": {
+                "$ref": "#/definitions/Content"
+            },
+            "type": "array"
+        },
         "CreateMessageRequest": {
             "description": "A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.",
             "properties": {
@@ -438,17 +447,7 @@
                     "type": "object"
                 },
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "$ref": "#/definitions/Content"
                 },
                 "model": {
                     "description": "The name of the model that generated the message.",
@@ -1762,17 +1761,7 @@
             "description": "Describes a message issued to or received from an LLM API.",
             "properties": {
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        }
-                    ]
+                    "$ref": "#/definitions/Content"
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
@@ -2057,7 +2046,7 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {

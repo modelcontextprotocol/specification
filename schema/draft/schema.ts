@@ -683,6 +683,14 @@ export interface ListToolsResult extends PaginatedResult {
   tools: Tool[];
 }
 
+export type Content =
+  | TextContent
+  | ImageContent
+  | AudioContent
+  | EmbeddedResource;
+
+export type ContentList = Content[];
+
 /**
  * The server's response to a tool call.
  */
@@ -690,7 +698,7 @@ export interface CallToolResult extends Result {
   /**
    * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: ContentList;
 
   /**
    * An optional JSON object that represents the structured result of the tool call.
@@ -701,7 +709,7 @@ export interface CallToolResult extends Result {
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
-   * 
+   *
    * Any errors that originate from the tool SHOULD be reported inside the result
    * object, with `isError` set to true, _not_ as an MCP protocol-level error
    * response. Otherwise, the LLM would not be able to see that an error occurred
@@ -812,7 +820,7 @@ export interface Tool {
   };
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * An optional JSON Schema object defining the structure of the tool's output returned in
    * the structuredContent field of a CallToolResult.
    */
   outputSchema?: {
@@ -933,7 +941,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent;
+  content: Content;
 }
 
 /**
