@@ -143,7 +143,7 @@ The transport layer handles the communication between MCP clients and servers, p
     <Tab title="SSE (HttpClient)">
         Creates a framework agnostic (pure Java API) SSE client transport. Included in the core mcp module.
         ```java
-        McpTransport transport = new HttpClientSseClientTransport("http://your-mcp-server");
+        McpTransport transport = HttpClientSseClientTransport.builder("http://your-mcp-server").build();
         ```
     </Tab>
     <Tab title="SSE (WebFlux)">
@@ -220,15 +220,15 @@ This capability allows:
 The client can register a logging consumer to receive log messages from the server and set the minimum logging level to filter messages:
 
 ```java	
-var mcpClient = McpClient.sync(transport)
+var client = McpClient.sync(transport)
         .loggingConsumer(notification -> {
             System.out.println("Received log message: " + notification.data());
         })
         .build();
 
-mcpClient.initialize();
+client.initialize();
 
-mcpClient.setLoggingLevel(McpSchema.LoggingLevel.INFO);
+client.setLoggingLevel(McpSchema.LoggingLevel.INFO);
 
 // Call the tool that can sends logging notifications
 CallToolResult result = mcpClient.callTool(new McpSchema.CallToolRequest("logging-test", Map.of()));
@@ -247,13 +247,14 @@ Tools are server-side functions that clients can discover and execute. The MCP c
 ```java
 // List available tools and their names
 var tools = client.listTools();
-tools.forEach(tool -> System.out.println(tool.getName()));
+tools.tools().forEach(tool -> System.out.println(tool.name()));
 
 // Execute a tool with parameters
-var result = client.callTool("calculator", Map.of(
-    "operation", "add",
-    "a", 1,
-    "b", 2
+var result = client.callTool(new McpSchema.CallToolRequest(
+        "calculator", Map.of(
+        "operation", "add",
+        "a", 1,
+        "b", 2)
 ));
 ```
   </Tab>
@@ -262,16 +263,17 @@ var result = client.callTool("calculator", Map.of(
 ```java
 // List available tools asynchronously
 client.listTools()
-    .doOnNext(tools -> tools.forEach(tool -> 
-        System.out.println(tool.getName())))
+    .doOnNext(tools -> tools.tools().forEach(tool -> 
+        System.out.println(tool.name())))
     .subscribe();
 
 // Execute a tool asynchronously
-client.callTool("calculator", Map.of(
+client.callTool(
+    new McpSchema.CallToolRequest("calculator", Map.of(
         "operation", "add",
-        "a", 1,
-        "b", 2
-    ))
+        "a", 2,
+        "b", 3
+        )))
     .subscribe();
 ```
   </Tab>
@@ -286,7 +288,7 @@ Resources represent server-side data sources that clients can access using URI t
 ```java
 // List available resources and their names
 var resources = client.listResources();
-resources.forEach(resource -> System.out.println(resource.getName()));
+resources.resources().forEach(resource -> System.out.println(resource.name()));
 
 // Retrieve resource content using a URI template
 var content = client.getResource("file", Map.of(
@@ -299,14 +301,12 @@ var content = client.getResource("file", Map.of(
 ```java
 // List available resources asynchronously
 client.listResources()
-    .doOnNext(resources -> resources.forEach(resource -> 
-        System.out.println(resource.getName())))
+    .doOnNext(resources -> resources.resources().forEach(resource -> 
+        System.out.println(resource.name())))
     .subscribe();
 
 // Retrieve resource content asynchronously
-client.getResource("file", Map.of(
-        "path", "/path/to/file.txt"
-    ))
+client.readResource(new McpSchema.ReadResourceRequest("resource://uri"))
     .subscribe();
 ```
   </Tab>
@@ -321,11 +321,12 @@ The prompt system enables interaction with server-side prompt templates. These t
 ```java
 // List available prompt templates
 var prompts = client.listPrompts();
-prompts.forEach(prompt -> System.out.println(prompt.getName()));
+prompts.prompts().forEach(prompt -> System.out.println(prompt.name()));
 
 // Execute a prompt template with parameters
-var response = client.executePrompt("echo", Map.of(
-    "text", "Hello, World!"
+var response = client.getPrompt(new McpSchema.GetPromptRequest(
+    "echo", Map.of(
+    "text", "Hello, World!")
 ));
 ```
   </Tab>
@@ -334,14 +335,13 @@ var response = client.executePrompt("echo", Map.of(
 ```java
 // List available prompt templates asynchronously
 client.listPrompts()
-    .doOnNext(prompts -> prompts.forEach(prompt -> 
-        System.out.println(prompt.getName())))
+    .doOnNext(prompts -> prompts.prompts().forEach(prompt -> 
+        System.out.println(prompt.name())))
     .subscribe();
 
 // Execute a prompt template asynchronously
-client.executePrompt("echo", Map.of(
-        "text", "Hello, World!"
-    ))
+client.getPrompt(
+    new McpSchema.GetPromptRequest("greeting", Map.of("name", "Spring")))
     .subscribe();
 ```
   </Tab>
