@@ -1021,7 +1021,7 @@ Create a new boot starter application using the `spring-ai-starter-mcp-client` d
 ```
 
 and set the `spring.ai.mcp.client.stdio.servers-configuration` property to point to your `claude_desktop_config.json`.
-You can re-use the existing Anthropic Desktop configuration:
+You can reuse the existing Anthropic Desktop configuration:
 
 ```properties
 spring.ai.mcp.client.stdio.servers-configuration=file:PATH/TO/claude_desktop_config.json
@@ -1478,7 +1478,7 @@ var app = builder.Build();
 await app.RunAsync();
 ```
 <Note>
-When creating the `ApplicationHostBuilder`, ensure you use `CreateEmptyApplicationBuilder` instead of `CreateDefaultBuilder`. This ensures that the server does not write any additional messages to the console. This is only neccessary for servers using STDIO transport.
+When creating the `ApplicationHostBuilder`, ensure you use `CreateEmptyApplicationBuilder` instead of `CreateDefaultBuilder`. This ensures that the server does not write any additional messages to the console. This is only necessary for servers using STDIO transport.
 </Note>
 
 This code sets up a basic console application that uses the Model Context Protocol SDK to create an MCP server with standard I/O transport.
