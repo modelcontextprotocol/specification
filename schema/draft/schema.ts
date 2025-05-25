@@ -21,7 +21,7 @@ export type JSONRPCBatchRequest = (JSONRPCRequest | JSONRPCNotification)[];
  */
 export type JSONRPCBatchResponse = (JSONRPCResponse | JSONRPCError)[];
 
-export const LATEST_PROTOCOL_VERSION = "2025-03-26";
+export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v2";
 export const JSONRPC_VERSION = "2.0";
 
 /**
@@ -642,7 +642,7 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
 }
 
 /**
@@ -685,23 +685,31 @@ export interface ListToolsResult extends PaginatedResult {
 
 /**
  * The server's response to a tool call.
- *
- * Any errors that originate from the tool SHOULD be reported inside the result
- * object, with `isError` set to true, _not_ as an MCP protocol-level error
- * response. Otherwise, the LLM would not be able to see that an error occurred
- * and self-correct.
- *
- * However, any errors in _finding_ the tool, an error indicating that the
- * server does not support tool calls, or any other exceptional conditions,
- * should be reported as an MCP error response.
  */
 export interface CallToolResult extends Result {
+  /**
+   * A list of content objects that represent the unstructured result of the tool call.
+   */
   content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+
+  /**
+   * An optional JSON object that represents the structured result of the tool call.
+   */
+  structuredContent?: { [key: string]: unknown };
 
   /**
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
+   * 
+   * Any errors that originate from the tool SHOULD be reported inside the result
+   * object, with `isError` set to true, _not_ as an MCP protocol-level error
+   * response. Otherwise, the LLM would not be able to see that an error occurred
+   * and self-correct.
+   *
+   * However, any errors in _finding_ the tool, an error indicating that the
+   * server does not support tool calls, or any other exceptional conditions,
+   * should be reported as an MCP error response.
    */
   isError?: boolean;
 }
@@ -798,6 +806,16 @@ export interface Tool {
    * A JSON Schema object defining the expected parameters for the tool.
    */
   inputSchema: {
+    type: "object";
+    properties?: { [key: string]: object };
+    required?: string[];
+  };
+
+  /**
+   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * the structuredContent field of a CallToolResult.
+   */
+  outputSchema?: {
     type: "object";
     properties?: { [key: string]: object };
     required?: string[];
@@ -915,7 +933,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: (TextContent | ImageContent | AudioContent)[];
+  content: TextContent | ImageContent | AudioContent;
 }
 
 /**

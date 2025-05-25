@@ -26,7 +26,8 @@
                 ]
               },
               "examples",
-              "clients"
+              "clients",
+              "faqs"
             ]
           },
           {
@@ -175,6 +176,56 @@
             ]
           },
           {
+            "group": "draft",
+            "pages": [
+              "specification/draft/index",
+              "specification/draft/changelog",
+              "specification/draft/architecture/index",
+              {
+                "group": "Base Protocol",
+                "pages": [
+                  "specification/draft/basic/index",
+                  "specification/draft/basic/lifecycle",
+                  "specification/draft/basic/transports",
+                  "specification/draft/basic/authorization",
+                  "specification/draft/basic/security_best_practices",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/draft/basic/utilities/cancellation",
+                      "specification/draft/basic/utilities/ping",
+                      "specification/draft/basic/utilities/progress"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Client Features",
+                "pages": [
+                  "specification/draft/client/roots",
+                  "specification/draft/client/sampling"
+                ]
+              },
+              {
+                "group": "Server Features",
+                "pages": [
+                  "specification/draft/server/index",
+                  "specification/draft/server/prompts",
+                  "specification/draft/server/resources",
+                  "specification/draft/server/tools",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/draft/server/utilities/completion",
+                      "specification/draft/server/utilities/logging",
+                      "specification/draft/server/utilities/pagination"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "group": "Resources",
             "pages": [
               "specification/versioning",
@@ -210,6 +261,11 @@
           "anchor": "C# SDK",
           "href": "https://github.com/modelcontextprotocol/csharp-sdk",
           "icon": "square-c"
+        },
+        {
+          "anchor": "Swift SDK",
+          "href": "https://github.com/modelcontextprotocol/swift-sdk",
+          "icon": "swift"
         }
       ]
     }
