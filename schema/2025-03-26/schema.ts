@@ -642,7 +642,7 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
 }
 
 /**
@@ -915,7 +915,7 @@ export interface CreateMessageResult extends Result, SamplingMessage {
  */
 export interface SamplingMessage {
   role: Role;
-  content: (TextContent | ImageContent | AudioContent)[];
+  content: TextContent | ImageContent | AudioContent;
 }
 
 /**
