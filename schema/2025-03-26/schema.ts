@@ -1119,6 +1119,10 @@ export interface CompleteResult extends Result {
   completion: {
     /**
      * An array of completion values. Must not exceed 100 items.
+     *
+     * @items.type string
+     * @items.minimum 0
+     * @items.maximum 100
      */
     values: string[];
     /**
