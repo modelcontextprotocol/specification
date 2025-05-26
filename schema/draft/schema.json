@@ -101,18 +101,7 @@
             "type": "object"
         },
         "CallToolResult": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/CallToolUnstructuredResult"
-                },
-                {
-                    "$ref": "#/definitions/CallToolStructuredResult"
-                }
-            ],
-            "description": "The server's response to a tool call.\n\nAny errors that originate from the tool SHOULD be reported inside the result\nobject, with `isError` set to true, _not_ as an MCP protocol-level error\nresponse. Otherwise, the LLM would not be able to see that an error occurred\nand self-correct.\n\nHowever, any errors in _finding_ the tool, an error indicating that the\nserver does not support tool calls, or any other exceptional conditions,\nshould be reported as an MCP error response."
-        },
-        "CallToolStructuredResult": {
-            "description": "Tool result for tools that do declare an outputSchema.",
+            "description": "The server's response to a tool call.",
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
@@ -120,7 +109,7 @@
                     "type": "object"
                 },
                 "content": {
-                    "description": "If the Tool defines an outputSchema, this field MAY be present in the result.\nTools should use this field to provide compatibility with older clients that do not support structured content.\nClients that support structured content should ignore this field.",
+                    "description": "A list of content objects that represent the unstructured result of the tool call.",
                     "items": {
                         "anyOf": [
                             {
@@ -140,51 +129,13 @@
                     "type": "array"
                 },
                 "isError": {
-                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).",
+                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).\n\nAny errors that originate from the tool SHOULD be reported inside the result\nobject, with `isError` set to true, _not_ as an MCP protocol-level error\nresponse. Otherwise, the LLM would not be able to see that an error occurred\nand self-correct.\n\nHowever, any errors in _finding_ the tool, an error indicating that the\nserver does not support tool calls, or any other exceptional conditions,\nshould be reported as an MCP error response.",
                     "type": "boolean"
                 },
                 "structuredContent": {
                     "additionalProperties": {},
-                    "description": "An object containing structured tool output.\n\nIf the Tool defines an outputSchema, this field MUST be present in the result, and contain a JSON object that matches the schema.",
+                    "description": "An optional JSON object that represents the structured result of the tool call.",
                     "type": "object"
-                }
-            },
-            "required": [
-                "structuredContent"
-            ],
-            "type": "object"
-        },
-        "CallToolUnstructuredResult": {
-            "description": "Tool result for tools that do not declare an outputSchema.",
-            "properties": {
-                "_meta": {
-                    "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
-                    "type": "object"
-                },
-                "content": {
-                    "description": "A list of content objects that represent the result of the tool call.\n\nIf the Tool does not define an outputSchema, this field MUST be present in the result.",
-                    "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/TextContent"
-                            },
-                            {
-                                "$ref": "#/definitions/ImageContent"
-                            },
-                            {
-                                "$ref": "#/definitions/AudioContent"
-                            },
-                            {
-                                "$ref": "#/definitions/EmbeddedResource"
-                            }
-                        ]
-                    },
-                    "type": "array"
-                },
-                "isError": {
-                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).",
-                    "type": "boolean"
                 }
             },
             "required": [
@@ -412,25 +363,6 @@
                 "completion"
             ],
             "type": "object"
-        },
-        "ContentList": {
-            "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/definitions/TextContent"
-                    },
-                    {
-                        "$ref": "#/definitions/ImageContent"
-                    },
-                    {
-                        "$ref": "#/definitions/AudioContent"
-                    },
-                    {
-                        "$ref": "#/definitions/EmbeddedResource"
-                    }
-                ]
-            },
-            "type": "array"
         },
         "CreateMessageRequest": {
             "description": "A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.",
@@ -1978,10 +1910,7 @@
                     "$ref": "#/definitions/ListToolsResult"
                 },
                 {
-                    "$ref": "#/definitions/CallToolUnstructuredResult"
-                },
-                {
-                    "$ref": "#/definitions/CallToolStructuredResult"
+                    "$ref": "#/definitions/CallToolResult"
                 },
                 {
                     "$ref": "#/definitions/CompleteResult"
@@ -2128,9 +2057,30 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "additionalProperties": true,
-                    "description": "An optional JSON Schema object defining the structure of the tool's output.\n\nIf set, a CallToolResult for this Tool MUST contain a structuredContent field whose contents validate against this schema.\nIf not set, a CallToolResult for this Tool MUST contain a content field.",
-                    "properties": {},
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "properties": {
+                        "properties": {
+                            "additionalProperties": {
+                                "additionalProperties": true,
+                                "properties": {},
+                                "type": "object"
+                            },
+                            "type": "object"
+                        },
+                        "required": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "type": {
+                            "const": "object",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "type"
+                    ],
                     "type": "object"
                 }
             },
