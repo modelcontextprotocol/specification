@@ -268,6 +268,11 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
+
+    /**
+     * Whether this server supports the tools/confirm request.
+     */
+    confirm?: string;
   };
 }
 
@@ -701,7 +706,7 @@ export interface CallToolResult extends Result {
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
-   * 
+   *
    * Any errors that originate from the tool SHOULD be reported inside the result
    * object, with `isError` set to true, _not_ as an MCP protocol-level error
    * response. Otherwise, the LLM would not be able to see that an error occurred
@@ -723,6 +728,32 @@ export interface CallToolRequest extends Request {
     name: string;
     arguments?: { [key: string]: unknown };
   };
+}
+
+/**
+ * Sent from the client to request confirmation details for a tool call.
+ */
+export interface ConfirmToolCallRequest extends Request {
+  method: "tools/confirm";
+  params: {
+    name: string;
+    arguments?: { [key: string]: unknown };
+  }
+}
+
+/**
+ * The server's response to a tools/confirm request from the client.
+ */
+export interface ConfirmToolCallResult extends Result {
+  /**
+   * A human-readable title for the confirmation.
+   */
+  title: string;
+
+  /**
+   * Additional contextual details for the client to display.
+   */
+  content?: (TextContent | ImageContent | AudioContent)[];
 }
 
 /**
@@ -812,7 +843,7 @@ export interface Tool {
   };
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * An optional JSON Schema object defining the structure of the tool's output returned in
    * the structuredContent field of a CallToolResult.
    */
   outputSchema?: {

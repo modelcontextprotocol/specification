@@ -364,6 +364,70 @@
             ],
             "type": "object"
         },
+        "ConfirmToolCallRequest": {
+            "description": "Sent from the client to request confirmation details for a tool call.",
+            "properties": {
+                "method": {
+                    "const": "tools/confirm",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "arguments": {
+                            "additionalProperties": {},
+                            "type": "object"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "ConfirmToolCallResult": {
+            "description": "The server's response to a tools/confirm request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "content": {
+                    "description": "Additional contextual details for the client to display.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/TextContent"
+                            },
+                            {
+                                "$ref": "#/definitions/ImageContent"
+                            },
+                            {
+                                "$ref": "#/definitions/AudioContent"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "title": {
+                    "description": "A human-readable title for the confirmation.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "title"
+            ],
+            "type": "object"
+        },
         "CreateMessageRequest": {
             "description": "A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.",
             "properties": {
@@ -1835,6 +1899,10 @@
                 "tools": {
                     "description": "Present if the server offers any tools to call.",
                     "properties": {
+                        "confirm": {
+                            "description": "Whether this server supports the tools/confirm request.",
+                            "type": "string"
+                        },
                         "listChanged": {
                             "description": "Whether this server supports notifications for changes to the tool list.",
                             "type": "boolean"
@@ -2057,7 +2125,7 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {

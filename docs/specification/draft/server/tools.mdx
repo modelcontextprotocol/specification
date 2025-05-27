@@ -187,6 +187,46 @@ A tool definition includes:
 <Warning>For trust & safety and security, clients **MUST** consider
 tool annotations to be untrusted unless they come from trusted servers.</Warning>
 
+### Tool Confirmations
+
+Servers may provide additional data for clients to request user confirmation by implementing the `tools/confirm` method and advertising the `tools.confirm` capability.
+
+The confirmation request is analogous to the `tools/call` request, and the response contains a `title` and multi-part `content` the client can display to the user to inform their decision.
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/confirm",
+  "params": {
+    "name": "get_weather",
+    "arguments": {
+      "location": "New York"
+    }
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "title": "Get the weather in New York?",
+    "content": [
+      {
+        "type": "text",
+        "text": "This tool will fetch the current weather information for New York. Do you want to proceed?"
+      }
+    ]
+  }
+}
+```
+
 ### Tool Result
 
 Tool results may contain [**structured**](#structured-content) or **unstructured** content.
@@ -240,7 +280,7 @@ or data, behind a URI that can be subscribed to or fetched again by the client l
 
 #### Structured Content
 
-**Structured** content is returned as a JSON object in the `structuredContent` field of a result. 
+**Structured** content is returned as a JSON object in the `structuredContent` field of a result.
 
 For backwards compatibility, a tool that returns structured content SHOULD also return functionally equivalent unstructured content.
 (For example, serialized JSON can be returned in a `TextContent` block.)
