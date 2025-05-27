@@ -29,7 +29,7 @@ Applications **SHOULD**:
 - Provide UI that makes it easy and intuitive to review sampling requests
 - Allow users to view and edit prompts before sending
 - Present generated responses for review before delivery
-</Warning>
+  </Warning>
 
 ## Capabilities
 
@@ -90,10 +90,12 @@ To request a language model generation, servers send a `sampling/createMessage` 
   "id": 1,
   "result": {
     "role": "assistant",
-    "content": {
-      "type": "text",
-      "text": "The capital of France is Paris."
-    },
+    "content": [
+      {
+        "type": "text",
+        "text": "The capital of France is Paris."
+      }
+    ],
     "model": "claude-3-sonnet-20240307",
     "stopReason": "endTurn"
   }
