@@ -15,7 +15,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [AgentAI][AgentAI]                          | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Agent Library written in Rust with tools support                            |
 | [AgenticFlow][AgenticFlow]                  | ✅          | ✅        | ✅      | ✅                     | ❌          | ❌    | Supports tools, prompts, and resources for no-code AI agents and multi-agent workflows.             |
 | [Amazon Q CLI][Amazon Q CLI]                | ❌          | ✅        | ✅      | ❓                     | ❌          | ❌    | Supports prompts and tools.                                                 |
-| [Apify MCP Tester][Apify MCP Tester]        | ❌          | ❌        | ✅      | ✅                     | ❌          | ❌    | Supports tools                                                              |
+| [Apify MCP Tester][Apify MCP Tester]        | ❌          | ❌        | ✅      | ✅                     | ❌          | ❌    | Supports remote MCP servers and tool discovery.                             |
 | [BeeAI Framework][BeeAI Framework]          | ❌          | ❌        | ✅      | ❌                     | ❌          | ❌    | Supports tools in agentic workflows.                                        |
 | [BoltAI][BoltAI]                            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools.                                                             |
 | [Claude.ai][Claude.ai]                      | ✅          | ✅        | ✅      | ❌                     | ❌          | ❌    | Supports tools, prompts, and resources for remote MCP servers.             |
@@ -45,6 +45,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Microsoft Copilot Studio]                  | ❌          | ❌        | ✅      | ✅                     | ❌          | ❌    | Supports tools & discovery                                                              |
 | [MindPal][MindPal]                          | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools for no-code AI agents and multi-agent workflows.             |
 | [Msty Studio][Msty Studio]                  | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools                                                              |
+| [NVIDIA Agent Intelligence toolkit][AIQ toolkit] | ❌     | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools in agentic workflows.                                        |
 | [OpenSumi][OpenSumi]                        | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools in OpenSumi                                                  |
 | [oterm][oterm]                              | ❌          | ✅        | ✅      | ❓                     | ✅          | ❌    | Supports tools, prompts and sampling for Ollama.                                                 |
 | [Postman][postman]                          | ✅          | ✅        | ✅      | ❓                     | ❌          | ❌    | Supports tools, resources, prompts, and sampling                                                 |
@@ -57,6 +58,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Tome][Tome]                                | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools, manages MCP servers.                                        |
 | [TypingMind App][TypingMind App]            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools at app-level (appear as plugins) or when assigned to Agents  |
 | [VS Code GitHub Copilot][VS Code]           | ❌          | ❌        | ✅      | ✅                     | ❌          | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
+| [WhatsMPC][WhatsMPC]                        | ❌          | ❌        | ✅      | ❌                     | ❌          | ❌    | Supports tools for Remote MCP Servers in WhatsApp                          |
 | [Windsurf Editor][Windsurf]                 | ❌          | ❌        | ✅      | ✅                     | ❌          | ❌    | Supports tools with AI Flow for collaborative development.                  |
 | [Witsy][Witsy]                              | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools in Witsy.                                                    |
 | [Zed][Zed]                                  | ❌          | ✅        | ❌      | ❌                     | ❌          | ❌    | Prompts appear as slash commands                                            |
@@ -64,6 +66,7 @@ This page provides an overview of applications that support the Model Context Pr
 [5ire]: https://github.com/nanbingxyz/5ire
 [AgentAI]: https://github.com/AdamStrojek/rust-agentai
 [AgenticFlow]: https://agenticflow.ai/mcp
+[AIQ toolkit]: https://github.com/NVIDIA/AIQToolkit
 [Amazon Q CLI]: https://github.com/aws/amazon-q-developer-cli
 [Apify MCP Tester]: https://apify.com/jiri.spilka/tester-mcp-client
 [BeeAI Framework]: https://i-am-bee.github.io/beeai-framework
@@ -107,6 +110,7 @@ This page provides an overview of applications that support the Model Context Pr
 [VS Code]: https://code.visualstudio.com/
 [Windsurf]: https://codeium.com/windsurf
 [gptme]: https://github.com/gptme/gptme
+[WhatsMPC]: https://wassist.app/mcp/
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
@@ -115,6 +119,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Sampling]: https://modelcontextprotocol.io/docs/concepts/sampling
 [HyperAgent]: https://github.com/hyperbrowserai/HyperAgent
 [Discovery]: /docs/concepts/tools#tool-discovery-and-updates
+
 
 </div>
 
@@ -448,6 +453,19 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 **Learn more:**
 - [Msty Studio Documentation](https://docs.msty.studio/features/toolbox/tools)
 
+### NVIDIA Agent Intelligence (AIQ) toolkit
+[NVIDIA Agent Intelligence (AIQ) toolkit](https://github.com/NVIDIA/AIQToolkit) is a flexible, lightweight, and unifying library that allows you to easily connect existing enterprise agents to data sources and tools across any framework.
+
+**Key features:**
+- Acts as an MCP **client** to consume remote tools
+- Acts as an MCP **server** to expose tools
+- Framework agnostic and compatible with LangChain, CrewAI, Semantic Kernel, and custom agents
+- Includes built-in observability and evaluation tools
+
+**Learn more:**
+- [AIQ toolkit GitHub repository](https://github.com/NVIDIA/AIQToolkit)
+- [AIQ toolkit MCP documentation](https://docs.nvidia.com/aiqtoolkit/latest/workflows/mcp/index.html)
+
 ### OpenSumi
 [OpenSumi](https://github.com/opensumi/core) is a framework helps you quickly build AI Native IDE products.
 
@@ -558,6 +576,17 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Tool calls with editable inputs and always-allow toggle
 - Integration with existing VS Code extension system to register MCP servers from extensions
 
+### WhatsMPC
+[WhatsMPC](https://wassist.app/mcp/) is an MCP client for WhatsApp. WhatsMCP lets you interact with your AI stack from the comfort of a WhatsApp chat.
+
+**Key features:**
+- Supports MCP tools
+- SSE transport, full OAuth2 support
+- Chat flow management for WhatsApp messages
+- One click setup for connecting to your MCP servers
+- In chat management of MCP servers
+- Oauth flow natively supported in WhatsApp
+
 ### Windsurf Editor
 [Windsurf Editor](https://codeium.com/windsurf) is an agentic IDE that combines AI assistance with developer workflows. It features an innovative AI Flow system that enables both collaborative and independent AI interactions while maintaining developer control.
 
@@ -575,6 +604,7 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Local server connections for enhanced privacy and security
 - Easy-install from Smithery.ai
 - Open-source, available for macOS, Windows and Linux
+
 
 ### Zed
 [Zed](https://zed.dev/docs/assistant/model-context-protocol) is a high-performance code editor with built-in MCP support, focusing on prompt templates and tool integration.
