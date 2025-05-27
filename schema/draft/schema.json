@@ -850,6 +850,10 @@
                     "properties": {
                         "_meta": {
                             "properties": {
+                                "partialResults": {
+                                    "description": "If true, the caller is requesting that results be streamed via progress notifications.\nWhen this is set to true, the final response may be empty as the complete result\nwill have been delivered through progress notifications.",
+                                    "type": "boolean"
+                                },
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
@@ -1039,6 +1043,10 @@
                     "properties": {
                         "_meta": {
                             "properties": {
+                                "partialResults": {
+                                    "description": "If true, the caller is requesting that results be streamed via progress notifications.\nWhen this is set to true, the final response may be empty as the complete result\nwill have been delivered through progress notifications.",
+                                    "type": "boolean"
+                                },
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
@@ -1278,6 +1286,10 @@
                     "properties": {
                         "_meta": {
                             "properties": {
+                                "partialResults": {
+                                    "description": "If true, the caller is requesting that results be streamed via progress notifications.\nWhen this is set to true, the final response may be empty as the complete result\nwill have been delivered through progress notifications.",
+                                    "type": "boolean"
+                                },
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
@@ -1306,6 +1318,30 @@
                         "message": {
                             "description": "An optional message describing the current progress.",
                             "type": "string"
+                        },
+                        "partialResult": {
+                            "description": "If present, contains a partial result chunk for the operation.\nThis is used to stream results incrementally while an operation is still in progress.",
+                            "properties": {
+                                "append": {
+                                    "description": "If true, this chunk should be appended to previously received chunks.\nIf false, this chunk replaces any previously received chunks.",
+                                    "type": "boolean"
+                                },
+                                "chunk": {
+                                    "additionalProperties": {},
+                                    "description": "The partial result data chunk.",
+                                    "type": "object"
+                                },
+                                "lastChunk": {
+                                    "description": "If true, this is the final chunk of the result.\nNo further chunks will be sent for this operation.",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "append",
+                                "chunk",
+                                "lastChunk"
+                            ],
+                            "type": "object"
                         },
                         "progress": {
                             "description": "The progress thus far. This should increase every time progress is made, even if the total is unknown.",
@@ -1520,6 +1556,10 @@
                     "properties": {
                         "_meta": {
                             "properties": {
+                                "partialResults": {
+                                    "description": "If true, the caller is requesting that results be streamed via progress notifications.\nWhen this is set to true, the final response may be empty as the complete result\nwill have been delivered through progress notifications.",
+                                    "type": "boolean"
+                                },
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
