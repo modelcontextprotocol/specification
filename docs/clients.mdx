@@ -58,6 +58,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Tome][Tome]                                | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools, manages MCP servers.                                        |
 | [TypingMind App][TypingMind App]            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools at app-level (appear as plugins) or when assigned to Agents  |
 | [VS Code GitHub Copilot][VS Code]           | ❌          | ❌        | ✅      | ✅                     | ❌          | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
+| [WhatsMPC][WhatsMPC]                        | ❌          | ❌        | ✅      | ❌                     | ❌          | ❌    | Supports tools for Remote MCP Servers in WhatsApp                          |
 | [Windsurf Editor][Windsurf]                 | ❌          | ❌        | ✅      | ✅                     | ❌          | ❌    | Supports tools with AI Flow for collaborative development.                  |
 | [Witsy][Witsy]                              | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools in Witsy.                                                    |
 | [Zed][Zed]                                  | ❌          | ✅        | ❌      | ❌                     | ❌          | ❌    | Prompts appear as slash commands                                            |
@@ -109,6 +110,7 @@ This page provides an overview of applications that support the Model Context Pr
 [VS Code]: https://code.visualstudio.com/
 [Windsurf]: https://codeium.com/windsurf
 [gptme]: https://github.com/gptme/gptme
+[WhatsMPC]: https://wassist.app/mcp/
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
@@ -574,6 +576,17 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Tool calls with editable inputs and always-allow toggle
 - Integration with existing VS Code extension system to register MCP servers from extensions
 
+### WhatsMPC
+[WhatsMPC](https://wassist.app/mcp/) is an MCP client for WhatsApp. WhatsMCP lets you interact with your AI stack from the comfort of a WhatsApp chat.
+
+**Key features:**
+- Supports MCP tools
+- SSE transport, full OAuth2 support
+- Chat flow management for WhatsApp messages
+- One click setup for connecting to your MCP servers
+- In chat management of MCP servers
+- Oauth flow natively supported in WhatsApp
+
 ### Windsurf Editor
 [Windsurf Editor](https://codeium.com/windsurf) is an agentic IDE that combines AI assistance with developer workflows. It features an innovative AI Flow system that enables both collaborative and independent AI interactions while maintaining developer control.
 
@@ -591,6 +604,7 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Local server connections for enhanced privacy and security
 - Easy-install from Smithery.ai
 - Open-source, available for macOS, Windows and Linux
+
 
 ### Zed
 [Zed](https://zed.dev/docs/assistant/model-context-protocol) is a high-performance code editor with built-in MCP support, focusing on prompt templates and tool integration.
