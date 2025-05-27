@@ -419,13 +419,10 @@
                     "type": "array"
                 },
                 "title": {
-                    "description": "A human-readable title for the confirmation.",
+                    "description": "A human-readable title for the confirmation. If this is omitted, the\nclient may create a generic title based on the tool name.",
                     "type": "string"
                 }
             },
-            "required": [
-                "title"
-            ],
             "type": "object"
         },
         "CreateMessageRequest": {

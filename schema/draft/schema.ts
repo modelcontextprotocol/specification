@@ -746,9 +746,10 @@ export interface ConfirmToolCallRequest extends Request {
  */
 export interface ConfirmToolCallResult extends Result {
   /**
-   * A human-readable title for the confirmation.
+   * A human-readable title for the confirmation. If this is omitted, the
+   * client may create a generic title based on the tool name.
    */
-  title: string;
+  title?: string;
 
   /**
    * Additional contextual details for the client to display.

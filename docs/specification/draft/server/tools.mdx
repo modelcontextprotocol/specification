@@ -193,6 +193,8 @@ Servers may provide additional data for clients to request user confirmation by 
 
 The confirmation request is analogous to the `tools/call` request, and the response contains a `title` and multi-part `content` the client can display to the user to inform their decision.
 
+The server may omit both `title` and `content` if no special confirmation display logic is needed. In this case, the client may use its own logic to display a generic confirmation prompt, as appropriate.
+
 **Request:**
 
 ```json
