@@ -443,8 +443,11 @@ Example tool execution error:
    - Implement proper access controls
    - Rate limit tool invocations
    - Sanitize tool outputs
+   - Verify veracity of webhook URLs to prevent Server-Side Request Forgery or
+     Distributed Denial of Service attacks against internal or 3rd party systems
 
 2. Clients **SHOULD**:
+
    - Prompt for user confirmation on sensitive operations
    - Show tool inputs to the user before calling the server, to avoid malicious or
      accidental data exfiltration
@@ -452,4 +455,7 @@ Example tool execution error:
    - Implement timeouts for tool calls
    - Log tool usage for audit purposes
    - Exercise caution when providing secrets in webhook credentials since they might be
-     susceptible to man-in-the-middle attacks
+     susceptible to Man-in-the-Middle attacks
+
+3. Webhook servers **SHOULD**:
+    - Authenticate the received messages
