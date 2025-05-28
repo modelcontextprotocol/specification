@@ -1943,6 +1943,59 @@
             ],
             "type": "object"
         },
+        "StartTaskRequest": {
+            "description": "Used by the client to start a task provided by the server.",
+            "properties": {
+                "method": {
+                    "const": "tasks/start",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "arguments": {
+                            "additionalProperties": {},
+                            "type": "object"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "StartTaskResult": {
+            "description": "Used by the by the server to provide a reference to the client for a task.",
+            "properties": {
+                "channels": {
+                    "items": {
+                        "$ref": "#/definitions/TaskUpdateChannel"
+                    },
+                    "type": "array"
+                },
+                "method": {
+                    "const": "tasks/result",
+                    "type": "string"
+                },
+                "token": {
+                    "$ref": "#/definitions/TaskToken"
+                }
+            },
+            "required": [
+                "channels",
+                "method",
+                "token"
+            ],
+            "type": "object"
+        },
         "SubscribeRequest": {
             "description": "Sent from the client to request resources/updated notifications from the server whenever a particular resource changes.",
             "properties": {
@@ -1967,6 +2020,33 @@
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "TaskToken": {
+            "description": "Used by the client to receive updates, join or cancel tasks on the server.",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "type": "object"
+        },
+        "TaskUpdateChannel": {
+            "description": "Used by the server to provide update notifications to the client on progress of a task.",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
             ],
             "type": "object"
         },

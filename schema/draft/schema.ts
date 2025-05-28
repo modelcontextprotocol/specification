@@ -223,6 +223,41 @@ export interface ClientCapabilities {
 }
 
 /**
+ * Used by the client to start a task provided by the server.
+ */
+export interface StartTaskRequest {
+  method: "tasks/start";
+  params: {
+    name: string;
+    arguments?: { [key: string]: unknown };
+  };
+}
+
+/**
+ * Used by the client to receive updates, join or cancel tasks on the server.
+ */
+export interface TaskToken {
+  id: string
+}
+
+/**
+ * Used by the server to provide update notifications to the client on progress of a task.
+ */
+export interface TaskUpdateChannel {
+    name: string;
+    description?: string;
+}
+
+/**
+ * Used by the by the server to provide a reference to the client for a task.
+ */
+export interface StartTaskResult {
+  method: "tasks/result";
+  token: TaskToken,
+  channels: TaskUpdateChannel[];
+}
+
+/**
  * Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
  */
 export interface ServerCapabilities {
