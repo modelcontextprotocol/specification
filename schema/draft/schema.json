@@ -348,7 +348,26 @@
                         "values": {
                             "description": "An array of completion values. Must not exceed 100 items.",
                             "items": {
-                                "type": "string"
+                                "anyOf": [
+                                    {
+                                        "properties": {
+                                            "displayValue": {
+                                                "type": "string"
+                                            },
+                                            "value": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "displayValue",
+                                            "value"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
                             },
                             "type": "array"
                         }
@@ -2057,7 +2076,7 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {
