@@ -48,6 +48,29 @@
             ],
             "type": "object"
         },
+        "AuthenticationInfo": {
+            "description": "Specifies the authentication details that are required for communication with an endpoint.",
+            "properties": {
+                "credentials": {
+                    "description": "Optional credentials that can be used to communicate with the endpoint.\n\nIn case of bearer and apiKey, credentials consist of static string credentials that can be supplied in the header.\nIn case of basic, credentials can consist of static string credentials that can be supplied in the header or a parsable JSON that consists of username and password keys along with their corresponding values.\nIn case of customHeader, credentials consist of a parsable JSON that contains the relevant authentication headers and corresponding values.",
+                    "type": "string"
+                },
+                "strategy": {
+                    "description": "The authentication strategy enforced by the endpoint.",
+                    "enum": [
+                        "apiKey",
+                        "basic",
+                        "bearer",
+                        "customHeader"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "strategy"
+            ],
+            "type": "object"
+        },
         "BlobResourceContents": {
             "properties": {
                 "blob": {
@@ -107,6 +130,12 @@
                         },
                         "name": {
                             "type": "string"
+                        },
+                        "webhooks": {
+                            "items": {
+                                "$ref": "#/definitions/Webhook"
+                            },
+                            "type": "array"
                         }
                     },
                     "required": [
@@ -2024,6 +2053,10 @@
                         "listChanged": {
                             "description": "Whether this server supports notifications for changes to the tool list.",
                             "type": "boolean"
+                        },
+                        "webhooksSupported": {
+                            "description": "Whether this server supports sending tool responses to webhooks",
+                            "type": "boolean"
                         }
                     },
                     "type": "object"
@@ -2386,6 +2419,23 @@
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "Webhook": {
+            "description": "Specifies a webhook that can receive messages from the server.\n\nIt includes the URL where the webhook is hosted and an optional authentication method that should be used by the server when transmitting to the webhook.",
+            "properties": {
+                "authentication": {
+                    "$ref": "#/definitions/AuthenticationInfo",
+                    "description": "Authentication required to communicate with the webhook."
+                },
+                "url": {
+                    "description": "The URL where the webhook is hosted and to which the message will be transmitted.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url"
             ],
             "type": "object"
         }

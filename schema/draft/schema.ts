@@ -272,6 +272,10 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
+    /**
+     * Whether this server supports sending tool responses to webhooks
+     */
+    webhooksSupported?: boolean;
   };
 }
 
@@ -726,6 +730,7 @@ export interface CallToolRequest extends Request {
   params: {
     name: string;
     arguments?: { [key: string]: unknown };
+    webhooks?: Webhook[];
   };
 }
 
@@ -734,6 +739,42 @@ export interface CallToolRequest extends Request {
  */
 export interface ToolListChangedNotification extends Notification {
   method: "notifications/tools/list_changed";
+}
+
+/**
+ * Specifies a webhook that can receive messages from the server.
+ * 
+ * It includes the URL where the webhook is hosted and an optional authentication method that should be used by the server when transmitting to the webhook.
+ */
+export interface Webhook {
+  /**
+   * The URL where the webhook is hosted and to which the message will be transmitted.
+   */
+  url: string;
+
+  /**
+   * Authentication required to communicate with the webhook.
+   */
+  authentication?: AuthenticationInfo;
+}
+
+/**
+ * Specifies the authentication details that are required for communication with an endpoint.
+ */
+export interface AuthenticationInfo {
+  /**
+   * The authentication strategy enforced by the endpoint.
+   */
+  strategy: "bearer" | "apiKey" | "basic" | "customHeader";
+
+  /**
+   * Optional credentials that can be used to communicate with the endpoint.
+   * 
+   * In case of bearer and apiKey, credentials consist of static string credentials that can be supplied in the header.
+   * In case of basic, credentials can consist of static string credentials that can be supplied in the header or a parsable JSON that consists of username and password keys along with their corresponding values.
+   * In case of customHeader, credentials consist of a parsable JSON that contains the relevant authentication headers and corresponding values.
+   */
+  credentials?: string;
 }
 
 /**
