@@ -568,7 +568,7 @@ async connectToServer(serverScriptPath: string) {
       command,
       args: [serverScriptPath],
     });
-    this.mcp.connect(this.transport);
+    await this.mcp.connect(this.transport);
 
     const toolsResult = await this.mcp.listTools();
     this.tools = toolsResult.tools.map((tool) => {
