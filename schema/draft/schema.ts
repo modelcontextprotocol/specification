@@ -272,7 +272,7 @@ export interface ServerCapabilities {
     /**
      * Whether this server supports the tools/confirm request.
      */
-    confirm?: string;
+    confirm?: boolean;
   };
 }
 

@@ -1898,7 +1898,7 @@
                     "properties": {
                         "confirm": {
                             "description": "Whether this server supports the tools/confirm request.",
-                            "type": "string"
+                            "type": "boolean"
                         },
                         "listChanged": {
                             "description": "Whether this server supports notifications for changes to the tool list.",
