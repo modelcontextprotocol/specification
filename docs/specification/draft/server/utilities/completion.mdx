@@ -68,7 +68,64 @@ what is being completed through a reference type:
   "id": 1,
   "result": {
     "completion": {
+      "values": [
+        {
+          "value": 45,
+          "displayValue": "python"
+        },
+        {
+          "value": 833,
+          "displayValue": "pytorch"
+        },
+        {
+          "value": 12,
+          "displayValue": "pyside"
+        }
+      ],
+      "total": 10,
+      "hasMore": true
+    }
+  }
+}
+```
+
+For simple use cases (where the `value` is the same as the `displayValue`), the
+`values` can be an array of strings:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "completion": {
       "values": ["python", "pytorch", "pyside"],
+      "total": 10,
+      "hasMore": true
+    }
+  }
+}
+```
+
+These can also be mixed:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "completion": {
+      "values": [
+        "python",
+        {
+          "value": 833,
+          "displayValue": "pytorch"
+        },
+        "pyside",
+        {
+          "value": 97,
+          "displayValue": "pyright"
+        }
+      ],
       "total": 10,
       "hasMore": true
     }
