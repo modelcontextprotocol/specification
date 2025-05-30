@@ -9,10 +9,10 @@ directly with end-users without data passing through the client or the LLM. This
 servers to maintain control over user interactions and data sharing while dynamically
 gathering necessary information.
 
-The details of the interaction itself are fully under the control of the MCP server, and
+The interaction itself is fully under the control of the MCP server and
 the MCP client is only responsible for facilitating the interaction (typically by
 presenting a URL to the end-user). Within this model, the client's responsibilities remain
-minimal and the server has the flexibility to implement a wide range of secure
+minimal and the server has the flexibility to implement a wide range of
 interactions involving the end-user. For example:
 
 - A productivity MCP server might request a user to authorize a third-party service to
@@ -22,14 +22,14 @@ interactions involving the end-user. For example:
 
 ## Terminology
 
-- **End-user**: The human who is interacting with the MCP client (and, by extension, the MCP server).
-- **User agent**: Most familiarly a Web browser, the user agent is a client that is capable of
+- **End-user**: The human who is interacting with with the MCP server through their MCP client.
+- **User agent**: a client, such as a web brwoser, that is capable of
   interacting with the end-user. Broadly, it is used as defined in
   [RFC 9110 Section 3.5](https://datatracker.ietf.org/doc/html/rfc9110#section-3.5).
 
 ## Capabilities
 
-Clients that support user interaction **MUST** declare the `userInteraction` capability during
+MCP clients that support user interaction **MUST** declare the `userInteraction` capability during
 [initialization](/specification/draft/basic/lifecycle#initialization):
 
 ```json
@@ -56,9 +56,9 @@ be a human in the loop with the ability to deny interaction requests.
 
 MCP clients **SHOULD**:
 
-- Provide UI that makes it clear which server is requesting information
+- Provide UI that makes it clear which server is requesting an interaction
 - Allow users to review and modify their responses before sending
-- Respect user privacy and provide clear cancel options
+- Respect user choice and provide clear cancellation options
 
 </Warning>
 
@@ -202,8 +202,8 @@ is specific to the interaction type.
 
 This specification defines one type of user interaction:
 
-- **`ua`**: A user agent interaction is a user interaction that involves making a request via a
-  User Agent (e.g. a Web browser).
+- **`ua`**: A user agent interaction that involves making a request via a
+  client application that acts on behalf of the user, such as a web browser.
 
 The client and server **MAY** negotiate additional interaction types.
 
@@ -211,7 +211,7 @@ The client and server **MAY** negotiate additional interaction types.
 ### User Agent Interactions
 
 A user agent interaction is a user interaction that involves the MCP client facilitating
-navigation to a URL in a User Agent (e.g. a Web browser). This allows the MCP server to
+navigation to a URL in a client application such as a web browser. This allows the MCP server to
 obtain data without involving the MCP client. The MCP server can, as a result, control the
 entire interaction from start to finish, including the user experience, and guarantee the
 security of sensitive data (e.g. API keys or authorization grants).
@@ -227,7 +227,7 @@ This flow requires the client to support the `ua` user interaction type:
 }
 ```
 
-The MCP client **MUST** facilitate the opening of the URL in a User Agent.
+The MCP client **MUST** facilitate the opening of the URL in a user agent, such as the default web browser.
 
 #### Server Request
 
