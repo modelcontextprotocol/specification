@@ -26,7 +26,8 @@
     "generate:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required --skipLibCheck \"$f\" \"*\" -o \"${f%ts}json\"; done",
     "serve:docs": "cd docs && mintlify dev",
     "format": "prettier --write \"**/*.md\"",
-    "format:check": "prettier --check \"**/*.md\""
+    "format:check": "prettier --check \"**/*.md\"",
+    "check-links": "cd docs && mintlify broken-links"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
