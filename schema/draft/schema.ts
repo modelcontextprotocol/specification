@@ -243,7 +243,7 @@ export interface ServerCapabilities {
    */
   completions?: object;
   /**
-   * Present if the server offers any prompt templates.
+   * Present if the server offers any prompts or prompt templates.
    */
   prompts?: {
     /**
@@ -1258,7 +1258,7 @@ export interface ElicitRequest extends Request {
  * Restricted schema definitions that only allow primitive types
  * without nested objects or arrays.
  */
-export type PrimitiveSchemaDefinition = 
+export type PrimitiveSchemaDefinition =
   | StringSchema
   | NumberSchema
   | BooleanSchema
@@ -1307,7 +1307,7 @@ export interface ElicitResult extends Result {
    * - "cancel": User dismissed without making an explicit choice
    */
   action: "accept" | "decline" | "cancel";
-  
+
   /**
    * The submitted form data, only present when action is "accept".
    * Contains values matching the requested schema.
