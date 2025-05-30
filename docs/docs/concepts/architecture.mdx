@@ -211,6 +211,7 @@ Here's a basic example of implementing an MCP server:
     ```typescript
     import { Server } from "@modelcontextprotocol/sdk/server/index.js";
     import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+    import { ListResourcesRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
     const server = new Server({
       name: "example-server",
