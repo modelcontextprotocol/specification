@@ -76,10 +76,12 @@ Servers expose a list of concrete resources via the `resources/list` endpoint. E
 
 ```typescript
 {
-  uri: string;           // Unique identifier for the resource
-  name: string;          // Human-readable name
-  description?: string;  // Optional description
-  mimeType?: string;     // Optional MIME type
+  uri: string;                   // Unique identifier for the resource
+  name: string;                  // Human-readable name
+  description?: string;          // Optional description
+  mimeType?: string;             // Optional MIME type
+  size?: number;                 // Size of the raw resource content (in bytes)
+  supportsDirectRead?: boolean;  // Whether the resource may be read directly via URI
 }
 ```
 
@@ -120,6 +122,8 @@ The server responds with a list of resource contents:
 <Tip>
   Servers may return multiple resources in response to one `resources/read` request. This could be used, for example, to return a list of files inside a directory when the directory is read.
 </Tip>
+
+Alternatively, if the resource's `supportsDirectRead` property is true, then the resource content may also be read by fetching its URI. This approach can be more performant than reading via `resources/read`.
 
 ## Resource updates
 

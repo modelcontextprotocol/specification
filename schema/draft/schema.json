@@ -1752,6 +1752,10 @@
                     "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
                     "type": "integer"
                 },
+                "supportsDirectRead": {
+                    "description": "Indicates whether the resource content may also be read directly via its URI. Reading the resource directly can be more performant than reading via resources/read. The resource may still be read via resources/read regardless of this value.",
+                    "type": "boolean"
+                },
                 "uri": {
                     "description": "The URI of this resource.",
                     "format": "uri",
@@ -2279,7 +2283,7 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {
