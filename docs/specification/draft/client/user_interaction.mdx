@@ -9,11 +9,11 @@ directly with end-users without data passing through the client or the LLM. This
 servers to maintain control over user interactions and data sharing while dynamically
 gathering necessary information.
 
-The interaction itself is fully under the control of the MCP server and
-the MCP client is only responsible for facilitating the interaction (typically by
-presenting a URL to the end-user). Within this model, the client's responsibilities remain
-minimal and the server has the flexibility to implement a wide range of
-interactions involving the end-user. For example:
+The interaction itself is fully under the control of the MCP server and the MCP client is
+only responsible for providing an affordance to start it (typically by presenting a URL to
+the end-user, and opening it in a user agent such as a web browser). Within this model,
+the client's responsibilities remain minimal and the server has the flexibility to
+implement a wide range of interactions involving the end-user. For example:
 
 - A productivity MCP server might request a user to authorize a third-party service to
   access their documents.
@@ -47,7 +47,7 @@ in the `types` array, and **MUST** support at least one interaction type. The ac
 are defined in the [Interaction Types](#interaction-types) section below.
 
 The MCP server **MUST NOT** send an interaction request to the client of a type that is not
-supported by the client.
+explicitly declared by the client.
 
 <Warning>
 
@@ -76,7 +76,7 @@ The request includes the following fields as part of the `params` object:
 - `id`: The ID of the interaction that **MUST** be unique across the server's concurrent
   interactions.
 - `type`: The type of interaction, which **MUST** be one of the types negotiated during
-  initialization.
+  [initialization](/specification/draft/basic/lifecycle#initialization).
 - `interaction`: The interaction object, the schema of which depends on the type of
   interaction. Each schema is defined in the [Interaction Types](#interaction-types)
   section below.
@@ -214,7 +214,7 @@ A user agent interaction is a user interaction that involves the MCP client faci
 navigation to a URL in a client application such as a web browser. This allows the MCP server to
 obtain data without involving the MCP client. The MCP server can, as a result, control the
 entire interaction from start to finish, including the user experience, and guarantee the
-security of sensitive data (e.g. API keys or authorization grants).
+security of sensitive data, such as API keys or access tokens.
 
 This flow requires the client to support the `ua` user interaction type:
 ```json
@@ -306,14 +306,7 @@ and provide a way for the end-user to consent to the interaction before continui
 The MCP server **MUST NOT** rely on input from the client or end-user to identify the
 end-user, as this untrusted input can be forged and lead to impersonation attacks.
 
-Instead, the MCP server **SHOULD** identify the end-user in trusted (server) code. For
-example:
-
-- Implementations using an HTTP transport and [MCP authorization](/specification/draft/basic/authorization)
-  **MAY** use the subject claim (`sub`) from the OAuth 2.1 Access Token as the user
-  identifier, if present.
-- Implementations using an stdio transport **MAY** acquire the user identifier from the
-  environment.
+Instead, the MCP server **SHOULD** follow [security best practices](/specification/draft/basic/security_best_practices).
 
 ### Server-side Request Forgery
 
