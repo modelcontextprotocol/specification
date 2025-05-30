@@ -9,7 +9,7 @@ language models. Tools enable models to interact with external systems, such as 
 databases, calling APIs, or performing computations. Each tool is uniquely identified by
 a name and includes metadata describing its schema.
 
-## User Interaction Model
+## 1. User Interaction Model
 
 Tools in MCP are designed to be **model-controlled**, meaning that the language model can
 discover and invoke tools automatically based on its contextual understanding and the
@@ -31,7 +31,7 @@ Applications **SHOULD**:
   loop
 </Warning>
 
-## Capabilities
+## 2. Capabilities
 
 Servers that support tools **MUST** declare the `tools` capability:
 
@@ -48,9 +48,9 @@ Servers that support tools **MUST** declare the `tools` capability:
 `listChanged` indicates whether the server will emit notifications when the list of
 available tools changes.
 
-## Protocol Messages
+## 3. Protocol Messages
 
-### Listing Tools
+### 3.1 Listing Tools
 
 To discover available tools, clients send a `tools/list` request. This operation supports
 [pagination](/specification/draft/server/utilities/pagination).
@@ -96,7 +96,7 @@ To discover available tools, clients send a `tools/list` request. This operation
 }
 ```
 
-### Calling Tools
+### 3.2 Calling Tools
 
 To invoke a tool, clients send a `tools/call` request:
 
@@ -134,7 +134,7 @@ To invoke a tool, clients send a `tools/call` request:
 }
 ```
 
-### List Changed Notification
+### 3.3 List Changed Notification
 
 When the list of available tools changes, servers that declared the `listChanged`
 capability **SHOULD** send a notification:
@@ -146,7 +146,7 @@ capability **SHOULD** send a notification:
 }
 ```
 
-## Message Flow
+## 4. Message Flow
 
 ```mermaid
 sequenceDiagram
@@ -172,9 +172,9 @@ sequenceDiagram
     Server-->>Client: Updated tools
 ```
 
-## Data Types
+## 5. Data Types
 
-### Tool
+### 5.1 Tool
 
 A tool definition includes:
 
@@ -187,13 +187,13 @@ A tool definition includes:
 <Warning>For trust & safety and security, clients **MUST** consider
 tool annotations to be untrusted unless they come from trusted servers.</Warning>
 
-### Tool Result
+### 5.2 Tool Result
 
-Tool results may contain [**structured**](#structured-content) or **unstructured** content.
+Tool results may contain **structured** or **unstructured** content.
 
 **Unstructured** content is returned in the `content` field of a result, and can contain multiple content items of different types:
 
-#### Text Content
+#### 5.2.1 Text Content
 
 ```json
 {
@@ -202,7 +202,7 @@ Tool results may contain [**structured**](#structured-content) or **unstructured
 }
 ```
 
-#### Image Content
+#### 5.2.2 Image Content
 
 ```json
 {
@@ -212,7 +212,7 @@ Tool results may contain [**structured**](#structured-content) or **unstructured
 }
 ```
 
-#### Audio Content
+#### 5.2.3 Audio Content
 
 ```json
 {
@@ -222,7 +222,7 @@ Tool results may contain [**structured**](#structured-content) or **unstructured
 }
 ```
 
-#### Embedded Resources
+#### 5.2.4 Embedded Resources
 
 [Resources](/specification/draft/server/resources) **MAY** be embedded, to provide additional context
 or data, behind a URI that can be subscribed to or fetched again by the client later:
@@ -238,14 +238,14 @@ or data, behind a URI that can be subscribed to or fetched again by the client l
 }
 ```
 
-#### Structured Content
+#### 5.2.5 Structured Content
 
 **Structured** content is returned as a JSON object in the `structuredContent` field of a result. 
 
-For backwards compatibility, a tool that returns structured content SHOULD also return functionally equivalent unstructured content.
+For backwards compatibility, a tool that returns structured content **SHOULD** also return functionally equivalent unstructured content.
 (For example, serialized JSON can be returned in a `TextContent` block.)
 
-#### Output Schema
+#### 5.2.6 Output Schema
 
 Tools may also provide an output schema for validation of structured results.
 If an output schema is provided:
@@ -318,7 +318,7 @@ Providing an output schema helps clients and LLMs understand and properly handle
 - Guiding clients and LLMs to properly parse and utilize the returned data
 - Supporting better documentation and developer experience
 
-## Error Handling
+## 6. Error Handling
 
 Tools use two error reporting mechanisms:
 
@@ -364,7 +364,7 @@ Example tool execution error:
 }
 ```
 
-## Security Considerations
+## 7. Security Considerations
 
 1. Servers **MUST**:
 

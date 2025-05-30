@@ -33,9 +33,9 @@ sequenceDiagram
     Note over Client,Server: Connection closed
 ```
 
-## Lifecycle Phases
+## 1. Lifecycle Phases
 
-### Initialization
+### 1.1 Initialization
 
 The initialization phase **MUST** be the first interaction between client and server.
 During this phase, the client and server:
@@ -71,12 +71,6 @@ The client **MUST** initiate this phase by sending an `initialize` request conta
   }
 }
 ```
-
-The initialize request **MUST NOT** be part of a JSON-RPC
-[batch](https://www.jsonrpc.org/specification#batch), as other requests and notifications
-are not possible until initialization has completed. This also permits backwards
-compatibility with prior protocol versions that do not explicitly support JSON-RPC
-batches.
 
 The server **MUST** respond with its own capabilities and information:
 
@@ -126,7 +120,7 @@ to indicate it is ready to begin normal operations:
   [logging](/specification/draft/server/utilities/logging) before receiving the `initialized`
   notification.
 
-#### Version Negotiation
+#### 1.1.1 Version Negotiation
 
 In the `initialize` request, the client **MUST** send a protocol version it supports.
 This **SHOULD** be the _latest_ version supported by the client.
@@ -138,7 +132,7 @@ supports. This **SHOULD** be the _latest_ version supported by the server.
 If the client does not support the version in the server's response, it **SHOULD**
 disconnect.
 
-#### Capability Negotiation
+#### 1.1.2 Capability Negotiation
 
 Client and server capabilities establish which optional protocol features will be
 available during the session.
@@ -163,7 +157,7 @@ Capability objects can describe sub-capabilities like:
   tools)
 - `subscribe`: Support for subscribing to individual items' changes (resources only)
 
-### Operation
+### 1.2 Operation
 
 During the operation phase, the client and server exchange messages according to the
 negotiated capabilities.
@@ -173,13 +167,13 @@ Both parties **SHOULD**:
 - Respect the negotiated protocol version
 - Only use capabilities that were successfully negotiated
 
-### Shutdown
+### 1.3 Shutdown
 
 During the shutdown phase, one side (usually the client) cleanly terminates the protocol
 connection. No specific shutdown messages are defined—instead, the underlying transport
 mechanism should be used to signal connection termination:
 
-#### stdio
+#### 1.3.1 stdio
 
 For the stdio [transport](/specification/draft/basic/transports), the client **SHOULD** initiate
 shutdown by:
@@ -192,12 +186,12 @@ shutdown by:
 The server **MAY** initiate shutdown by closing its output stream to the client and
 exiting.
 
-#### HTTP
+#### 1.3.2 HTTP
 
 For HTTP [transports](/specification/draft/basic/transports), shutdown is indicated by closing the
 associated HTTP connection(s).
 
-## Timeouts
+## 2. Timeouts
 
 Implementations **SHOULD** establish timeouts for all sent requests, to prevent hung
 connections and resource exhaustion. When the request has not received a success or error
@@ -214,7 +208,7 @@ implies that work is actually happening. However, implementations **SHOULD** alw
 enforce a maximum timeout, regardless of progress notifications, to limit the impact of a
 misbehaving client or server.
 
-## Error Handling
+## 3. Error Handling
 
 Implementations **SHOULD** be prepared to handle these error cases:
 

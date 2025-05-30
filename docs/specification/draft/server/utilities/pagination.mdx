@@ -12,7 +12,7 @@ Pagination is especially important when connecting to external services over the
 internet, but also useful for local integrations to avoid performance issues with large
 data sets.
 
-## Pagination Model
+## 1. Pagination Model
 
 Pagination in MCP uses an opaque cursor-based approach, instead of numbered pages.
 
@@ -20,7 +20,7 @@ Pagination in MCP uses an opaque cursor-based approach, instead of numbered page
 - **Page size** is determined by the server, and clients **MUST NOT** assume a fixed page
   size
 
-## Response Format
+## 2. Response Format
 
 Pagination starts when the server sends a **response** that includes:
 
@@ -38,7 +38,7 @@ Pagination starts when the server sends a **response** that includes:
 }
 ```
 
-## Request Format
+## 3. Request Format
 
 After receiving a cursor, the client can _continue_ paginating by issuing a request
 including that cursor:
@@ -53,7 +53,7 @@ including that cursor:
 }
 ```
 
-## Pagination Flow
+## 4. Pagination Flow
 
 ```mermaid
 sequenceDiagram
@@ -67,7 +67,7 @@ sequenceDiagram
     end
 ```
 
-## Operations Supporting Pagination
+## 5. Operations Supporting Pagination
 
 The following MCP operations support pagination:
 
@@ -76,7 +76,7 @@ The following MCP operations support pagination:
 - `prompts/list` - List available prompts
 - `tools/list` - List available tools
 
-## Implementation Guidelines
+## 6. Implementation Guidelines
 
 1. Servers **SHOULD**:
 
@@ -93,6 +93,6 @@ The following MCP operations support pagination:
    - Don't attempt to parse or modify cursors
    - Don't persist cursors across sessions
 
-## Error Handling
+## 7. Error Handling
 
 Invalid cursors **SHOULD** result in an error with code -32602 (Invalid params).

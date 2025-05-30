@@ -8,7 +8,7 @@ capabilities across applications while maintaining clear security boundaries and
 isolating concerns. Built on JSON-RPC, MCP provides a stateful session protocol focused
 on context exchange and sampling coordination between clients and servers.
 
-## Core Components
+## 1. Core Components
 
 ```mermaid
 graph LR
@@ -43,7 +43,7 @@ graph LR
     end
 ```
 
-### Host
+### 1.1 Host
 
 The host process acts as the container and coordinator:
 
@@ -54,7 +54,7 @@ The host process acts as the container and coordinator:
 - Coordinates AI/LLM integration and sampling
 - Manages context aggregation across clients
 
-### Clients
+### 1.2 Clients
 
 Each client is created by the host and maintains an isolated server connection:
 
@@ -67,7 +67,7 @@ Each client is created by the host and maintains an isolated server connection:
 A host application creates and manages multiple clients, with each client having a 1:1
 relationship with a particular server.
 
-### Servers
+### 1.3 Servers
 
 Servers provide specialized context and capabilities:
 
@@ -77,7 +77,7 @@ Servers provide specialized context and capabilities:
 - Must respect security constraints
 - Can be local processes or remote services
 
-## Design Principles
+## 2. Design Principles
 
 MCP is built on several key design principles that inform its architecture and
 implementation:
@@ -112,7 +112,7 @@ implementation:
    - Protocol designed for future extensibility
    - Backwards compatibility is maintained
 
-## Capability Negotiation
+## 3. Capability Negotiation
 
 The Model Context Protocol uses a capability-based negotiation system where clients and
 servers explicitly declare their supported features during initialization. Capabilities

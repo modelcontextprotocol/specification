@@ -11,7 +11,7 @@ enabling servers to leverage AI capabilities&mdash;with no server API keys neces
 Servers can request text, audio, or image-based interactions and optionally include
 context from MCP servers in their prompts.
 
-## User Interaction Model
+## 1. User Interaction Model
 
 Sampling in MCP allows servers to implement agentic behaviors, by enabling LLM calls to
 occur _nested_ inside other MCP server features.
@@ -31,7 +31,7 @@ Applications **SHOULD**:
 - Present generated responses for review before delivery
 </Warning>
 
-## Capabilities
+## 2. Capabilities
 
 Clients that support sampling **MUST** declare the `sampling` capability during
 [initialization](/specification/draft/basic/lifecycle#initialization):
@@ -44,9 +44,9 @@ Clients that support sampling **MUST** declare the `sampling` capability during
 }
 ```
 
-## Protocol Messages
+## 3. Protocol Messages
 
-### Creating Messages
+### 3.1 Creating Messages
 
 To request a language model generation, servers send a `sampling/createMessage` request:
 
@@ -100,7 +100,7 @@ To request a language model generation, servers send a `sampling/createMessage` 
 }
 ```
 
-## Message Flow
+## 4. Message Flow
 
 ```mermaid
 sequenceDiagram
@@ -128,13 +128,13 @@ sequenceDiagram
     Client-->>Server: Return approved response
 ```
 
-## Data Types
+## 5. Data Types
 
-### Messages
+### 5.1 Messages
 
 Sampling messages can contain:
 
-#### Text Content
+#### 5.1.1 Text Content
 
 ```json
 {
@@ -143,7 +143,7 @@ Sampling messages can contain:
 }
 ```
 
-#### Image Content
+#### 5.1.2 Image Content
 
 ```json
 {
@@ -153,7 +153,7 @@ Sampling messages can contain:
 }
 ```
 
-#### Audio Content
+#### 5.1.3 Audio Content
 
 ```json
 {
@@ -163,7 +163,7 @@ Sampling messages can contain:
 }
 ```
 
-### Model Preferences
+### 5.2 Model Preferences
 
 Model selection in MCP requires careful abstraction since servers and clients may use
 different AI providers with distinct model offerings. A server cannot simply request a
@@ -173,7 +173,7 @@ prefer to use a different provider's equivalent model.
 To solve this, MCP implements a preference system that combines abstract capability
 priorities with optional model hints:
 
-#### Capability Priorities
+#### 5.2.1 Capability Priorities
 
 Servers express their needs through three normalized priority values (0-1):
 
@@ -182,7 +182,7 @@ Servers express their needs through three normalized priority values (0-1):
 - `intelligencePriority`: How important are advanced capabilities? Higher values prefer
   more capable models.
 
-#### Model Hints
+#### 5.2.2 Model Hints
 
 While priorities help select models based on characteristics, `hints` allow servers to
 suggest specific models or model families:
@@ -210,7 +210,7 @@ The client processes these preferences to select an appropriate model from its a
 options. For instance, if the client doesn't have access to Claude models but has Gemini,
 it might map the sonnet hint to `gemini-1.5-pro` based on similar capabilities.
 
-## Error Handling
+## 6. Error Handling
 
 Clients **SHOULD** return errors for common failure cases:
 
@@ -227,7 +227,7 @@ Example error:
 }
 ```
 
-## Security Considerations
+## 7. Security Considerations
 
 1. Clients **SHOULD** implement user approval controls
 2. Both parties **SHOULD** validate message content

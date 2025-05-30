@@ -10,7 +10,7 @@ within the filesystem, allowing them to understand which directories and files t
 access to. Servers can request the list of roots from supporting clients and receive
 notifications when that list changes.
 
-## User Interaction Model
+## 1. User Interaction Model
 
 Roots in MCP are typically exposed through workspace or project configuration interfaces.
 
@@ -22,7 +22,7 @@ However, implementations are free to expose roots through any interface pattern 
 suits their needs&mdash;the protocol itself does not mandate any specific user
 interaction model.
 
-## Capabilities
+## 2. Capabilities
 
 Clients that support roots **MUST** declare the `roots` capability during
 [initialization](/specification/draft/basic/lifecycle#initialization):
@@ -40,9 +40,9 @@ Clients that support roots **MUST** declare the `roots` capability during
 `listChanged` indicates whether the client will emit notifications when the list of roots
 changes.
 
-## Protocol Messages
+## 3. Protocol Messages
 
-### Listing Roots
+### 3.1 Listing Roots
 
 To retrieve roots, servers send a `roots/list` request:
 
@@ -73,7 +73,7 @@ To retrieve roots, servers send a `roots/list` request:
 }
 ```
 
-### Root List Changes
+### 3.2 Root List Changes
 
 When roots change, clients that support `listChanged` **MUST** send a notification:
 
@@ -84,7 +84,7 @@ When roots change, clients that support `listChanged` **MUST** send a notificati
 }
 ```
 
-## Message Flow
+## 4. Message Flow
 
 ```mermaid
 sequenceDiagram
@@ -101,9 +101,9 @@ sequenceDiagram
     Client-->>Server: Updated roots
 ```
 
-## Data Types
+## 5. Data Types
 
-### Root
+### 5.1 Root
 
 A root definition includes:
 
@@ -113,7 +113,7 @@ A root definition includes:
 
 Example roots for different use cases:
 
-#### Project Directory
+#### 5.1.1 Project Directory
 
 ```json
 {
@@ -122,7 +122,7 @@ Example roots for different use cases:
 }
 ```
 
-#### Multiple Repositories
+#### 5.1.2 Multiple Repositories
 
 ```json
 [
@@ -137,7 +137,7 @@ Example roots for different use cases:
 ]
 ```
 
-## Error Handling
+## 6. Error Handling
 
 Clients **SHOULD** return standard JSON-RPC errors for common failure cases:
 
@@ -160,7 +160,7 @@ Example error:
 }
 ```
 
-## Security Considerations
+## 7. Security Considerations
 
 1. Clients **MUST**:
 
@@ -174,7 +174,7 @@ Example error:
    - Respect root boundaries during operations
    - Validate all paths against provided roots
 
-## Implementation Guidelines
+## 8. Implementation Guidelines
 
 1. Clients **SHOULD**:
 
