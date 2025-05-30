@@ -14,7 +14,7 @@ maintain control over user interactions and data sharing while enabling servers 
 necessary information dynamically.
 Servers can request structured data from users with optional JSON schemas to validate responses.
 
-## User Interaction Model
+## 1. User Interaction Model
 
 Elicitation in MCP allows servers to implement interactive workflows by enabling user input
 requests to occur _nested_ inside other MCP server features.
@@ -35,7 +35,7 @@ Applications **SHOULD**:
 - Respect user privacy and provide clear decline and cancel options
 </Warning>
 
-## Capabilities
+## 2. Capabilities
 
 Clients that support elicitation **MUST** declare the `elicitation` capability during
 [initialization](/specification/draft/basic/lifecycle#initialization):
@@ -48,13 +48,13 @@ Clients that support elicitation **MUST** declare the `elicitation` capability d
 }
 ```
 
-## Protocol Messages
+## 3. Protocol Messages
 
-### Creating Elicitation Requests
+### 3.1 Creating Elicitation Requests
 
 To request information from a user, servers send an `elicitation/create` request:
 
-#### Simple Text Request
+#### 3.1.1 Simple Text Request
 
 **Request:**
 
@@ -93,7 +93,7 @@ To request information from a user, servers send an `elicitation/create` request
 }
 ```
 
-#### Structured Data Request
+#### 3.1.2 Structured Data Request
 
 **Request:**
 
@@ -169,7 +169,7 @@ To request information from a user, servers send an `elicitation/create` request
 }
 ```
 
-## Message Flow
+## 4. Message Flow
 
 ```mermaid
 sequenceDiagram
@@ -190,7 +190,7 @@ sequenceDiagram
     Note over Server: Continue processing with new information
 ```
 
-## Request Schema
+## 5. Request Schema
 
 The `requestedSchema` field allows servers to define the structure of the expected response using a restricted subset of JSON Schema. To simplify implementation for clients, elicitation schemas are limited to flat objects with primitive properties only:
 
@@ -213,7 +213,7 @@ The `requestedSchema` field allows servers to define the structure of the expect
 }
 ```
 
-### Supported Schema Types
+### 5.1 Supported Schema Types
 
 The schema is restricted to these primitive types:
 
@@ -270,7 +270,7 @@ Clients can use this schema to:
 
 Note that complex nested structures, arrays of objects, and other advanced JSON Schema features are intentionally not supported to simplify client implementation.
 
-## Response Actions
+## 6. Response Actions
 
 Elicitation responses use a three-action model to clearly distinguish between different user actions:
 
@@ -307,7 +307,7 @@ Servers should handle each state appropriately:
 - **Decline**: Handle explicit rejection (e.g., offer alternatives)
 - **Cancel**: Handle dismissal (e.g., prompt again later)
 
-## Security Considerations
+## 7. Security Considerations
 
 1. Servers **MUST NOT** request sensitive information through elicitation
 2. Clients **SHOULD** implement user approval controls

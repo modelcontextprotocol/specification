@@ -9,7 +9,7 @@ argument autocompletion suggestions for prompts and resource URIs. This enables 
 IDE-like experiences where users receive contextual suggestions while entering argument
 values.
 
-## User Interaction Model
+## 1. User Interaction Model
 
 Completion in MCP is designed to support interactive user experiences similar to IDE code
 completion.
@@ -21,7 +21,7 @@ However, implementations are free to expose completion through any interface pat
 suits their needs&mdash;the protocol itself does not mandate any specific user
 interaction model.
 
-## Capabilities
+## 2. Capabilities
 
 Servers that support completions **MUST** declare the `completions` capability:
 
@@ -33,9 +33,9 @@ Servers that support completions **MUST** declare the `completions` capability:
 }
 ```
 
-## Protocol Messages
+## 3. Protocol Messages
 
-### Requesting Completions
+### 3.1 Requesting Completions
 
 To get completion suggestions, clients send a `completion/complete` request specifying
 what is being completed through a reference type:
@@ -76,7 +76,7 @@ what is being completed through a reference type:
 }
 ```
 
-### Reference Types
+### 3.2 Reference Types
 
 The protocol supports two types of completion references:
 
@@ -85,7 +85,7 @@ The protocol supports two types of completion references:
 | `ref/prompt`   | References a prompt by name | `{"type": "ref/prompt", "name": "code_review"}`     |
 | `ref/resource` | References a resource URI   | `{"type": "ref/resource", "uri": "file:///{path}"}` |
 
-### Completion Results
+### 3.3 Completion Results
 
 Servers return an array of completion values ranked by relevance, with:
 
@@ -93,7 +93,7 @@ Servers return an array of completion values ranked by relevance, with:
 - Optional total number of available matches
 - Boolean indicating if additional results exist
 
-## Message Flow
+## 4. Message Flow
 
 ```mermaid
 sequenceDiagram
@@ -109,23 +109,23 @@ sequenceDiagram
     Server-->>Client: Refined suggestions
 ```
 
-## Data Types
+## 5. Data Types
 
-### CompleteRequest
+### 5.1 CompleteRequest
 
 - `ref`: A `PromptReference` or `ResourceReference`
 - `argument`: Object containing:
   - `name`: Argument name
   - `value`: Current value
 
-### CompleteResult
+### 5.2 CompleteResult
 
 - `completion`: Object containing:
   - `values`: Array of suggestions (max 100)
   - `total`: Optional total matches
   - `hasMore`: Additional results flag
 
-## Error Handling
+## 6. Error Handling
 
 Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
 
@@ -134,7 +134,7 @@ Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
 - Missing required arguments: `-32602` (Invalid params)
 - Internal errors: `-32603` (Internal error)
 
-## Implementation Considerations
+## 7. Implementation Considerations
 
 1. Servers **SHOULD**:
 
@@ -148,7 +148,7 @@ Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
    - Cache completion results where appropriate
    - Handle missing or partial results gracefully
 
-## Security
+## 8. Security
 
 Implementations **MUST**:
 

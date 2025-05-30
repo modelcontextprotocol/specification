@@ -17,7 +17,7 @@ Clients **SHOULD** support stdio whenever possible.
 It is also possible for clients and servers to implement
 [custom transports](#custom-transports) in a pluggable fashion.
 
-## stdio
+## 1. stdio
 
 In the **stdio** transport:
 
@@ -47,7 +47,7 @@ sequenceDiagram
     deactivate Server Process
 ```
 
-## Streamable HTTP
+## 2. Streamable HTTP
 
 <Info>This replaces the [HTTP+SSE
 transport](/specification/2024-11-05/basic/transports#http-with-sse) from
@@ -65,7 +65,7 @@ The server **MUST** provide a single HTTP endpoint path (hereafter referred to a
 **MCP endpoint**) that supports both POST and GET methods. For example, this could be a
 URL like `https://example.com/mcp`.
 
-#### Security Warning
+### 2.1 Security Warning
 
 When implementing Streamable HTTP transport:
 
@@ -75,7 +75,7 @@ When implementing Streamable HTTP transport:
 
 Without these protections, attackers could use DNS rebinding to interact with local MCP servers from remote websites.
 
-### Sending Messages to the Server
+### 2.2 Sending Messages to the Server
 
 Every JSON-RPC message sent from the client **MUST** be a new HTTP POST request to the
 MCP endpoint.
@@ -112,7 +112,7 @@ MCP endpoint.
      - To avoid message loss due to disconnection, the server **MAY** make the stream
        [resumable](#resumability-and-redelivery).
 
-### Listening for Messages from the Server
+### 2.3 Listening for Messages from the Server
 
 1. The client **MAY** issue an HTTP GET to the MCP endpoint. This can be used to open an
    SSE stream, allowing the server to communicate to the client, without the client first
@@ -132,7 +132,7 @@ MCP endpoint.
    - The server **MAY** close the SSE stream at any time.
    - The client **MAY** close the SSE stream at any time.
 
-### Multiple Connections
+### 2.4 Multiple Connections
 
 1. The client **MAY** remain connected to multiple SSE streams simultaneously.
 2. The server **MUST** send each of its JSON-RPC messages on only one of the connected
@@ -140,7 +140,7 @@ MCP endpoint.
    - The risk of message loss **MAY** be mitigated by making the stream
      [resumable](#resumability-and-redelivery).
 
-### Resumability and Redelivery
+### 2.5 Resumability and Redelivery
 
 To support resuming broken connections, and redelivering messages that might otherwise be
 lost:
@@ -163,7 +163,7 @@ lost:
 In other words, these event IDs should be assigned by servers on a _per-stream_ basis, to
 act as a cursor within that particular stream.
 
-### Session Management
+### 2.6 Session Management
 
 An MCP "session" consists of logically related interactions between a client and a
 server, beginning with the [initialization phase](/specification/draft/basic/lifecycle). To support
@@ -192,7 +192,7 @@ servers which want to establish stateful sessions:
    - The server **MAY** respond to this request with HTTP 405 Method Not Allowed,
      indicating that the server does not allow clients to terminate sessions.
 
-### Sequence Diagram
+### 2.7 Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -233,7 +233,7 @@ sequenceDiagram
 
 ```
 
-### Backwards Compatibility
+### 2.8 Backwards Compatibility
 
 Clients and servers can maintain backwards compatibility with the deprecated [HTTP+SSE
 transport](/specification/2024-11-05/basic/transports#http-with-sse) (from
@@ -262,7 +262,7 @@ protocol version 2024-11-05) as follows:
        the old HTTP+SSE transport, and should use that transport for all subsequent
        communication.
 
-## Custom Transports
+## 3. Custom Transports
 
 Clients and servers **MAY** implement additional custom transport mechanisms to suit
 their specific needs. The protocol is transport-agnostic and can be implemented over any
