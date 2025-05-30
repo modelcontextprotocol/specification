@@ -694,7 +694,7 @@ export interface CallToolResult extends Result {
   /**
    * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | ResourceReference)[];
 
   /**
    * An optional JSON object that represents the structured result of the tool call.

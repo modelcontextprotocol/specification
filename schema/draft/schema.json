@@ -144,6 +144,9 @@
                             },
                             {
                                 "$ref": "#/definitions/EmbeddedResource"
+                            },
+                            {
+                                "$ref": "#/definitions/ResourceReference"
                             }
                         ]
                     },
@@ -336,10 +339,10 @@
                         "ref": {
                             "anyOf": [
                                 {
-                                    "$ref": "#/definitions/PromptReference"
+                                    "$ref": "#/definitions/ResourceReference"
                                 },
                                 {
-                                    "$ref": "#/definitions/ResourceReference"
+                                    "$ref": "#/definitions/PromptReference"
                                 }
                             ]
                         }
