@@ -380,6 +380,7 @@
                             "items": {
                                 "type": "string"
                             },
+                            "maxItems": 100,
                             "type": "array"
                         }
                     },
