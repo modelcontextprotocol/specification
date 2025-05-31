@@ -229,14 +229,14 @@ export interface ClientCapabilities {
 /**
  * Used by the client to call a tool provided by the server and return a token to get the result or cancel the call at a later stage.
  * 
- * The server SHOULD retain the result of the tool call for the number of seconds specified by keep_alive to enable the client to retrieve the result.
+ * The server SHOULD retain the result of the tool call for the number of seconds specified by keepAlive to enable the client to retrieve the result.
  * 
  * The server MUST respond with an CallToolAsyncResult.
  * 
- * The server MAY reduce the number of seconds specified by keep_alive if so the server MUST inform the client of the new keep_alive time in the CallToolAsyncResult
+ * The server MAY reduce the number of seconds specified by keepAlive if so the server MUST inform the client of the new keepAlive time in the CallToolAsyncResult.
  */
 export interface CallToolAsyncRequest {
-  method: "tools/call/async";
+  method: "tools/async/call";
   params: {
     name: string;
     arguments?: { [key: string]: unknown };
@@ -256,7 +256,7 @@ export interface CallToolAsyncRequest {
  * The async token MUST not be relied on for authorisation and servers SHOULD validate clients have permission to join this tool call via other means.
  */
 export interface JoinCallToolAsyncRequest {
-  method: "tools/join/async";
+  method: "tools/async/join";
   params: {
     token: AsyncToken
     /**
@@ -273,10 +273,10 @@ export interface JoinCallToolAsyncRequest {
  *
  * This request indicates that the result will be unused, so any associated processing SHOULD cease.
  * 
- * The server SHOULD send a CancelNotification to any clients that have.
+ * The server SHOULD send a CancelNotification to any clients that have called or joined the associated async tool call.
  */
 export interface CancelToolAsyncNotification {
-  method: "tools/cancel/async";
+  method: "tools/async/cancel";
   params: {
     token: AsyncToken
   };
@@ -298,7 +298,7 @@ export interface CancelToolAsyncNotification {
  * The server SHOULD send a CancelNotification to the client if the request has been cancelled with a reason.
  */
 export interface GetToolAsyncResultRequest {
-  method: "tools/get/async";
+  method: "tools/async/get";
   params: {
     token: AsyncToken
   };
@@ -306,6 +306,8 @@ export interface GetToolAsyncResultRequest {
 
 /**
  * Used by the client to reference a previous async tool call submitted to the server.
+ * 
+ * The server SHOULD NOT rely on this for authentication or authorisation purposes
  */
 export type AsyncToken = string | number;
 
@@ -317,13 +319,38 @@ export type AsyncToken = string | number;
  * The token SHOULD be valid to get or cancel the result for keepAalive seconds from the received time on the server.
  * 
  * The server SHOULD report the received time in unix time, e.g. seconds elapsed since 00:00:00 UTC on 1 January 1970
- * 
- * The is NOT
  */
 export interface CallToolAsyncResult {
-  token: AsyncToken,
-  received: number
-  keepAlive: number
+  /**
+   * The token the client can use to retrieve results, cancel the invocation or rejoin the call in the case of disconnection
+   * 
+   * MUST be set if accepted is true
+   * 
+   * MAY be set if accepted is false in order for the client to retrieve the error result
+   */
+  token?: AsyncToken,
+  /**
+   * The unix time on the server the async call was received
+   * 
+   * MUST be set if accepted is true
+   * 
+   * MAY be set if accepted is false in order for the client to retrieve the error result
+   */
+  received?: number
+  /**
+   * The number of seconds from the received time that the client has to retrieve the result
+   * 
+   * MUST be set if accepted is true
+   * 
+   * MAY be set if accepted is false in order for the client to retrieve the error result
+   */
+  keepAlive?: number
+  /**
+   * Whether the async tool call was accepted for execution on the server.
+   * 
+   * If accepted is false the server MAY still respond to GetToolAsyncResultRequest with details of the reason for rejection if so the token MUST be set.
+   */
+  accepted: boolean
 }
 
 /**
