@@ -592,7 +592,7 @@ export interface UnsubscribeRequest extends Request {
 }
 
 /**
- * A notification from the server to the client, informing it that a resource has changed and may need to be read again. This should only be sent if the client previously sent a resources/subscribe request.
+ * A notification from the server to the client, informing it that a feature that the client has requested is not supported by this server.
  */
 export interface UnsupportedFeatureNotification extends Notification {
   method: "notifications/feature/unsupported";
