@@ -1654,8 +1654,9 @@
                             "$ref": "#/definitions/ProgressToken",
                             "description": "The progress token which was given in the initial request, used to associate this notification with the request that is proceeding."
                         },
-                        "resourceId": {
-                            "description": "An optional resource id associated with the current progress.\n\nServers SHOULD retain these resources for a reasonable period of time to enable the client\nto retrieve the resource.\n\nIn the case of CallToolAsyncRequest initiated requests this SHOULD be at least the keepAlive\ntime of the tool call.\n\nIn synchronous scenarios the server SHOULD retain these resources at least as long as the\nrequest is in progress and MAY be longer.\n\nIf a request is cancelled the server MAY discard these resources at any time after the cancellation.\n\nThe server SHOULD NOT list in-progress resources in the response to a ListResourcesRequest.",
+                        "resourceUri": {
+                            "description": "An optional resource uri associated with the current progress.\n\nServers SHOULD retain these resources for a reasonable period of time to enable the client\nto retrieve the resource.\n\nIn the case of CallToolAsyncRequest initiated requests this SHOULD be at least the keepAlive\ntime of the tool call.\n\nIn synchronous scenarios the server SHOULD retain these resources at least as long as the\nrequest is in progress and MAY be longer.\n\nIf a request is cancelled the server MAY discard these resources at any time after the cancellation.\n\nThe server SHOULD NOT list in-progress resources in the response to a ListResourcesRequest.",
+                            "format": "uri",
                             "type": "string"
                         },
                         "total": {

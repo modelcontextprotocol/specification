@@ -461,7 +461,7 @@ export interface ProgressNotification extends Notification {
     message?: string;
 
     /**
-     * An optional resource id associated with the current progress.
+     * An optional resource uri associated with the current progress.
      * 
      * Servers SHOULD retain these resources for a reasonable period of time to enable the client
      * to retrieve the resource.
@@ -475,8 +475,10 @@ export interface ProgressNotification extends Notification {
      * If a request is cancelled the server MAY discard these resources at any time after the cancellation.
      * 
      * The server SHOULD NOT list in-progress resources in the response to a ListResourcesRequest.
+     * 
+     * @format uri
      */
-    resourceId?: string
+    resourceUri?: string
   };
 }
 
