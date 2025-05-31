@@ -27,18 +27,6 @@
                 "integer"
             ]
         },
-        "AsyncToolResult": {
-            "description": "Used by the by the server to provide a reference to the client for a previously submitted async tool call.",
-            "properties": {
-                "token": {
-                    "$ref": "#/definitions/AsyncToken"
-                }
-            },
-            "required": [
-                "token"
-            ],
-            "type": "object"
-        },
         "AudioContent": {
             "description": "Audio provided to or from an LLM.",
             "properties": {
@@ -91,7 +79,7 @@
             "type": "object"
         },
         "CallToolAsyncRequest": {
-            "description": "Used by the client to call a tool provided by the server and return a token to get the result or cancel the invocation at a later stage.",
+            "description": "Used by the client to call a tool provided by the server and return a token to get the result or cancel the call at a later stage.\n\nThe server SHOULD retain the result of the tool call for the number of seconds specified by keep_alive to enable the client to retrieve the result.\n\nThe server MUST respond with an CallToolAsyncResult.\n\nThe server MAY reduce the number of seconds specified by keep_alive if so the server MUST inform the client of the new keep_alive time in the CallToolAsyncResult",
             "properties": {
                 "method": {
                     "const": "tools/call/async",
@@ -102,6 +90,9 @@
                         "arguments": {
                             "additionalProperties": {},
                             "type": "object"
+                        },
+                        "keepAlive": {
+                            "type": "integer"
                         },
                         "name": {
                             "type": "string"
@@ -116,6 +107,26 @@
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "CallToolAsyncResult": {
+            "description": "Used by the server to provide a reference to the client for a previously submitted async tool call.\n\nThis MUST only be sent as the result of EITHER CallToolAsyncRequest or JoinToolAsyncResultRequest \n\nThe token SHOULD be valid to get or cancel the result for keepAalive seconds from the received time on the server.\n\nThe server SHOULD report the received time in unix time, e.g. seconds elapsed since 00:00:00 UTC on 1 January 1970\n\nThe is NOT",
+            "properties": {
+                "keepAlive": {
+                    "type": "integer"
+                },
+                "received": {
+                    "type": "integer"
+                },
+                "token": {
+                    "$ref": "#/definitions/AsyncToken"
+                }
+            },
+            "required": [
+                "keepAlive",
+                "received",
+                "token"
             ],
             "type": "object"
         },
@@ -192,7 +203,7 @@
             "type": "object"
         },
         "CancelToolAsyncRequest": {
-            "description": "Used by the client to cancel a previous async tool call.",
+            "description": "Used by the client to cancel a previous async tool call request.\n\nThe request SHOULD still be in-flight, but due to communication latency, it is always possible that this request MAY arrive after the request has already finished.\n\nThis request indicates that the result will be unused, so any associated processing SHOULD cease.\n\nThe server SHOULD send a CancelNotification to any clients that have.",
             "properties": {
                 "method": {
                     "const": "tools/cancel/async",
@@ -297,6 +308,12 @@
             "anyOf": [
                 {
                     "$ref": "#/definitions/InitializeRequest"
+                },
+                {
+                    "$ref": "#/definitions/CallToolAsyncRequest"
+                },
+                {
+                    "$ref": "#/definitions/JoinCallToolAsyncRequest"
                 },
                 {
                     "$ref": "#/definitions/PingRequest"
@@ -634,8 +651,8 @@
             ],
             "type": "object"
         },
-        "GetToolAsyncResult": {
-            "description": "Used by the client to retrieve the result of an async tool call running on a server.",
+        "GetToolAsyncResultRequest": {
+            "description": "Used by the client to request the result of an async async tool call running on a server to be sent to this client.\n\nThe request SHOULD still be in-flight, but due to communication latency, it is always possible that this request MAY arrive after the request has already finished.\n\nThe server MUST return a CallToolResult either with the result an error status if the result cannot be retrieved or a pending status if the call tool is still in progress.\n\nThe client SHOULD use ProgressNotification results to determin when to call this method.\n\nThe client MAY call this periodically if regular progress notifications are not recieved.\n\nThe server MAY cancel any in progress tool calls if the client submits too many GetToolAsyncResultRequest.\n\nThe server SHOULD send a CancelNotification to the client if the request has been cancelled with a reason.",
             "properties": {
                 "method": {
                     "const": "tools/get/async",
@@ -987,6 +1004,35 @@
             ],
             "type": "object"
         },
+        "JoinCallToolAsyncRequest": {
+            "description": "Used by the client to reconnect to or extend the keep alive of a call tool request running on the server.\n\nThe server SHOULD allow multiple clients to join a previous call tool request.\n\nThe request SHOULD still be in-flight, but due to communication latency, it is always possible that this request MAY arrive after the request has already finished.\n\nThe client MAY request a new keepAlive time on the server to extend the amount of time the client has to retrieve the result.\n\nThe async token MUST not be relied on for authorisation and servers SHOULD validate clients have permission to join this tool call via other means.",
+            "properties": {
+                "method": {
+                    "const": "tools/join/async",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "keepAlive": {
+                            "description": "The number of seconds to keep results and resources generated by this call tool available on the server",
+                            "type": "integer"
+                        },
+                        "token": {
+                            "$ref": "#/definitions/AsyncToken"
+                        }
+                    },
+                    "required": [
+                        "token"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
         "ListPromptsRequest": {
             "description": "Sent from the client to request a list of prompts and prompt templates the server has.",
             "properties": {
@@ -1034,7 +1080,7 @@
             "type": "object"
         },
         "ListResourceTemplatesRequest": {
-            "description": "Sent from the client to request a list of resource templates the server has.",
+            "description": "Sent from the client to request a list of resource templates the server has.\n\nThis SHOULD NOT include any templates to return in progress resources sent as part of a ProgressNotification",
             "properties": {
                 "method": {
                     "const": "resources/templates/list",
@@ -1102,7 +1148,7 @@
             "type": "object"
         },
         "ListResourcesResult": {
-            "description": "The server's response to a resources/list request from the client.",
+            "description": "The server's response to a resources/list request from the client.\n\nThis SHOULD NOT include any in progress resources sent as part of a ProgressNotification",
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
@@ -1412,6 +1458,10 @@
                         "progressToken": {
                             "$ref": "#/definitions/ProgressToken",
                             "description": "The progress token which was given in the initial request, used to associate this notification with the request that is proceeding."
+                        },
+                        "resourceId": {
+                            "description": "An optional resource id associated with the current progress.\n\nServers SHOULD retain these resources for a reasonable period of time to enable the client\nto retrieve the resource.\n\nIn the case of CallToolAsyncRequest initiated requests this SHOULD be at least the keepAlive\ntime of the tool call.\n\nIn synchronous scenarios the server SHOULD retain these resources at least as long as the\nrequest is in progress and MAY be longer.\n\nIf a request is cancelled the server MAY discard these resources at any time after the cancellation.\n\nThe server SHOULD NOT list in-progress resources in the response to a ListResourcesRequest.",
+                            "type": "string"
                         },
                         "total": {
                             "description": "Total number of items to process (or total progress required), if known.",
@@ -1885,6 +1935,16 @@
         "ServerCapabilities": {
             "description": "Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.",
             "properties": {
+                "async": {
+                    "description": "Present if the server offers async tool calls.",
+                    "properties": {
+                        "maxKeepAliveTime": {
+                            "description": "The maximum keep alive time in seconds that the server will support for async tool calls.",
+                            "type": "integer"
+                        }
+                    },
+                    "type": "object"
+                },
                 "completions": {
                     "additionalProperties": true,
                     "description": "Present if the server supports argument autocompletion suggestions.",
@@ -1955,6 +2015,9 @@
                     "$ref": "#/definitions/ResourceListChangedNotification"
                 },
                 {
+                    "$ref": "#/definitions/UnsupportedFeatureNotification"
+                },
+                {
                     "$ref": "#/definitions/ResourceUpdatedNotification"
                 },
                 {
@@ -1988,6 +2051,9 @@
                 },
                 {
                     "$ref": "#/definitions/InitializeResult"
+                },
+                {
+                    "$ref": "#/definitions/CallToolAsyncResult"
                 },
                 {
                     "$ref": "#/definitions/ListResourcesResult"
@@ -2203,6 +2269,10 @@
                     "description": "If true, this tool may interact with an \"open world\" of external\nentities. If false, the tool's domain of interaction is closed.\nFor example, the world of a web search tool is open, whereas that\nof a memory tool is not.\n\nDefault: true",
                     "type": "boolean"
                 },
+                "preferAsync": {
+                    "description": "If true, should ideally be called using the async protocol\nas requests are expected to be long running.\n\nDefault: false",
+                    "type": "boolean"
+                },
                 "readOnlyHint": {
                     "description": "If true, the tool does not modify its environment.\n\nDefault: false",
                     "type": "boolean"
@@ -2255,6 +2325,32 @@
                     },
                     "required": [
                         "uri"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "UnsupportedFeatureNotification": {
+            "description": "A notification from the server to the client, informing it that a resource has changed and may need to be read again. This should only be sent if the client previously sent a resources/subscribe request.",
+            "properties": {
+                "method": {
+                    "const": "notifications/feature/unsupported",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "message": {
+                            "description": "A message describing an optional feature that the client has called that is not supported by the server.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "message"
                     ],
                     "type": "object"
                 }

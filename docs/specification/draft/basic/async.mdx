@@ -1,0 +1,98 @@
+---
+title: Async Tool Calls
+---
+
+<Info>**Protocol Revision**: draft</Info>
+
+The Model Context Protocol (MCP) defines a rigorous protocol for client-server 
+async call tool requests.
+
+## 1. Introduction
+
+### 1.1 Purpose and Scope
+
+The Model Context Protocol provides asyncronouse capabilities at the transport level,
+enabling MCP clients to make asyncronous requests to call tools.
+
+### 1.2 Protocol Requirements
+
+Asynchronous tool calls is **OPTIONAL** for MCP implementations. When supported:
+
+- Implementations **MUST** follow established security best practices for their protocol.
+
+### 1.3 Standards Compliance
+
+- TODO note any relevant standards in this space
+
+### 2.1 Overview
+
+#### 2.1.1 Basic usage
+
+The following diagram shows a basic sequence of request, responses and notifications
+
+```mermaid
+sequenceDiagram
+        actor Client
+        actor Server
+        Client->>Server: CallToolAsyncRequest
+        Server->>Client: CallToolAsyncResult
+        Server--)Client: ProgressNotification (1/2)
+        Server--)Client: ProgressNotification (2/2)
+        Client->>Server: GetAsyncResultRequest
+        Server->>Client: CallToolResult
+```
+
+#### 2.1.1 Join usage
+
+A client may join an existing tool call request. A server MAY send all or partial progress notifications to the client
+```mermaid
+sequenceDiagram
+        actor Client
+        actor Server
+        Client->>Server: JoinCallToolAsyncRequest
+        Server->>Client: CallToolAsyncResult
+        Server--)Client: ProgressNotification (3/4)
+        Server--)Client: ProgressNotification (4/4)
+        Client->>Server: GetAsyncResultRequest
+        Server->>Client: CallToolResult
+```
+
+Multiple clients MAY join an existing tool call request. 
+```mermaid
+sequenceDiagram
+        actor Client1
+        actor Client2
+        actor Server
+        Client1->>Server: CallToolAsyncRequest
+        Server-->>Client1: CallToolAsyncResult
+        Server--)Client1: ProgressNotification (1/2)
+        Client2->>Server: JoinCallToolAsyncRequest
+        Server-->>Client2: CallToolAsyncResult
+        Server--)Client1: ProgressNotification (2/2)
+        Client1->>Server: GetAsyncResultRequest
+        Server-->>Client1: CallToolResult
+        Server--)Client2: ProgressNotification (2/2)
+        Client2->>Server: GetAsyncResultRequest
+        Server-->>Client2: CallToolResult
+```
+
+#### 2.1.1 Cancel usage
+
+A client may cancel any in progress call tool requests. 
+The server SHOULD notify all clients that have called or joined the async tool call of the cancellation
+```mermaid
+sequenceDiagram
+        actor Client1
+        actor Client2
+        actor Server
+        Client1->>Server: CallToolAsyncRequest
+        Server->>Client1: CallToolAsyncResult
+        Server--)Client1: ProgressNotification (1/3)
+        Client2->>Server: JoinCallToolAsyncRequest
+        Server->>Client2: CallToolAsyncResult
+        Server--)Client1: ProgressNotification (2/3)
+        Server--)Client2: ProgressNotification (2/3)
+        Client2--)Server: CancelToolAsyncNotification
+        Server--)Client1: CancelNotification
+        Server--)Client2: CancelNotification
+```
