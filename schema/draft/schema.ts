@@ -888,6 +888,13 @@ export interface CallToolResult extends Result {
    * should be reported as an MCP error response.
    */
   isError?: boolean;
+
+  /**
+   * Whether the tool call is pending a result.
+   *
+   * If not set, this is assumed to be false (the call was successful).
+   */
+  isPending?: boolean;
 }
 
 /**

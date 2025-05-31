@@ -217,6 +217,10 @@
                     "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).\n\nAny errors that originate from the tool SHOULD be reported inside the result\nobject, with `isError` set to true, _not_ as an MCP protocol-level error\nresponse. Otherwise, the LLM would not be able to see that an error occurred\nand self-correct.\n\nHowever, any errors in _finding_ the tool, an error indicating that the\nserver does not support tool calls, or any other exceptional conditions,\nshould be reported as an MCP error response.",
                     "type": "boolean"
                 },
+                "isPending": {
+                    "description": "Whether the tool call is pending a result.\n\nIf not set, this is assumed to be false (the call was successful).",
+                    "type": "boolean"
+                },
                 "structuredContent": {
                     "additionalProperties": {},
                     "description": "An optional JSON object that represents the structured result of the tool call.",
