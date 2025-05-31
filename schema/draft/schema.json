@@ -333,6 +333,9 @@
                     "$ref": "#/definitions/InitializedNotification"
                 },
                 {
+                    "$ref": "#/definitions/CancelToolAsyncNotification"
+                },
+                {
                     "$ref": "#/definitions/ProgressNotification"
                 },
                 {

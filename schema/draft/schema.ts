@@ -1517,6 +1517,7 @@ export type ClientNotification =
   | CancelledNotification
   | ProgressNotification
   | InitializedNotification
+  | CancelToolAsyncNotification
   | RootsListChangedNotification;
 
 export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
@@ -1535,7 +1536,7 @@ export type ServerNotification =
   | ResourceUpdatedNotification
   | ResourceListChangedNotification
   | ToolListChangedNotification
-  | PromptListChangedNotification
+  | PromptListChangedNotification;
 
 export type ServerResult =
   | EmptyResult
