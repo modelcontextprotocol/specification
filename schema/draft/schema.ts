@@ -749,11 +749,25 @@ export interface ToolListChangedNotification extends Notification {
 export interface ToolAnnotations {
   /**
    * A human-readable title for the tool.
+   * 
+   * Useful for displaying in user interfaces when the tool name
+   * itself is not descriptive enough for end users.
+   * 
+   * Examples:
+   * - Tool name: "calc_sum" → Title: "Calculate Sum"
+   * - Tool name: "gh_create_issue" → Title: "Create GitHub Issue"
    */
   title?: string;
 
   /**
    * If true, the tool does not modify its environment.
+   *
+   * This means the tool only reads or retrieves information
+   * without making any changes to data, files, or system state.
+   *
+   * Examples:
+   * - readOnlyHint: true → search_database, get_weather, read_file
+   * - readOnlyHint: false → create_user, delete_file, send_email
    *
    * Default: false
    */
@@ -763,7 +777,13 @@ export interface ToolAnnotations {
    * If true, the tool may perform destructive updates to its environment.
    * If false, the tool performs only additive updates.
    *
-   * (This property is meaningful only when `readOnlyHint == false`)
+   * This annotation is only meaningful when readOnlyHint is false.
+   * Destructive operations cannot be easily undone or may result in
+   * permanent data loss.
+   *
+   * Examples:
+   * - destructiveHint: true → delete_file, drop_database_table, factory_reset
+   * - destructiveHint: false → create_backup, add_user, append_to_log
    *
    * Default: true
    */
@@ -771,9 +791,15 @@ export interface ToolAnnotations {
 
   /**
    * If true, calling the tool repeatedly with the same arguments
-   * will have no additional effect on the its environment.
+   * will have no additional effect on its environment.
    *
-   * (This property is meaningful only when `readOnlyHint == false`)
+   * This annotation is only meaningful when readOnlyHint is false.
+   * Idempotent operations can be safely retried without causing
+   * unintended side effects.
+   *
+   * Examples:
+   * - idempotentHint: true → set_user_status, ensure_directory_exists
+   * - idempotentHint: false → increment_counter, append_to_file, send_notification
    *
    * Default: false
    */
@@ -782,12 +808,108 @@ export interface ToolAnnotations {
   /**
    * If true, this tool may interact with an "open world" of external
    * entities. If false, the tool's domain of interaction is closed.
-   * For example, the world of a web search tool is open, whereas that
-   * of a memory tool is not.
+   * 
+   * An "open world" means the tool can interact with arbitrary external
+   * entities, services, or data sources that are not fully controlled
+   * or predictable. A "closed world" means the tool operates within
+   * a bounded, controlled environment.
+   *
+   * Examples:
+   * - openWorldHint: true → web_search, external_api_call, fetch_url
+   * - openWorldHint: false → local_database_query, memory_store, file_system_operation
+   *
+   * Note: Most tools that require network connectivity to external services
+   * should set this to true.
    *
    * Default: true
    */
   openWorldHint?: boolean;
+
+  /**
+   * If true, this tool involves AI or LLM processing.
+   *
+   * This includes any tool that uses machine learning models,
+   * language models, or AI services for processing data or
+   * generating responses.
+   *
+   * Examples:
+   * - aiProcessingHint: true → generate_text, analyze_sentiment, create_embedding
+   * - aiProcessingHint: false → database_query, file_upload, send_email
+   *
+   * Default: false
+   */
+  aiProcessingHint?: boolean;
+
+  /**
+   * If true, this tool typically takes a long time to execute.
+   *
+   * This helps clients decide whether to show progress indicators,
+   * set appropriate timeouts, or warn users about expected delays.
+   *
+   * Examples:
+   * - slowExecutionHint: true → large_file_processing, model_training, video_encoding
+   * - slowExecutionHint: false → simple_calculation, cache_lookup, status_check
+   *
+   * Default: false
+   */
+  slowExecutionHint?: boolean;
+
+  /**
+   * If true, this tool is resource-intensive (CPU, memory, or disk).
+   *
+   * This helps clients manage system resources and potentially
+   * limit concurrent executions of resource-heavy tools.
+   *
+   * Examples:
+   * - resourceIntensiveHint: true → image_processing, data_compression, crypto_mining
+   * - resourceIntensiveHint: false → text_formatting, simple_math, configuration_read
+   *
+   * Default: false
+   */
+  resourceIntensiveHint?: boolean;
+
+  /**
+   * If true, this tool processes or has access to sensitive data.
+   *
+   * This includes personally identifiable information (PII),
+   * credentials, financial data, or any confidential information
+   * that requires special handling or governance.
+   *
+   * Examples:
+   * - sensitiveDataHint: true → access_user_passwords, read_financial_records, process_medical_data
+   * - sensitiveDataHint: false → get_weather, public_api_lookup, system_time
+   *
+   * Default: false
+   */
+  sensitiveDataHint?: boolean;
+
+  /**
+   * If true, this tool requires elevated system privileges to execute.
+   *
+   * This indicates that the tool needs administrative, root, or
+   * special permissions that go beyond normal user-level access.
+   *
+   * Examples:
+   * - privilegedAccessHint: true → install_software, modify_system_config, restart_service
+   * - privilegedAccessHint: false → read_user_file, send_http_request, calculate_hash
+   *
+   * Default: false
+   */
+  privilegedAccessHint?: boolean;
+
+  /**
+   * If true, this tool's operations can be undone or reversed.
+   *
+   * This annotation is only meaningful when readOnlyHint is false.
+   * Reversible operations provide some mechanism to undo their effects.
+   *
+   * Examples:
+   * - reversibleHint: true → create_backup (can be deleted), rename_file (can rename back)
+   * - reversibleHint: false → send_email (cannot unsend), delete_permanently
+   *
+   * Default: false
+   */
+  reversibleHint?: boolean;
 }
 
 /**
