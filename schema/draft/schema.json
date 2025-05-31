@@ -2315,24 +2315,48 @@
         "ToolAnnotations": {
             "description": "Additional properties describing a Tool to clients.\n\nNOTE: all properties in ToolAnnotations are **hints**.\nThey are not guaranteed to provide a faithful description of\ntool behavior (including descriptive properties like `title`).\n\nClients should never make tool use decisions based on ToolAnnotations\nreceived from untrusted servers.",
             "properties": {
+                "aiProcessingHint": {
+                    "description": "If true, this tool involves AI or LLM processing.\n\nThis includes any tool that uses machine learning models,\nlanguage models, or AI services for processing data or\ngenerating responses.\n\nExamples:\n- aiProcessingHint: true → generate_text, analyze_sentiment, create_embedding\n- aiProcessingHint: false → database_query, file_upload, send_email\n\nDefault: false",
+                    "type": "boolean"
+                },
                 "destructiveHint": {
-                    "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: true",
+                    "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\nThis annotation is only meaningful when readOnlyHint is false.\nDestructive operations cannot be easily undone or may result in\npermanent data loss.\n\nExamples:\n- destructiveHint: true → delete_file, drop_database_table, factory_reset\n- destructiveHint: false → create_backup, add_user, append_to_log\n\nDefault: true",
                     "type": "boolean"
                 },
                 "idempotentHint": {
-                    "description": "If true, calling the tool repeatedly with the same arguments\nwill have no additional effect on the its environment.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: false",
+                    "description": "If true, calling the tool repeatedly with the same arguments\nwill have no additional effect on its environment.\n\nThis annotation is only meaningful when readOnlyHint is false.\nIdempotent operations can be safely retried without causing\nunintended side effects.\n\nExamples:\n- idempotentHint: true → set_user_status, ensure_directory_exists\n- idempotentHint: false → increment_counter, append_to_file, send_notification\n\nDefault: false",
                     "type": "boolean"
                 },
                 "openWorldHint": {
-                    "description": "If true, this tool may interact with an \"open world\" of external\nentities. If false, the tool's domain of interaction is closed.\nFor example, the world of a web search tool is open, whereas that\nof a memory tool is not.\n\nDefault: true",
+                    "description": "If true, this tool may interact with an \"open world\" of external\nentities. If false, the tool's domain of interaction is closed.\n\nAn \"open world\" means the tool can interact with arbitrary external\nentities, services, or data sources that are not fully controlled\nor predictable. A \"closed world\" means the tool operates within\na bounded, controlled environment.\n\nExamples:\n- openWorldHint: true → web_search, external_api_call, fetch_url\n- openWorldHint: false → local_database_query, memory_store, file_system_operation\n\nNote: Most tools that require network connectivity to external services\nshould set this to true.\n\nDefault: true",
+                    "type": "boolean"
+                },
+                "privilegedAccessHint": {
+                    "description": "If true, this tool requires elevated system privileges to execute.\n\nThis indicates that the tool needs administrative, root, or\nspecial permissions that go beyond normal user-level access.\n\nExamples:\n- privilegedAccessHint: true → install_software, modify_system_config, restart_service\n- privilegedAccessHint: false → read_user_file, send_http_request, calculate_hash\n\nDefault: false",
                     "type": "boolean"
                 },
                 "readOnlyHint": {
-                    "description": "If true, the tool does not modify its environment.\n\nDefault: false",
+                    "description": "If true, the tool does not modify its environment.\n\nThis means the tool only reads or retrieves information\nwithout making any changes to data, files, or system state.\n\nExamples:\n- readOnlyHint: true → search_database, get_weather, read_file\n- readOnlyHint: false → create_user, delete_file, send_email\n\nDefault: false",
+                    "type": "boolean"
+                },
+                "resourceIntensiveHint": {
+                    "description": "If true, this tool is resource-intensive (CPU, memory, or disk).\n\nThis helps clients manage system resources and potentially\nlimit concurrent executions of resource-heavy tools.\n\nExamples:\n- resourceIntensiveHint: true → image_processing, data_compression, crypto_mining\n- resourceIntensiveHint: false → text_formatting, simple_math, configuration_read\n\nDefault: false",
+                    "type": "boolean"
+                },
+                "reversibleHint": {
+                    "description": "If true, this tool's operations can be undone or reversed.\n\nThis annotation is only meaningful when readOnlyHint is false.\nReversible operations provide some mechanism to undo their effects.\n\nExamples:\n- reversibleHint: true → create_backup (can be deleted), rename_file (can rename back)\n- reversibleHint: false → send_email (cannot unsend), delete_permanently\n\nDefault: false",
+                    "type": "boolean"
+                },
+                "sensitiveDataHint": {
+                    "description": "If true, this tool processes or has access to sensitive data.\n\nThis includes personally identifiable information (PII),\ncredentials, financial data, or any confidential information\nthat requires special handling or governance.\n\nExamples:\n- sensitiveDataHint: true → access_user_passwords, read_financial_records, process_medical_data\n- sensitiveDataHint: false → get_weather, public_api_lookup, system_time\n\nDefault: false",
+                    "type": "boolean"
+                },
+                "slowExecutionHint": {
+                    "description": "If true, this tool typically takes a long time to execute.\n\nThis helps clients decide whether to show progress indicators,\nset appropriate timeouts, or warn users about expected delays.\n\nExamples:\n- slowExecutionHint: true → large_file_processing, model_training, video_encoding\n- slowExecutionHint: false → simple_calculation, cache_lookup, status_check\n\nDefault: false",
                     "type": "boolean"
                 },
                 "title": {
-                    "description": "A human-readable title for the tool.",
+                    "description": "A human-readable title for the tool.\n\nUseful for displaying in user interfaces when the tool name\nitself is not descriptive enough for end users.\n\nExamples:\n- Tool name: \"calc_sum\" → Title: \"Calculate Sum\"\n- Tool name: \"gh_create_issue\" → Title: \"Create GitHub Issue\"",
                     "type": "string"
                 }
             },

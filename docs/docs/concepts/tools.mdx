@@ -321,6 +321,7 @@ Tool annotations serve several key purposes:
 2. Help clients categorize and present tools appropriately
 3. Convey information about a tool's potential side effects
 4. Assist in developing intuitive interfaces for tool approval
+5. Enable appropriate governance policies and security controls
 
 ### Available tool annotations
 
@@ -333,68 +334,201 @@ The MCP specification defines the following annotations for tools:
 | `destructiveHint` | boolean | true | If true, the tool may perform destructive updates (only meaningful when `readOnlyHint` is false) |
 | `idempotentHint` | boolean | false | If true, calling the tool repeatedly with the same arguments has no additional effect (only meaningful when `readOnlyHint` is false) |
 | `openWorldHint` | boolean | true | If true, the tool may interact with an "open world" of external entities |
+| `aiProcessingHint` | boolean | false | If true, the tool involves AI or LLM processing |
+| `slowExecutionHint` | boolean | false | If true, the tool typically takes a long time to execute |
+| `resourceIntensiveHint` | boolean | false | If true, the tool is resource-intensive (CPU, memory, or disk) |
+| `sensitiveDataHint` | boolean | false | If true, the tool processes or has access to sensitive data |
+| `privilegedAccessHint` | boolean | false | If true, the tool requires elevated system privileges |
+| `reversibleHint` | boolean | false | If true, the tool's operations can be undone or reversed |
 
-### Example usage
+### Detailed annotation descriptions
 
-Here's how to define tools with annotations for different scenarios:
+#### Basic Operation Annotations
+
+**`title`**: Provides a human-friendly display name for the tool.
+- Example: Tool name `gh_create_issue` → Title `"Create GitHub Issue"`
+
+**`readOnlyHint`**: Indicates whether the tool modifies its environment.
+- `true`: `search_database`, `get_weather`, `read_file`
+- `false`: `create_user`, `delete_file`, `send_email`
+
+**`destructiveHint`**: For non-read-only tools, indicates if changes are destructive.
+- `true`: `delete_file`, `drop_database_table`, `factory_reset`
+- `false`: `create_backup`, `add_user`, `append_to_log`
+
+**`idempotentHint`**: For non-read-only tools, indicates if repeated calls have the same effect.
+- `true`: `set_user_status`, `ensure_directory_exists`
+- `false`: `increment_counter`, `append_to_file`, `send_notification`
+
+**`openWorldHint`**: Indicates whether the tool interacts with external, uncontrolled entities.
+- `true`: `web_search`, `external_api_call`, `fetch_url`
+- `false`: `local_database_query`, `memory_store`, `file_system_operation`
+
+#### AI and Processing Annotations
+
+**`aiProcessingHint`**: Indicates AI/ML model usage for governance policies.
+- `true`: `generate_text`, `analyze_sentiment`, `create_embedding`
+- `false`: `database_query`, `file_upload`, `send_email`
+
+**`slowExecutionHint`**: Helps clients manage user expectations and timeouts.
+- `true`: `large_file_processing`, `model_training`, `video_encoding`
+- `false`: `simple_calculation`, `cache_lookup`, `status_check`
+
+**`resourceIntensiveHint`**: Helps clients manage system resources.
+- `true`: `image_processing`, `data_compression`, `crypto_mining`
+- `false`: `text_formatting`, `simple_math`, `configuration_read`
+
+#### Security and Access Annotations
+
+**`sensitiveDataHint`**: Indicates handling of confidential information.
+- `true`: `access_user_passwords`, `read_financial_records`, `process_medical_data`
+- `false`: `get_weather`, `public_api_lookup`, `system_time`
+
+**`privilegedAccessHint`**: Indicates need for elevated system permissions.
+- `true`: `install_software`, `modify_system_config`, `restart_service`
+- `false`: `read_user_file`, `send_http_request`, `calculate_hash`
+
+**`reversibleHint`**: For non-read-only tools, indicates if operations can be undone.
+- `true`: `create_backup` (can be deleted), `rename_file` (can rename back)
+- `false`: `send_email` (cannot unsend), `delete_permanently`
+
+### Comprehensive example usage
+
+Here are real-world examples showing how to use annotations effectively:
 
 ```typescript
-// A read-only search tool
+// AI-powered code analysis tool
 {
-  name: "web_search",
-  description: "Search the web for information",
+  name: "analyze_code_with_ai",
+  description: "Analyze code quality and security using AI",
   inputSchema: {
     type: "object",
     properties: {
-      query: { type: "string" }
+      code: { type: "string" },
+      language: { type: "string" }
     },
-    required: ["query"]
+    required: ["code"]
   },
   annotations: {
-    title: "Web Search",
+    title: "AI Code Analyzer",
     readOnlyHint: true,
-    openWorldHint: true
+    openWorldHint: true,
+    aiProcessingHint: true,
+    slowExecutionHint: true,
+    sensitiveDataHint: true
   }
 }
 
-// A destructive file deletion tool
+// System service management tool
 {
-  name: "delete_file",
-  description: "Delete a file from the filesystem",
+  name: "restart_service",
+  description: "Restart a system service",
   inputSchema: {
     type: "object",
     properties: {
-      path: { type: "string" }
+      service_name: { type: "string" }
     },
-    required: ["path"]
+    required: ["service_name"]
   },
   annotations: {
-    title: "Delete File",
+    title: "Restart Service",
     readOnlyHint: false,
-    destructiveHint: true,
+    destructiveHint: false,
     idempotentHint: true,
-    openWorldHint: false
+    openWorldHint: false,
+    privilegedAccessHint: true,
+    reversibleHint: true
   }
 }
 
-// A non-destructive database record creation tool
+// Large file processing tool
 {
-  name: "create_record",
-  description: "Create a new record in the database",
+  name: "compress_video",
+  description: "Compress video files to reduce size",
   inputSchema: {
     type: "object",
     properties: {
-      table: { type: "string" },
-      data: { type: "object" }
+      input_path: { type: "string" },
+      output_path: { type: "string" },
+      quality: { type: "string" }
     },
-    required: ["table", "data"]
+    required: ["input_path", "output_path"]
   },
   annotations: {
-    title: "Create Database Record",
+    title: "Video Compressor",
+    readOnlyHint: false,
+    destructiveHint: false,
+    openWorldHint: false,
+    slowExecutionHint: true,
+    resourceIntensiveHint: true,
+    reversibleHint: false
+  }
+}
+
+// External API integration
+{
+  name: "send_slack_message",
+  description: "Send a message to a Slack channel",
+  inputSchema: {
+    type: "object",
+    properties: {
+      channel: { type: "string" },
+      message: { type: "string" }
+    },
+    required: ["channel", "message"]
+  },
+  annotations: {
+    title: "Send Slack Message",
     readOnlyHint: false,
     destructiveHint: false,
     idempotentHint: false,
+    openWorldHint: true,
+    reversibleHint: false
+  }
+}
+
+// Database backup tool
+{
+  name: "backup_database",
+  description: "Create a backup of the database",
+  inputSchema: {
+    type: "object",
+    properties: {
+      database_name: { type: "string" },
+      backup_path: { type: "string" }
+    },
+    required: ["database_name"]
+  },
+  annotations: {
+    title: "Database Backup",
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    slowExecutionHint: true,
+    resourceIntensiveHint: true,
+    sensitiveDataHint: true,
+    privilegedAccessHint: true,
+    reversibleHint: true
+  }
+}
+
+// Simple calculation tool
+{
+  name: "calculate_fibonacci",
+  description: "Calculate the nth Fibonacci number",
+  inputSchema: {
+    type: "object",
+    properties: {
+      n: { type: "number" }
+    },
+    required: ["n"]
+  },
+  annotations: {
+    title: "Fibonacci Calculator",
+    readOnlyHint: true,
     openWorldHint: false
+    // Most hints default to false and don't need to be specified
   }
 }
 ```
@@ -407,20 +541,24 @@ Here's how to define tools with annotations for different scenarios:
     server.setRequestHandler(ListToolsRequestSchema, async () => {
       return {
         tools: [{
-          name: "calculate_sum",
-          description: "Add two numbers together",
+          name: "ai_text_generator",
+          description: "Generate text using AI models",
           inputSchema: {
             type: "object",
             properties: {
-              a: { type: "number" },
-              b: { type: "number" }
+              prompt: { type: "string" },
+              max_tokens: { type: "number" }
             },
-            required: ["a", "b"]
+            required: ["prompt"]
           },
           annotations: {
-            title: "Calculate Sum",
-            readOnlyHint: true,
-            openWorldHint: false
+            title: "AI Text Generator",
+            readOnlyHint: false,
+            destructiveHint: false,
+            openWorldHint: true,
+            aiProcessingHint: true,
+            slowExecutionHint: true,
+            sensitiveDataHint: true
           }
         }]
       };
@@ -435,20 +573,23 @@ Here's how to define tools with annotations for different scenarios:
     
     @mcp.tool(
         annotations={
-            "title": "Calculate Sum",
+            "title": "System Log Analyzer",
             "readOnlyHint": True,
-            "openWorldHint": False
+            "openWorldHint": False,
+            "slowExecutionHint": True,
+            "resourceIntensiveHint": True,
+            "privilegedAccessHint": True,
+            "sensitiveDataHint": False
         }
     )
-    async def calculate_sum(a: float, b: float) -> str:
-        """Add two numbers together.
+    async def analyze_system_logs(log_path: str) -> str:
+        """Analyze system logs for patterns and issues.
         
         Args:
-            a: First number to add
-            b: Second number to add
+            log_path: Path to the log file to analyze
         """
-        result = a + b
-        return str(result)
+        # Implementation here
+        return "Analysis complete"
     ```
   </Tab>
 </Tabs>
@@ -459,11 +600,15 @@ Here's how to define tools with annotations for different scenarios:
 
 2. **Use descriptive titles**: Provide human-friendly titles that clearly describe the tool's purpose.
 
-3. **Indicate idempotency properly**: Mark tools as idempotent only if repeated calls with the same arguments truly have no additional effect.
+3. **Consider security implications**: Use `sensitiveDataHint` and `privilegedAccessHint` to help clients implement appropriate security controls.
 
-4. **Set appropriate open/closed world hints**: Indicate whether a tool interacts with a closed system (like a database) or an open system (like the web).
+4. **Help with resource management**: Use `slowExecutionHint` and `resourceIntensiveHint` to enable better UX and system resource management.
 
-5. **Remember annotations are hints**: All properties in ToolAnnotations are hints and not guaranteed to provide a faithful description of tool behavior. Clients should never make security-critical decisions based solely on annotations.
+5. **Enable AI governance**: Use `aiProcessingHint` to support organizational policies around AI tool usage.
+
+6. **Indicate reversibility**: Use `reversibleHint` to help users understand whether operations can be undone.
+
+7. **Remember annotations are hints**: All properties in ToolAnnotations are hints and not guaranteed to provide a faithful description of tool behavior. Clients should never make security-critical decisions based solely on annotations.
 
 ## Testing tools
 

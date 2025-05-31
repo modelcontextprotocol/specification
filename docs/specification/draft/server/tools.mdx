@@ -88,6 +88,11 @@ To discover available tools, clients send a `tools/list` request. This operation
             }
           },
           "required": ["location"]
+        },
+        "annotations": {
+          "title": "Weather Lookup",
+          "readOnlyHint": true,
+          "openWorldHint": true
         }
       }
     ],
@@ -186,6 +191,126 @@ A tool definition includes:
 
 <Warning>For trust & safety and security, clients **MUST** consider
 tool annotations to be untrusted unless they come from trusted servers.</Warning>
+
+## Tool Annotations
+
+Tool annotations provide additional metadata about a tool's behavior, helping clients understand how to present and manage tools appropriately. These annotations are **hints** that describe the nature and impact of a tool, but should not be relied upon for security decisions.
+
+### Purpose
+
+Tool annotations serve several key purposes:
+
+1. **User Experience**: Provide information for UI elements without affecting model context
+2. **Tool Categorization**: Help clients group and present tools appropriately  
+3. **Side Effect Awareness**: Convey information about a tool's potential impact
+4. **Approval Workflows**: Assist in developing intuitive interfaces for tool approval
+5. **Governance Policies**: Enable appropriate security controls and organizational policies
+
+### Available Annotations
+
+| Annotation | Type | Default | Description |
+|------------|------|---------|-------------|
+| `title` | string | - | Human-readable title for UI display |
+| `readOnlyHint` | boolean | false | Tool does not modify its environment |
+| `destructiveHint` | boolean | true | Tool may perform destructive updates (only meaningful when `readOnlyHint` is false) |
+| `idempotentHint` | boolean | false | Repeated calls with same arguments have no additional effect (only meaningful when `readOnlyHint` is false) |
+| `openWorldHint` | boolean | true | Tool may interact with external, uncontrolled entities |
+| `aiProcessingHint` | boolean | false | Tool involves AI or LLM processing |
+| `slowExecutionHint` | boolean | false | Tool typically takes a long time to execute |
+| `resourceIntensiveHint` | boolean | false | Tool uses significant CPU, memory, or disk resources |
+| `sensitiveDataHint` | boolean | false | Tool processes or accesses sensitive data |
+| `privilegedAccessHint` | boolean | false | Tool requires elevated system privileges |
+| `reversibleHint` | boolean | false | Tool's operations can be undone or reversed (only meaningful when `readOnlyHint` is false) |
+
+### Annotation Descriptions
+
+#### Basic Operation Annotations
+
+**`title`**: Provides a human-friendly display name.
+- Example: Tool name `"gh_create_issue"` → Title `"Create GitHub Issue"`
+
+**`readOnlyHint`**: Indicates whether the tool modifies its environment.
+- `true`: `search_database`, `get_weather`, `read_file`
+- `false`: `create_user`, `delete_file`, `send_email`
+
+**`destructiveHint`**: For non-read-only tools, indicates if changes are destructive.
+- `true`: `delete_file`, `drop_database_table`, `factory_reset`
+- `false`: `create_backup`, `add_user`, `append_to_log`
+
+**`idempotentHint`**: For non-read-only tools, indicates if repeated calls have the same effect.
+- `true`: `set_user_status`, `ensure_directory_exists`
+- `false`: `increment_counter`, `append_to_file`, `send_notification`
+
+**`openWorldHint`**: Indicates interaction with external, uncontrolled entities.
+- `true`: `web_search`, `external_api_call`, `fetch_url`
+- `false`: `local_database_query`, `memory_store`, `file_system_operation`
+
+#### AI and Processing Annotations
+
+**`aiProcessingHint`**: Indicates AI/ML model usage for governance policies.
+- `true`: `generate_text`, `analyze_sentiment`, `create_embedding`
+- `false`: `database_query`, `file_upload`, `send_email`
+
+**`slowExecutionHint`**: Helps clients manage user expectations and timeouts.
+- `true`: `large_file_processing`, `model_training`, `video_encoding`
+- `false`: `simple_calculation`, `cache_lookup`, `status_check`
+
+**`resourceIntensiveHint`**: Helps clients manage system resources.
+- `true`: `image_processing`, `data_compression`, `crypto_mining`
+- `false`: `text_formatting`, `simple_math`, `configuration_read`
+
+#### Security and Access Annotations
+
+**`sensitiveDataHint`**: Indicates handling of confidential information.
+- `true`: `access_user_passwords`, `read_financial_records`, `process_medical_data`
+- `false`: `get_weather`, `public_api_lookup`, `system_time`
+
+**`privilegedAccessHint`**: Indicates need for elevated system permissions.
+- `true`: `install_software`, `modify_system_config`, `restart_service`
+- `false`: `read_user_file`, `send_http_request`, `calculate_hash`
+
+**`reversibleHint`**: For non-read-only tools, indicates if operations can be undone.
+- `true`: `create_backup` (can be deleted), `rename_file` (can rename back)
+- `false`: `send_email` (cannot unsend), `delete_permanently`
+
+### Example Tool with Annotations
+
+```json
+{
+  "name": "ai_code_analyzer",
+  "description": "Analyze code quality and security using AI",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "code": { "type": "string" },
+      "language": { "type": "string" }
+    },
+    "required": ["code"]
+  },
+  "annotations": {
+    "title": "AI Code Analyzer",
+    "readOnlyHint": true,
+    "openWorldHint": true,
+    "aiProcessingHint": true,
+    "slowExecutionHint": true,
+    "sensitiveDataHint": true
+  }
+}
+```
+
+### Usage Guidelines
+
+1. **Be accurate about side effects**: Clearly indicate whether a tool modifies its environment and whether those modifications are destructive.
+
+2. **Use descriptive titles**: Provide human-friendly titles that clearly describe the tool's purpose.
+
+3. **Consider security implications**: Use `sensitiveDataHint` and `privilegedAccessHint` to help clients implement appropriate security controls.
+
+4. **Help with resource management**: Use `slowExecutionHint` and `resourceIntensiveHint` to enable better UX and system resource management.
+
+5. **Enable AI governance**: Use `aiProcessingHint` to support organizational policies around AI tool usage.
+
+6. **Remember annotations are hints**: All properties in annotations are hints and not guaranteed to provide a faithful description of tool behavior. Clients should never make security-critical decisions based solely on annotations.
 
 ### Tool Result
 
