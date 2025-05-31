@@ -19,6 +19,7 @@ enabling MCP clients to make asynchronous requests to call tools.
 Asynchronous tool calls is **OPTIONAL** for MCP implementations. When supported:
 
 - Implementations **MUST** follow established security best practices for their protocol.
+- In particular implementations **MUST NOT** use the AsyncToken as a substitute for authorisation or authentication checks.
 
 ### 1.3 Standards Compliance
 
@@ -35,11 +36,11 @@ sequenceDiagram
         actor Client
         actor Server
         Client->>Server: CallToolAsyncRequest
-        Server->>Client: CallToolAsyncResult
-        Server--)Client: ProgressNotification (1/2)
-        Server--)Client: ProgressNotification (2/2)
+        Server-->>Client: CallToolAsyncResult
+        Server-)Client: ProgressNotification (1/2)
+        Server-)Client: ProgressNotification (2/2)
         Client->>Server: GetAsyncResultRequest
-        Server->>Client: CallToolResult
+        Server-->>Client: CallToolResult
 ```
 
 #### 2.1.1 Join usage
@@ -50,11 +51,11 @@ sequenceDiagram
         actor Client
         actor Server
         Client->>Server: JoinCallToolAsyncRequest
-        Server->>Client: CallToolAsyncResult
-        Server--)Client: ProgressNotification (3/4)
-        Server--)Client: ProgressNotification (4/4)
+        Server-->>Client: CallToolAsyncResult
+        Server-)Client: ProgressNotification (3/4)
+        Server-)Client: ProgressNotification (4/4)
         Client->>Server: GetAsyncResultRequest
-        Server->>Client: CallToolResult
+        Server-->>Client: CallToolResult
 ```
 
 Multiple clients MAY join an existing tool call request. 
@@ -65,13 +66,13 @@ sequenceDiagram
         actor Server
         Client1->>Server: CallToolAsyncRequest
         Server-->>Client1: CallToolAsyncResult
-        Server--)Client1: ProgressNotification (1/2)
+        Server-)Client1: ProgressNotification (1/2)
         Client2->>Server: JoinCallToolAsyncRequest
         Server-->>Client2: CallToolAsyncResult
-        Server--)Client1: ProgressNotification (2/2)
+        Server-)Client1: ProgressNotification (2/2)
         Client1->>Server: GetAsyncResultRequest
         Server-->>Client1: CallToolResult
-        Server--)Client2: ProgressNotification (2/2)
+        Server-)Client2: ProgressNotification (2/2)
         Client2->>Server: GetAsyncResultRequest
         Server-->>Client2: CallToolResult
 ```
@@ -86,13 +87,13 @@ sequenceDiagram
         actor Client2
         actor Server
         Client1->>Server: CallToolAsyncRequest
-        Server->>Client1: CallToolAsyncResult
-        Server--)Client1: ProgressNotification (1/3)
+        Server-->>Client1: CallToolAsyncResult
+        Server-)Client1: ProgressNotification (1/3)
         Client2->>Server: JoinCallToolAsyncRequest
-        Server->>Client2: CallToolAsyncResult
-        Server--)Client1: ProgressNotification (2/3)
-        Server--)Client2: ProgressNotification (2/3)
-        Client2--)Server: CancelToolAsyncNotification
+        Server-->>Client2: CallToolAsyncResult
+        Server-)Client1: ProgressNotification (2/3)
+        Server-)Client2: ProgressNotification (2/3)
+        Client2-)Server: CancelToolAsyncNotification
         Server--)Client1: CancelNotification
         Server--)Client2: CancelNotification
 ```
