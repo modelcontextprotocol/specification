@@ -20,6 +20,25 @@
             },
             "type": "object"
         },
+        "AsyncToken": {
+            "description": "Used by the client to reference a previous async tool call submitted to the server.",
+            "type": [
+                "string",
+                "integer"
+            ]
+        },
+        "AsyncToolResult": {
+            "description": "Used by the by the server to provide a reference to the client for a previously submitted async tool call.",
+            "properties": {
+                "token": {
+                    "$ref": "#/definitions/AsyncToken"
+                }
+            },
+            "required": [
+                "token"
+            ],
+            "type": "object"
+        },
         "AudioContent": {
             "description": "Audio provided to or from an LLM.",
             "properties": {
@@ -68,6 +87,35 @@
             "required": [
                 "blob",
                 "uri"
+            ],
+            "type": "object"
+        },
+        "CallToolAsyncRequest": {
+            "description": "Used by the client to call a tool provided by the server and return a token to get the result or cancel the invocation at a later stage.",
+            "properties": {
+                "method": {
+                    "const": "tools/call/async",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "arguments": {
+                            "additionalProperties": {},
+                            "type": "object"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
             ],
             "type": "object"
         },
@@ -140,6 +188,31 @@
             },
             "required": [
                 "content"
+            ],
+            "type": "object"
+        },
+        "CancelToolAsyncRequest": {
+            "description": "Used by the client to cancel a previous async tool call.",
+            "properties": {
+                "method": {
+                    "const": "tools/cancel/async",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "token": {
+                            "$ref": "#/definitions/AsyncToken"
+                        }
+                    },
+                    "required": [
+                        "token"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
             ],
             "type": "object"
         },
@@ -558,6 +631,31 @@
             },
             "required": [
                 "messages"
+            ],
+            "type": "object"
+        },
+        "GetToolAsyncResult": {
+            "description": "Used by the client to retrieve the result of an async tool call running on a server.",
+            "properties": {
+                "method": {
+                    "const": "tools/get/async",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "token": {
+                            "$ref": "#/definitions/AsyncToken"
+                        }
+                    },
+                    "required": [
+                        "token"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
             ],
             "type": "object"
         },
@@ -1943,59 +2041,6 @@
             ],
             "type": "object"
         },
-        "StartTaskRequest": {
-            "description": "Used by the client to start a task provided by the server.",
-            "properties": {
-                "method": {
-                    "const": "tasks/start",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "arguments": {
-                            "additionalProperties": {},
-                            "type": "object"
-                        },
-                        "name": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "name"
-                    ],
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method",
-                "params"
-            ],
-            "type": "object"
-        },
-        "StartTaskResult": {
-            "description": "Used by the by the server to provide a reference to the client for a task.",
-            "properties": {
-                "channels": {
-                    "items": {
-                        "$ref": "#/definitions/TaskUpdateChannel"
-                    },
-                    "type": "array"
-                },
-                "method": {
-                    "const": "tasks/result",
-                    "type": "string"
-                },
-                "token": {
-                    "$ref": "#/definitions/TaskToken"
-                }
-            },
-            "required": [
-                "channels",
-                "method",
-                "token"
-            ],
-            "type": "object"
-        },
         "SubscribeRequest": {
             "description": "Sent from the client to request resources/updated notifications from the server whenever a particular resource changes.",
             "properties": {
@@ -2020,33 +2065,6 @@
             "required": [
                 "method",
                 "params"
-            ],
-            "type": "object"
-        },
-        "TaskToken": {
-            "description": "Used by the client to receive updates, join or cancel tasks on the server.",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "type": "object"
-        },
-        "TaskUpdateChannel": {
-            "description": "Used by the server to provide update notifications to the client on progress of a task.",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
             ],
             "type": "object"
         },

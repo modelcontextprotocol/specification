@@ -223,10 +223,10 @@ export interface ClientCapabilities {
 }
 
 /**
- * Used by the client to start a task provided by the server.
+ * Used by the client to call a tool provided by the server and return a token to get the result or cancel the invocation at a later stage.
  */
-export interface StartTaskRequest {
-  method: "tasks/start";
+export interface CallToolAsyncRequest {
+  method: "tools/call/async";
   params: {
     name: string;
     arguments?: { [key: string]: unknown };
@@ -234,27 +234,35 @@ export interface StartTaskRequest {
 }
 
 /**
- * Used by the client to receive updates, join or cancel tasks on the server.
+ * Used by the client to cancel a previous async tool call.
  */
-export interface TaskToken {
-  id: string
+export interface CancelToolAsyncRequest {
+  method: "tools/cancel/async";
+  params: {
+    token: AsyncToken
+  };
 }
 
 /**
- * Used by the server to provide update notifications to the client on progress of a task.
+ * Used by the client to retrieve the result of an async tool call running on a server.
  */
-export interface TaskUpdateChannel {
-    name: string;
-    description?: string;
+export interface GetToolAsyncResult {
+  method: "tools/get/async";
+  params: {
+    token: AsyncToken
+  };
 }
 
 /**
- * Used by the by the server to provide a reference to the client for a task.
+ * Used by the client to reference a previous async tool call submitted to the server.
  */
-export interface StartTaskResult {
-  method: "tasks/result";
-  token: TaskToken,
-  channels: TaskUpdateChannel[];
+export type AsyncToken = string | number;
+
+/**
+ * Used by the by the server to provide a reference to the client for a previously submitted async tool call.
+ */
+export interface AsyncToolResult {
+  token: AsyncToken,
 }
 
 /**
