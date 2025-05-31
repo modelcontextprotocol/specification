@@ -592,19 +592,6 @@ export interface UnsubscribeRequest extends Request {
 }
 
 /**
- * A notification from the server to the client, informing it that a feature that the client has requested is not supported by this server.
- */
-export interface UnsupportedFeatureNotification extends Notification {
-  method: "notifications/feature/unsupported";
-  params: {
-    /**
-     * A message describing an optional feature that the client has called that is not supported by the server.
-     */
-    message: string;
-  };
-}
-
-/**
  * A notification from the server to the client, informing it that a resource has changed and may need to be read again. This should only be sent if the client previously sent a resources/subscribe request.
  */
 export interface ResourceUpdatedNotification extends Notification {
@@ -1547,7 +1534,6 @@ export type ServerNotification =
   | ResourceListChangedNotification
   | ToolListChangedNotification
   | PromptListChangedNotification
-  | UnsupportedFeatureNotification;
 
 export type ServerResult =
   | EmptyResult

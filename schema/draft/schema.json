@@ -2210,9 +2210,6 @@
                     "$ref": "#/definitions/ResourceListChangedNotification"
                 },
                 {
-                    "$ref": "#/definitions/UnsupportedFeatureNotification"
-                },
-                {
                     "$ref": "#/definitions/ResourceUpdatedNotification"
                 },
                 {
@@ -2556,32 +2553,6 @@
                     },
                     "required": [
                         "uri"
-                    ],
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method",
-                "params"
-            ],
-            "type": "object"
-        },
-        "UnsupportedFeatureNotification": {
-            "description": "A notification from the server to the client, informing it that a feature that the client has requested is not supported by this server.",
-            "properties": {
-                "method": {
-                    "const": "notifications/feature/unsupported",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "message": {
-                            "description": "A message describing an optional feature that the client has called that is not supported by the server.",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "message"
                     ],
                     "type": "object"
                 }
