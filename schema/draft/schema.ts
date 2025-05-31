@@ -283,17 +283,21 @@ export interface CancelToolAsyncNotification {
 }
 
 /**
- * Used by the client to request the result of an async async tool call running on a server to be sent to this client.
+ * Used by the client to request the result of an async tool call running on a server to be sent to this client.
  * 
- * The request SHOULD still be in-flight, but due to communication latency, it is always possible that this request MAY arrive after the request has already finished.
+ * The request SHOULD be complete and this request SHOULD be recieved within the keepAlive window, but due to communication latency, it is always possible that this request MAY arrive after the request has already been discarded.
  * 
- * The server MUST return a CallToolResult either with the result an error status if the result cannot be retrieved or a pending status if the call tool is still in progress.
-
-* The client SHOULD use ProgressNotification results to determin when to call this method.
+ * The server MUST return a CallToolResult with either: the result if the call was successful; an error status if the result cannot be retrieved; or a pending status if the call tool is still in progress.
+ * 
+ * The client SHOULD use ProgressNotification progress/total values to determin when to call this method.
  * 
  * The client MAY call this periodically if regular progress notifications are not recieved.
  * 
- * The server MAY cancel any in progress tool calls if the client submits too many GetToolAsyncResultRequest.
+ * The client SHOULD NOT rely solely on polling to retrieve the result.
+ * 
+ * The server MAY cancel any in progress tool calls if the client submits too many GetToolAsyncResultRequest to the server.
+ * 
+ * The determination of what constitutes too many requests MAY be defined by the server at runtime.
  * 
  * The server SHOULD send a CancelNotification to the client if the request has been cancelled with a reason.
  */
