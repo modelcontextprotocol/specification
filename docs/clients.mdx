@@ -54,6 +54,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Sourcegraph Cody][Cody]                    | ✅          | ❌        | ❌      | ❓                     | ❌          | ❌    | Supports resources through OpenCTX                                          |
 | [SpinAI][SpinAI]                            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools for Typescript AI Agents                                     |
 | [Superinterface][Superinterface]            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools                                                              |
+| [Superjoin][Superjoin]                      | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools and multiple servers.                                        |
 | [TheiaAI/TheiaIDE][TheiaAI/TheiaIDE]        | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools for Agents in Theia AI and the AI-powered Theia IDE          |
 | [Tome][Tome]                                | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools, manages MCP servers.                                        |
 | [TypingMind App][TypingMind App]            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools at app-level (appear as plugins) or when assigned to Agents  |
@@ -104,6 +105,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Cody]: https://sourcegraph.com/cody
 [SpinAI]: https://spinai.dev
 [Superinterface]: https://superinterface.ai
+[Superjoin]: https://superjoin.ai
 [TheiaAI/TheiaIDE]: https://eclipsesource.com/blogs/2024/12/19/theia-ide-and-theia-ai-support-mcp/
 [Tome]: https://github.com/runebookai/tome
 [TypingMind App]: https://www.typingmind.com
@@ -531,6 +533,15 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Use tools from MCP servers in assistants embedded via React components or script tags
 - SSE transport support
 - Use any AI model from any AI provider (OpenAI, Anthropic, Ollama, others)
+
+### Superjoin
+[Superjoin](https://superjoin.ai) brings the power of MCP directly into Google Sheets extension. With Superjoin, users can access and invoke MCP tools and agents without leaving their spreadsheets, enabling powerful AI workflows and automation right where their data lives.
+
+**Key features:**
+- Native Google Sheets add-on providing effortless access to MCP capabilities
+- Supports OAuth 2.1 and header-based authentication for secure and flexible connections
+- Compatible with both SSE and Streamable HTTP transport for efficient, real-time streaming communication
+- Fully web-based, cross-platform client requiring no additional software installation
 
 ### TheiaAI/TheiaIDE
 [Theia AI](https://eclipsesource.com/blogs/2024/10/07/introducing-theia-ai/) is a framework for building AI-enhanced tools and IDEs. The [AI-powered Theia IDE](https://eclipsesource.com/blogs/2024/10/08/introducting-ai-theia-ide/) is an open and flexible development environment built on Theia AI.
