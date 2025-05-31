@@ -96,7 +96,8 @@
             },
             "required": [
                 "type"
-            ]
+            ],
+            "type": "object"
         },
         "CallToolAsyncRequest": {
             "description": "Used by the client to call a tool provided by the server and return a token to get the result or cancel the call at a later stage.\n\nThe server SHOULD retain the result of the tool call for the number of seconds specified by keep_alive to enable the client to retrieve the result.\n\nThe server MUST respond with an CallToolAsyncResult.\n\nThe server MAY reduce the number of seconds specified by keep_alive if so the server MUST inform the client of the new keep_alive time in the CallToolAsyncResult",
@@ -222,7 +223,7 @@
             ],
             "type": "object"
         },
-        "CancelToolAsyncRequest": {
+        "CancelToolAsyncNotification": {
             "description": "Used by the client to cancel a previous async tool call request.\n\nThe request SHOULD still be in-flight, but due to communication latency, it is always possible that this request MAY arrive after the request has already finished.\n\nThis request indicates that the result will be unused, so any associated processing SHOULD cease.\n\nThe server SHOULD send a CancelNotification to any clients that have.",
             "properties": {
                 "method": {
