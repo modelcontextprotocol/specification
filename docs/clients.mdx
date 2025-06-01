@@ -12,6 +12,7 @@ This page provides an overview of applications that support the Model Context Pr
 | Client                                      | [Resources] | [Prompts] | [Tools]  | [Discovery][Discovery] | [Sampling] | Roots | Notes                                                                        |
 |---------------------------------------------|-------------|-----------|----------|------------------------|------------|--------|-----------------------------------------------------------------------------|
 | [5ire][5ire]                                | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools.                                                             |
+| [AIQL TUUI][AIQL TUUI]                      | ✅          | ✅        | ✅      | ✅                     | ✅          | ❌    | Supports tools, prompts, resources, and sampling for MCP servers via Multi-LLM APIs.              |
 | [AgentAI][AgentAI]                          | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Agent Library written in Rust with tools support                            |
 | [AgenticFlow][AgenticFlow]                  | ✅          | ✅        | ✅      | ✅                     | ❌          | ❌    | Supports tools, prompts, and resources for no-code AI agents and multi-agent workflows.             |
 | [Amazon Q CLI][Amazon Q CLI]                | ❌          | ✅        | ✅      | ❓                     | ❌          | ❌    | Supports prompts and tools.                                                 |
@@ -64,6 +65,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Zed][Zed]                                  | ❌          | ✅        | ❌      | ❌                     | ❌          | ❌    | Prompts appear as slash commands                                            |
 
 [5ire]: https://github.com/nanbingxyz/5ire
+[AIQL TUUI]: https://github.com/AI-QL/tuui
 [AgentAI]: https://github.com/AdamStrojek/rust-agentai
 [AgenticFlow]: https://agenticflow.ai/mcp
 [AIQ toolkit]: https://github.com/NVIDIA/AIQToolkit
@@ -133,6 +135,21 @@ This page provides an overview of applications that support the Model Context Pr
 - Users can add more servers by modifying the configuration file.
 - It is open-source and user-friendly, suitable for beginners.
 - Future support for MCP will be continuously improved.
+
+### AIQL TUUI
+[AIQL TUUI] is a native, cross-platform desktop AI chat application with MCP support. It supports multiple AI providers (e.g., Anthropic, Cloudflare, Deepseek, OpenAI, Qwen), local AI models (via vLLM, Ray, etc.), and aggregated API platforms (such as Deepinfra, Openrouter, and more).
+
+**Key features:**
+- **Dynamic LLM API & Agent Switching**: Seamlessly toggle between different LLM APIs and agents on the fly.
+- **Comprehensive Capabilities Support**: Built-in support for tools, prompts, resources, and sampling methods.
+- **Configurable Agents**: Enhanced flexibility with selectable and customizable tools via agent settings.
+- **Advanced Sampling Control**: Modify sampling parameters and leverage multi-round sampling for optimal results.
+- **Cross-Platform Compatibility**: Fully compatible with macOS, Windows, and Linux.
+- **Free & Open-Source (FOSS)**: Permissive licensing allows modifications and custom app bundling.
+
+**Learn more:**
+- [TUUI document](https://www.tuui.com/)
+- [AIQL GitHub repository](https://github.com/AI-QL)
 
 ### AgentAI
 
