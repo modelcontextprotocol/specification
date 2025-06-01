@@ -1511,6 +1511,7 @@ export type ClientRequest =
   | CallToolRequest
   | CallToolAsyncRequest
   | JoinCallToolAsyncRequest
+  | GetToolAsyncResultRequest
   | ListToolsRequest;
 
 export type ClientNotification =

@@ -355,6 +355,9 @@
                     "$ref": "#/definitions/JoinCallToolAsyncRequest"
                 },
                 {
+                    "$ref": "#/definitions/GetToolAsyncResultRequest"
+                },
+                {
                     "$ref": "#/definitions/PingRequest"
                 },
                 {
