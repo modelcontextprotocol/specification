@@ -50,6 +50,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [oterm][oterm]                              | ❌          | ✅        | ✅      | ❓                     | ✅          | ❌    | Supports tools, prompts and sampling for Ollama.                                                 |
 | [Postman][postman]                          | ✅          | ✅        | ✅      | ❓                     | ❌          | ❌    | Supports tools, resources, prompts, and sampling                                                 |
 | [Roo Code][Roo Code]                        | ✅          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools and resources.                                               |
+| [Saiki][Saiki]                              | ✅          | ✅        | ✅      | ❓                     | ❌          | ❌    | Supports tools, resources, prompts and multiple servers.       |
 | [Slack MCP Client][Slack MCP Client]        | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools and multiple servers.                                        |
 | [Sourcegraph Cody][Cody]                    | ✅          | ❌        | ❌      | ❓                     | ❌          | ❌    | Supports resources through OpenCTX                                          |
 | [SpinAI][SpinAI]                            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools for Typescript AI Agents                                     |
@@ -100,6 +101,7 @@ This page provides an overview of applications that support the Model Context Pr
 [oterm]: https://github.com/ggozad/oterm
 [Postman]: https://postman.com/downloads
 [Roo Code]: https://roocode.com
+[Saiki]: https://github.com/truffle-ai/saiki
 [Slack MCP Client]: https://github.com/tuannvm/slack-mcp-client
 [Cody]: https://sourcegraph.com/cody
 [SpinAI]: https://spinai.dev
@@ -497,6 +499,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Fast, seamless UI for debugging MCP capabilities
 - MCP config integration (Claude, VSCode, etc.) for fast first-time experience in testing MCPs
 - Integration with history, varibles, and collections for re-use and collaboration
+
+### Saiki
+
+[Saiki](https://github.com/truffle-ai/saiki) is a flexible, customizable AI agent that fully supports the Model Context Protocol. Talk to Saiki in natural language to orchestrate any MCP‑compatible servers.
+
+**Key features:**
+
+- **Open & Extensible**: Drop in pre‑built or custom MCP servers to connect to any service via `stdio`, `sse` or `http`.  
+- **LLM Agnostic**: Use any LLM model (Anthropic, OpenAI, Gemini, local, etc.)
+- **Orchestration**: Figures out which tools to call—and in what order—based on your instruction.  
+- **Multi‑Interface Support**: Use via CLI, APIs, embed in a web UI, or integrate into other applications such as Slack, Telegram, etc.  
+- **Local‑First**: Run entirely on your machine or self‑host for full control.
 
 ### Slack MCP Client
 [Slack MCP Client](https://github.com/tuannvm/slack-mcp-client) acts as a bridge between Slack and Model Context Protocol (MCP) servers. Using Slack as the interface, it enables large language models (LLMs) to connect and interact with various MCP servers through standardized MCP tools.
