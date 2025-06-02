@@ -23,7 +23,7 @@ implement a wide range of interactions involving the end-user. For example:
 ## Terminology
 
 - **End-user**: The human who is interacting with with the MCP server through their MCP client.
-- **User agent**: a client, such as a web brwoser, that is capable of
+- **User agent**: a client, such as a web browser, that is capable of
   interacting with the end-user. Broadly, it is used as defined in
   [RFC 9110 Section 3.5](https://datatracker.ietf.org/doc/html/rfc9110#section-3.5).
 
@@ -42,9 +42,10 @@ MCP clients that support user interaction **MUST** declare the `userInteraction`
 }
 ```
 
-Clients supporting the `userInteraction` capability **MUST** list all supported interaction types
-in the `types` array, and **MUST** support at least one interaction type. The acceptable values
-are defined in the [Interaction Types](#interaction-types) section below.
+Clients supporting the `userInteraction` capability **MUST** support at least one
+interaction type, and **MUST** list all the interaction types they support in the `types`
+array. The acceptable values are defined in the [Interaction Types](#interaction-types)
+section below.
 
 The MCP server **MUST NOT** send an interaction request to the client of a type that is not
 explicitly declared by the client.
