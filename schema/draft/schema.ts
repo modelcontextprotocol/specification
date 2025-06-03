@@ -118,37 +118,6 @@ export type JSONRPCResponse = SuccessResponse | ErrorResponse;
  */
 export type RequestId = string | number;
 
-/**
- * A message sent from a client to a server (or, from an application point-of-view, vice versa). A server/recipient MUST respond.
- */
-// export interface JSONRPCRequest {
-//   method: string;
-//   params?: {
-//     /**
-//      * This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their requests.
-//      */
-//     _meta?: { [key: string]: unknown };
-//     [key: string]: unknown;
-//   };
-//   jsonrpc: typeof JSONRPC_VERSION;
-//   id: RequestId;
-// }
-
-// /**
-//  * A Request which does NOT include an `id`, and does not expect a response. The recipient MUST NOT respond to this message.
-//  */
-// export interface JSONRPCNotification extends Notification {
-//   jsonrpc: typeof JSONRPC_VERSION;
-// }
-
-// /**
-//  * A successful (non-error) response to a request.
-//  */
-// export interface JSONRPCResponse {
-//   jsonrpc: typeof JSONRPC_VERSION;
-//   id: RequestId;
-//   result: Result;
-// }
 
 // Standard JSON-RPC error codes
 export const PARSE_ERROR = -32700;
@@ -236,7 +205,7 @@ export interface InitializedNotification extends Notification {
  * Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
  * ONE OF THESE:
  * If the client supports a specific capability, it MUST include it in the `capabilities` object. |
- * If the client supports a specific capability, it MUST include it in the `capabilities` object. |
+ * If the client supports a specific capability, it SHOULD include it in the `capabilities` object. |
  * If the client supports a specific capability, it MAY or may not include it in the `capabilities` object.
  */
 export interface ClientCapabilities {
