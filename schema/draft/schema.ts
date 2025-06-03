@@ -220,6 +220,10 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client supports elicitation from the server.
+   */
+  elicitation?: object;
 }
 
 /**
@@ -685,70 +689,34 @@ export interface ListToolsResult extends PaginatedResult {
 
 /**
  * The server's response to a tool call.
- *
- * Any errors that originate from the tool SHOULD be reported inside the result
- * object, with `isError` set to true, _not_ as an MCP protocol-level error
- * response. Otherwise, the LLM would not be able to see that an error occurred
- * and self-correct.
- *
- * However, any errors in _finding_ the tool, an error indicating that the
- * server does not support tool calls, or any other exceptional conditions,
- * should be reported as an MCP error response.
  */
-export type CallToolResult = CallToolUnstructuredResult | CallToolStructuredResult;
-
-export type ContentList = (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
-
-/**
- * Tool result for tools that do not declare an outputSchema.
- */
-export interface CallToolUnstructuredResult extends Result {
+export interface CallToolResult extends Result {
   /**
-   * A list of content objects that represent the result of the tool call.
-   *
-   * If the Tool does not define an outputSchema, this field MUST be present in the result.
+   * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: ContentList;
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
 
   /**
-   * Structured output must not be provided in an unstructured tool result.
+   * An optional JSON object that represents the structured result of the tool call.
    */
-  structuredContent: never;
+  structuredContent?: { [key: string]: unknown };
 
   /**
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
+   * 
+   * Any errors that originate from the tool SHOULD be reported inside the result
+   * object, with `isError` set to true, _not_ as an MCP protocol-level error
+   * response. Otherwise, the LLM would not be able to see that an error occurred
+   * and self-correct.
+   *
+   * However, any errors in _finding_ the tool, an error indicating that the
+   * server does not support tool calls, or any other exceptional conditions,
+   * should be reported as an MCP error response.
    */
   isError?: boolean;
 }
-
-/**
- * Tool result for tools that do declare an outputSchema.
- */
-export interface CallToolStructuredResult extends Result {
-  /**
-   * An object containing structured tool output.
-   *
-   * If the Tool defines an outputSchema, this field MUST be present in the result, and contain a JSON object that matches the schema.
-   */
-  structuredContent: { [key: string]: unknown };
-
-  /**
-   * If the Tool defines an outputSchema, this field MAY be present in the result.
-   * Tools should use this field to provide compatibility with older clients that do not support structured content.
-   * Clients that support structured content should ignore this field.
-   */
-  content?: ContentList;
-
-  /**
-   * Whether the tool call ended in an error.
-   *
-   * If not set, this is assumed to be false (the call was successful).
-   */
-  isError?: boolean;
-}
-
 
 /**
  * Used by the client to invoke a tool provided by the server.
@@ -848,12 +816,14 @@ export interface Tool {
   };
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output.
-   *
-   * If set, a CallToolResult for this Tool MUST contain a structuredContent field whose contents validate against this schema.
-   * If not set, a CallToolResult for this Tool MUST contain a content field.
+   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * the structuredContent field of a CallToolResult.
    */
-  outputSchema?: object;
+  outputSchema?: {
+    type: "object";
+    properties?: { [key: string]: object };
+    required?: string[];
+  };
 
   /**
    * Optional additional tool information.
@@ -1258,6 +1228,91 @@ export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
 }
 
+/**
+ * A request from the server to elicit additional information from the user via the client.
+ */
+export interface ElicitRequest extends Request {
+  method: "elicitation/create";
+  params: {
+    /**
+     * The message to present to the user.
+     */
+    message: string;
+    /**
+     * A restricted subset of JSON Schema.
+     * Only top-level properties are allowed, without nesting.
+     */
+    requestedSchema: {
+      type: "object";
+      properties: {
+        [key: string]: PrimitiveSchemaDefinition;
+      };
+      required?: string[];
+    };
+  };
+}
+
+/**
+ * Restricted schema definitions that only allow primitive types
+ * without nested objects or arrays.
+ */
+export type PrimitiveSchemaDefinition = 
+  | StringSchema
+  | NumberSchema
+  | BooleanSchema
+  | EnumSchema;
+
+export interface StringSchema {
+  type: "string";
+  title?: string;
+  description?: string;
+  minLength?: number;
+  maxLength?: number;
+  format?: "email" | "uri" | "date" | "date-time";
+}
+
+export interface NumberSchema {
+  type: "number" | "integer";
+  title?: string;
+  description?: string;
+  minimum?: number;
+  maximum?: number;
+}
+
+export interface BooleanSchema {
+  type: "boolean";
+  title?: string;
+  description?: string;
+  default?: boolean;
+}
+
+export interface EnumSchema {
+  type: "string";
+  title?: string;
+  description?: string;
+  enum: string[];
+  enumNames?: string[];  // Display names for enum values
+}
+
+/**
+ * The client's response to an elicitation request.
+ */
+export interface ElicitResult extends Result {
+  /**
+   * The user action in response to the elicitation.
+   * - "accept": User submitted the form/confirmed the action
+   * - "decline": User explicitly declined the action
+   * - "cancel": User dismissed without making an explicit choice
+   */
+  action: "accept" | "decline" | "cancel";
+  
+  /**
+   * The submitted form data, only present when action is "accept".
+   * Contains values matching the requested schema.
+   */
+  content?: { [key: string]: unknown };
+}
+
 /* Client messages */
 export type ClientRequest =
   | PingRequest
@@ -1280,13 +1335,14 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult;
+export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
-  | ListRootsRequest;
+  | ListRootsRequest
+  | ElicitRequest;
 
 export type ServerNotification =
   | CancelledNotification

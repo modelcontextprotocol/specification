@@ -1484,12 +1484,29 @@ When creating the `ApplicationHostBuilder`, ensure you use `CreateEmptyApplicati
 This code sets up a basic console application that uses the Model Context Protocol SDK to create an MCP server with standard I/O transport.
 
 ### Weather API helper functions
+
+Create an extension class for `HttpClient` which helps simplify JSON request handling:
+
+```csharp
+using System.Text.Json;
+
+internal static class HttpClientExt
+{
+    public static async Task<JsonDocument> ReadJsonDocumentAsync(this HttpClient client, string requestUri)
+    {
+        using var response = await client.GetAsync(requestUri);
+        response.EnsureSuccessStatusCode();
+        return await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+    }
+}
+```
+
 Next, define a class with the tool execution handlers for querying and converting responses from the National Weather Service API:
 
 ```csharp
 using ModelContextProtocol.Server;
 using System.ComponentModel;
-using System.Net.Http.Json;
+using System.Globalization;
 using System.Text.Json;
 
 namespace QuickstartWeatherServer.Tools;
@@ -1502,7 +1519,8 @@ public static class WeatherTools
         HttpClient client,
         [Description("The US state to get alerts for.")] string state)
     {
-        var jsonElement = await client.GetFromJsonAsync<JsonElement>($"/alerts/active/area/{state}");
+        using var jsonDocument = await client.ReadJsonDocumentAsync($"/alerts/active/area/{state}");
+        var jsonElement = jsonDocument.RootElement;
         var alerts = jsonElement.GetProperty("features").EnumerateArray();
 
         if (!alerts.Any())
@@ -1529,8 +1547,13 @@ public static class WeatherTools
         [Description("Latitude of the location.")] double latitude,
         [Description("Longitude of the location.")] double longitude)
     {
-        var jsonElement = await client.GetFromJsonAsync<JsonElement>($"/points/{latitude},{longitude}");
-        var periods = jsonElement.GetProperty("properties").GetProperty("periods").EnumerateArray();
+        var pointUrl = string.Create(CultureInfo.InvariantCulture, $"/points/{latitude},{longitude}");
+        using var jsonDocument = await client.ReadJsonDocumentAsync(pointUrl);
+        var forecastUrl = jsonDocument.RootElement.GetProperty("properties").GetProperty("forecast").GetString()
+            ?? throw new Exception($"No forecast URL provided by {client.BaseAddress}points/{latitude},{longitude}");
+
+        using var forecastDocument = await client.ReadJsonDocumentAsync(forecastUrl);
+        var periods = forecastDocument.RootElement.GetProperty("properties").GetProperty("periods").EnumerateArray();
 
         return string.Join("\n---\n", periods.Select(period => $"""
                 {period.GetProperty("name").GetString()}
@@ -1624,13 +1647,13 @@ Save the file, and restart **Claude for Desktop**.
 
 ### Test with commands
 
-Let's make sure Claude for Desktop is picking up the two tools we've exposed in our `weather` server. You can do this by looking for the hammer <img src="/images/claude-desktop-mcp-hammer-icon.svg" style={{display: 'inline', margin: 0, height: '1.3em'}} /> icon:
+Let's make sure Claude for Desktop is picking up the two tools we've exposed in our `weather` server. You can do this by looking for the "Search and tools" <img src="/images/claude-desktop-mcp-slider.svg" style={{display: 'inline', margin: 0, height: '1.3em'}} /> icon:
 
 <Frame>
   <img src="/images/visual-indicator-mcp-tools.png" />
 </Frame>
 
-After clicking on the hammer icon, you should see two tools listed:
+After clicking on the slider icon, you should see two tools listed:
 
 <Frame>
   <img src="/images/available-mcp-tools.png" />
@@ -1638,7 +1661,7 @@ After clicking on the hammer icon, you should see two tools listed:
 
 If your server isn't being picked up by Claude for Desktop, proceed to the [Troubleshooting](#troubleshooting) section for debugging tips.
 
-If the hammer icon has shown up, you can now test your server by running the following commands in Claude for Desktop:
+If the tool settings icon has shown up, you can now test your server by running the following commands in Claude for Desktop:
 
 - What's the weather in Sacramento?
 - What are the active weather alerts in Texas?
