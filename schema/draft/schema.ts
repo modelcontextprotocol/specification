@@ -5,21 +5,21 @@
  */
 export type JSONRPCMessage =
   | JSONRPCRequest
-  | JSONRPCNotification
   | JSONRPCBatchRequest
   | JSONRPCResponse
-  | JSONRPCError
   | JSONRPCBatchResponse;
+
+export type NonEmptyArray<T> = [T, ...T[]];
 
 /**
  * A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.
  */
-export type JSONRPCBatchRequest = (JSONRPCRequest | JSONRPCNotification)[];
+export type JSONRPCBatchRequest = NonEmptyArray<JSONRPCRequest>;
 
 /**
  * A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.
  */
-export type JSONRPCBatchResponse = (JSONRPCResponse | JSONRPCError)[];
+export type JSONRPCBatchResponse = NonEmptyArray<JSONRPCResponse>;
 
 export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v2";
 export const JSONRPC_VERSION = "2.0";
@@ -34,7 +34,15 @@ export type ProgressToken = string | number;
  */
 export type Cursor = string;
 
+/**
+ * A message sent from a client to a server (or, from an application point-of-view, vice versa). The server/recipient MUST respond.
+ */
 export interface Request {
+  /**
+   * The JSON-RPC version of the request. This MUST be "2.0".
+   */
+  jsonrpc: typeof JSONRPC_VERSION;
+  id: RequestId;
   method: string;
   params?: {
     _meta?: {
@@ -47,17 +55,19 @@ export interface Request {
   };
 }
 
-export interface Notification {
-  method: string;
-  params?: {
-    /**
-     * This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-     */
-    _meta?: { [key: string]: unknown };
-    [key: string]: unknown;
-  };
-}
+/**
+ * A Request that lacks an `id` field. The server/recipient MUST NOT respond.
+ */
+export interface Notification extends Omit<Request, "id"> { }
 
+/**
+ * A message sent from a client to a server (or, from an application point-of-view, vice versa).
+ */
+export type JSONRPCRequest = Request | Notification;
+
+/**
+ * A property of a successful JSON-RPC response.
+ */
 export interface Result {
   /**
    * This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -66,34 +76,79 @@ export interface Result {
   [key: string]: unknown;
 }
 
+export interface Response {
+  jsonrpc: typeof JSONRPC_VERSION;
+  id: RequestId;
+}
+
+/**
+ * A property of an unsuccessful JSON-RPC response.
+ */
+export interface Error {
+  /**
+   * The error type that occurred.
+   */
+  code: number;
+  /**
+   * A short description of the error. The message SHOULD be limited to a concise single sentence.
+   */
+  message: string;
+  /**
+   * Additional information about the error. The value of this member is defined by the sender (e.g. detailed error information, nested errors etc.).
+   */
+  data?: unknown;
+};
+
+export interface SuccessResponse extends Response {
+  result: Result;
+}
+
+export interface ErrorResponse extends Response {
+  error: Error;
+}
+/**
+ * A JSON-RPC response, which can either be a success or an error.
+ *
+ * This is the response to a request (excluding notifications), and MUST contain either a `result` or an `error` property.
+ */
+export type JSONRPCResponse = SuccessResponse | ErrorResponse;
+
 /**
  * A uniquely identifying ID for a request in JSON-RPC.
  */
 export type RequestId = string | number;
 
 /**
- * A request that expects a response.
+ * A message sent from a client to a server (or, from an application point-of-view, vice versa). A server/recipient MUST respond.
  */
-export interface JSONRPCRequest extends Request {
-  jsonrpc: typeof JSONRPC_VERSION;
-  id: RequestId;
-}
+// export interface JSONRPCRequest {
+//   method: string;
+//   params?: {
+//     /**
+//      * This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their requests.
+//      */
+//     _meta?: { [key: string]: unknown };
+//     [key: string]: unknown;
+//   };
+//   jsonrpc: typeof JSONRPC_VERSION;
+//   id: RequestId;
+// }
 
-/**
- * A notification which does not expect a response.
- */
-export interface JSONRPCNotification extends Notification {
-  jsonrpc: typeof JSONRPC_VERSION;
-}
+// /**
+//  * A Request which does NOT include an `id`, and does not expect a response. The recipient MUST NOT respond to this message.
+//  */
+// export interface JSONRPCNotification extends Notification {
+//   jsonrpc: typeof JSONRPC_VERSION;
+// }
 
-/**
- * A successful (non-error) response to a request.
- */
-export interface JSONRPCResponse {
-  jsonrpc: typeof JSONRPC_VERSION;
-  id: RequestId;
-  result: Result;
-}
+// /**
+//  * A successful (non-error) response to a request.
+//  */
+// export interface JSONRPCResponse {
+//   jsonrpc: typeof JSONRPC_VERSION;
+//   id: RequestId;
+//   result: Result;
+// }
 
 // Standard JSON-RPC error codes
 export const PARSE_ERROR = -32700;
@@ -102,31 +157,9 @@ export const METHOD_NOT_FOUND = -32601;
 export const INVALID_PARAMS = -32602;
 export const INTERNAL_ERROR = -32603;
 
-/**
- * A response to a request that indicates an error occurred.
- */
-export interface JSONRPCError {
-  jsonrpc: typeof JSONRPC_VERSION;
-  id: RequestId;
-  error: {
-    /**
-     * The error type that occurred.
-     */
-    code: number;
-    /**
-     * A short description of the error. The message SHOULD be limited to a concise single sentence.
-     */
-    message: string;
-    /**
-     * Additional information about the error. The value of this member is defined by the sender (e.g. detailed error information, nested errors etc.).
-     */
-    data?: unknown;
-  };
-}
-
 /* Empty result */
 /**
- * A response that indicates success but carries no data.
+ * A Result property that indicates success but carries no data.
  */
 export type EmptyResult = Result;
 
@@ -146,7 +179,7 @@ export interface CancelledNotification extends Notification {
     /**
      * The ID of the request to cancel.
      *
-     * This MUST correspond to the ID of a request previously issued in the same direction.
+     * This MUST correspond to the ID of a request previously issued in the same direction, and to which a response has not yet been received.
      */
     requestId: RequestId;
 
@@ -159,7 +192,7 @@ export interface CancelledNotification extends Notification {
 
 /* Initialization */
 /**
- * This request is sent from the client to the server when it first connects, asking it to begin initialization.
+ * A client that wishes to communicate with a server MUST send this request when it first connects, asking it to begin initialization.
  */
 export interface InitializeRequest extends Request {
   method: "initialize";
@@ -174,7 +207,7 @@ export interface InitializeRequest extends Request {
 }
 
 /**
- * After receiving an initialize request from the client, the server sends this response.
+ * After receiving a successful initialize request from the client, the server MUST send a response with this type of result.
  */
 export interface InitializeResult extends Result {
   /**
@@ -201,6 +234,10 @@ export interface InitializedNotification extends Notification {
 
 /**
  * Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
+ * ONE OF THESE:
+ * If the client supports a specific capability, it MUST include it in the `capabilities` object. |
+ * If the client supports a specific capability, it MUST include it in the `capabilities` object. |
+ * If the client supports a specific capability, it MAY or may not include it in the `capabilities` object.
  */
 export interface ClientCapabilities {
   /**
@@ -209,19 +246,26 @@ export interface ClientCapabilities {
   experimental?: { [key: string]: object };
   /**
    * Present if the client supports listing roots.
+   * CLARIFY:
+   * MUST/SHOULD/MAY be present if the client supports listing roots, etc.
    */
   roots?: {
     /**
      * Whether the client supports notifications for changes to the roots list.
+     * CLARIFY:
+     * MUST/SHOULD/MAY be present if the client supports notifications for changes to the roots list.
+     * MUST NOT be present if the client does not support notifications for changes to the roots list.
      */
     listChanged?: boolean;
   };
   /**
    * Present if the client supports sampling from an LLM.
+   * CLARIFY: Same as above.
    */
   sampling?: object;
   /**
    * Present if the client supports elicitation from the server.
+   * CLARIFY: Same as above.
    */
   elicitation?: object;
 }
@@ -236,40 +280,51 @@ export interface ServerCapabilities {
   experimental?: { [key: string]: object };
   /**
    * Present if the server supports sending log messages to the client.
+   * CLARIFY: Same as above.
    */
   logging?: object;
   /**
    * Present if the server supports argument autocompletion suggestions.
+   * CLARIFY: Same as above.
    */
   completions?: object;
   /**
    * Present if the server offers any prompt templates.
+   * CLARIFY: Same as above.
    */
   prompts?: {
     /**
      * Whether this server supports notifications for changes to the prompt list.
+     * CLARIFY: Same as above.
      */
     listChanged?: boolean;
   };
   /**
    * Present if the server offers any resources to read.
+   * CLARIFY: Same as above.
    */
   resources?: {
     /**
      * Whether this server supports subscribing to resource updates.
+     * CLARIFY: Same as above.
+     * FURTHER CLARIFICATION: If a server supports resource subscriptions, then it MUST/SHOULD/MAY send a resource/updated notification to any subscribed clients whenever a resource changes.
      */
     subscribe?: boolean;
     /**
      * Whether this server supports notifications for changes to the resource list.
+     * CLARIFY: Same as above.
+     * FURTHER CLARIFICATION: Same as above.
      */
     listChanged?: boolean;
   };
   /**
    * Present if the server offers any tools to call.
+   * CLARIFY: Same as above.
    */
   tools?: {
     /**
      * Whether this server supports notifications for changes to the tool list.
+     * CLARIFY: Same as above.
      */
     listChanged?: boolean;
   };
@@ -350,6 +405,7 @@ export interface ListResourcesRequest extends PaginatedRequest {
 
 /**
  * The server's response to a resources/list request from the client.
+ * CLARIFY: The server MUST/SHOULD/MAY list all/some/none of the resources it has available.
  */
 export interface ListResourcesResult extends PaginatedResult {
   resources: Resource[];
@@ -364,6 +420,7 @@ export interface ListResourceTemplatesRequest extends PaginatedRequest {
 
 /**
  * The server's response to a resources/templates/list request from the client.
+ * CLARIFY: The server MUST/SHOULD/MAY list all/some/none of the resource templates it has available.
  */
 export interface ListResourceTemplatesResult extends PaginatedResult {
   resourceTemplates: ResourceTemplate[];
@@ -386,13 +443,14 @@ export interface ReadResourceRequest extends Request {
 
 /**
  * The server's response to a resources/read request from the client.
+ * CLARIFY: The server MUST/SHOULD/MAY return the contents of the resource, if the client has the necessary permissions.
  */
 export interface ReadResourceResult extends Result {
   contents: (TextResourceContents | BlobResourceContents)[];
 }
 
 /**
- * An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.
+ * An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This MAY be issued by servers without any previous subscription from the client.
  */
 export interface ResourceListChangedNotification extends Notification {
   method: "notifications/resources/list_changed";
@@ -401,7 +459,7 @@ export interface ResourceListChangedNotification extends Notification {
 /**
  * Sent from the client to request resources/updated notifications from the server whenever a particular resource changes.
  */
-export interface SubscribeRequest extends Request {
+export interface SubscribeRequest extends Notification { // NOTE: This results in a slightly awkward name, because it's nice to be explicit when something is a notification, but it's not illegal.
   method: "resources/subscribe";
   params: {
     /**
@@ -414,9 +472,9 @@ export interface SubscribeRequest extends Request {
 }
 
 /**
- * Sent from the client to request cancellation of resources/updated notifications from the server. This should follow a previous resources/subscribe request.
+ * Sent from the client to request cancellation of resources/updated notifications from the server. This SHOULD be sent only if a client has sent a previous resources/subscribe notification.
  */
-export interface UnsubscribeRequest extends Request {
+export interface UnsubscribeRequest extends Notification {
   method: "resources/unsubscribe";
   params: {
     /**
@@ -429,7 +487,7 @@ export interface UnsubscribeRequest extends Request {
 }
 
 /**
- * A notification from the server to the client, informing it that a resource has changed and may need to be read again. This should only be sent if the client previously sent a resources/subscribe request.
+ * A notification from the server to the client, informing it that a resource has changed and may need to be read again. This SHOULD be sent if and only if the client previously sent a resources/subscribe notification.
  */
 export interface ResourceUpdatedNotification extends Notification {
   method: "notifications/resources/updated";
@@ -1194,8 +1252,14 @@ export interface ListRootsRequest extends Request {
 
 /**
  * The client's response to a roots/list request from the server.
- * This result contains an array of Root objects, each representing a root directory
+ * The result contains an array of Root objects, each representing a root directory
  * or file that the server can operate on.
+ * ONE OF THESE:
+ * (The array MUST contain all of the available roots. |
+ * The array MUST contain all or some of the available roots. |
+ * The array SHOULD contain all of the available roots. |
+ * The array SHOULD contain all or some of the available roots. |
+ * The array MAY contain all, some or, none of the available roots.)
  */
 export interface ListRootsResult extends Result {
   roots: Root[];
@@ -1258,7 +1322,7 @@ export interface ElicitRequest extends Request {
  * Restricted schema definitions that only allow primitive types
  * without nested objects or arrays.
  */
-export type PrimitiveSchemaDefinition = 
+export type PrimitiveSchemaDefinition =
   | StringSchema
   | NumberSchema
   | BooleanSchema
@@ -1307,9 +1371,10 @@ export interface ElicitResult extends Result {
    * - "cancel": User dismissed without making an explicit choice
    */
   action: "accept" | "decline" | "cancel";
-  
+
   /**
    * The submitted form data, only present when action is "accept".
+   * CLARIFY: MUST be present when action is "accept". (?) If so, this should be split into two interfaces, so that the JSON Schema "knowns" whether "content" is required.
    * Contains values matching the requested schema.
    */
   content?: { [key: string]: unknown };
@@ -1326,8 +1391,6 @@ export type ClientRequest =
   | ListResourcesRequest
   | ListResourceTemplatesRequest
   | ReadResourceRequest
-  | SubscribeRequest
-  | UnsubscribeRequest
   | CallToolRequest
   | ListToolsRequest;
 
@@ -1335,6 +1398,8 @@ export type ClientNotification =
   | CancelledNotification
   | ProgressNotification
   | InitializedNotification
+  | SubscribeRequest
+  | UnsubscribeRequest
   | RootsListChangedNotification;
 
 export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
