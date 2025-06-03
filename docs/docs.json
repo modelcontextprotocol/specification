@@ -53,7 +53,6 @@
           {
             "group": "Development",
             "pages": [
-              "development/updates",
               "development/roadmap",
               "development/contributing"
             ]
