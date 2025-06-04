@@ -113,7 +113,7 @@ Content-Type: application/json
 
 ## 4. Token Exchange
 
-The Client makes a Token Exchange ([RFC8693](https://datatracker.ietf.org/doc/html/rfc8693)) request to the IdP's Token Endpoint with the following parameters:
+To request a JWT Assertion Grant, the MCP Client **MUST** make a Token Exchange ([RFC8693](https://datatracker.ietf.org/doc/html/rfc8693)) request to the IdP's Token Endpoint with the following parameters:
 
 `requested_token_type`: REQUIRED - The value `urn:ietf:params:oauth:token-type:id-jag` indicates that an ID Assertion JWT is being requested.
 
