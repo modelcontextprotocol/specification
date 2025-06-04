@@ -91,7 +91,7 @@ Location: https://acme.idp.example/authorize?response_type=code&scope=openid&cli
 The user authenticates with the IdP, and is redirected back to the Client with an authorization code, which it can then exchange for an ID Token.
 
 The enterprise IdP may enforce additional security controls such as multi-factor authentication before granting the user access to the MCP Client.
-
+A request and response from an Authorization Server handling the initial token acquisition may look like the following:
 ```
 POST /token HTTP/1.1
 Host: acme.idp.example
