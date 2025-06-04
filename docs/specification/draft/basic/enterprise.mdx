@@ -245,7 +245,7 @@ signature
 
 The authorization server **MAY** add additional claims as necessary.
 
-Implementation notes:
+#### Implementation notes
 
 If the IdP is multi-tenant and uses the same issuer for all tenants, the MCP server will already have IdP-specific logic to determine the tenant from the OpenID Connect ID Token (e.g. the `hd` claim in Google) or SAML assertion, and will need to use that if the IdP also has only one client registration for the MCP server.
 
