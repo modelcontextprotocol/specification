@@ -489,7 +489,7 @@
             "type": "object"
         },
         "CreateUserInteractionRequest": {
-            "description": "A request from the server to the client, to create a user interaction.",
+            "description": "A request from the server to the client to create a user interaction.",
             "properties": {
                 "method": {
                     "const": "interaction/create",
@@ -2216,6 +2216,56 @@
             "required": [
                 "method"
             ],
+            "type": "object"
+        },
+        "TrackUserInteractionRequest": {
+            "description": "A request from the client to the server to track the progress of a user interaction.",
+            "properties": {
+                "_meta": {
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "The progress token which was given in the initial request, used to associate this notification with the request that is proceeding."
+                        }
+                    },
+                    "required": [
+                        "progressToken"
+                    ],
+                    "type": "object"
+                },
+                "method": {
+                    "const": "interaction/track",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "id": {
+                            "description": "The ID of the interaction.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "id"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "_meta",
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "TrackUserInteractionResult": {
+            "description": "The server's response to a user interaction/track request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                }
+            },
             "type": "object"
         },
         "UAInteraction": {

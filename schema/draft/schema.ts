@@ -1242,7 +1242,7 @@ export interface RootsListChangedNotification extends Notification {
 
 /* User Interaction */
 /**
- * A request from the server to the client, to create a user interaction.
+ * A request from the server to the client to create a user interaction.
  */
 export interface CreateUserInteractionRequest extends Request {
   method: "interaction/create";
@@ -1284,6 +1284,31 @@ export interface UAInteraction {
  * The client's response to a user interaction/create request from the server.
  */
 export interface CreateUserInteractionResult extends Result { }
+
+/**
+ * A request from the client to the server to track the progress of a user interaction.
+ */
+export interface TrackUserInteractionRequest extends Request {
+  method: "interaction/track";
+  params: {
+    /**
+     * The ID of the interaction.
+     */
+    id: string;
+  };
+  _meta: {
+    /**
+     * The progress token which was given in the initial request, used to associate this notification with the request that is proceeding.
+     */
+    progressToken: ProgressToken;
+  };
+}
+
+
+/**
+ * The server's response to a user interaction/track request from the client.
+ */
+export interface TrackUserInteractionResult extends Result { }
 
 /* Client messages */
 export type ClientRequest =
