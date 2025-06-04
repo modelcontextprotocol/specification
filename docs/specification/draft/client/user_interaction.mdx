@@ -282,6 +282,59 @@ send an error response to the server:
 }
 ```
 
+## Tracking Progress
+The [Progress capability](/specification/draft/basic/utilities/progress) provides a way
+for MCP clients to track progress for user interactions. By tracking the progress of an
+interaction, the MCP client can provide a better user experience. For example, the MCP
+client could:
+
+- Update the UI when the interaction is complete.
+- Automatically retry a tool call that required interaction.
+
+Tracking progress for user interactions is optional. MCP clients **MAY** send an
+`interaction/track` message to the MCP server along with a [progress token](/specification/draft/basic/utilities/progress#progress-flow)
+to track the progress of an interaction. The MCP client **MUST** include the interaction
+ID in the `id` field for which it wants to track. This `id` **MUST** refer to an
+interaction the server sent to the client.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 123,
+  "method": "interaction/track",
+  "params": {
+    "_meta": {
+      "progressToken": "progress-token-123"
+    },
+    "id": "c8ec9a71-c475-4a88-a774-e9cd154bc7f8"
+  }
+}
+```
+
+MCP servers **MUST NOT** send progress notifications related to the interaction if:
+
+- The `id` is not an interaction the server created.
+- The `id` is not an interaction associated with the client.
+- The `id` is not an interaction associated with the current MCP session, if session management is in use.
+
+MCP servers that receive a valid `interaction/track` request **SHOULD** send at least 1
+`notifications/progress` message, even if the interaction is already complete.
+
+The following is an example of a progress notification sent by the MCP server:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/progress",
+  "params": {
+    "progressToken": "progress-token-123",
+    "progress": 100,
+    "total": 100,
+    "message": "Consent granted."
+  }
+}
+```
+
 ## Cancelling an Interaction
 
 The MCP server **MAY** cancel an interaction at any time by sending a
