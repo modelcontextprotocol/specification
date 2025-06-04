@@ -37,6 +37,9 @@ Each tool is defined with the following structure:
     destructiveHint?: boolean; // If true, the tool may perform destructive updates
     idempotentHint?: boolean;  // If true, repeated calls with same args have no additional effect
     openWorldHint?: boolean;   // If true, tool interacts with external entities
+    statelessHint?: boolean;   // If true, tool does not maintain state from previous requests
+    streamingHint?: boolean;   // If true, tool streams its responses
+    asyncHint?: boolean;       // If true, tool works asynchronously to generate responses
   }
 }
 ```
@@ -333,6 +336,9 @@ The MCP specification defines the following annotations for tools:
 | `destructiveHint` | boolean | true | If true, the tool may perform destructive updates (only meaningful when `readOnlyHint` is false) |
 | `idempotentHint` | boolean | false | If true, calling the tool repeatedly with the same arguments has no additional effect (only meaningful when `readOnlyHint` is false) |
 | `openWorldHint` | boolean | true | If true, the tool may interact with an "open world" of external entities |
+| `statelessHint` | boolean | false | If true, this tool does not maintain state based on previous requests |
+| `streamingHint` | boolean | false | If true, this tool may stream its responses |
+| `asyncHint` | boolean | false | If true, this tool accepts a request and continues to work asynchronously to generate responses |
 
 ### Example usage
 
@@ -353,7 +359,9 @@ Here's how to define tools with annotations for different scenarios:
   annotations: {
     title: "Web Search",
     readOnlyHint: true,
-    openWorldHint: true
+    openWorldHint: true,
+    streamingHint: false,
+    asyncHint: false
   }
 }
 
@@ -373,7 +381,9 @@ Here's how to define tools with annotations for different scenarios:
     readOnlyHint: false,
     destructiveHint: true,
     idempotentHint: true,
-    openWorldHint: false
+    openWorldHint: false,
+    statelessHint: true,
+    streamingHint: false,
   }
 }
 
@@ -394,7 +404,32 @@ Here's how to define tools with annotations for different scenarios:
     readOnlyHint: false,
     destructiveHint: false,
     idempotentHint: false,
-    openWorldHint: false
+    openWorldHint: false,
+    statelessHint: true,
+  }
+}
+
+// An asynchronous timeseries forecasting tool
+{
+  name: "create_timeseries_forecast",
+  description: "Create a forecast for timeseries data",
+  inputSchema: {
+    type: "object",
+    properties: {
+      timeseries: { type: "object" },
+      forecast_horizon: { type: "number" }
+    },
+    required: ["timeseries", "forecast_horizon"]
+  },
+  annotations: {
+    title: "Create Timeseries Forecast",
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    statelessHint: true,
+    streamingHint: false,
+    asyncHint: true,
   }
 }
 ```
