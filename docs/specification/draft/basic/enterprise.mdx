@@ -127,7 +127,7 @@ The Client makes a Token Exchange ([RFC8693](https://datatracker.ietf.org/doc/ht
 
 `subject_token_type`: REQUIRED - An identifier, as described in [Section 3 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-3), that indicates the type of the security token in the `subject_token` parameter. For an OpenID Connect ID Token: `urn:ietf:params:oauth:token-type:id_token`, or for a SAML assertion: `urn:ietf:params:oauth:token-type:saml2`.
 
-The additional parameters defined in Section 2.1 of RFC8693 `actor_token` and `actor_token_type` are not used in this specification.
+Additional parameters defined in [Section 2.1 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#name-request) (`actor_token` and `actor_token_type`) are not used in this specification.
 
 If the IdP requires client authentication when this client performs OpenID Connect for single sign-on, then client authentication of the Token Exchange request is also required.
 
