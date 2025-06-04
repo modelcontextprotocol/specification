@@ -334,19 +334,12 @@ export interface CallToolAsyncResult {
    */
   token?: AsyncToken,
   /**
-   * The unix time on the server the async call was received
+   * The number of seconds that the server should retain results after all sessions 
+   * have disconnected
    * 
    * MUST be set if accepted is true
    * 
-   * MAY be set if accepted is false in order for the client to retrieve the error result
-   */
-  received?: number
-  /**
-   * The number of seconds from the received time that the client has to retrieve the result
-   * 
-   * MUST be set if accepted is true
-   * 
-   * MAY be set if accepted is false in order for the client to retrieve the error result
+   * MAY be set if accepted is false in order for the client to retrieve an error result
    */
   keepAlive?: number
   /**

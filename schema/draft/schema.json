@@ -139,11 +139,7 @@
                     "type": "boolean"
                 },
                 "keepAlive": {
-                    "description": "The number of seconds from the received time that the client has to retrieve the result\n\nMUST be set if accepted is true\n\nMAY be set if accepted is false in order for the client to retrieve the error result",
-                    "type": "integer"
-                },
-                "received": {
-                    "description": "The unix time on the server the async call was received\n\nMUST be set if accepted is true\n\nMAY be set if accepted is false in order for the client to retrieve the error result",
+                    "description": "The number of seconds that the server should retain results after all sessions \nhave disconnected\n\nMUST be set if accepted is true\n\nMAY be set if accepted is false in order for the client to retrieve an error result",
                     "type": "integer"
                 },
                 "token": {
