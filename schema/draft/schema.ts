@@ -220,6 +220,12 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+
+  /**
+   * Present if the client supports elicitation from the server.
+   */
+  elicitation?: object;
+
   /**
    * Present if the client supports user interaction.
    */
@@ -1240,6 +1246,91 @@ export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
 }
 
+/**
+ * A request from the server to elicit additional information from the user via the client.
+ */
+export interface ElicitRequest extends Request {
+  method: "elicitation/create";
+  params: {
+    /**
+     * The message to present to the user.
+     */
+    message: string;
+    /**
+     * A restricted subset of JSON Schema.
+     * Only top-level properties are allowed, without nesting.
+     */
+    requestedSchema: {
+      type: "object";
+      properties: {
+        [key: string]: PrimitiveSchemaDefinition;
+      };
+      required?: string[];
+    };
+  };
+}
+
+/**
+ * Restricted schema definitions that only allow primitive types
+ * without nested objects or arrays.
+ */
+export type PrimitiveSchemaDefinition =
+  | StringSchema
+  | NumberSchema
+  | BooleanSchema
+  | EnumSchema;
+
+export interface StringSchema {
+  type: "string";
+  title?: string;
+  description?: string;
+  minLength?: number;
+  maxLength?: number;
+  format?: "email" | "uri" | "date" | "date-time";
+}
+
+export interface NumberSchema {
+  type: "number" | "integer";
+  title?: string;
+  description?: string;
+  minimum?: number;
+  maximum?: number;
+}
+
+export interface BooleanSchema {
+  type: "boolean";
+  title?: string;
+  description?: string;
+  default?: boolean;
+}
+
+export interface EnumSchema {
+  type: "string";
+  title?: string;
+  description?: string;
+  enum: string[];
+  enumNames?: string[];  // Display names for enum values
+}
+
+/**
+ * The client's response to an elicitation request.
+ */
+export interface ElicitResult extends Result {
+  /**
+   * The user action in response to the elicitation.
+   * - "accept": User submitted the form/confirmed the action
+   * - "decline": User explicitly declined the action
+   * - "cancel": User dismissed without making an explicit choice
+   */
+  action: "accept" | "decline" | "cancel";
+
+  /**
+   * The submitted form data, only present when action is "accept".
+   * Contains values matching the requested schema.
+   */
+  content?: { [key: string]: unknown };
+}
+
 /* User Interaction */
 /**
  * A request from the server to the client to create a user interaction.
@@ -1324,7 +1415,8 @@ export type ClientRequest =
   | SubscribeRequest
   | UnsubscribeRequest
   | CallToolRequest
-  | ListToolsRequest;
+  | ListToolsRequest
+  | TrackUserInteractionRequest;
 
 export type ClientNotification =
   | CancelledNotification
@@ -1332,13 +1424,14 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | CreateUserInteractionResult;
+export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult | CreateUserInteractionResult;
 
 /* Server messages */
 export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
   | ListRootsRequest
+  | ElicitRequest
   | CreateUserInteractionRequest;
 
 export type ServerNotification =
@@ -1360,4 +1453,5 @@ export type ServerResult =
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
-  | ListToolsResult;
+  | ListToolsResult
+  | TrackUserInteractionResult;
