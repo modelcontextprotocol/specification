@@ -393,10 +393,10 @@
                     "$ref": "#/definitions/AudioContent"
                 },
                 {
-                    "$ref": "#/definitions/EmbeddedResource"
+                    "$ref": "#/definitions/LinkedResource"
                 },
                 {
-                    "$ref": "#/definitions/LinkedResource"
+                    "$ref": "#/definitions/EmbeddedResource"
                 }
             ]
         },
@@ -1038,7 +1038,7 @@
             "type": "object"
         },
         "LinkedResource": {
-            "description": "A resource descriptor, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render linked resources for the benefit\nof the LLM and/or the user.",
+            "description": "A reference to a resource descriptor, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render linked resources for the benefit\nof the LLM and/or the user.",
             "properties": {
                 "resource": {
                     "$ref": "#/definitions/Resource"
