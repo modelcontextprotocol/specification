@@ -180,6 +180,7 @@
               "specification/draft/index",
               "specification/draft/changelog",
               "specification/draft/architecture/index",
+              "specification/draft/enhanced_tool_definition_interface",
               {
                 "group": "Base Protocol",
                 "pages": [

@@ -1,0 +1,52 @@
+---
+title: Overview
+---
+
+<Info>**Protocol Revision**: draft</Info>
+
+Clients in the Model Context Protocol (MCP) are components, typically within a host application (like an IDE or a chat interface), that communicate with MCP Servers to enrich the capabilities of Large Language Models (LLMs). They initiate connections, manage the flow of contextual information, and can also provide features to servers.
+
+## Core Client Responsibilities
+
+- **Connection Management**: Establishing and maintaining communication sessions with MCP servers.
+- **Capability Negotiation**: Determining the features supported by both the client and the server.
+- **Contextualization**: Attaching and managing resources (e.g., file contents, user selections) to provide context to LLMs via the server.
+- **User Interaction**: Facilitating user choices for prompts and handling server-initiated requests for information or actions.
+
+## Key Client-Side Features
+
+The MCP specification details several features that can be implemented or utilized by clients:
+
+<CardGroup cols={2}>
+  <Card title="Elicitation" icon="user-pen" href="/specification/draft/client/elicitation">
+    Server-initiated requests for additional information or choices from the user.
+  </Card>
+  <Card title="Roots" icon="folder-tree" href="/specification/draft/client/roots">
+    Mechanisms for clients to declare entry points or primary contextual items.
+  </Card>
+  <Card title="Sampling" icon="wand-magic-sparkles" href="/specification/draft/client/sampling">
+    Server-initiated requests for the client to perform agentic behaviors or recursive LLM interactions.
+  </Card>
+</CardGroup>
+
+## Client Security and ETDI
+
+Security is paramount for MCP clients, especially when interacting with various tools and servers. The **Enhanced Tool Definition Interface (ETDI)** provides a comprehensive security framework that significantly impacts client implementations.
+
+Key aspects of ETDI relevant to clients include:
+
+- **Tool Definition Verification**: Clients are responsible for verifying the cryptographic signatures and integrity of tool definitions received from servers.
+- **Approval Management**: Securely storing and managing user approvals for tools, including version and content hash tracking.
+- **OAuth Integration**: Leveraging OAuth 2.0 for secure authentication and authorization flows when interacting with ETDI-enabled servers.
+
+<Card
+  title="ETDI Security Specification"
+  icon="shield-halved"
+  href="/specification/draft/enhanced_tool_definition_interface"
+>
+  For a comprehensive understanding of client-side security responsibilities and the
+  ETDI framework, including detailed verification processes and OAuth integration,
+  please refer to the full ETDI specification.
+</Card>
+
+Implementing ETDI security measures is crucial for protecting users from malicious tools and ensuring the trustworthiness of the MCP ecosystem. 
