@@ -22,6 +22,19 @@ Common terminology and context are essential for understanding the security cons
 **MCP Proxy Server**
 : An MCP server that connects MCP clients to third-party APIs, offering MCP features while delegating operations and acting as a single OAuth client to the third-party API server.
 
+**Third-Party Authorization Server**
+: Authorization server that protects the third-party API. It may lack dynamic client registration support, requiring MCP proxy to use a static client ID for all requests.
+
+**Third-Party API**
+: The protected resource server that provides the actual API functionality. Access to this 
+  API requires tokens issued by the third-party authorization server.
+
+**Static Client ID**
+: A fixed OAuth 2.0 client identifier used by the MCP proxy server when communicating with
+  the third-party authorization server. This Client ID refers to the MCP server acting as a client
+  to the Third-Party API. It is the same value for all MCP server to Third-Party API interactions regardless of
+  which MCP client initiated the request.
+
 #### 1.2.2 Terminology Reference Diagram
 
 The following diagram illustrates the architecture of MCP implementations, highlighting the roles of MCP Proxy Servers and First-Party Hosted MCP Servers.
@@ -77,24 +90,9 @@ This section gives a detailed description of attacks on MCP implementations, alo
 
 Attackers can exploit MCP servers proxying other resource servers, creating "[confused deputy](https://en.wikipedia.org/wiki/Confused_deputy_problem)" vulnerabilities.
 
-#### 2.1.1 Terminology
+#### 2.1.1 Architecture and Attack Flows
 
-**Third-Party Authorization Server**
-: Authorization server that protects the third-party API. It may lack dynamic client registration support, requiring MCP proxy to use a static client ID for all requests.
-
-**Third-Party API**
-: The protected resource server that provides the actual API functionality. Access to this 
-  API requires tokens issued by the third-party authorization server.
-
-**Static Client ID**
-: A fixed OAuth 2.0 client identifier used by the MCP proxy server when communicating with
-  the third-party authorization server. This Client ID refers to the MCP server acting as a client
-  to the Third-Party API. It is the same value for all MCP server to Third-Party API interactions regardless of
-  which MCP client initiated the request.
-
-#### 2.1.2 Architecture and Attack Flows
-
-##### 2.1.2.1 Normal OAuth proxy usage (preserves user consent)
+##### 2.1.1.1 Normal OAuth proxy usage (preserves user consent)
 
 ```mermaid
 sequenceDiagram
@@ -122,7 +120,7 @@ sequenceDiagram
     Note over M,UA: Exchange code for token, etc.
 ```
 
-##### 2.1.2.3 Malicious OAuth proxy usage (skips user consent)
+##### 2.1.1.3 Malicious OAuth proxy usage (skips user consent)
 
 ```mermaid
 sequenceDiagram
@@ -150,7 +148,7 @@ sequenceDiagram
    A->>M: Attacker impersonates user to MCP server
 ```
 
-#### 2.1.3 Attack Description
+#### 2.1.2 Attack Description
 
 When an MCP proxy server uses a static client ID to authenticate with a third-party 
 authorization server that does not support dynamic client registration, the following 
@@ -166,7 +164,7 @@ attack becomes possible:
 7. The attacker exchanges the stolen authorization code for access tokens for the MCP server without the user's explicit approval
 8. Attacker now has access to the third-party API as the compromised user
 
-#### 2.1.4 Mitigation
+#### 2.1.3 Mitigation
 
 MCP proxy servers using static client IDs **MUST** obtain user consent for each dynamically
 registered client before forwarding to third-party authorization servers (which may require additional consent).
