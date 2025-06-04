@@ -247,7 +247,7 @@ The authorization server **MAY** add additional claims as necessary.
 
 #### Implementation notes
 
-If the IdP is multi-tenant and uses the same issuer for all tenants, the MCP server will already have IdP-specific logic to determine the tenant from the OpenID Connect ID Token (e.g. the `hd` claim in Google) or SAML assertion, and will need to use that if the IdP also has only one client registration for the MCP server.
+If the IdP is multi-tenant and uses the same issuer for all tenants, the MCP Server will already have IdP-specific logic to determine the tenant from the OpenID Connect ID Token (e.g., the `hd` claim for Google) or SAML assertion, and will need to use that if the IdP also has only one client registration for the MCP Server.
 
 `sub` should be an opaque ID, as `iss+sub` is unique. The IdP might want to also include the user's email here, which it should do as a new `email` claim. This would let the app dedupe existing users who may have an account with an email address but have not done SSO yet.
 
