@@ -1,0 +1,296 @@
+---
+title: Enterprise Authorization Profile
+---
+
+<Info>**Protocol Revision**: draft</Info>
+
+## 1. Introduction
+
+### 1.1 Purpose and Scope
+
+This document defines a profile of the "[Identity Assertion Authorization Grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/)" for use within enterprise deployments of the Model Context Protocol (MCP). It specifies how an MCP Client can obtain an access token from an MCP server's Authorization Server by presenting an identity assertion, and how an MCP Server validates and utilizes this identity assertion before issuing an access token. This profile is designed to facilitate secure and interoperable authorization within corporate environments, leveraging existing enterprise identity infrastructure.
+
+This provides two key benefits:
+
+* For end users, this removes the need to manually connect and authorize the MCP Client to individual services within the organization.
+* For enterprise admins, this enables visibility and control over which MCP Servers are able to be used within the organization.
+
+
+### 1.2 Roles and Terminology
+
+* **Resource Application**: In the context of this profile, the Resource Application is the MCP Server.
+* **Identity Provider (IdP)**: An entity that creates, maintains, and manages identity information for principals and provides authentication services, and is trusted by a set of applications in an organization's app ecosystem.
+* **Identity Assertion**: A security token (e.g., ID Token, SAML Assertion) that contains information about an authenticated user and is issued by an Identity Provider trusted by the Authorization Server.
+* **Authorization Server**: This profile uses the term "Authorization Server" to refer to the authorization server that issues tokens to be used at the MCP server.
+
+
+## 2. Identity Assertion Authorization Grant Overview
+
+This profile utilizes the "Identity Assertion Authorization Grant" as defined in [draft-parecki-oauth-identity-assertion-authz-grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/). The Identity Assertion Authorization Grant is made up of two distinct steps: a Token Exchange [[RFC8623](https://datatracker.ietf.org/doc/html/rfc8693)] followed by a JWT Authorization Grant [[RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)].
+
+The core flow is as follows:
+
+* A user logs in to an MCP Client through the Identity Provider, resulting in an Identity Assertion (ID Token or SAML assertion) being issued to the MCP Client.
+* The MCP Client sends a Token Exchange [[RFC8623](https://datatracker.ietf.org/doc/html/rfc8693)] request to the Identity Provider including the identity assertion and identifier of the MCP Server it is attempting to access, and obtains a Identity Assertion Authorization Grant.
+* The MCP Client uses the Identity Assertion Authorization Grant as a JWT Authorization Grant [[RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)] to request an access token from the Authorization Server.
+* The Authorization Server validates the Identity Assertion Authorization Grant and, if valid, issues an access token.
+* The MCP Client uses the access token to make requests to the MCP Server.
+
+
+### 2.1 Sequence Diagram
+
+The following diagram outlines an example flow:
+
+```mermaid
+sequenceDiagram
+    participant UA as Browser
+    participant C as MCP Client
+    participant MAS as MCP Authorization Server
+    participant MRS as MCP Resource Server
+    participant IdP as Identity Provider
+
+    C-->>UA: Redirect to IdP
+    UA->>IdP: Redirect to IdP
+    Note over IdP: User Logs In
+    IdP-->>UA: IdP Authorization Code
+    UA->>C: IdP Authorization Code
+    C->>IdP: Token Request with IdP Authorization Code
+    IdP-->C: ID Token
+
+    note over C: User is logged<br>in to MCP Client.<br>Client stores ID Token.
+
+    C->IdP: Exchange ID Token for ID-JAG
+    note over IdP: Evaluate Policy
+    IdP-->C: Responds with ID-JAG
+    C->MAS: Token Request with ID-JAG
+    note over MAS: Validate ID-JAG
+    MAS-->C: MCP Access Token
+
+    loop
+    C->>MRS: Call MCP API with Access Token
+    MRS-->>C: MCP Response with Data
+    end
+```
+
+## 3. User Authentication
+
+The Client initiates an authentication request with the IdP using OpenID Connect or SAML.
+
+The following is an example of a web app redirecting the user using OpenID Connect:
+
+```
+302 Redirect
+Location: https://acme.idp.example/authorize?response_type=code&scope=openid&client_id=...
+```
+
+The user authenticates with the IdP, and is redirected back to the Client with an authorization code, which it can then exchange for an ID Token.
+
+Note: The Enterprise IdP may enforce security controls such as multi-factor authentication before granting the user access to the Client.
+
+```
+POST /token HTTP/1.1
+Host: acme.idp.example
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code
+&code=.....
+
+HTTP/1.1 200 Ok
+Content-Type: application/json
+
+{
+  "id_token": "eyJraWQiOiJzMTZ0cVNtODhwREo4VGZCXzdrSEtQ...",
+  "token_type": "Bearer",
+  "access_token": "7SliwCQP1brGdjBtsaMnXo",
+  "scope": "openid"
+}
+```
+
+## 4. Token Exchange
+
+The Client makes a Token Exchange ([RFC8693](https://datatracker.ietf.org/doc/html/rfc8693)) request to the IdP's Token Endpoint with the following parameters:
+
+`requested_token_type`: REQUIRED - The value `urn:ietf:params:oauth:token-type:id-jag` indicates that an ID Assertion JWT is being requested.
+
+`resource`: REQUIRED - The Issuer URL of the MCP server's authorization server.
+
+`audience`: The audience parameter MUST NOT be used to indicate the authorization server.
+
+`scope`: OPTIONAL - The space-separated list of scopes at the MCP Server that are being requested.
+
+`subject_token`: REQUIRED - The identity assertion (e.g. the OpenID Connect ID Token or SAML assertion) for the target end-user.
+
+`subject_token_type`: REQUIRED - An identifier, as described in [Section 3 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-3), that indicates the type of the security token in the `subject_token` parameter. For an OpenID Connect ID Token: `urn:ietf:params:oauth:token-type:id_token`, or for a SAML assertion: `urn:ietf:params:oauth:token-type:saml2`.
+
+The additional parameters defined in Section 2.1 of RFC8693 `actor_token` and `actor_token_type` are not used in this specification.
+
+If the IdP requires client authentication when this client performs OpenID Connect for single sign-on, then client authentication of the Token Exchange request is also required.
+
+The example below uses an ID Token as the Identity Assertion, and uses a client secret as the client authentication method, (tokens truncated for brevity):
+
+```
+POST /oauth2/token HTTP/1.1
+Host: acme.idp.example
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange
+&requested_token_type=urn:ietf:params:oauth:token-type:id-jag
+&resource=https://acme.chat.example/
+&scope=chat.read+chat.history
+&subject_token=eyJraWQiOiJzMTZ0cVNtODhwREo4VGZCXzdrSEtQ...
+&subject_token_type=urn:ietf:params:oauth:token-type:id_token
+&client_id=2ec954a1d60620116d36d9ceb7
+&client_secret=a26d84873504215a34a86d52ef5cd64f4b76
+```
+
+### 4.1 Processing Rules
+
+The IdP MUST validate the subject token, and MUST validate that the audience of the Subject Token (e.g. the `aud` claim of the ID Token) matches the `client_id` of the MCP client's client authentication.
+
+The IdP evaluates administrator-defined policy for the token exchange request and determines if the MCP client should be granted access to act on behalf of the user for the target MCP server and scopes.
+
+The IdP may also introspect the authentication context described in the SSO assertion to determine if step-up authentication is required.
+
+### 4.2 Token Exchange Response
+
+If access is granted, the IdP creates a signed Identity Assertion Authorization Grant JWT and returns it in the token exchange response defined in [Section 2.2 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-2.2):
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+  "issued_token_type": "urn:ietf:params:oauth:token-type:id-jag",
+  "access_token": "eyJhbGciOiJIUzI1NiIsI...",
+  "token_type": "N_A",
+  "scope": "chat.read chat.history",
+  "expires_in": 300
+}
+```
+
+REQUIRED - urn:ietf:params:oauth:token-type:id-jag
+
+`access_token`: REQUIRED - The Identity Assertion Authorization Grant JWT. (Note: Token Exchange requires the `access_token` response parameter for historical reasons, even though this is not an OAuth access token.)
+
+`token_type`: REQUIRED - `N_A` (because this is not an OAuth access token.)
+
+`scope`: OPTIONAL if the scope of the issued token is identical to the scope requested by the client; otherwise, it is REQUIRED. This may be fewer scopes than the application requested based on various policies in the IdP.
+
+`expires_in`: RECOMMENDED - The lifetime in seconds of the authorization grant.
+
+#### 4.2.1 Error Response
+
+On an error condition, the IdP returns an OAuth 2.0 Token Error response as defined in Section 5.2 of RFC6749, e.g:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "error": "invalid_grant",
+  "error_description": "Audience validation failed"
+}
+```
+
+### 4.3 Identity Assertion Authorization Grant JWT
+
+The Identity Assertion Authorization Grant JWT is issued and signed by the IdP, and describes the intended audience of the authorization grant as well as the client to which it was issued and the subject identifier of the resource owner, using the following claims:
+
+`iss`: REQUIRED - The IdP issuer URL as defined in Section 4.1.1 of [RFC7519]
+
+`sub`: REQUIRED - The subject identifier (e.g. user ID) of the user at the MCP server as defined in Section 4.1.2 of [RFC7519]
+
+`aud`: REQUIRED - The Issuer URL of the MCP server's authorization server as defined in Section 4.1.3 of [RFC7519]
+
+`client_id`: REQUIRED - An identifier of the MCP client that this JWT was issued to. For interoperability, the client identifier SHOULD be a client_id as defined in Section 4.3 [RFC8693].
+
+`jti`: REQUIRED - Unique ID of this JWT as defined in Section 4.1.7 of [RFC7519]
+
+`exp`: REQUIRED - as defined in Section 4.1.4 of [RFC7519]
+
+`iat`: REQUIRED - as defined in Section 4.1.6 of [RFC7519]
+
+`scope`: OPTIONAL - a JSON string containing a space-separated list of scopes associated with the token, in the format described in Section 3.3 of [RFC6749].
+
+The typ of the JWT indicated in the JWT header MUST be `oauth-id-jag+jwt`.
+
+An example JWT shown with expanded header and payload claims is below:
+
+```
+{
+  "typ": "oauth-id-jag+jwt"
+}
+.
+{
+  "jti": "9e43f81b64a33f20116179",
+  "iss": "https://acme.idp.example",
+  "sub": "U019488227",
+  "aud": "https://acme.chat.example/",
+  "client_id": "f53f191f9311af35",
+  "exp": 1311281970,
+  "iat": 1311280970,
+  "scope": "chat.read chat.history"
+}
+.
+signature
+```
+
+The authorization server MAY add additional claims as necessary.
+
+Implementation notes:
+
+If the IdP is multi-tenant and uses the same issuer for all tenants, the MCP server will already have IdP-specific logic to determine the tenant from the OpenID Connect ID Token (e.g. the `hd` claim in Google) or SAML assertion, and will need to use that if the IdP also has only one client registration for the MCP server.
+
+`sub` should be an opaque ID, as `iss+sub` is unique. The IdP might want to also include the user's email here, which it should do as a new `email` claim. This would let the app dedupe existing users who may have an account with an email address but have not done SSO yet.
+
+
+## 5. Access Token Request
+
+The MCP Client makes an access token request to the MCP Server's authorization server using the previously obtained Identity Assertion Authorization Grant as a JWT Assertion as defined by [RFC7523].
+
+`grant_type`: REQUIRED - The value of `grant_type` is `urn:ietf:params:oauth:grant-type:jwt-bearer`
+
+`assertion`: REQUIRED - The Identity Assertion Authorization Grant JWT obtained in the previous token exchange step
+
+The MCP Client authenticates with its credentials as registered with the MCP server's authorization server. If the MCP Client has not yet registered with the MCP server's authorization server, then it can do a Dynamic Client Registration request at this stage.
+
+For example:
+
+```
+POST /oauth2/token HTTP/1.1
+Host: acme.chat.example
+Authorization: Basic yZS1yYW5kb20tc2VjcmV0v3JOkF0XG5Qx2
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+assertion=eyJhbGciOiJIUzI1NiIsI...
+```
+
+### 5.1 Processing Rules
+
+All of Section 5.2 of [RFC7521] applies, in addition to the following processing rules:
+
+* Validate the JWT `typ` is `oauth-id-jag+jwt` (per [RFC8725])
+* The `aud` claim MUST identify the Issuer URL of the MCP Server's authorization server as the intended audience of the JWT.
+* The `client_id` claim MUST identify the same client as the client authentication in the request.
+
+### 5.2 Access Token Response
+
+The MCP Server's authorization server responds with an OAuth 2.0 Token Response, e.g.:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "token_type": "Bearer",
+  "access_token": "2YotnFZFEjr1zCsicMWpAA",
+  "expires_in": 86400,
+  "scope": "chat.read chat.history",
+  "refresh_token": "tGzv3JOkF0XG5Qx2TlKWIA",
+}
+```
+
