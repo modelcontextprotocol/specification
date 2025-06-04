@@ -646,7 +646,7 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
+  content: ContentBlock;
 }
 
 /**
@@ -663,6 +663,19 @@ export interface EmbeddedResource {
    * Optional annotations for the client.
    */
   annotations?: Annotations;
+}
+
+/**
+ *
+ * A resource descriptor, embedded into a prompt or tool call result.
+ *
+ * It is up to the client how best to render linked resources for the benefit
+ * of the LLM and/or the user.
+ *
+ */
+export interface LinkedResource {
+  type: "linkedresource";
+  resource: Resource;
 }
 
 /**
@@ -694,7 +707,7 @@ export interface CallToolResult extends Result {
   /**
    * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | ResourceReference)[];
+  content: ContentBlock[];
 
   /**
    * An optional JSON object that represents the structured result of the tool call.
@@ -705,7 +718,7 @@ export interface CallToolResult extends Result {
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
-   * 
+   *
    * Any errors that originate from the tool SHOULD be reported inside the result
    * object, with `isError` set to true, _not_ as an MCP protocol-level error
    * response. Otherwise, the LLM would not be able to see that an error occurred
@@ -816,7 +829,7 @@ export interface Tool {
   };
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * An optional JSON Schema object defining the structure of the tool's output returned in
    * the structuredContent field of a CallToolResult.
    */
   outputSchema?: {
@@ -964,6 +977,14 @@ export interface Annotations {
    */
   priority?: number;
 }
+
+/**  */
+export type ContentBlock =
+  | TextContent
+  | ImageContent
+  | AudioContent
+  | EmbeddedResource
+  | LinkedResource;
 
 /**
  * Text provided to or from an LLM.
@@ -1258,7 +1279,7 @@ export interface ElicitRequest extends Request {
  * Restricted schema definitions that only allow primitive types
  * without nested objects or arrays.
  */
-export type PrimitiveSchemaDefinition = 
+export type PrimitiveSchemaDefinition =
   | StringSchema
   | NumberSchema
   | BooleanSchema
@@ -1293,7 +1314,7 @@ export interface EnumSchema {
   title?: string;
   description?: string;
   enum: string[];
-  enumNames?: string[];  // Display names for enum values
+  enumNames?: string[]; // Display names for enum values
 }
 
 /**
@@ -1307,7 +1328,7 @@ export interface ElicitResult extends Result {
    * - "cancel": User dismissed without making an explicit choice
    */
   action: "accept" | "decline" | "cancel";
-  
+
   /**
    * The submitted form data, only present when action is "accept".
    * Contains values matching the requested schema.
@@ -1337,7 +1358,11 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
+export type ClientResult =
+  | EmptyResult
+  | CreateMessageResult
+  | ListRootsResult
+  | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =

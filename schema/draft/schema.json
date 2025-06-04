@@ -132,23 +132,7 @@
                 "content": {
                     "description": "A list of content objects that represent the unstructured result of the tool call.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/TextContent"
-                            },
-                            {
-                                "$ref": "#/definitions/ImageContent"
-                            },
-                            {
-                                "$ref": "#/definitions/AudioContent"
-                            },
-                            {
-                                "$ref": "#/definitions/EmbeddedResource"
-                            },
-                            {
-                                "$ref": "#/definitions/ResourceReference"
-                            }
-                        ]
+                        "$ref": "#/definitions/ContentBlock"
                     },
                     "type": "array"
                 },
@@ -396,6 +380,25 @@
                 "completion"
             ],
             "type": "object"
+        },
+        "ContentBlock": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TextContent"
+                },
+                {
+                    "$ref": "#/definitions/ImageContent"
+                },
+                {
+                    "$ref": "#/definitions/AudioContent"
+                },
+                {
+                    "$ref": "#/definitions/EmbeddedResource"
+                },
+                {
+                    "$ref": "#/definitions/LinkedResource"
+                }
+            ]
         },
         "CreateMessageRequest": {
             "description": "A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.",
@@ -1034,6 +1037,23 @@
             ],
             "type": "object"
         },
+        "LinkedResource": {
+            "description": "A resource descriptor, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render linked resources for the benefit\nof the LLM and/or the user.",
+            "properties": {
+                "resource": {
+                    "$ref": "#/definitions/Resource"
+                },
+                "type": {
+                    "const": "linkedresource",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "resource",
+                "type"
+            ],
+            "type": "object"
+        },
         "ListPromptsRequest": {
             "description": "Sent from the client to request a list of prompts and prompt templates the server has.",
             "properties": {
@@ -1602,20 +1622,7 @@
             "description": "Describes a message returned as part of a prompt.\n\nThis is similar to `SamplingMessage`, but also supports the embedding of\nresources from the MCP server.",
             "properties": {
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        },
-                        {
-                            "$ref": "#/definitions/EmbeddedResource"
-                        }
-                    ]
+                    "$ref": "#/definitions/ContentBlock"
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
@@ -2282,7 +2289,7 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {
