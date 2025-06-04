@@ -35,26 +35,26 @@ Common terminology and context are essential for understanding the security cons
   to the Third-Party API. It is the same value for all MCP server to Third-Party API interactions regardless of
   which MCP client initiated the request.
 
-#### 1.2.2 Terminology Reference Diagram
+#### 1.2.2 Terminology Reference Diagrams
 
-The following diagram illustrates the architecture of MCP implementations, highlighting the roles of MCP Proxy Servers and First-Party Hosted MCP Servers.
+The following diagrams provide visual context for the terminology used in this document.
+
+#### 1.2.2.1 First-Party Hosted MCP Server Architecture
+
+The following diagram illustrates First-Party Hosted MCP Servers.
 
 ```mermaid
 graph TD
     %% Actors
-    ProxyUser["Proxy Client<br>(Uses MCP Proxy Server)"]
-    DirectUser["Direct Client<br>(Uses First-Party MCP Server)"]
-
-    %% External MCP Components
-    MCPProxyServer["MCP Proxy Server<br>(Sits outside the Provider)"]
+    DirectUser["First Party Client"]
 
     %% Provider / Host Components (Grouped in Subgraph)
     subgraph HostResourceServer ["Host (Resource Server)"]
-        direction LR
+    direction LR
         ProviderMCPServer["First-Party MCP Server<br>(Hosted by Provider)"]
+        AuthorizationServer["Authorization Server<br>(Hosted by Provider)"]
         ProviderAPIServices["API Services<br>(Hosted by Provider)"]
-        AuthorizationServer["Authorization Server(Hosted by Provider)"]
-        Note1["AuthN/Authorization is part of the<br>resource provider's infrastructure &<br>shares the same security context and audience."]
+        Note1["AuthN/Authorization is part of the resource provider's infrastructure & shares the same security context and audience."]
         style Note1 fill:#f9f9f9,stroke:#2E8B57,stroke-dasharray: 5 5,textColor:#333
 
         %% Connections within the subgraph
@@ -64,22 +64,46 @@ graph TD
     end
 
     %% Connections from Users to Components
-    ProxyUser --> MCPProxyServer
-    MCPProxyServer -.->|Acts as Third-Party<br>Client| ProviderAPIServices
+    DirectUser -->|Uses First-Party MCP Server| ProviderMCPServer
+    DirectUser -.->|Can Use First-Party APIs| ProviderAPIServices
 
-    DirectUser --> ProviderMCPServer
-    DirectUser --> ProviderAPIServices
+    %% Styling (optional, but can improve readability)
+    classDef directActor fill:#f9f9f9,stroke:#2E8B57,stroke-width:2px
+    classDef hostcomponent fill:#d4f8d4,stroke:#2E8B57,stroke-width:2px
+
+    class DirectUser directActor;
+    class ProviderMCPServer,ProviderAPIServices,AuthorizationServer hostcomponent;
+```
+
+#### 1.2.2.2 Third-Party MCP Server Architecture
+
+The following diagram illustrates MCP Proxy Servers which sit outside the boundaries of the Resource Server.
+
+```mermaid
+graph TD
+    %% Actors
+    ProxyUser["Proxy Client"]
+
+    %% External MCP Components
+    MCPProxyServer["MCP Proxy Server<br>(External to API Provider)"]
+
+    %% Provider / Host Components (Grouped in Subgraph)
+    subgraph HostResourceServer ["Third Party Resource Server"]
+        ProviderAPIServices["Third Party API Services<br>"]
+    end
+
+    %% Connections from Users to Components
+    ProxyUser -->|Uses MCP Proxy Server| MCPProxyServer
+    MCPProxyServer -->|connects clients to| HostResourceServer
 
     %% Styling (optional, but can improve readability)
     classDef proxyActor fill:#f9f9f9,stroke:#d2691e,stroke-width:2px
-    classDef directActor fill:#f9f9f9,stroke:#2E8B57,stroke-width:2px
     classDef mcpproxy fill:#fff0e6,stroke:#d2691e,stroke-width:2px
     classDef hostcomponent fill:#d4f8d4,stroke:#2E8B57,stroke-width:2px
 
     class ProxyUser proxyActor;
-    class DirectUser directActor;
     class MCPProxyServer mcpproxy;
-    class ProviderMCPServer,ProviderAPIServices,AuthorizationServer hostcomponent;
+    class ProviderAPIServices hostcomponent;
 ```
 
 ## 2. Attacks and Mitigations
