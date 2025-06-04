@@ -54,10 +54,12 @@ This page provides an overview of applications that support the Model Context Pr
 | [Sourcegraph Cody][Cody]                    | ✅          | ❌        | ❌      | ❓                     | ❌          | ❌    | Supports resources through OpenCTX                                          |
 | [SpinAI][SpinAI]                            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools for Typescript AI Agents                                     |
 | [Superinterface][Superinterface]            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools                                                              |
+| [Superjoin][Superjoin]                      | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools and multiple servers.                                        |
 | [TheiaAI/TheiaIDE][TheiaAI/TheiaIDE]        | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools for Agents in Theia AI and the AI-powered Theia IDE          |
 | [Tome][Tome]                                | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools, manages MCP servers.                                        |
 | [TypingMind App][TypingMind App]            | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools at app-level (appear as plugins) or when assigned to Agents  |
 | [VS Code GitHub Copilot][VS Code]           | ❌          | ❌        | ✅      | ✅                     | ❌          | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
+| [WhatsMPC][WhatsMPC]                        | ❌          | ❌        | ✅      | ❌                     | ❌          | ❌    | Supports tools for Remote MCP Servers in WhatsApp                          |
 | [Windsurf Editor][Windsurf]                 | ❌          | ❌        | ✅      | ✅                     | ❌          | ❌    | Supports tools with AI Flow for collaborative development.                  |
 | [Witsy][Witsy]                              | ❌          | ❌        | ✅      | ❓                     | ❌          | ❌    | Supports tools in Witsy.                                                    |
 | [Zed][Zed]                                  | ❌          | ✅        | ❌      | ❌                     | ❌          | ❌    | Prompts appear as slash commands                                            |
@@ -103,12 +105,14 @@ This page provides an overview of applications that support the Model Context Pr
 [Cody]: https://sourcegraph.com/cody
 [SpinAI]: https://spinai.dev
 [Superinterface]: https://superinterface.ai
+[Superjoin]: https://superjoin.ai
 [TheiaAI/TheiaIDE]: https://eclipsesource.com/blogs/2024/12/19/theia-ide-and-theia-ai-support-mcp/
 [Tome]: https://github.com/runebookai/tome
 [TypingMind App]: https://www.typingmind.com
 [VS Code]: https://code.visualstudio.com/
 [Windsurf]: https://codeium.com/windsurf
 [gptme]: https://github.com/gptme/gptme
+[WhatsMPC]: https://wassist.app/mcp/
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
@@ -212,6 +216,15 @@ Claude Code is an interactive agentic coding tool from Anthropic that helps you 
 - Tool and prompt support for MCP servers
 - Offers its own tools through an MCP server for integrating with other MCP clients
 
+### Claude.ai
+[Claude.ai](https://claude.ai) is Anthropic's web-based AI assistant that provides MCP support for remote servers.
+
+**Key features:**
+- Support for remote MCP servers via integrations UI in settings
+- Access to tools, prompts, and resources from configured MCP servers
+- Seamless integration with Claude's conversational interface
+- Enterprise-grade security and compliance features
+
 ### Claude Desktop App
 The Claude desktop application provides comprehensive support for MCP, enabling deep integration with local tools and data sources.
 
@@ -220,8 +233,6 @@ The Claude desktop application provides comprehensive support for MCP, enabling 
 - Support for prompt templates
 - Tool integration for executing commands and scripts
 - Local server connections for enhanced privacy and security
-
-> ⓘ Note: The Claude.ai web application does not currently support MCP. MCP features are only available in the desktop application.
 
 ### Cline
 [Cline](https://github.com/cline/cline) is an autonomous coding agent in VS Code that edits files, runs commands, uses a browser, and more–with your permission at each step.
@@ -530,6 +541,15 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - SSE transport support
 - Use any AI model from any AI provider (OpenAI, Anthropic, Ollama, others)
 
+### Superjoin
+[Superjoin](https://superjoin.ai) brings the power of MCP directly into Google Sheets extension. With Superjoin, users can access and invoke MCP tools and agents without leaving their spreadsheets, enabling powerful AI workflows and automation right where their data lives.
+
+**Key features:**
+- Native Google Sheets add-on providing effortless access to MCP capabilities
+- Supports OAuth 2.1 and header-based authentication for secure and flexible connections
+- Compatible with both SSE and Streamable HTTP transport for efficient, real-time streaming communication
+- Fully web-based, cross-platform client requiring no additional software installation
+
 ### TheiaAI/TheiaIDE
 [Theia AI](https://eclipsesource.com/blogs/2024/10/07/introducing-theia-ai/) is a framework for building AI-enhanced tools and IDEs. The [AI-powered Theia IDE](https://eclipsesource.com/blogs/2024/10/08/introducting-ai-theia-ide/) is an open and flexible development environment built on Theia AI.
 
@@ -574,6 +594,17 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Tool calls with editable inputs and always-allow toggle
 - Integration with existing VS Code extension system to register MCP servers from extensions
 
+### WhatsMPC
+[WhatsMPC](https://wassist.app/mcp/) is an MCP client for WhatsApp. WhatsMCP lets you interact with your AI stack from the comfort of a WhatsApp chat.
+
+**Key features:**
+- Supports MCP tools
+- SSE transport, full OAuth2 support
+- Chat flow management for WhatsApp messages
+- One click setup for connecting to your MCP servers
+- In chat management of MCP servers
+- Oauth flow natively supported in WhatsApp
+
 ### Windsurf Editor
 [Windsurf Editor](https://codeium.com/windsurf) is an agentic IDE that combines AI assistance with developer workflows. It features an innovative AI Flow system that enables both collaborative and independent AI interactions while maintaining developer control.
 
@@ -591,6 +622,7 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Local server connections for enhanced privacy and security
 - Easy-install from Smithery.ai
 - Open-source, available for macOS, Windows and Linux
+
 
 ### Zed
 [Zed](https://zed.dev/docs/assistant/model-context-protocol) is a high-performance code editor with built-in MCP support, focusing on prompt templates and tool integration.
