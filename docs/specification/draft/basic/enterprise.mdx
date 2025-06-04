@@ -26,7 +26,12 @@ Enterprise-ready authorization for MCP Clients and Servers has two key benefits:
 
 ## 2. Identity Assertion Authorization Grant Overview
 
-This profile utilizes the "Identity Assertion Authorization Grant" as defined in [draft-parecki-oauth-identity-assertion-authz-grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/). The Identity Assertion Authorization Grant is made up of two distinct steps: a Token Exchange [[RFC8623](https://datatracker.ietf.org/doc/html/rfc8693)] followed by a JWT Authorization Grant [[RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)].
+This profile uses the "Identity Assertion Authorization Grant" as defined in [draft-parecki-oauth-identity-assertion-authz-grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/).
+
+The Identity Assertion Authorization Grant follows two steps:
+
+1. Token Exchange ([RFC8623](https://datatracker.ietf.org/doc/html/rfc8693))
+2. A JWT Authorization Grant ([RFC7523](https://datatracker.ietf.org/doc/html/rfc7523))
 
 The core flow is as follows:
 
