@@ -187,7 +187,7 @@ REQUIRED - urn:ietf:params:oauth:token-type:id-jag
 
 #### 4.2.1 Error Response
 
-On an error condition, the IdP returns an OAuth 2.0 Token Error response as defined in Section 5.2 of RFC6749, e.g:
+In case of an error occurring while performing the token exchange, the IdP will return an OAuth 2.0 Token Error response as defined in [Section 5.2 of RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-5.2). An example response may look like this:
 
 ```
 HTTP/1.1 400 Bad Request
