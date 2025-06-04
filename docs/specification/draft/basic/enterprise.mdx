@@ -129,7 +129,7 @@ To request a JWT Assertion Grant, the MCP Client **MUST** make a Token Exchange 
 
 Additional parameters defined in [Section 2.1 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#name-request) (`actor_token` and `actor_token_type`) are not used in this specification.
 
-If the IdP requires client authentication when this client performs OpenID Connect for single sign-on, then client authentication of the Token Exchange request is also required.
+If the IdP requires client authentication when the MCP client performs OpenID Connect for single sign-on, then client authentication of the Token Exchange request is also required.
 
 The example below uses an ID Token as the Identity Assertion, and uses a client secret as the client authentication method, (tokens truncated for brevity):
 
