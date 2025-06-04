@@ -39,6 +39,9 @@ source .venv/bin/activate
 uv add mcp anthropic python-dotenv
 
 # Remove boilerplate files
+# On Windows:
+del main.py
+# On Unix or MacOS:
 rm main.py
 
 # Create our main file
@@ -801,7 +804,7 @@ This is a quickstart demo based on Spring AI MCP auto-configuration and boot sta
 To learn how to create sync and async MCP Clients manually, consult the [Java SDK Client](/sdk/java/mcp-client) documentation
 </Note>
 
-This example demonstrates how to build an interactive chatbot that combines Spring AI's Model Context Protocol (MCP) with the [Brave Search MCP Server](https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search). The application creates a conversational interface powered by Anthropic's Claude AI model that can perform internet searches through Brave Search, enabling natural language interactions with real-time web data.
+This example demonstrates how to build an interactive chatbot that combines Spring AI's Model Context Protocol (MCP) with the [Brave Search MCP Server](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/brave-search). The application creates a conversational interface powered by Anthropic's Claude AI model that can perform internet searches through Brave Search, enabling natural language interactions with real-time web data.
 [You can find the complete code for this tutorial here.](https://github.com/spring-projects/spring-ai-examples/tree/main/model-context-protocol/web-search/brave-chatbot)
 
 ## System Requirements
@@ -916,16 +919,21 @@ The chatbot is implemented using Spring AI's ChatClient with MCP tool integratio
 ```java
 var chatClient = chatClientBuilder
     .defaultSystem("You are useful assistant, expert in AI and Java.")
-    .defaultTools((Object[]) mcpToolAdapter.toolCallbacks())
+    .defaultToolCallbacks((Object[]) mcpToolAdapter.toolCallbacks())
     .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
     .build();
 ```
+
+<Warning>
+Breaking change: From SpringAI 1.0.0-M8 onwards, use `.defaultToolCallbacks(...)` instead of `.defaultTool(...)` to register MCP tools.
+</Warning>
 
 Key features:
 - Uses Claude AI model for natural language understanding
 - Integrates Brave Search through MCP for real-time web search capabilities
 - Maintains conversation memory using InMemoryChatMemory
 - Runs as an interactive command-line application
+
 
 ### Build and run
 

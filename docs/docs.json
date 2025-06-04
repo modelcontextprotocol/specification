@@ -53,7 +53,6 @@
           {
             "group": "Development",
             "pages": [
-              "development/updates",
               "development/roadmap",
               "development/contributing"
             ]
@@ -188,6 +187,7 @@
                   "specification/draft/basic/lifecycle",
                   "specification/draft/basic/transports",
                   "specification/draft/basic/authorization",
+                  "specification/draft/basic/security_best_practices",
                   {
                     "group": "Utilities",
                     "pages": [
@@ -202,7 +202,8 @@
                 "group": "Client Features",
                 "pages": [
                   "specification/draft/client/roots",
-                  "specification/draft/client/sampling"
+                  "specification/draft/client/sampling",
+                  "specification/draft/client/elicitation"
                 ]
               },
               {
@@ -226,10 +227,7 @@
           },
           {
             "group": "Resources",
-            "pages": [
-              "specification/versioning",
-              "specification/contributing"
-            ]
+            "pages": ["specification/versioning", "specification/contributing"]
           }
         ]
       }
@@ -237,14 +235,9 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Python SDK",
-          "href": "https://github.com/modelcontextprotocol/python-sdk",
-          "icon": "python"
-        },
-        {
-          "anchor": "TypeScript SDK",
-          "href": "https://github.com/modelcontextprotocol/typescript-sdk",
-          "icon": "square-js"
+          "anchor": "C# SDK",
+          "href": "https://github.com/modelcontextprotocol/csharp-sdk",
+          "icon": "square-c"
         },
         {
           "anchor": "Java SDK",
@@ -257,9 +250,24 @@
           "icon": "square-k"
         },
         {
-          "anchor": "C# SDK",
-          "href": "https://github.com/modelcontextprotocol/csharp-sdk",
-          "icon": "square-c"
+          "anchor": "Python SDK",
+          "href": "https://github.com/modelcontextprotocol/python-sdk",
+          "icon": "python"
+        },
+        {
+          "anchor": "Ruby SDK",
+          "href": "https://github.com/modelcontextprotocol/ruby-sdk",
+          "icon": "gem"
+        },
+        {
+          "anchor": "Swift SDK",
+          "href": "https://github.com/modelcontextprotocol/swift-sdk",
+          "icon": "swift"
+        },
+        {
+          "anchor": "TypeScript SDK",
+          "href": "https://github.com/modelcontextprotocol/typescript-sdk",
+          "icon": "square-js"
         }
       ]
     }
@@ -303,9 +311,6 @@
     }
   ],
   "contextual": {
-    "options": [
-      "copy",
-      "view"
-    ]
+    "options": ["copy", "view"]
   }
 }
