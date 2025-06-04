@@ -220,19 +220,6 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
-  /**
-   * Present if the client advertises content types it can handle.
-   */
-  contentTypes?: {
-    /**
-     * Optional non-exclusive List of MIME types that the client can render to Users.
-     */
-    renders?: string[];
-    /**
-     * Optional non-exclusive list of MIME types that the client can tokenize for the LLM.
-     */
-    tokenizes?: string[];
-  };
 }
 
 /**
@@ -282,7 +269,6 @@ export interface ServerCapabilities {
      */
     listChanged?: boolean;
   };
-
 }
 
 /**
@@ -790,12 +776,6 @@ export interface ToolAnnotations {
    * Default: true
    */
   openWorldHint?: boolean;
-
-
-  /**
-   * Optional list of MIME types that this Tool may produce in a CallToolResult.
-   */
-  generatesHint?: string[];
 }
 
 /**

@@ -170,26 +170,6 @@
         "ClientCapabilities": {
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
-                "contentTypes": {
-                    "description": "Present if the client advertises content types it can handle.",
-                    "properties": {
-                        "renders": {
-                            "description": "Optional non-exclusive List of MIME types that the client can render to Users.",
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        "tokenizes": {
-                            "description": "Optional non-exclusive list of MIME types that the client can tokenize for the LLM.",
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        }
-                    },
-                    "type": "object"
-                },
                 "experimental": {
                     "additionalProperties": {
                         "additionalProperties": true,
@@ -2083,13 +2063,6 @@
                 "destructiveHint": {
                     "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: true",
                     "type": "boolean"
-                },
-                "generatesHint": {
-                    "description": "Optional list of MIME types that this Tool may produce in a CallToolResult.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 },
                 "idempotentHint": {
                     "description": "If true, calling the tool repeatedly with the same arguments\nwill have no additional effect on the its environment.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: false",
