@@ -339,7 +339,7 @@
                                     "$ref": "#/definitions/PromptReference"
                                 },
                                 {
-                                    "$ref": "#/definitions/ResourceReference"
+                                    "$ref": "#/definitions/ResourceTemplateReference"
                                 }
                             ]
                         }
@@ -1806,25 +1806,6 @@
             ],
             "type": "object"
         },
-        "ResourceReference": {
-            "description": "A reference to a resource or resource template definition.",
-            "properties": {
-                "type": {
-                    "const": "ref/resource",
-                    "type": "string"
-                },
-                "uri": {
-                    "description": "The URI or URI template of the resource.",
-                    "format": "uri-template",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type",
-                "uri"
-            ],
-            "type": "object"
-        },
         "ResourceTemplate": {
             "description": "A template description for resources available on the server.",
             "properties": {
@@ -1853,6 +1834,25 @@
             "required": [
                 "name",
                 "uriTemplate"
+            ],
+            "type": "object"
+        },
+        "ResourceTemplateReference": {
+            "description": "A reference to a resource or resource template definition.",
+            "properties": {
+                "type": {
+                    "const": "ref/resource",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI or URI template of the resource.",
+                    "format": "uri-template",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "uri"
             ],
             "type": "object"
         },
