@@ -657,11 +657,9 @@ export interface PromptMessage {
  * of the LLM and/or the user.
  *
  */
-export interface LinkedResource {
+export interface LinkedResource extends Resource {
   type: "linkedresource";
-  resource: Resource;
 }
-
 
 /**
  * The contents of a resource, embedded into a prompt or tool call result.

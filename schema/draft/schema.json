@@ -1040,17 +1040,40 @@
         "LinkedResource": {
             "description": "A reference to a resource descriptor, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render linked resources for the benefit\nof the LLM and/or the user.",
             "properties": {
-                "resource": {
-                    "$ref": "#/definitions/Resource"
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
+                },
+                "description": {
+                    "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of this resource, if known.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "A human-readable name for this resource.\n\nThis can be used by clients to populate UI elements.",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
+                    "type": "integer"
                 },
                 "type": {
                     "const": "linkedresource",
                     "type": "string"
+                },
+                "uri": {
+                    "description": "The URI of this resource.",
+                    "format": "uri",
+                    "type": "string"
                 }
             },
             "required": [
-                "resource",
-                "type"
+                "name",
+                "type",
+                "uri"
             ],
             "type": "object"
         },
