@@ -8,7 +8,7 @@ the previous revision, [2025-03-26](/specification/2025-03-26).
 ## Major changes
 
 1. Removed support for JSON-RPC **[batching](https://www.jsonrpc.org/specification#batch)**
-   (PR [#416](https://github.com/modelcontextprotocol/specification/pull/416)) 
+   (PR [#416](https://github.com/modelcontextprotocol/specification/pull/416))
 2. Added support for [structured tool output](https://modelcontextprotocol.io/specification/draft/server/tools#structured-content)
    (PR [#371](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/371))
 3. Classified MCP servers as [OAuth Resource Servers](https://modelcontextprotocol.io/specification/draft/basic/authorization#2-3-authorization-server-discovery), adding protected resource metadata to discover the corresponding Authorization server. (PR [#338](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/338))
@@ -17,6 +17,9 @@ the previous revision, [2025-03-26](/specification/2025-03-26).
    servers to request additional information from users during interactions. (PR [#382](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/382))
 
 ## Other schema changes
+
+- PromptMessage and SamplingMessage now contain Arrays of content.
+- TODO
 
 ## Full changelog
 

@@ -120,10 +120,12 @@ auto-completed through [the completion API](/specification/draft/server/utilitie
     "messages": [
       {
         "role": "user",
-        "content": {
-          "type": "text",
-          "text": "Please review this Python code:\ndef hello():\n    print('world')"
-        }
+        "content": [
+          {
+            "type": "text",
+            "text": "Please review this Python code:\ndef hello():\n    print('world')"
+          }
+        ]
       }
     ]
   }
