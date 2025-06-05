@@ -444,6 +444,17 @@ export interface ResourceUpdatedNotification extends Notification {
 }
 
 /**
+ * The status of this resource.
+ *
+ * This can be used by clients to determine whether the resource is available for use.
+ */
+export type ResourceStatus =
+  | "pending"
+  | "available"
+  | "error"
+  | "deleted"
+
+/**
  * A known resource that the server is capable of reading.
  */
 export interface Resource {
@@ -467,6 +478,13 @@ export interface Resource {
    * This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
    */
   description?: string;
+
+  /**
+   * The status of this resource.
+   *
+   * This can be used by clients to determine whether the resource is available for use.
+   */
+  status?: ResourceStatus;
 
   /**
    * The MIME type of this resource, if known.
@@ -694,7 +712,7 @@ export interface CallToolResult extends Result {
   /**
    * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: (TextContent | ImageContent | AudioContent | EmbeddedResource | Resource)[];
 
   /**
    * An optional JSON object that represents the structured result of the tool call.

@@ -134,6 +134,9 @@
                     "items": {
                         "anyOf": [
                             {
+                                "$ref": "#/definitions/Resource"
+                            },
+                            {
                                 "$ref": "#/definitions/TextContent"
                             },
                             {
@@ -1752,6 +1755,10 @@
                     "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
                     "type": "integer"
                 },
+                "status": {
+                    "$ref": "#/definitions/ResourceStatus",
+                    "description": "The status of this resource.\n\nThis can be used by clients to determine whether the resource is available for use."
+                },
                 "uri": {
                     "description": "The URI of this resource.",
                     "format": "uri",
@@ -1824,6 +1831,16 @@
                 "uri"
             ],
             "type": "object"
+        },
+        "ResourceStatus": {
+            "description": "The status of this resource.\n\nThis can be used by clients to determine whether the resource is available for use.",
+            "enum": [
+                "available",
+                "deleted",
+                "error",
+                "pending"
+            ],
+            "type": "string"
         },
         "ResourceTemplate": {
             "description": "A template description for resources available on the server.",
