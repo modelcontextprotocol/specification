@@ -304,7 +304,15 @@ export interface CancelToolAsyncNotification {
 export interface GetToolAsyncResultRequest {
   method: "tools/async/get";
   params: {
-    token: AsyncToken
+    token: AsyncToken,
+    /** 
+     * The timeout in seconds for the call tool request timeout.
+     * 
+     * If not set the server SHOULD wait indefinitely for a result or until the client session disconnects.
+     * 
+     * The server MAY return with an error if the client submits too many requests.
+     */
+    timeout?: number
   };
 }
 
@@ -877,6 +885,8 @@ export interface CallToolResult extends Result {
 
   /**
    * Whether the tool call is pending a result.
+   * 
+   * This MUST only be set in response to a GetToolAsyncResultRequest where timeout is set
    *
    * If not set, this is assumed to be false (the call was successful).
    */

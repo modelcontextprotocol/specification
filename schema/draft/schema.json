@@ -214,7 +214,7 @@
                     "type": "boolean"
                 },
                 "isPending": {
-                    "description": "Whether the tool call is pending a result.\n\nIf not set, this is assumed to be false (the call was successful).",
+                    "description": "Whether the tool call is pending a result.\n\nThis MUST only be set in response to a GetToolAsyncResultRequest where timeout is set\n\nIf not set, this is assumed to be false (the call was successful).",
                     "type": "boolean"
                 },
                 "structuredContent": {
@@ -813,6 +813,10 @@
                 },
                 "params": {
                     "properties": {
+                        "timeout": {
+                            "description": "The timeout in seconds for the call tool request timeout.\n\nIf not set the server SHOULD wait indefinitely for a result or until the client session disconnects.\n\nThe server MAY return with an error if the client submits too many requests.",
+                            "type": "integer"
+                        },
                         "token": {
                             "$ref": "#/definitions/AsyncToken"
                         }
