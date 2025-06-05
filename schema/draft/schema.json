@@ -1061,7 +1061,7 @@
                     "type": "integer"
                 },
                 "type": {
-                    "const": "linkedresource",
+                    "const": "linked_resource",
                     "type": "string"
                 },
                 "uri": {
