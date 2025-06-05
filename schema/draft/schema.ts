@@ -650,12 +650,9 @@ export interface PromptMessage {
 }
 
 /**
+ * A resource that the server is capable of reading, embedded into a prompt or tool call result.
  *
- * A reference to a resource descriptor, embedded into a prompt or tool call result.
- *
- * It is up to the client how best to render linked resources for the benefit
- * of the LLM and/or the user.
- *
+ * Note: linked resources are not guaranteed to appear in the results of `resources/list` requests.
  */
 export interface LinkedResource extends Resource {
   type: "linked_resource";
