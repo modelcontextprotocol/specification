@@ -224,6 +224,19 @@ export interface ClientCapabilities {
    * Present if the client supports elicitation from the server.
    */
   elicitation?: object;
+  /**
+   * Present if the client advertises content types it can handle.
+   */
+  contentTypes?: {
+    /**
+     * Optional non-exclusive List of MIME types that the client can render to Users.
+     */
+    renders?: string[];
+    /**
+     * Optional non-exclusive list of MIME types that the client can tokenize for the LLM.
+     */
+    tokenizes?: string[];
+  };  
 }
 
 /**
@@ -788,6 +801,11 @@ export interface ToolAnnotations {
    * Default: true
    */
   openWorldHint?: boolean;
+  
+  /**
+   * Optional list of MIME types that this Tool may produce in a CallToolResult.
+   */
+  generatesHint?: string[];  
 }
 
 /**

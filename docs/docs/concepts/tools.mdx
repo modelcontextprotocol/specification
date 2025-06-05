@@ -333,6 +333,7 @@ The MCP specification defines the following annotations for tools:
 | `destructiveHint` | boolean | true | If true, the tool may perform destructive updates (only meaningful when `readOnlyHint` is false) |
 | `idempotentHint` | boolean | false | If true, calling the tool repeatedly with the same arguments has no additional effect (only meaningful when `readOnlyHint` is false) |
 | `openWorldHint` | boolean | true | If true, the tool may interact with an "open world" of external entities |
+| `generatesHint` | string[] | None | If present, provides non-exhaustive list of MIME types this Tool may generate in a `CallToolResult`. |
 
 ### Example usage
 
