@@ -80,6 +80,7 @@ To discover available tools, clients send a `tools/list` request. This operation
     "tools": [
       {
         "name": "get_weather",
+        "displayName": "Weather Information Provider",
         "description": "Get current weather information for a location",
         "inputSchema": {
           "type": "object",
@@ -181,6 +182,7 @@ sequenceDiagram
 A tool definition includes:
 
 - `name`: Unique identifier for the tool
+- `displayName`: Optional human-readable name of the tool for display purposes.
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
 - `outputSchema`: Optional JSON Schema defining expected output structure
@@ -238,6 +240,7 @@ or data, behind a URI that can be subscribed to or fetched again by the client l
   "type": "resource",
   "resource": {
     "uri": "resource://example",
+    "displayName": "My Plain-text Resource",
     "mimeType": "text/plain",
     "text": "Resource content"
   }
@@ -264,6 +267,7 @@ Example tool with output schema:
 ```json
 {
   "name": "get_weather_data",
+  "displayName": "Weather Data Retriever",
   "description": "Get current weather data for a location",
   "inputSchema": {
     "type": "object",
