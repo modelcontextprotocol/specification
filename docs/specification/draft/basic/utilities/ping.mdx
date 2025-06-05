@@ -7,12 +7,12 @@ title: Ping
 The Model Context Protocol includes an optional ping mechanism that allows either party
 to verify that their counterpart is still responsive and the connection is alive.
 
-## Overview
+## 1. Overview
 
 The ping functionality is implemented through a simple request/response pattern. Either
 the client or server can initiate a ping by sending a `ping` request.
 
-## Message Format
+## 2. Message Format
 
 A ping request is a standard JSON-RPC request with no parameters:
 
@@ -24,7 +24,7 @@ A ping request is a standard JSON-RPC request with no parameters:
 }
 ```
 
-## Behavior Requirements
+## 3. Behavior Requirements
 
 1. The receiver **MUST** respond promptly with an empty response:
 
@@ -41,7 +41,7 @@ A ping request is a standard JSON-RPC request with no parameters:
    - Terminate the connection
    - Attempt reconnection procedures
 
-## Usage Patterns
+## 4. Usage Patterns
 
 ```mermaid
 sequenceDiagram
@@ -52,14 +52,14 @@ sequenceDiagram
     Receiver->>Sender: empty response
 ```
 
-## Implementation Considerations
+## 5. Implementation Considerations
 
 - Implementations **SHOULD** periodically issue pings to detect connection health
 - The frequency of pings **SHOULD** be configurable
 - Timeouts **SHOULD** be appropriate for the network environment
 - Excessive pinging **SHOULD** be avoided to reduce network overhead
 
-## Error Handling
+## 6. Error Handling
 
 - Timeouts **SHOULD** be treated as connection failures
 - Multiple failed pings **MAY** trigger connection reset

@@ -10,7 +10,7 @@ language models, such as files, database schemas, or application-specific inform
 Each resource is uniquely identified by a
 [URI](https://datatracker.ietf.org/doc/html/rfc3986).
 
-## User Interaction Model
+## 1. User Interaction Model
 
 Resources in MCP are designed to be **application-driven**, with host applications
 determining how to incorporate context based on their needs.
@@ -27,7 +27,7 @@ However, implementations are free to expose resources through any interface patt
 suits their needs&mdash;the protocol itself does not mandate any specific user
 interaction model.
 
-## Capabilities
+## 2. Capabilities
 
 Servers that support resources **MUST** declare the `resources` capability:
 
@@ -80,9 +80,9 @@ either, or both:
 }
 ```
 
-## Protocol Messages
+## 3. Protocol Messages
 
-### Listing Resources
+### 3.1 Listing Resources
 
 To discover available resources, clients send a `resources/list` request. This operation
 supports [pagination](/specification/draft/server/utilities/pagination).
@@ -120,7 +120,7 @@ supports [pagination](/specification/draft/server/utilities/pagination).
 }
 ```
 
-### Reading Resources
+### 3.2 Reading Resources
 
 To retrieve resource contents, clients send a `resources/read` request:
 
@@ -155,7 +155,7 @@ To retrieve resource contents, clients send a `resources/read` request:
 }
 ```
 
-### Resource Templates
+### 3.3 Resource Templates
 
 Resource templates allow servers to expose parameterized resources using
 [URI templates](https://datatracker.ietf.org/doc/html/rfc6570). Arguments may be
@@ -190,7 +190,7 @@ auto-completed through [the completion API](/specification/draft/server/utilitie
 }
 ```
 
-### List Changed Notification
+### 3.4 List Changed Notification
 
 When the list of available resources changes, servers that declared the `listChanged`
 capability **SHOULD** send a notification:
@@ -202,7 +202,7 @@ capability **SHOULD** send a notification:
 }
 ```
 
-### Subscriptions
+### 3.5 Subscriptions
 
 The protocol supports optional subscriptions to resource changes. Clients can subscribe
 to specific resources and receive notifications when they change:
@@ -232,7 +232,7 @@ to specific resources and receive notifications when they change:
 }
 ```
 
-## Message Flow
+## 4. Message Flow
 
 ```mermaid
 sequenceDiagram
@@ -257,9 +257,9 @@ sequenceDiagram
     Server-->>Client: Updated contents
 ```
 
-## Data Types
+## 5. Data Types
 
-### Resource
+### 5.1 Resource
 
 A resource definition includes:
 
@@ -269,11 +269,11 @@ A resource definition includes:
 - `mimeType`: Optional MIME type
 - `size`: Optional size in bytes
 
-### Resource Contents
+### 5.2 Resource Contents
 
 Resources can contain either text or binary data:
 
-#### Text Content
+#### 5.2.1 Text Content
 
 ```json
 {
@@ -283,7 +283,7 @@ Resources can contain either text or binary data:
 }
 ```
 
-#### Binary Content
+#### 5.2.2 Binary Content
 
 ```json
 {
@@ -293,12 +293,12 @@ Resources can contain either text or binary data:
 }
 ```
 
-## Common URI Schemes
+## 6. Common URI Schemes
 
 The protocol defines several standard URI schemes. This list not
 exhaustive&mdash;implementations are always free to use additional, custom URI schemes.
 
-### https://
+### 6.1 https://
 
 Used to represent a resource available on the web.
 
@@ -310,7 +310,7 @@ For other use cases, servers **SHOULD** prefer to use another URI scheme, or def
 custom one, even if the server will itself be downloading resource contents over the
 internet.
 
-### file://
+### 6.2 file://
 
 Used to identify resources that behave like a filesystem. However, the resources do not
 need to map to an actual physical filesystem.
@@ -320,11 +320,11 @@ MCP servers **MAY** identify file:// resources with an
 like `inode/directory`, to represent non-regular files (such as directories) that don’t
 otherwise have a standard MIME type.
 
-### git://
+### 6.3 git://
 
 Git version control integration.
 
-## Error Handling
+## 7. Error Handling
 
 Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
 
@@ -347,7 +347,7 @@ Example error:
 }
 ```
 
-## Security Considerations
+## 8. Security Considerations
 
 1. Servers **MUST** validate all resource URIs
 2. Access controls **SHOULD** be implemented for sensitive resources

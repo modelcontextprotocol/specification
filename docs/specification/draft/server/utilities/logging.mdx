@@ -9,12 +9,12 @@ structured log messages to clients. Clients can control logging verbosity by set
 minimum log levels, with servers sending notifications containing severity levels,
 optional logger names, and arbitrary JSON-serializable data.
 
-## User Interaction Model
+## 1. User Interaction Model
 
 Implementations are free to expose logging through any interface pattern that suits their
 needs&mdash;the protocol itself does not mandate any specific user interaction model.
 
-## Capabilities
+## 2. Capabilities
 
 Servers that emit log message notifications **MUST** declare the `logging` capability:
 
@@ -26,7 +26,7 @@ Servers that emit log message notifications **MUST** declare the `logging` capab
 }
 ```
 
-## Log Levels
+## 3. Log Levels
 
 The protocol follows the standard syslog severity levels specified in
 [RFC 5424](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1):
@@ -42,9 +42,9 @@ The protocol follows the standard syslog severity levels specified in
 | alert     | Action must be taken immediately | Data corruption detected   |
 | emergency | System is unusable               | Complete system failure    |
 
-## Protocol Messages
+## 4. Protocol Messages
 
-### Setting Log Level
+### 4.1 Setting Log Level
 
 To configure the minimum log level, clients **MAY** send a `logging/setLevel` request:
 
@@ -61,7 +61,7 @@ To configure the minimum log level, clients **MAY** send a `logging/setLevel` re
 }
 ```
 
-### Log Message Notifications
+### 4.2 Log Message Notifications
 
 Servers send log messages using `notifications/message` notifications:
 
@@ -83,7 +83,7 @@ Servers send log messages using `notifications/message` notifications:
 }
 ```
 
-## Message Flow
+## 5. Message Flow
 
 ```mermaid
 sequenceDiagram
@@ -105,14 +105,14 @@ sequenceDiagram
     Note over Server: Only sends error level<br/>and above
 ```
 
-## Error Handling
+## 6. Error Handling
 
 Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
 
 - Invalid log level: `-32602` (Invalid params)
 - Configuration errors: `-32603` (Internal error)
 
-## Implementation Considerations
+## 7. Implementation Considerations
 
 1. Servers **SHOULD**:
 
@@ -127,7 +127,7 @@ Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
    - Display severity visually
    - Persist log messages
 
-## Security
+## 8. Security
 
 1. Log messages **MUST NOT** contain:
 
