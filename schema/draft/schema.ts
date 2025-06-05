@@ -220,10 +220,26 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+
   /**
    * Present if the client supports elicitation from the server.
    */
   elicitation?: object;
+
+  /**
+   * Present if the client supports user interaction.
+   */
+  userInteraction?: {
+    /**
+     * An array of supported user interaction types. Clients must support at least one type.
+     *
+     * This specification defines one interaction type:
+     * - "ua": A user agent interaction involving making a request via a User Agent (e.g. a Web browser)
+     *
+     * Additional interaction types may be negotiated between client and server.
+     */
+    types: string[];
+  };
 }
 
 /**
@@ -1258,7 +1274,7 @@ export interface ElicitRequest extends Request {
  * Restricted schema definitions that only allow primitive types
  * without nested objects or arrays.
  */
-export type PrimitiveSchemaDefinition = 
+export type PrimitiveSchemaDefinition =
   | StringSchema
   | NumberSchema
   | BooleanSchema
@@ -1307,13 +1323,83 @@ export interface ElicitResult extends Result {
    * - "cancel": User dismissed without making an explicit choice
    */
   action: "accept" | "decline" | "cancel";
-  
+
   /**
    * The submitted form data, only present when action is "accept".
    * Contains values matching the requested schema.
    */
   content?: { [key: string]: unknown };
 }
+
+/* User Interaction */
+/**
+ * A request from the server to the client to create a user interaction.
+ */
+export interface CreateUserInteractionRequest extends Request {
+  method: "interaction/create";
+  params: {
+    /**
+     * The ID of the interaction.
+     */
+    id: string;
+    /**
+     * The type of interaction.
+     */
+    type: string;
+    /**
+     * The interaction object. The schema of the interaction object is dependent on the type of
+     * interaction.
+     */
+    interaction: UAInteraction | object;
+  };
+}
+
+/**
+ * Defines the interaction object for "ua" (user agent) type interactions.
+ */
+export interface UAInteraction {
+  /**
+   * The URL that the user should interact with.
+   *
+   * @format uri
+   */
+  url: string;
+
+  /**
+   * An optional message to provide an explanation to the user about the interaction.
+   */
+  message?: TextContent;
+}
+
+/**
+ * The client's response to a user interaction/create request from the server.
+ */
+export interface CreateUserInteractionResult extends Result { }
+
+/**
+ * A request from the client to the server to track the progress of a user interaction.
+ */
+export interface TrackUserInteractionRequest extends Request {
+  method: "interaction/track";
+  params: {
+    /**
+     * The ID of the interaction.
+     */
+    id: string;
+  };
+  _meta: {
+    /**
+     * The progress token which was given in the initial request, used to associate this notification with the request that is proceeding.
+     */
+    progressToken: ProgressToken;
+  };
+}
+
+
+/**
+ * The server's response to a user interaction/track request from the client.
+ */
+export interface TrackUserInteractionResult extends Result { }
 
 /* Client messages */
 export type ClientRequest =
@@ -1329,7 +1415,8 @@ export type ClientRequest =
   | SubscribeRequest
   | UnsubscribeRequest
   | CallToolRequest
-  | ListToolsRequest;
+  | ListToolsRequest
+  | TrackUserInteractionRequest;
 
 export type ClientNotification =
   | CancelledNotification
@@ -1337,14 +1424,15 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
+export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult | CreateUserInteractionResult;
 
 /* Server messages */
 export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
   | ListRootsRequest
-  | ElicitRequest;
+  | ElicitRequest
+  | CreateUserInteractionRequest;
 
 export type ServerNotification =
   | CancelledNotification
@@ -1365,4 +1453,5 @@ export type ServerResult =
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
-  | ListToolsResult;
+  | ListToolsResult
+  | TrackUserInteractionResult;
