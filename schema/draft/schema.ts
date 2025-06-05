@@ -658,7 +658,7 @@ export interface PromptMessage {
  *
  */
 export interface LinkedResource extends Resource {
-  type: "linkedresource";
+  type: "linked_resource";
 }
 
 /**
