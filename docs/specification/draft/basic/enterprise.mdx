@@ -271,8 +271,8 @@ assertion=eyJhbGciOiJIUzI1NiIsI...
 All of [Section 5.2 of RFC7521](https://datatracker.ietf.org/doc/html/rfc7521#section-5.2) applies, in addition to the following processing rules:
 
 * Validate the JWT `typ` is `oauth-id-jag+jwt` (per [RFC8725](https://datatracker.ietf.org/doc/html/rfc8725))
-* The `aud` claim **MUST** identify the Issuer URL of the MCP Server's authorization server as the intended audience of the JWT.
-* The `client_id` claim **MUST** identify the same client as the client authentication in the request.
+* The `aud` claim of the assertion JWT **MUST** identify the Issuer URL of the MCP Server's authorization server as the intended audience of the JWT.
+* The `client_id` claim of the assertion JWT **MUST** identify the same client as the client authentication in the request (e.g., the `client_id` specified in a basic auth header).
 
 ### 5.2 Access Token Response
 
