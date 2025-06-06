@@ -138,15 +138,13 @@ supports. This **SHOULD** be the _latest_ version supported by the server.
 If the client does not support the version in the server's response, it **SHOULD**
 disconnect.
 
+<Note>
 If using HTTP, the client **MUST** include the `MCP-Protocol-Version:
-<protocol-version>` HTTP header during any subsequent requests to the MCP
-server, allowing the MCP server to respond based on the MCP protocol version. 
+<protocol-version>` HTTP header on all subsequent requests to the MCP
+server.
+For details, see [the Protocol Version Header section in Transports](/specification/draft/basic/transports#protocol-version-header).
+</Note>
 
-The protocol version sent by the client **SHOULD** be the one negotiated during [initialization](https://modelcontextprotocol.io/specification/draft/basic/lifecycle#initialization).
-
-If the server receives a request with a missing, invalid, or unsupported
-MCP-Protocol-VERSION, it **MUST** respond with `400 Bad Request`.
-For example: `MCP-Protocol-Version: 2024-11-05`
 #### Capability Negotiation
 
 Client and server capabilities establish which optional protocol features will be
