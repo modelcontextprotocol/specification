@@ -333,13 +333,26 @@
                             ],
                             "type": "object"
                         },
+                        "context": {
+                            "description": "Additional, optional context for completions",
+                            "properties": {
+                                "arguments": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "description": "Previously-resolved variables in a URI template or prompt.",
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        },
                         "ref": {
                             "anyOf": [
                                 {
                                     "$ref": "#/definitions/PromptReference"
                                 },
                                 {
-                                    "$ref": "#/definitions/ResourceReference"
+                                    "$ref": "#/definitions/ResourceTemplateReference"
                                 }
                             ]
                         }
@@ -1806,25 +1819,6 @@
             ],
             "type": "object"
         },
-        "ResourceReference": {
-            "description": "A reference to a resource or resource template definition.",
-            "properties": {
-                "type": {
-                    "const": "ref/resource",
-                    "type": "string"
-                },
-                "uri": {
-                    "description": "The URI or URI template of the resource.",
-                    "format": "uri-template",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type",
-                "uri"
-            ],
-            "type": "object"
-        },
         "ResourceTemplate": {
             "description": "A template description for resources available on the server.",
             "properties": {
@@ -1853,6 +1847,25 @@
             "required": [
                 "name",
                 "uriTemplate"
+            ],
+            "type": "object"
+        },
+        "ResourceTemplateReference": {
+            "description": "A reference to a resource or resource template definition.",
+            "properties": {
+                "type": {
+                    "const": "ref/resource",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI or URI template of the resource.",
+                    "format": "uri-template",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "uri"
             ],
             "type": "object"
         },
@@ -2279,7 +2292,7 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {
