@@ -248,7 +248,7 @@ The MCP Client makes an access token request to the MCP Server's authorization s
 
 | Parameter   | Required/Optional | Description                                                                                                        | Example/Allowed Values                                                                           |
 |-------------|-------------------|--------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `grant_type`| REQUIRED          | MUST be `urn:ietf:params:oauth:grant-type:jwt-bearer`                                                              | `urn:ietf:params:oauth:grant-type:jwt-bearer`<br/>[Section 4.1 of RFC7523](https://datatracker.ietf.org/doc/html/rfc7523#section-4.1) |
+| `grant_type`| REQUIRED          | **MUST** be `urn:ietf:params:oauth:grant-type:jwt-bearer`                                                              | `urn:ietf:params:oauth:grant-type:jwt-bearer`<br/>[Section 4.1 of RFC7523](https://datatracker.ietf.org/doc/html/rfc7523#section-4.1) |
 | `assertion` | REQUIRED          | The Identity Assertion Authorization Grant JWT obtained in the previous token exchange step                        | (JWT string)                                                                                     |
 
 The MCP Client authenticates with its credentials as registered with the MCP Server's authorization server.
