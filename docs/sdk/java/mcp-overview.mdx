@@ -7,9 +7,12 @@ Java SDK for the [Model Context Protocol](https://modelcontextprotocol.org/docs/
 enables standardized integration between AI models and tools.
 
 <Note>
+
 ### Breaking Changes in 0.8.x ⚠️
-**Note:** Version 0.8.x introduces several breaking changes including a new session-based architecture. 
+
+**Note:** Version 0.8.x introduces several breaking changes including a new session-based architecture.
 If you're upgrading from 0.7.0, please refer to the [Migration Guide](https://github.com/modelcontextprotocol/java-sdk/blob/main/migration-0.8.0.md) for detailed instructions.
+
 </Note>
 
 ## Features
@@ -32,9 +35,11 @@ If you're upgrading from 0.7.0, please refer to the [Migration Guide](https://gi
 - Supports Synchronous and Asynchronous programming paradigms
 
 <Tip>
-The core `io.modelcontextprotocol.sdk:mcp` module provides default STDIO and SSE client and server transport implementations without requiring external web frameworks. 
+
+The core `io.modelcontextprotocol.sdk:mcp` module provides default STDIO and SSE client and server transport implementations without requiring external web frameworks.
 
 Spring-specific transports are available as optional dependencies for convenience when using the [Spring Framework](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-client-boot-starter-docs.html).
+
 </Tip>
 
 ## Architecture
@@ -44,19 +49,18 @@ The SDK follows a layered architecture with clear separation of concerns:
 ![MCP Stack Architecture](/images/java/mcp-stack.svg)
 
 - **Client/Server Layer (McpClient/McpServer)**: Both use McpSession for sync/async operations,
-with McpClient handling client-side protocol operations and McpServer managing server-side protocol operations.
+  with McpClient handling client-side protocol operations and McpServer managing server-side protocol operations.
 - **Session Layer (McpSession)**: Manages communication patterns and state using DefaultMcpSession implementation.
 - **Transport Layer (McpTransport)**: Handles JSON-RPC message serialization/deserialization via:
   - StdioTransport (stdin/stdout) in the core module
   - HTTP SSE transports in dedicated transport modules (Java HttpClient, Spring WebFlux, Spring WebMVC)
 
-
-The MCP Client is a key component in the Model Context Protocol (MCP) architecture, responsible for establishing and managing connections with MCP servers. 
+The MCP Client is a key component in the Model Context Protocol (MCP) architecture, responsible for establishing and managing connections with MCP servers.
 It implements the client-side of the protocol.
 
 ![Java MCP Client Architecture](/images/java/java-mcp-client-architecture.jpg)
 
-The MCP Server is a foundational component in the Model Context Protocol (MCP) architecture that provides tools, resources, and capabilities to clients. 
+The MCP Server is a foundational component in the Model Context Protocol (MCP) architecture that provides tools, resources, and capabilities to clients.
 It implements the server-side of the protocol.
 
 ![Java MCP Server Architecture](/images/java/java-mcp-server-architecture.jpg)
@@ -73,6 +77,7 @@ Add the following Maven dependency to your project:
 
 <Tabs>
   <Tab title="Maven">
+
 The core MCP functionality:
 
 ```xml
@@ -99,16 +104,18 @@ If you're using the Spring Framework and want to use Spring-specific transport i
     <artifactId>mcp-spring-webmvc</artifactId>
 </dependency>
 ```
+
   </Tab>
     <Tab title="Gradle">
+
     The core MCP functionality:
 
-  ```groovy
-  dependencies {
-    implementation platform("io.modelcontextprotocol.sdk:mcp")
-    //...
-  }
-  ```
+```groovy
+dependencies {
+  implementation platform("io.modelcontextprotocol.sdk:mcp")
+  //...
+}
+```
 
     The core `mcp` module already includes default STDIO and SSE transport implementations and doesn't require external web frameworks.
 
@@ -125,6 +132,7 @@ If you're using the Spring Framework and want to use Spring-specific transport i
       implementation platform("io.modelcontextprotocol.sdk:mcp-spring-webmvc")
     }
     ```
+
   </Tab>
 </Tabs>
 
@@ -139,6 +147,7 @@ Add the BOM to your project:
 
 <Tabs>
   <Tab title="Maven">
+
 ```xml
 <dependencyManagement>
     <dependencies>
@@ -152,9 +161,11 @@ Add the BOM to your project:
     </dependencies>
 </dependencyManagement>
 ```
+
   </Tab>
 
   <Tab title="Gradle">
+
 ```groovy
 dependencies {
   implementation platform("io.modelcontextprotocol.sdk:mcp-bom:0.9.0")
@@ -165,6 +176,7 @@ dependencies {
 Gradle users can also use the Spring AI MCP BOM by leveraging Gradle (5.0+) native support for declaring dependency constraints using a Maven BOM.
 This is implemented by adding a 'platform' dependency handler method to the dependencies section of your Gradle build script.
 As shown in the snippet above this can then be followed by version-less declarations of the Starter Dependencies for the one or more spring-ai modules you wish to use, e.g. spring-ai-openai.
+
   </Tab>
 </Tabs>
 
@@ -174,7 +186,7 @@ Replace the version number with the version of the BOM you want to use.
 
 The following dependencies are available and managed by the BOM:
 
-- Core Dependencies 
+- Core Dependencies
   - `io.modelcontextprotocol.sdk:mcp` - Core MCP library providing the base functionality and APIs for Model Context Protocol implementation, including default STDIO and SSE client and server transport implementations. No external web frameworks required.
 - Optional Transport Dependencies (convenience if using Spring Framework)
   - `io.modelcontextprotocol.sdk:mcp-spring-webflux` - WebFlux-based Server-Sent Events (SSE) transport implementation for reactive applications.

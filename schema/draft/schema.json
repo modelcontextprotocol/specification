@@ -333,6 +333,19 @@
                             ],
                             "type": "object"
                         },
+                        "context": {
+                            "description": "Additional, optional context for completions",
+                            "properties": {
+                                "arguments": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "description": "Previously-resolved variables in a URI template or prompt.",
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        },
                         "ref": {
                             "anyOf": [
                                 {
@@ -2279,7 +2292,7 @@
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in \nthe structuredContent field of a CallToolResult.",
+                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {

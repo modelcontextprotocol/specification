@@ -705,7 +705,7 @@ export interface CallToolResult extends Result {
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
-   * 
+   *
    * Any errors that originate from the tool SHOULD be reported inside the result
    * object, with `isError` set to true, _not_ as an MCP protocol-level error
    * response. Otherwise, the LLM would not be able to see that an error occurred
@@ -816,7 +816,7 @@ export interface Tool {
   };
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * An optional JSON Schema object defining the structure of the tool's output returned in
    * the structuredContent field of a CallToolResult.
    */
   outputSchema?: {
@@ -1131,6 +1131,16 @@ export interface CompleteRequest extends Request {
        */
       value: string;
     };
+
+    /**
+     * Additional, optional context for completions
+     */
+    context?: {
+       /**
+        * Previously-resolved variables in a URI template or prompt.
+        */
+        arguments?: { [key: string]: string };
+     };
   };
 }
 
@@ -1258,7 +1268,7 @@ export interface ElicitRequest extends Request {
  * Restricted schema definitions that only allow primitive types
  * without nested objects or arrays.
  */
-export type PrimitiveSchemaDefinition = 
+export type PrimitiveSchemaDefinition =
   | StringSchema
   | NumberSchema
   | BooleanSchema
@@ -1307,7 +1317,7 @@ export interface ElicitResult extends Result {
    * - "cancel": User dismissed without making an explicit choice
    */
   action: "accept" | "decline" | "cancel";
-  
+
   /**
    * The submitted form data, only present when action is "accept".
    * Contains values matching the requested schema.
