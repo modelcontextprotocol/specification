@@ -6,3 +6,54 @@
 #feature-support-matrix-wrapper table {
     min-width: 800px;
 }
+
+/* CSS numbering for draft specification sections */
+/* Uses CSS counters to automatically number headings in hierarchical format (1., 1.1, 1.1.1, etc.) */
+
+/* Target pages under /specification/draft/ by detecting href attributes containing that path */
+/* Initialize the top-level counter when on a draft specification page */
+body:has([href*="/specification/draft/"]) {
+  counter-reset: h1-counter;
+}
+
+/* Each heading level increments its own counter and resets child counters */
+body:has([href*="/specification/draft/"]) h1 {
+  counter-increment: h1-counter;
+  counter-reset: h2-counter;
+}
+
+body:has([href*="/specification/draft/"]) h2 {
+  counter-increment: h2-counter;
+  counter-reset: h3-counter;
+}
+
+body:has([href*="/specification/draft/"]) h3 {
+  counter-increment: h3-counter;
+  counter-reset: h4-counter;
+}
+
+body:has([href*="/specification/draft/"]) h4 {
+  counter-increment: h4-counter;
+}
+
+/* Insert the hierarchical numbering before each heading */
+/* Format: "1. " for h1 */
+body:has([href*="/specification/draft/"]) h1::before {
+  content: counter(h1-counter) ". ";
+}
+
+/* Format: "1.1 " for h2 */
+body:has([href*="/specification/draft/"]) h2::before {
+  content: counter(h1-counter) "." counter(h2-counter) " ";
+}
+
+/* Format: "1.1.1 " for h3 */
+body:has([href*="/specification/draft/"]) h3::before {
+  content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) " ";
+}
+
+/* Format: "1.1.1.1 " for h4 */
+body:has([href*="/specification/draft/"]) h4::before {
+  content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter) " ";
+}
+
