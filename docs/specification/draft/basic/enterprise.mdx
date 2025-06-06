@@ -210,7 +210,7 @@ The Identity Assertion Authorization Grant JWT is issued and signed by the IdP, 
 | `iat`        | REQUIRED          | Issued-at time of this JWT (Unix timestamp in seconds).                                                                        | [Section 4.1.6 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6) |
 | `scope`      | OPTIONAL          | A JSON string containing a space-separated list of scopes associated with the token, per Section 3.3 of RFC6749.               | `["scope1 scope2"]`<br/>[Section 3.3 of RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-3.3)    |
 
-The typ of the JWT indicated in the JWT header MUST be `oauth-id-jag+jwt`.
+The `typ` claim of the JWT indicated in the JWT header **MUST** be `oauth-id-jag+jwt`.
 
 An example JWT shown with expanded header and payload claims may look like this:
 
