@@ -6,20 +6,8 @@
 export type JSONRPCMessage =
   | JSONRPCRequest
   | JSONRPCNotification
-  | JSONRPCBatchRequest
   | JSONRPCResponse
-  | JSONRPCError
-  | JSONRPCBatchResponse;
-
-/**
- * A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchRequest = (JSONRPCRequest | JSONRPCNotification)[];
-
-/**
- * A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchResponse = (JSONRPCResponse | JSONRPCError)[];
+  | JSONRPCError;
 
 export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v2";
 export const JSONRPC_VERSION = "2.0";
