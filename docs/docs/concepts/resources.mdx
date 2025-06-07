@@ -82,11 +82,14 @@ Servers expose a list of concrete resources via the `resources/list` endpoint. E
 
 ```typescript
 {
-  uri: string;           // Unique identifier for the resource
-  name: string;          // Human-readable name
-  description?: string;  // Optional description
-  mimeType?: string;     // Optional MIME type
-  size?: number;         // Optional size in bytes
+  uri: string;  // Unique identifier for the resource
+  name: string; // Human-readable name for the resource
+
+  // Optional fields:
+  description?: string; // Description
+  mimeType?: string;    // MIME type
+  size?: number;        // Size in bytes
+  uriScope?: "external" | "internal"; // Indicates when URI is directly readable
 }
 ```
 
@@ -96,10 +99,12 @@ For dynamic resources, servers can expose [URI templates](https://datatracker.ie
 
 ```typescript
 {
-  uriTemplate: string;   // URI template following RFC 6570
-  name: string;          // Human-readable name for this type
-  description?: string;  // Optional description
-  mimeType?: string;     // Optional MIME type for all matching resources
+  uriTemplate: string; // URI template following RFC 6570
+  name: string;        // Human-readable name for this type
+
+  // Optional fields:
+  description?: string; // Description
+  mimeType?: string;    // MIME type for all matching resources
 }
 ```
 
@@ -113,12 +118,12 @@ The server responds with a list of resource contents:
 {
   contents: [
     {
-      uri: string;        // The URI of the resource
-      mimeType?: string;  // Optional MIME type
+      uri: string;       // URI of the resource
+      mimeType?: string; // Optional MIME type
 
       // One of:
-      text?: string;      // For text resources
-      blob?: string;      // For binary resources (base64 encoded)
+      text?: string; // For text resources
+      blob?: string; // For binary resources (base64 encoded)
     }
   ]
 }
@@ -129,6 +134,8 @@ The server responds with a list of resource contents:
 Servers may return multiple resources in response to one `resources/read` request. This could be used, for example, to return a list of files inside a directory when the directory is read.
 
 </Tip>
+
+Alternatively, if the resource's `uriScope` property is present, then the resource might be readable directly via its URI, which can be more performant. If `uriScope` is `"external"`, clients may attempt to read via the URI; if the read fails, clients should fall back to `resources/read`. If `uriScope` is `"internal"`, clients must verify that the server is local before attempting to read via the URI; if the server is not local or the read fails, clients should fall back to `resources/read`.
 
 ## Resource updates
 
