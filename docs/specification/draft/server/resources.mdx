@@ -207,9 +207,9 @@ capability **SHOULD** send a notification:
 The protocol supports optional subscriptions to resource changes. Clients can subscribe
 to specific resources and receive notifications when they change.
 
-Servers **MAY** indicate which resources support subscriptions by setting the `subscribable` 
-field to `true` in the resource definition. Clients **MAY** attempt 
-to subscribe to any resource regardless of this field's value. Servers will not send 
+Servers **MAY** indicate which resources support subscriptions by setting the `subscribable`
+field to `true` in the resource definition. Clients **MAY** attempt
+to subscribe to any resource regardless of this field's value. Servers will not send
 notifications for resources that don't support updates.
 
 **Subscribe Request:**
@@ -236,7 +236,6 @@ notifications for resources that don't support updates.
   }
 }
 ```
-
 
 ## Message Flow
 
