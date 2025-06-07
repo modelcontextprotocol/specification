@@ -2,23 +2,25 @@
 title: Security Best Practices
 ---
 
-## 1. Introduction
+<div id="enable-section-numbers" />
 
-### 1.1 Purpose and Scope
+## Introduction
+
+### Purpose and Scope
 
 This document provides security considerations for the Model Context Protocol (MCP), complementing the MCP Authorization specification. This document identifies security risks, attack vectors, and best practices specific to MCP implementations.
 
 The primary audience for this document includes developers implementing MCP authorization flows, MCP server operators, and security professionals evaluating MCP-based systems. This document should be read alongside the MCP Authorization specification and [OAuth 2.0 security best practices](https://datatracker.ietf.org/doc/html/rfc9700).
 
-## 2. Attacks and Mitigations
+## Attacks and Mitigations
 
 This section gives a detailed description of attacks on MCP implementations, along with potential countermeasures.
 
-### 2.1 Confused Deputy Problem
+### Confused Deputy Problem
 
 Attackers can exploit MCP servers proxying other resource servers, creating "[confused deputy](https://en.wikipedia.org/wiki/Confused_deputy_problem)" vulnerabilities.
 
-#### 2.1.1 Terminology
+#### Terminology
 
 **MCP Proxy Server**
 : An MCP server that connects MCP clients to third-party APIs, offering MCP features while delegating operations and acting as a single OAuth client to the third-party API server.
@@ -36,9 +38,9 @@ the third-party authorization server. This Client ID refers to the MCP server ac
 to the Third-Party API. It is the same value for all MCP server to Third-Party API interactions regardless of
 which MCP client initiated the request.
 
-#### 2.1.2 Architecture and Attack Flows
+#### Architecture and Attack Flows
 
-##### 2.1.2.1 Normal OAuth proxy usage (preserves user consent)
+##### Normal OAuth proxy usage (preserves user consent)
 
 ```mermaid
 sequenceDiagram
@@ -66,7 +68,7 @@ sequenceDiagram
     Note over M,UA: Exchange code for token, etc.
 ```
 
-##### 2.1.2.3 Malicious OAuth proxy usage (skips user consent)
+##### Malicious OAuth proxy usage (skips user consent)
 
 ```mermaid
 sequenceDiagram
@@ -94,7 +96,7 @@ sequenceDiagram
    A->>M: Attacker impersonates user to MCP server
 ```
 
-#### 2.1.3 Attack Description
+#### Attack Description
 
 When an MCP proxy server uses a static client ID to authenticate with a third-party
 authorization server that does not support dynamic client registration, the following
@@ -110,16 +112,16 @@ attack becomes possible:
 7. The attacker exchanges the stolen authorization code for access tokens for the MCP server without the user's explicit approval
 8. Attacker now has access to the third-party API as the compromised user
 
-#### 2.1.4 Mitigation
+#### Mitigation
 
 MCP proxy servers using static client IDs **MUST** obtain user consent for each dynamically
 registered client before forwarding to third-party authorization servers (which may require additional consent).
 
-### 2.2 Token Passthrough
+### Token Passthrough
 
 "Token passthrough" is an anti-pattern where an MCP server accepts tokens from an MCP client without validating that the tokens were properly issued _to the MCP server_ and "passing them through" to the downstream API.
 
-#### 2.2.1 Risks
+#### Risks
 
 Token passthrough is explicitly forbidden in the [authorization specification](/specification/draft/basic/authorization) as it introduces a number of security risks, that include:
 
@@ -136,6 +138,6 @@ Token passthrough is explicitly forbidden in the [authorization specification](/
 - **Future Compatibility Risk**
   - Even if an MCP Server starts as a "pure proxy" today, it might need to add security controls later. Starting with proper token audience separation makes it easier to evolve the security model.
 
-#### 2.2.2 Mitigation
+#### Mitigation
 
 MCP servers **MUST NOT** accept any tokens that were not explicitly issued for the MCP server.
