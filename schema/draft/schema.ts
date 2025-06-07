@@ -276,10 +276,11 @@ export interface ServerCapabilities {
 }
 
 /**
- * Describes the name and version of an MCP implementation.
+ * Describes the name and version of an MCP implementation, with an optional displayName for UI representation.
  */
 export interface Implementation {
   name: string;
+  displayName?: string;
   version: string;
 }
 
@@ -455,11 +456,17 @@ export interface Resource {
   uri: string;
 
   /**
-   * A human-readable name for this resource.
-   *
-   * This can be used by clients to populate UI elements.
+   * A name for this resource, used for display if no displayName is provided.
    */
   name: string;
+
+  /**
+   * An optional display name for the resource intended for display purposes only.
+   * It should be human-readable and may be different from the name.
+   *
+   * If it is not provided, the name should be used for display.
+   */
+  displayName?: string;
 
   /**
    * A description of what this resource represents.
@@ -602,9 +609,16 @@ export interface GetPromptResult extends Result {
  */
 export interface Prompt {
   /**
-   * The name of the prompt or prompt template.
+   * The unique identifier of the prompt or prompt template.
    */
   name: string;
+  /**
+   * An optional display name for the prompt or prompt template intended to be used for display purposes only.
+   * It should be human-readable and may be different from the name.
+   *
+   * If it is not provided, the name should be used for display.
+   */
+  displayName?: string;
   /**
    * An optional description of what this prompt provides
    */
@@ -798,6 +812,14 @@ export interface Tool {
    * The name of the tool.
    */
   name: string;
+
+  /**
+   * An optional display name for the tool intended to be used for display purposes only.
+   * It should be human-readable and may be different from the name.
+   *
+   * If it is not provided, the name should be used for display.
+   */
+  displayName?: string;
 
   /**
    * A human-readable description of the tool.

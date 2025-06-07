@@ -745,8 +745,11 @@
             "type": "object"
         },
         "Implementation": {
-            "description": "Describes the name and version of an MCP implementation.",
+            "description": "Describes the name and version of an MCP implementation, with an optional displayName for UI representation.",
             "properties": {
+                "displayName": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -1553,8 +1556,12 @@
                     "description": "An optional description of what this prompt provides",
                     "type": "string"
                 },
+                "displayName": {
+                    "description": "An optional display name for the prompt or prompt template intended to be used for display purposes only.\nIt should be human-readable and may be different from the name.\n\nIf it is not provided, the name should be used for display.",
+                    "type": "string"
+                },
                 "name": {
-                    "description": "The name of the prompt or prompt template.",
+                    "description": "The unique identifier of the prompt or prompt template.",
                     "type": "string"
                 }
             },
@@ -1753,12 +1760,16 @@
                     "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
                 },
+                "displayName": {
+                    "description": "An optional display name for the resource intended for display purposes only.\nIt should be human-readable and may be different from the name.\n\nIf it is not provided, the name should be used for display.",
+                    "type": "string"
+                },
                 "mimeType": {
                     "description": "The MIME type of this resource, if known.",
                     "type": "string"
                 },
                 "name": {
-                    "description": "A human-readable name for this resource.\n\nThis can be used by clients to populate UI elements.",
+                    "description": "A name for this resource, used for display if no displayName is provided.",
                     "type": "string"
                 },
                 "size": {
@@ -2258,6 +2269,10 @@
                 },
                 "description": {
                     "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
+                    "type": "string"
+                },
+                "displayName": {
+                    "description": "An optional display name for the tool intended to be used for display purposes only.\nIt should be human-readable and may be different from the name.\n\nIf it is not provided, the name should be used for display.",
                     "type": "string"
                 },
                 "inputSchema": {
