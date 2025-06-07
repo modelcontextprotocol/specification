@@ -4,9 +4,12 @@ description: Learn how to implement and configure a Model Context Protocol (MCP)
 ---
 
 <Note>
+
 ### Breaking Changes in 0.8.x ⚠️
-**Note:** Version 0.8.x introduces several breaking changes including a new session-based architecture. 
+
+**Note:** Version 0.8.x introduces several breaking changes including a new session-based architecture.
 If you're upgrading from 0.7.0, please refer to the [Migration Guide](https://github.com/modelcontextprotocol/java-sdk/blob/main/migration-0.8.0.md) for detailed instructions.
+
 </Note>
 
 ## Overview
@@ -22,16 +25,18 @@ The MCP Server is a foundational component in the Model Context Protocol (MCP) a
 - Providing structured logging and notifications
 
 <Tip>
-The core `io.modelcontextprotocol.sdk:mcp` module provides STDIO and SSE server transport implementations  without requiring external web frameworks. 
+
+The core `io.modelcontextprotocol.sdk:mcp` module provides STDIO and SSE server transport implementations without requiring external web frameworks.
 
 Spring-specific transport implementations are available as an **optional** dependencies `io.modelcontextprotocol.sdk:mcp-spring-webflux`, `io.modelcontextprotocol.sdk:mcp-spring-webmvc` for [Spring Framework](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-client-boot-starter-docs.html) users.
-</Tip>
 
+</Tip>
 
 The server supports both synchronous and asynchronous APIs, allowing for flexible integration in different application contexts.
 
 <Tabs>
   <Tab title="Sync API">
+
 ```java
 // Create a server with custom configuration
 McpSyncServer syncServer = McpServer.sync(transportProvider)
@@ -53,9 +58,11 @@ syncServer.addPrompt(syncPromptSpecification);
 // Close the server when done
 syncServer.close();
 ```
+
   </Tab>
 
   <Tab title="Async API">
+
 ```java
 // Create an async server with custom configuration
 McpAsyncServer asyncServer = McpServer.async(transportProvider)
@@ -86,19 +93,20 @@ asyncServer.close()
     .doOnSuccess(v -> logger.info("Server closed"))
     .subscribe();
 ```
+
   </Tab>
 </Tabs>
 
-
 ## Server Transport Providers
 
-The transport layer in the MCP SDK is responsible for handling the communication between clients and servers. 
-It provides different implementations to support various communication protocols and patterns. 
+The transport layer in the MCP SDK is responsible for handling the communication between clients and servers.
+It provides different implementations to support various communication protocols and patterns.
 The SDK includes several built-in transport provider implementations:
 
 <Tabs>
-  
+
   <Tab title="STDIO">
+
     <>
       Create in-process based transport:
 
@@ -116,9 +124,11 @@ The SDK includes several built-in transport provider implementations:
         <li>Lightweight implementation</li>
       </ul>
     </>
+
   </Tab>
 
 <Tab title="SSE (WebFlux)">
+
   <>
     <p>Creates WebFlux-based SSE server transport.<br />Requires the <code>mcp-spring-webflux</code> dependency.</p>
 
@@ -144,11 +154,13 @@ The SDK includes several built-in transport provider implementations:
       <li>Message routing and session management</li>
       <li>Graceful shutdown capabilities</li>
     </ul>
+
   </>
+
 </Tab>
 
-
 <Tab title="SSE (WebMvc)">
+
   <>
     <p>Creates WebMvc-based SSE server transport.<br />Requires the <code>mcp-spring-webmvc</code> dependency.</p>
 
@@ -175,11 +187,13 @@ The SDK includes several built-in transport provider implementations:
       <li>Support for traditional web applications</li>
       <li>Synchronous operation handling</li>
     </ul>
+
   </>
+
 </Tab>
 
-
 <Tab title="SSE (Servlet)">
+
   <>
     <p>
       Creates a Servlet-based SSE server transport. It is included in the core <code>mcp</code> module.<br />
@@ -220,11 +234,12 @@ The SDK includes several built-in transport provider implementations:
       <li>Error handling and response formatting</li>
       <li>Graceful shutdown support</li>
     </ul>
+
   </>
+
 </Tab>
 
 </Tabs>
-
 
 ## Server Capabilities
 
@@ -257,12 +272,13 @@ Supported logging levels (in order of increasing severity): DEBUG (0), INFO (1),
 
 ### Tool Specification
 
-The Model Context Protocol allows servers to [expose tools](/specification/2024-11-05/server/tools/) that can be invoked by language models. 
-The Java SDK allows implementing a Tool Specifications with their handler functions. 
+The Model Context Protocol allows servers to [expose tools](/specification/2024-11-05/server/tools/) that can be invoked by language models.
+The Java SDK allows implementing a Tool Specifications with their handler functions.
 Tools enable AI models to perform calculations, access external APIs, query databases, and manipulate files:
 
 <Tabs>
   <Tab title="Sync">
+
 ```java
 // Sync tool specification
 var schema = """
@@ -290,9 +306,11 @@ var syncToolSpecification = new McpServerFeatures.SyncToolSpecification(
     }
 );
 ```
+
   </Tab>
 
   <Tab title="Async">
+
 ```java
 // Async tool specification
 var schema = """
@@ -320,20 +338,22 @@ var asyncToolSpecification = new McpServerFeatures.AsyncToolSpecification(
     }
 );
 ```
+
   </Tab>
 </Tabs>
 
-The Tool specification includes a Tool definition with `name`, `description`, and `parameter schema` followed by a call handler that implements the tool's logic. 
+The Tool specification includes a Tool definition with `name`, `description`, and `parameter schema` followed by a call handler that implements the tool's logic.
 The function's first argument is `McpAsyncServerExchange` for client interaction, and the second is a map of tool arguments.
 
 ### Resource Specification
 
-Specification of a resource with its handler function. 
+Specification of a resource with its handler function.
 Resources provide context to AI models by exposing data such as: File contents, Database records, API responses, System information, Application state.
 Example resource specification:
 
 <Tabs>
   <Tab title="Sync">
+
 ```java
 // Sync resource specification
 var syncResourceSpecification = new McpServerFeatures.SyncResourceSpecification(
@@ -344,9 +364,11 @@ var syncResourceSpecification = new McpServerFeatures.SyncResourceSpecification(
     }
 );
 ```
+
   </Tab>
 
   <Tab title="Async">
+
 ```java
 // Async resource specification
 var asyncResourceSpecification = new McpServerFeatures.AsyncResourceSpecification(
@@ -357,22 +379,24 @@ var asyncResourceSpecification = new McpServerFeatures.AsyncResourceSpecificatio
     }
 );
 ```
+
   </Tab>
 </Tabs>
 
 The resource specification comprised of resource definitions and resource read handler.
 The resource definition including `name`, `description`, and `MIME type`.
 The first argument of the function that handles resource read requests is an `McpAsyncServerExchange` upon which the server can
-interact with the connected client. 
+interact with the connected client.
 The second arguments is a `McpSchema.ReadResourceRequest`.
 
 ### Prompt Specification
 
-As part of the [Prompting capabilities](/specification/2024-11-05/server/prompts/), MCP provides a standardized way for servers to expose prompt templates to clients. 
+As part of the [Prompting capabilities](/specification/2024-11-05/server/prompts/), MCP provides a standardized way for servers to expose prompt templates to clients.
 The Prompt Specification is a structured template for AI model interactions that enables consistent message formatting, parameter substitution, context injection, response formatting, and instruction templating.
 
 <Tabs>
   <Tab title="Sync">
+
 ```java
 // Sync prompt specification
 var syncPromptSpecification = new McpServerFeatures.SyncPromptSpecification(
@@ -385,9 +409,11 @@ var syncPromptSpecification = new McpServerFeatures.SyncPromptSpecification(
     }
 );
 ```
+
   </Tab>
 
   <Tab title="Async">
+
 ```java
 // Async prompt specification
 var asyncPromptSpecification = new McpServerFeatures.AsyncPromptSpecification(
@@ -400,11 +426,12 @@ var asyncPromptSpecification = new McpServerFeatures.AsyncPromptSpecification(
     }
 );
 ```
+
   </Tab>
 </Tabs>
 
 The prompt definition includes name (identifier for the prompt), description (purpose of the prompt), and list of arguments (parameters for templating).
-The handler function processes requests and returns formatted templates. 
+The handler function processes requests and returns formatted templates.
 The first argument is `McpAsyncServerExchange` for client interaction, and the second argument is a `GetPromptRequest` instance.
 
 ### Completion Specification
@@ -413,16 +440,17 @@ As part of the [Completion capabilities](/specification/2025-03-26/server/utilit
 
 <Tabs>
   <Tab title="Sync">
+
 ```java
 // Sync completion specification
 var syncCompletionSpecification = new McpServerFeatures.SyncCompletionSpecification(
 			new McpSchema.PromptReference("code_review"), (exchange, request) -> {
-        
+
         // completion implementation ...
-        
+
         return new McpSchema.CompleteResult(
             new CompleteResult.CompleteCompletion(
-              List.of("python", "pytorch", "pyside"), 
+              List.of("python", "pytorch", "pyside"),
               10, // total
               false // hasMore
             ));
@@ -441,9 +469,11 @@ var mcpServer = McpServer.sync(mcpServerTransportProvider)
   .build();
 
 ```
+
   </Tab>
 
   <Tab title="Async">
+
 ```java
 // Async prompt specification
 var asyncCompletionSpecification = new McpServerFeatures.AsyncCompletionSpecification(
@@ -453,7 +483,7 @@ var asyncCompletionSpecification = new McpServerFeatures.AsyncCompletionSpecific
 
         return Mono.just(new McpSchema.CompleteResult(
             new CompleteResult.CompleteCompletion(
-              List.of("python", "pytorch", "pyside"), 
+              List.of("python", "pytorch", "pyside"),
               10, // total
               false // hasMore
             )));
@@ -472,20 +502,19 @@ var mcpServer = McpServer.async(mcpServerTransportProvider)
   .build();
 
 ```
+
   </Tab>
 </Tabs>
 
 The `McpSchema.CompletionReference` definition defines the type (`PromptRefernce` or `ResourceRefernce`) and the identifier for the completion specification (e.g handler).
-The handler function processes requests and returns the complition response. 
+The handler function processes requests and returns the complition response.
 The first argument is `McpAsyncServerExchange` for client interaction, and the second argument is a `CompleteRequest` instance.
-
 
 Check the [using completion](/sdk/java/mcp-client#using-completion) to learn how to use the completion capabilities on the client side.
 
-
 ### Using Sampling from a Server
 
-To use [Sampling capabilities](/specification/2024-11-05/client/sampling/), connect to a client that supports sampling. 
+To use [Sampling capabilities](/specification/2024-11-05/client/sampling/), connect to a client that supports sampling.
 No special server configuration is needed, but verify client sampling support before making requests.
 Learn about [client sampling support](./mcp-client#sampling-support).
 
@@ -493,6 +522,7 @@ Once connected to a compatible client, the server can request language model gen
 
 <Tabs>
   <Tab title="Sync API">
+
 ```java
 // Create a server
 McpSyncServer server = McpServer.sync(transportProvider)
@@ -507,7 +537,7 @@ var calculatorTool = new McpServerFeatures.SyncToolSpecification(
         if (exchange.getClientCapabilities().sampling() == null) {
             return new CallToolResult("Client does not support AI capabilities", false);
         }
-        
+
         // Create a sampling request
         McpSchema.CreateMessageRequest request = McpSchema.CreateMessageRequest.builder()
             .messages(List.of(new McpSchema.SamplingMessage(McpSchema.Role.USER,
@@ -523,10 +553,10 @@ var calculatorTool = new McpServerFeatures.SyncToolSpecification(
             .systemPrompt("You are a helpful calculator assistant. Provide only the numerical answer.")
             .maxTokens(100)
             .build();
-        
+
         // Request sampling from the client
         McpSchema.CreateMessageResult result = exchange.createMessage(request);
-        
+
         // Process the result
         String answer = result.content().text();
         return new CallToolResult(answer, false);
@@ -536,9 +566,11 @@ var calculatorTool = new McpServerFeatures.SyncToolSpecification(
 // Add the tool to the server
 server.addTool(calculatorTool);
 ```
+
   </Tab>
 
   <Tab title="Async API">
+
 ```java
 // Create a server
 McpAsyncServer server = McpServer.async(transportProvider)
@@ -553,7 +585,7 @@ var calculatorTool = new McpServerFeatures.AsyncToolSpecification(
         if (exchange.getClientCapabilities().sampling() == null) {
             return Mono.just(new CallToolResult("Client does not support AI capabilities", false));
         }
-        
+
         // Create a sampling request
         McpSchema.CreateMessageRequest request = McpSchema.CreateMessageRequest.builder()
             .content(new McpSchema.TextContent("Calculate: " + arguments.get("expression")))
@@ -568,7 +600,7 @@ var calculatorTool = new McpServerFeatures.AsyncToolSpecification(
             .systemPrompt("You are a helpful calculator assistant. Provide only the numerical answer.")
             .maxTokens(100)
             .build();
-        
+
         // Request sampling from the client
         return exchange.createMessage(request)
             .map(result -> {
@@ -583,22 +615,23 @@ var calculatorTool = new McpServerFeatures.AsyncToolSpecification(
 server.addTool(calculatorTool)
     .subscribe();
 ```
+
   </Tab>
 </Tabs>
 
-The `CreateMessageRequest` object allows you to specify: `Content` - the input text or image for the model, 
-`Model Preferences` - hints and priorities for model selection, `System Prompt` - instructions for the model's behavior and 
+The `CreateMessageRequest` object allows you to specify: `Content` - the input text or image for the model,
+`Model Preferences` - hints and priorities for model selection, `System Prompt` - instructions for the model's behavior and
 `Max Tokens` - maximum length of the generated response.
 
 ### Logging Support
 
 The server provides structured logging capabilities that allow sending log messages to clients with different severity levels. The
- log notifications can only be sent from within an existing client session, such as tools, resources, and prompts calls.
+log notifications can only be sent from within an existing client session, such as tools, resources, and prompts calls.
 
-For example, we can send a log message from within a tool handler function. 
+For example, we can send a log message from within a tool handler function.
 On the client side, you can register a logging consumer to receive log messages from the server and set the minimum logging level to filter messages.
 
-```java	
+```java
 var mcpClient = McpClient.sync(transport)
         .loggingConsumer(notification -> {
             System.out.println("Received log message: " + notification.data());
@@ -618,7 +651,7 @@ The server can send log messages using the `McpAsyncServerExchange`/`McpSyncServ
 ```java
 var tool = new McpServerFeatures.AsyncToolSpecification(
     new McpSchema.Tool("logging-test", "Test logging notifications", emptyJsonSchema),
-    (exchange, request) -> {  
+    (exchange, request) -> {
 
       exchange.loggingNotification( // Use the exchange to send log messages
           McpSchema.LoggingMessageNotification.builder()
