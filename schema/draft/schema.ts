@@ -650,16 +650,12 @@ export interface PromptMessage {
 }
 
 /**
+ * A resource that the server is capable of reading, embedded into a prompt or tool call result.
  *
- * A reference to a resource descriptor, embedded into a prompt or tool call result.
- *
- * It is up to the client how best to render linked resources for the benefit
- * of the LLM and/or the user.
- *
+ * Note: linked resources are not guaranteed to appear in the results of `resources/list` requests.
  */
-export interface LinkedResource {
-  type: "linkedresource";
-  resource: Resource;
+export interface LinkedResource extends Resource {
+  type: "linked_resource";
 }
 
 
@@ -1138,7 +1134,7 @@ export interface ModelHint {
 export interface CompleteRequest extends Request {
   method: "completion/complete";
   params: {
-    ref: PromptReference | ResourceReference;
+    ref: PromptReference | ResourceTemplateReference;
     /**
      * The argument's information
      */
@@ -1178,7 +1174,7 @@ export interface CompleteResult extends Result {
 /**
  * A reference to a resource or resource template definition.
  */
-export interface ResourceReference {
+export interface ResourceTemplateReference {
   type: "ref/resource";
   /**
    * The URI or URI template of the resource.

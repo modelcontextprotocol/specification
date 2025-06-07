@@ -53,6 +53,7 @@ while maintaining simplicity:
    MCP clients **MUST** use the OAuth 2.0 Authorization Server Metadata.
 
 ### 2.2 Roles
+
 A protected MCP server acts as an [OAuth 2.1 resource server](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
 capable of accepting and responding to protected resource requests using access tokens.
 
@@ -65,6 +66,7 @@ resource server or a separate entity. Section [2.3 Authorization Server Discover
 specifies how an MCP server indicates the location of its corresponding authorization server to a client.
 
 ### 2.3 Authorization Server Discovery
+
 This section describes the mechanisms by which MCP servers advertise their associated
 authorization servers to MCP clients, as well as the discovery process through which MCP
 clients can determine authorization server endpoints and supported capabilities.
@@ -93,6 +95,7 @@ MCP clients **MUST** follow the OAuth 2.0 Authorization Server Metadata [RFC8414
 specification to obtain the information required to interact with the authorization server.
 
 #### 2.3.3 Sequence Diagram
+
 The following diagram outlines an example flow:
 
 ```mermaid

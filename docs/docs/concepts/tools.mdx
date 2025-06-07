@@ -6,7 +6,9 @@ description: "Enable LLMs to perform actions through your server"
 Tools are a powerful primitive in the Model Context Protocol (MCP) that enable servers to expose executable functionality to clients. Through tools, LLMs can interact with external systems, perform computations, and take actions in the real world.
 
 <Note>
-  Tools are designed to be **model-controlled**, meaning that tools are exposed from servers to clients with the intention of the AI model being able to automatically invoke them (with a human in the loop to grant approval).
+
+Tools are designed to be **model-controlled**, meaning that tools are exposed from servers to clients with the intention of the AI model being able to automatically invoke them (with a human in the loop to grant approval).
+
 </Note>
 
 ## Overview
@@ -47,6 +49,7 @@ Here's an example of implementing a basic tool in an MCP server:
 
 <Tabs>
   <Tab title="TypeScript">
+
     ```typescript
     const server = new Server({
       name: "example-server",
@@ -91,8 +94,10 @@ Here's an example of implementing a basic tool in an MCP server:
       throw new Error("Tool not found");
     });
     ```
+
   </Tab>
   <Tab title="Python">
+
     ```python
     app = Server("example-server")
 
@@ -125,6 +130,7 @@ Here's an example of implementing a basic tool in an MCP server:
             return [types.TextContent(type="text", text=str(result))]
         raise ValueError(f"Tool not found: {name}")
     ```
+
   </Tab>
 </Tabs>
 
@@ -255,6 +261,7 @@ Here's an example of proper error handling for tools:
 
 <Tabs>
   <Tab title="TypeScript">
+
     ```typescript
     try {
       // Tool operation
@@ -279,8 +286,10 @@ Here's an example of proper error handling for tools:
       };
     }
     ```
+
   </Tab>
   <Tab title="Python">
+
     ```python
     try:
         # Tool operation
@@ -304,6 +313,7 @@ Here's an example of proper error handling for tools:
             ]
         )
     ```
+
   </Tab>
 </Tabs>
 
@@ -326,13 +336,13 @@ Tool annotations serve several key purposes:
 
 The MCP specification defines the following annotations for tools:
 
-| Annotation | Type | Default | Description |
-|------------|------|---------|-------------|
-| `title` | string | - | A human-readable title for the tool, useful for UI display |
-| `readOnlyHint` | boolean | false | If true, indicates the tool does not modify its environment |
-| `destructiveHint` | boolean | true | If true, the tool may perform destructive updates (only meaningful when `readOnlyHint` is false) |
-| `idempotentHint` | boolean | false | If true, calling the tool repeatedly with the same arguments has no additional effect (only meaningful when `readOnlyHint` is false) |
-| `openWorldHint` | boolean | true | If true, the tool may interact with an "open world" of external entities |
+| Annotation        | Type    | Default | Description                                                                                                                          |
+| ----------------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `title`           | string  | -       | A human-readable title for the tool, useful for UI display                                                                           |
+| `readOnlyHint`    | boolean | false   | If true, indicates the tool does not modify its environment                                                                          |
+| `destructiveHint` | boolean | true    | If true, the tool may perform destructive updates (only meaningful when `readOnlyHint` is false)                                     |
+| `idempotentHint`  | boolean | false   | If true, calling the tool repeatedly with the same arguments has no additional effect (only meaningful when `readOnlyHint` is false) |
+| `openWorldHint`   | boolean | true    | If true, the tool may interact with an "open world" of external entities                                                             |
 
 ### Example usage
 
@@ -403,6 +413,7 @@ Here's how to define tools with annotations for different scenarios:
 
 <Tabs>
   <Tab title="TypeScript">
+
     ```typescript
     server.setRequestHandler(ListToolsRequestSchema, async () => {
       return {
@@ -426,13 +437,15 @@ Here's how to define tools with annotations for different scenarios:
       };
     });
     ```
+
   </Tab>
   <Tab title="Python">
+
     ```python
     from mcp.server.fastmcp import FastMCP
-    
+
     mcp = FastMCP("example-server")
-    
+
     @mcp.tool(
         annotations={
             "title": "Calculate Sum",
@@ -442,7 +455,7 @@ Here's how to define tools with annotations for different scenarios:
     )
     async def calculate_sum(a: float, b: float) -> str:
         """Add two numbers together.
-        
+
         Args:
             a: First number to add
             b: Second number to add
@@ -450,6 +463,7 @@ Here's how to define tools with annotations for different scenarios:
         result = a + b
         return str(result)
     ```
+
   </Tab>
 </Tabs>
 
