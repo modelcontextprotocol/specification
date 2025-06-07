@@ -33,8 +33,7 @@ npm install  # install dependencies
 ## Making Changes
 
 Note that schema changes are made to `schema.ts`, and `schema.json` is generated from
-`schema.ts`. You should validate your `schema.ts` changes first and then generate the
-`schema.json`.
+`schema.ts`.
 
 1. Create a new branch:
 
@@ -42,30 +41,26 @@ Note that schema changes are made to `schema.ts`, and `schema.json` is generated
 git checkout -b feature/your-feature-name
 ```
 
-2. Make your changes
-3. Validate your changes:
+2. Make your changes.
+
+3. Validate schema changes and generate `schema.json`:
 
 ```bash
-npm run validate:schema    # validate schema
+npm run check:schema:ts
+npm run generate:json
 ```
 
-4. Generate the `schema.json`:
+4. Validate documentation changes and apply formatting:
 
 ```bash
-npm run generate:json      # generate JSON schema
+npm run check:docs
+npm run format
 ```
 
-5. Run docs locally (optional):
+5. Preview documentation locally (optional):
 
 ```bash
 npm run serve:docs
-```
-
-6. Format/lint your changes:
-
-```bash
-npm run format:check   # check formatting
-npm run format         # apply formatting
 ```
 
 ### Documentation Guidelines
@@ -77,7 +72,7 @@ When contributing to the documentation:
 - Include code examples where appropriate
 - Use proper MDX formatting and components
 - Test all links and code samples
-  - You may run `npm run check-links` to look for broken internal links.
+  - You may run `npm run check:docs:links` to look for broken internal links.
 - Use appropriate headings: "When to use", "Steps", and "Tips" for tutorials
 - Place new pages in appropriate sections (concepts, tutorials, etc.)
 - Update `docs.json` when adding new pages
