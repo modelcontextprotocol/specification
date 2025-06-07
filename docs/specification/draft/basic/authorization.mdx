@@ -125,16 +125,7 @@ sequenceDiagram
     Note over C,M: MCP communication continues with valid token
 ```
 
-### 2.4 MCP specific headers for discovery
-
-MCP clients **SHOULD** include the `MCP-Protocol-Version: <protocol-version>` HTTP header during
-any request to the MCP server allowing the MCP server to respond based on the MCP protocol version.
-
-MCP servers **SHOULD** use the `MCP-Protocol-Version` header to determine compatibility with the MCP client.
-
-For example: `MCP-Protocol-Version: 2024-11-05`
-
-### 2.5 Dynamic Client Registration
+### 2.4 Dynamic Client Registration
 
 MCP clients and authorization servers **SHOULD** support the
 OAuth 2.0 Dynamic Client Registration Protocol [RFC7591](https://datatracker.ietf.org/doc/html/rfc7591)
@@ -157,7 +148,7 @@ these authorization servers, MCP clients will have to either:
    OAuth client themselves (e.g., through a configuration interface hosted by the
    server).
 
-### 2.6 Authorization Flow Steps
+### 2.5 Authorization Flow Steps
 
 The complete Authorization flow proceeds as follows:
 
@@ -198,9 +189,9 @@ sequenceDiagram
     Note over C,M: MCP communication continues with valid token
 ```
 
-### 2.7 Access Token Usage
+### 2.6 Access Token Usage
 
-#### 2.7.1 Token Requirements
+#### 2.6.1 Token Requirements
 
 Access token handling when making requests to MCP servers **MUST** conform to the requirements defined in
 [OAuth 2.1 Section 5 "Resource Requests"](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5).
@@ -226,7 +217,7 @@ Host: mcp.example.com
 Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 ```
 
-#### 2.7.2 Token Handling
+#### 2.6.2 Token Handling
 
 MCP servers, acting in their role as an OAuth 2.1 resource server, **MUST** validate access tokens as described in
 [OAuth 2.1 Section 5.2](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.2).
@@ -242,7 +233,7 @@ own resources.
 
 MCP servers **MUST NOT** accept or transit any other tokens.
 
-### 2.8 Error Handling
+### 2.7 Error Handling
 
 Servers **MUST** return appropriate HTTP status codes for authorization errors:
 

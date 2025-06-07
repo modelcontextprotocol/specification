@@ -732,7 +732,7 @@ export interface CallToolResult extends Result {
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
-   * 
+   *
    * Any errors that originate from the tool SHOULD be reported inside the result
    * object, with `isError` set to true, _not_ as an MCP protocol-level error
    * response. Otherwise, the LLM would not be able to see that an error occurred
@@ -843,7 +843,7 @@ export interface Tool {
   };
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * An optional JSON Schema object defining the structure of the tool's output returned in
    * the structuredContent field of a CallToolResult.
    */
   outputSchema?: {
@@ -1158,6 +1158,16 @@ export interface CompleteRequest extends Request {
        */
       value: string;
     };
+
+    /**
+     * Additional, optional context for completions
+     */
+    context?: {
+       /**
+        * Previously-resolved variables in a URI template or prompt.
+        */
+        arguments?: { [key: string]: string };
+     };
   };
 }
 
