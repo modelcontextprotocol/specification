@@ -388,7 +388,7 @@ export interface ReadResourceRequest extends Request {
  * The server's response to a resources/read request from the client.
  */
 export interface ReadResourceResult extends Result {
-  contents: (TextResourceContents | BlobResourceContents)[];
+  contents: (TextResourceContents | BlobResourceContents | ToolResultResourceContents)[];
 }
 
 /**
@@ -685,6 +685,145 @@ export interface ListToolsRequest extends PaginatedRequest {
  */
 export interface ListToolsResult extends PaginatedResult {
   tools: Tool[];
+}
+
+/**
+ * The status of an asynchronous operation.
+ */
+export type OperationStatus = "PENDING" | "ACTIVE" | "UPDATING" | "FAILED" | "DELETING" | "DELETE_UNSUCCESSFUL";
+
+/**
+ * Information about an asynchronous operation.
+ */
+export interface AsyncOperation {
+  /**
+   * The ID of the request that created this operation.
+   */
+  requestId: string | number;
+  
+  /**
+   * Current status of the operation.
+   */
+  status: OperationStatus;
+  
+  /**
+   * The URI of the resource that will contain the result when ready.
+   */
+  resourceUri: string;
+  
+  /**
+   * Time in seconds when the operation will expire.
+   */
+  expiryTime?: number;
+  
+  /**
+   * Error message if the operation failed.
+   */
+  errorMessage?: string;
+}
+
+/**
+ * Tool result contents of a resource.
+ */
+export interface ToolResultResourceContents extends ResourceContents {
+  /**
+   * The result of a tool call.
+   */
+  toolResult: CallToolResult;
+}
+
+/**
+ * Parameters for calling a tool asynchronously.
+ */
+export interface CallToolAsyncRequestParams {
+  /**
+   * Name of the tool to call.
+   */
+  name: string;
+  
+  /**
+   * Arguments to pass to the tool.
+   */
+  arguments?: { [key: string]: unknown };
+  
+  /**
+   * Number of seconds to keep the result available.
+   */
+  keepAlive?: number;
+}
+
+/**
+ * Used by the client to invoke a tool asynchronously.
+ */
+export interface CallToolAsyncRequest {
+  method: "tools/callAsync";
+  params: CallToolAsyncRequestParams;
+}
+
+/**
+ * The server's response to an asynchronous tool call request.
+ */
+export interface CallToolAsyncResult {
+  /**
+   * Information about the asynchronous operation.
+   */
+  operation: AsyncOperation;
+}
+
+/**
+ * Parameters for getting the status of an operation.
+ */
+export interface GetOperationRequestParams {
+  /**
+   * The ID of the request to check.
+   */
+  requestId: string | number;
+}
+
+/**
+ * Used by the client to check an operation's status.
+ */
+export interface GetOperationRequest {
+  method: "operations/get";
+  params: GetOperationRequestParams;
+}
+
+/**
+ * The server's response to an operation status check.
+ */
+export interface GetOperationResult {
+  /**
+   * The current state of the operation.
+   */
+  operation: AsyncOperation;
+}
+
+/**
+ * Parameters for cancelling an operation.
+ */
+export interface CancelOperationRequestParams {
+  /**
+   * The ID of the request to cancel.
+   */
+  requestId: string | number;
+}
+
+/**
+ * Used by the client to cancel an operation.
+ */
+export interface CancelOperationRequest {
+  method: "operations/cancel";
+  params: CancelOperationRequestParams;
+}
+
+/**
+ * The server's response to an operation cancellation request.
+ */
+export interface CancelOperationResult {
+  /**
+   * The updated state of the operation.
+   */
+  operation: AsyncOperation;
 }
 
 /**
