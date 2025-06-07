@@ -227,8 +227,8 @@ Tool results can contain multiple content items of different types:
 
 #### Embedded Resources
 
-[Resources](/specification/2025-03-26/server/resources) **MAY** be embedded, to provide additional context
-or data, behind a URI that can be subscribed to or fetched again by the client later:
+[Resources](resources) **MAY** be embedded to provide additional context
+or data using a suitable [URI scheme](./resources#common-uri-schemes). Servers that use embedded resources **SHOULD** implement the `resources` capability:
 
 ```json
 {
