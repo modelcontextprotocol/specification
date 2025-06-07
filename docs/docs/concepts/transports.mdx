@@ -12,6 +12,7 @@ MCP uses [JSON-RPC](https://www.jsonrpc.org/) 2.0 as its wire format. The transp
 There are three types of JSON-RPC messages used:
 
 ### Requests
+
 ```typescript
 {
   jsonrpc: "2.0",
@@ -22,6 +23,7 @@ There are three types of JSON-RPC messages used:
 ```
 
 ### Responses
+
 ```typescript
 {
   jsonrpc: "2.0",
@@ -36,6 +38,7 @@ There are three types of JSON-RPC messages used:
 ```
 
 ### Notifications
+
 ```typescript
 {
   jsonrpc: "2.0",
@@ -53,6 +56,7 @@ MCP includes two standard transport implementations:
 The stdio transport enables communication through standard input and output streams. This is particularly useful for local integrations and command-line tools.
 
 Use stdio when:
+
 - Building command-line tools
 - Implementing local integrations
 - Needing simple process communication
@@ -60,6 +64,7 @@ Use stdio when:
 
 <Tabs>
   <Tab title="TypeScript (Server)">
+
     ```typescript
     const server = new Server({
       name: "example-server",
@@ -71,8 +76,10 @@ Use stdio when:
     const transport = new StdioServerTransport();
     await server.connect(transport);
     ```
+
   </Tab>
   <Tab title="TypeScript (Client)">
+
     ```typescript
     const client = new Client({
       name: "example-client",
@@ -87,8 +94,10 @@ Use stdio when:
     });
     await client.connect(transport);
     ```
+
   </Tab>
   <Tab title="Python (Server)">
+
     ```python
     app = Server("example-server")
 
@@ -99,8 +108,10 @@ Use stdio when:
             app.create_initialization_options()
         )
     ```
+
   </Tab>
   <Tab title="Python (Client)">
+
     ```python
     params = StdioServerParameters(
         command="./server",
@@ -111,14 +122,25 @@ Use stdio when:
         async with ClientSession(streams[0], streams[1]) as session:
             await session.initialize()
     ```
+
   </Tab>
+
 </Tabs>
 
 ### Server-Sent Events (SSE)
 
+<Warning>
+
+The SSE Transport has been [**replaced**](http://modelcontextprotocol.io/specification/2025-03-26/changelog#major-changes) with a more
+flexible [Streamable HTTP](http://modelcontextprotocol.io/specification/2025-03-26/basic/transports) transport. Refer to the [Specification](http://modelcontextprotocol.io/specification/2025-03-26/basic/transports)
+and latest SDKs for the most recent information.
+
+</Warning>
+
 SSE transport enables server-to-client streaming with HTTP POST requests for client-to-server communication.
 
 Use SSE when:
+
 - Only server-to-client streaming is needed
 - Working with restricted networks
 - Implementing simple updates
@@ -135,18 +157,19 @@ Without these protections, attackers could use DNS rebinding to interact with lo
 
 <Tabs>
   <Tab title="TypeScript (Server)">
+
     ```typescript
     import express from "express";
-    
+
     const app = express();
-    
+
     const server = new Server({
       name: "example-server",
       version: "1.0.0"
     }, {
       capabilities: {}
     });
-    
+
     let transport: SSEServerTransport | null = null;
 
     app.get("/sse", (req, res) => {
@@ -162,8 +185,10 @@ Without these protections, attackers could use DNS rebinding to interact with lo
 
     app.listen(3000);
     ```
+
   </Tab>
   <Tab title="TypeScript (Client)">
+
     ```typescript
     const client = new Client({
       name: "example-client",
@@ -177,8 +202,10 @@ Without these protections, attackers could use DNS rebinding to interact with lo
     );
     await client.connect(transport);
     ```
+
   </Tab>
   <Tab title="Python (Server)">
+
     ```python
     from mcp.server.sse import SseServerTransport
     from starlette.applications import Starlette
@@ -201,14 +228,18 @@ Without these protections, attackers could use DNS rebinding to interact with lo
         ]
     )
     ```
+
   </Tab>
   <Tab title="Python (Client)">
+
     ```python
     async with sse_client("http://localhost:8000/sse") as streams:
         async with ClientSession(streams[0], streams[1]) as session:
             await session.initialize()
     ```
+
   </Tab>
+
 </Tabs>
 
 ## Custom Transports
@@ -216,6 +247,7 @@ Without these protections, attackers could use DNS rebinding to interact with lo
 MCP makes it easy to implement custom transports for specific needs. Any transport implementation just needs to conform to the Transport interface:
 
 You can implement custom transports for:
+
 - Custom network protocols
 - Specialized communication channels
 - Integration with existing systems
@@ -223,6 +255,7 @@ You can implement custom transports for:
 
 <Tabs>
   <Tab title="TypeScript">
+
     ```typescript
     interface Transport {
       // Start processing messages
@@ -240,8 +273,10 @@ You can implement custom transports for:
       onmessage?: (message: JSONRPCMessage) => void;
     }
     ```
+
   </Tab>
   <Tab title="Python">
+
     Note that while MCP Servers are often implemented with asyncio, we recommend
     implementing low-level interfaces like transports with `anyio` for wider compatibility.
     ```python
@@ -275,7 +310,9 @@ You can implement custom transports for:
                 await write_stream.aclose()
                 await read_stream.aclose()
     ```
+
   </Tab>
+
 </Tabs>
 
 ## Error Handling
@@ -292,6 +329,7 @@ Example error handling:
 
 <Tabs>
   <Tab title="TypeScript">
+
     ```typescript
     class ExampleTransport implements Transport {
       async start() {
@@ -313,10 +351,13 @@ Example error handling:
       }
     }
     ```
+
   </Tab>
   <Tab title="Python">
-  Note that while MCP Servers are often implemented with asyncio, we recommend
-  implementing low-level interfaces like transports with `anyio` for wider compatibility.
+
+Note that while MCP Servers are often implemented with asyncio, we recommend
+implementing low-level interfaces like transports with `anyio` for wider compatibility.
+
     ```python
     @contextmanager
     async def example_transport(scope: Scope, receive: Receive, send: Send):
@@ -350,7 +391,9 @@ Example error handling:
             logger.error(f"Failed to initialize transport: {exc}")
             raise exc
     ```
+
   </Tab>
+
 </Tabs>
 
 ## Best Practices
@@ -373,12 +416,14 @@ When implementing or using MCP transport:
 When implementing transport:
 
 ### Authentication and Authorization
+
 - Implement proper authentication mechanisms
 - Validate client credentials
 - Use secure token handling
 - Implement authorization checks
 
 ### Data Security
+
 - Use TLS for network transport
 - Encrypt sensitive data
 - Validate message integrity
@@ -386,6 +431,7 @@ When implementing transport:
 - Sanitize input data
 
 ### Network Security
+
 - Implement rate limiting
 - Use appropriate timeouts
 - Handle denial of service scenarios

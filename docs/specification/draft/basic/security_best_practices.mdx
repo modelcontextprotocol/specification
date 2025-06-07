@@ -27,14 +27,14 @@ Attackers can exploit MCP servers proxying other resource servers, creating "[co
 : Authorization server that protects the third-party API. It may lack dynamic client registration support, requiring MCP proxy to use a static client ID for all requests.
 
 **Third-Party API**
-: The protected resource server that provides the actual API functionality. Access to this 
-  API requires tokens issued by the third-party authorization server.
+: The protected resource server that provides the actual API functionality. Access to this
+API requires tokens issued by the third-party authorization server.
 
 **Static Client ID**
 : A fixed OAuth 2.0 client identifier used by the MCP proxy server when communicating with
-  the third-party authorization server. This Client ID refers to the MCP server acting as a client
-  to the Third-Party API. It is the same value for all MCP server to Third-Party API interactions regardless of
-  which MCP client initiated the request.
+the third-party authorization server. This Client ID refers to the MCP server acting as a client
+to the Third-Party API. It is the same value for all MCP server to Third-Party API interactions regardless of
+which MCP client initiated the request.
 
 #### 2.1.2 Architecture and Attack Flows
 
@@ -42,7 +42,7 @@ Attackers can exploit MCP servers proxying other resource servers, creating "[co
 
 ```mermaid
 sequenceDiagram
-    participant UA as User-Agent (Browser)  
+    participant UA as User-Agent (Browser)
     participant MC as MCP Client
     participant M as MCP Proxy Server
     participant TAS as Third-Party Authorization Server
@@ -96,8 +96,8 @@ sequenceDiagram
 
 #### 2.1.3 Attack Description
 
-When an MCP proxy server uses a static client ID to authenticate with a third-party 
-authorization server that does not support dynamic client registration, the following 
+When an MCP proxy server uses a static client ID to authenticate with a third-party
+authorization server that does not support dynamic client registration, the following
 attack becomes possible:
 
 1. A user authenticates normally through the MCP proxy server to access the third-party API
