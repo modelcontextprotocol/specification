@@ -228,18 +228,38 @@ Tool results may contain [**structured**](#structured-content) or **unstructured
 }
 ```
 
+#### Linked Resources
+
+[Resources](/specification/draft/server/resources) **MAY** be linked, to provide additional context
+or data, behind a URI that can be subscribed to or fetched by the client:
+
+```json
+{
+  "type": "linked_resource",
+  "uri": "file:///project/src/main.rs",
+  "name": "main.rs",
+  "description": "Primary application entry point",
+  "mimeType": "text/x-rust"
+}
+```
+
+<Info>
+  Linked resources returned by tools are not guaranteed to appear in the results
+  of a `resources/list` request.
+</Info>
+
 #### Embedded Resources
 
 [Resources](/specification/draft/server/resources) **MAY** be embedded, to provide additional context
-or data, behind a URI that can be subscribed to or fetched again by the client later:
+or data, along with a URI that can be subscribed to or fetched again by the client later:
 
 ```json
 {
   "type": "resource",
   "resource": {
-    "uri": "resource://example",
-    "mimeType": "text/plain",
-    "text": "Resource content"
+    "uri": "file:///project/src/main.rs",
+    "mimeType": "text/x-rust",
+    "text": "fn main() {\n    println!(\"Hello world!\");\n}"
   }
 }
 ```

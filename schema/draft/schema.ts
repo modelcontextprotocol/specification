@@ -646,8 +646,18 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
+  content: ContentBlock;
 }
+
+/**
+ * A resource that the server is capable of reading, embedded into a prompt or tool call result.
+ *
+ * Note: linked resources are not guaranteed to appear in the results of `resources/list` requests.
+ */
+export interface LinkedResource extends Resource {
+  type: "linked_resource";
+}
+
 
 /**
  * The contents of a resource, embedded into a prompt or tool call result.
@@ -664,7 +674,6 @@ export interface EmbeddedResource {
    */
   annotations?: Annotations;
 }
-
 /**
  * An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
  */
@@ -694,7 +703,7 @@ export interface CallToolResult extends Result {
   /**
    * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: ContentBlock[];
 
   /**
    * An optional JSON object that represents the structured result of the tool call.
@@ -964,6 +973,14 @@ export interface Annotations {
    */
   priority?: number;
 }
+
+/**  */
+export type ContentBlock =
+  | TextContent
+  | ImageContent
+  | AudioContent
+  | LinkedResource
+  | EmbeddedResource;
 
 /**
  * Text provided to or from an LLM.
@@ -1303,7 +1320,7 @@ export interface EnumSchema {
   title?: string;
   description?: string;
   enum: string[];
-  enumNames?: string[];  // Display names for enum values
+  enumNames?: string[]; // Display names for enum values
 }
 
 /**
@@ -1347,7 +1364,11 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
+export type ClientResult =
+  | EmptyResult
+  | CreateMessageResult
+  | ListRootsResult
+  | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
