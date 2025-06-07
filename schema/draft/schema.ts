@@ -977,6 +977,11 @@ export interface TextContent {
   text: string;
 
   /**
+   * Optional MIME type of the text content (e.g. "text/html"). Defaults to "text/plain".
+   */
+  mimeType?: string;
+
+  /**
    * Optional annotations for the client.
    */
   annotations?: Annotations;
@@ -1136,11 +1141,11 @@ export interface CompleteRequest extends Request {
      * Additional, optional context for completions
      */
     context?: {
-       /**
-        * Previously-resolved variables in a URI template or prompt.
-        */
-        arguments?: { [key: string]: string };
-     };
+      /**
+       * Previously-resolved variables in a URI template or prompt.
+       */
+      arguments?: { [key: string]: string };
+    };
   };
 }
 
@@ -1303,7 +1308,7 @@ export interface EnumSchema {
   title?: string;
   description?: string;
   enum: string[];
-  enumNames?: string[];  // Display names for enum values
+  enumNames?: string[]; // Display names for enum values
 }
 
 /**
@@ -1347,7 +1352,11 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
+export type ClientResult =
+  | EmptyResult
+  | CreateMessageResult
+  | ListRootsResult
+  | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
