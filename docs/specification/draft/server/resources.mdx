@@ -29,6 +29,15 @@ interaction model.
 
 ## Capabilities
 
+<Info>
+  As of the 2025-03-26 draft, servers SHOULD enumerate all features they support
+  in their `capabilities` object, not just a minimal subset. The set of
+  capabilities is open/extensible. Servers SHOULD include any client features
+  they support (e.g., roots, sampling, elicitation) if relevant, and vice versa.
+  See [discussion
+  #604](https://github.com/modelcontextprotocol/modelcontextprotocol/discussions/604).
+</Info>
+
 Servers that support resources **MUST** declare the `resources` capability:
 
 ```json
@@ -317,7 +326,7 @@ need to map to an actual physical filesystem.
 
 MCP servers **MAY** identify file:// resources with an
 [XDG MIME type](https://specifications.freedesktop.org/shared-mime-info-spec/0.14/ar01s02.html#id-1.3.14),
-like `inode/directory`, to represent non-regular files (such as directories) that don’t
+like `inode/directory`, to represent non-regular files (such as directories) that don't
 otherwise have a standard MIME type.
 
 ### git://

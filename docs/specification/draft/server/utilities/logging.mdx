@@ -18,13 +18,14 @@ needs&mdash;the protocol itself does not mandate any specific user interaction m
 
 Servers that emit log message notifications **MUST** declare the `logging` capability:
 
-```json
-{
-  "capabilities": {
-    "logging": {}
-  }
-}
-```
+<Info>
+  As of the 2025-03-26 draft, servers SHOULD enumerate all features they support
+  in their `capabilities` object, not just a minimal subset. The set of
+  capabilities is open/extensible. Servers SHOULD include any client features
+  they support (e.g., roots, sampling, elicitation) if relevant, and vice versa.
+  See [discussion
+  #604](https://github.com/modelcontextprotocol/modelcontextprotocol/discussions/604).
+</Info>
 
 ## Log Levels
 

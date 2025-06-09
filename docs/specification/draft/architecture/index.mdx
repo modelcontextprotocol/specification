@@ -118,6 +118,15 @@ The Model Context Protocol uses a capability-based negotiation system where clie
 servers explicitly declare their supported features during initialization. Capabilities
 determine which protocol features and primitives are available during a session.
 
+<Info>
+  As of the 2025-03-26 draft, both client and server SHOULD enumerate all
+  features they support in their `capabilities` object, not just a minimal
+  subset. This enables each side to tailor requests and responses to the other's
+  capabilities. The set of capabilities is open/extensible. Clients SHOULD
+  include any server features they support (e.g., tools, resources) if relevant,
+  and vice versa.
+</Info>
+
 - Servers declare capabilities like resource subscriptions, tool support, and prompt
   templates
 - Clients declare capabilities like sampling support and notification handling

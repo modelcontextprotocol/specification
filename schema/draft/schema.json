@@ -195,8 +195,15 @@
             "type": "object"
         },
         "ClientCapabilities": {
-            "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
+            "additionalProperties": {},
+            "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.\n\nClients SHOULD enumerate all features they support, not just a minimal subset. This enables servers to tailor responses to client capabilities (e.g., fallback to text if the client does not support embedded resources).\n\nThe set of capabilities is open/extensible. Clients SHOULD include any server features they support (e.g., tools, resources) if relevant, and vice versa.",
             "properties": {
+                "completions": {
+                    "additionalProperties": true,
+                    "description": "Present if the client supports argument autocompletion suggestions.",
+                    "properties": {},
+                    "type": "object"
+                },
                 "elicitation": {
                     "additionalProperties": true,
                     "description": "Present if the client supports elicitation from the server.",
@@ -210,6 +217,36 @@
                         "type": "object"
                     },
                     "description": "Experimental, non-standard capabilities that the client supports.",
+                    "type": "object"
+                },
+                "logging": {
+                    "additionalProperties": true,
+                    "description": "Present if the client supports receiving log messages from the server.",
+                    "properties": {},
+                    "type": "object"
+                },
+                "prompts": {
+                    "description": "Present if the client supports prompt templates.",
+                    "properties": {
+                        "listChanged": {
+                            "description": "Whether this client supports notifications for changes to the prompt list.",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "resources": {
+                    "description": "Present if the client supports resources.",
+                    "properties": {
+                        "listChanged": {
+                            "description": "Whether the client supports notifications for changes to the resource list.",
+                            "type": "boolean"
+                        },
+                        "subscribe": {
+                            "description": "Whether the client supports subscribing to resource updates.",
+                            "type": "boolean"
+                        }
+                    },
                     "type": "object"
                 },
                 "roots": {
@@ -226,6 +263,16 @@
                     "additionalProperties": true,
                     "description": "Present if the client supports sampling from an LLM.",
                     "properties": {},
+                    "type": "object"
+                },
+                "tools": {
+                    "description": "Present if the client supports tools.",
+                    "properties": {
+                        "listChanged": {
+                            "description": "Whether the client supports notifications for changes to the tool list.",
+                            "type": "boolean"
+                        }
+                    },
                     "type": "object"
                 }
             },
@@ -1984,11 +2031,18 @@
             "type": "object"
         },
         "ServerCapabilities": {
-            "description": "Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.",
+            "additionalProperties": {},
+            "description": "Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.\n\nServers SHOULD enumerate all features they support, not just a minimal subset. This enables clients to tailor requests to server capabilities.\n\nThe set of capabilities is open/extensible. Servers SHOULD include any client features they support (e.g., roots, sampling, elicitation) if relevant, and vice versa.",
             "properties": {
                 "completions": {
                     "additionalProperties": true,
                     "description": "Present if the server supports argument autocompletion suggestions.",
+                    "properties": {},
+                    "type": "object"
+                },
+                "elicitation": {
+                    "additionalProperties": true,
+                    "description": "Present if the server supports elicitation from the client.",
                     "properties": {},
                     "type": "object"
                 },
@@ -2029,6 +2083,22 @@
                             "type": "boolean"
                         }
                     },
+                    "type": "object"
+                },
+                "roots": {
+                    "description": "Present if the server supports roots (e.g., for file system access).",
+                    "properties": {
+                        "listChanged": {
+                            "description": "Whether the server supports notifications for changes to the roots list.",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "sampling": {
+                    "additionalProperties": true,
+                    "description": "Present if the server supports sampling from an LLM.",
+                    "properties": {},
                     "type": "object"
                 },
                 "tools": {

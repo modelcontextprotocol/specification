@@ -150,25 +150,101 @@ For details, see [the Protocol Version Header section in Transports](/specificat
 Client and server capabilities establish which optional protocol features will be
 available during the session.
 
+<Info>
+  As of the 2025-03-26 draft, both client and server SHOULD enumerate all
+  features they support in their `capabilities` object, not just a minimal
+  subset. This enables each side to tailor requests and responses to the other's
+  capabilities (e.g., fallback to text if the client does not support embedded
+  resources). The set of capabilities is open/extensible. Clients SHOULD include
+  any server features they support (e.g., tools, resources) if relevant, and
+  vice versa.
+</Info>
+
 Key capabilities include:
 
-| Category | Capability     | Description                                                                        |
-| -------- | -------------- | ---------------------------------------------------------------------------------- |
-| Client   | `roots`        | Ability to provide filesystem [roots](/specification/draft/client/roots)           |
-| Client   | `sampling`     | Support for LLM [sampling](/specification/draft/client/sampling) requests          |
-| Client   | `elicitation`  | Support for server [elicitation](/specification/draft/client/elicitation) requests |
-| Client   | `experimental` | Describes support for non-standard experimental features                           |
-| Server   | `prompts`      | Offers [prompt templates](/specification/draft/server/prompts)                     |
-| Server   | `resources`    | Provides readable [resources](/specification/draft/server/resources)               |
-| Server   | `tools`        | Exposes callable [tools](/specification/draft/server/tools)                        |
-| Server   | `logging`      | Emits structured [log messages](/specification/draft/server/utilities/logging)     |
-| Server   | `experimental` | Describes support for non-standard experimental features                           |
+| Category | Capability     | Description                                                                                         |
+| -------- | -------------- | --------------------------------------------------------------------------------------------------- |
+| Client   | `roots`        | Ability to provide filesystem [roots](/specification/draft/client/roots)                            |
+| Client   | `sampling`     | Support for LLM [sampling](/specification/draft/client/sampling) requests                           |
+| Client   | `elicitation`  | Support for server [elicitation](/specification/draft/client/elicitation) requests                  |
+| Client   | `logging`      | Support for receiving [log messages](/specification/draft/server/utilities/logging) from the server |
+| Client   | `completions`  | Support for [argument autocompletion](/specification/draft/server/utilities/completion)             |
+| Client   | `prompts`      | Support for [prompt templates](/specification/draft/server/prompts)                                 |
+| Client   | `resources`    | Support for [resources](/specification/draft/server/resources)                                      |
+| Client   | `tools`        | Support for [tools](/specification/draft/server/tools)                                              |
+| Client   | `experimental` | Describes support for non-standard experimental features                                            |
+| Server   | `prompts`      | Offers [prompt templates](/specification/draft/server/prompts)                                      |
+| Server   | `resources`    | Provides readable [resources](/specification/draft/server/resources)                                |
+| Server   | `tools`        | Exposes callable [tools](/specification/draft/server/tools)                                         |
+| Server   | `logging`      | Emits structured [log messages](/specification/draft/server/utilities/logging)                      |
+| Server   | `roots`        | Offers [roots](/specification/draft/client/roots)                                                   |
+| Server   | `sampling`     | Offers [sampling](/specification/draft/client/sampling)                                             |
+| Server   | `elicitation`  | Offers [elicitation](/specification/draft/client/elicitation)                                       |
+| Server   | `completions`  | Offers [argument autocompletion](/specification/draft/server/utilities/completion)                  |
+| Server   | `experimental` | Describes support for non-standard experimental features                                            |
 
 Capability objects can describe sub-capabilities like:
 
-- `listChanged`: Support for list change notifications (for prompts, resources, and
-  tools)
+- `listChanged`: Support for list change notifications (for prompts, resources, and tools)
 - `subscribe`: Support for subscribing to individual items' changes (resources only)
+
+### Example: Full Capabilities Declaration
+
+Client `initialize` request:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": {
+      "roots": { "listChanged": true },
+      "sampling": {},
+      "elicitation": {},
+      "logging": {},
+      "completions": {},
+      "prompts": { "listChanged": true },
+      "resources": { "subscribe": true, "listChanged": true },
+      "tools": { "listChanged": true },
+      "experimental": { "customFeature": {} }
+    },
+    "clientInfo": {
+      "name": "ExampleClient",
+      "version": "1.0.0"
+    }
+  }
+}
+```
+
+Server `initialize` response:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": {
+      "logging": {},
+      "prompts": { "listChanged": true },
+      "resources": { "subscribe": true, "listChanged": true },
+      "tools": { "listChanged": true },
+      "roots": { "listChanged": true },
+      "sampling": {},
+      "elicitation": {},
+      "completions": {},
+      "experimental": { "customServerFeature": {} }
+    },
+    "serverInfo": {
+      "name": "ExampleServer",
+      "version": "1.0.0"
+    },
+    "instructions": "Optional instructions for the client"
+  }
+}
+```
 
 ### Operation
 
