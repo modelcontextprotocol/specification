@@ -132,20 +132,7 @@
                 "content": {
                     "description": "A list of content objects that represent the unstructured result of the tool call.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/TextContent"
-                            },
-                            {
-                                "$ref": "#/definitions/ImageContent"
-                            },
-                            {
-                                "$ref": "#/definitions/AudioContent"
-                            },
-                            {
-                                "$ref": "#/definitions/EmbeddedResource"
-                            }
-                        ]
+                        "$ref": "#/definitions/ContentBlock"
                     },
                     "type": "array"
                 },
@@ -406,6 +393,25 @@
                 "completion"
             ],
             "type": "object"
+        },
+        "ContentBlock": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TextContent"
+                },
+                {
+                    "$ref": "#/definitions/ImageContent"
+                },
+                {
+                    "$ref": "#/definitions/AudioContent"
+                },
+                {
+                    "$ref": "#/definitions/ResourceLink"
+                },
+                {
+                    "$ref": "#/definitions/EmbeddedResource"
+                }
+            ]
         },
         "CreateMessageRequest": {
             "description": "A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.",
@@ -848,34 +854,6 @@
             ],
             "type": "object"
         },
-        "JSONRPCBatchRequest": {
-            "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
-            "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/definitions/JSONRPCRequest"
-                    },
-                    {
-                        "$ref": "#/definitions/JSONRPCNotification"
-                    }
-                ]
-            },
-            "type": "array"
-        },
-        "JSONRPCBatchResponse": {
-            "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
-            "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/definitions/JSONRPCResponse"
-                    },
-                    {
-                        "$ref": "#/definitions/JSONRPCError"
-                    }
-                ]
-            },
-            "type": "array"
-        },
         "JSONRPCError": {
             "description": "A response to a request that indicates an error occurred.",
             "properties": {
@@ -923,38 +901,10 @@
                     "$ref": "#/definitions/JSONRPCNotification"
                 },
                 {
-                    "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
-                    "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/JSONRPCRequest"
-                            },
-                            {
-                                "$ref": "#/definitions/JSONRPCNotification"
-                            }
-                        ]
-                    },
-                    "type": "array"
-                },
-                {
                     "$ref": "#/definitions/JSONRPCResponse"
                 },
                 {
                     "$ref": "#/definitions/JSONRPCError"
-                },
-                {
-                    "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
-                    "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/JSONRPCResponse"
-                            },
-                            {
-                                "$ref": "#/definitions/JSONRPCError"
-                            }
-                        ]
-                    },
-                    "type": "array"
                 }
             ],
             "description": "Refers to any valid JSON-RPC object that can be decoded off the wire, or encoded to be sent."
@@ -1612,20 +1562,7 @@
             "description": "Describes a message returned as part of a prompt.\n\nThis is similar to `SamplingMessage`, but also supports the embedding of\nresources from the MCP server.",
             "properties": {
                 "content": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/TextContent"
-                        },
-                        {
-                            "$ref": "#/definitions/ImageContent"
-                        },
-                        {
-                            "$ref": "#/definitions/AudioContent"
-                        },
-                        {
-                            "$ref": "#/definitions/EmbeddedResource"
-                        }
-                    ]
+                    "$ref": "#/definitions/ContentBlock"
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
@@ -1791,6 +1728,46 @@
                 }
             },
             "required": [
+                "uri"
+            ],
+            "type": "object"
+        },
+        "ResourceLink": {
+            "description": "A resource that the server is capable of reading, included in a prompt or tool call result.\n\nNote: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.",
+            "properties": {
+                "annotations": {
+                    "$ref": "#/definitions/Annotations",
+                    "description": "Optional annotations for the client."
+                },
+                "description": {
+                    "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of this resource, if known.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "A human-readable name for this resource.\n\nThis can be used by clients to populate UI elements.",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
+                    "type": "integer"
+                },
+                "type": {
+                    "const": "resource_link",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI of this resource.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "type",
                 "uri"
             ],
             "type": "object"

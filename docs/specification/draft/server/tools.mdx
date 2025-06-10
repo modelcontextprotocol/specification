@@ -2,6 +2,8 @@
 title: Tools
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) allows servers to expose tools that can be invoked by
@@ -228,18 +230,38 @@ Tool results may contain [**structured**](#structured-content) or **unstructured
 }
 ```
 
+#### Resource Links
+
+A tool **MAY** return links to [Resources](/specification/draft/server/resources), to provide additional context
+or data. In this case, the tool will return a URI that can be subscribed to or fetched by the client:
+
+```json
+{
+  "type": "resource_link",
+  "uri": "file:///project/src/main.rs",
+  "name": "main.rs",
+  "description": "Primary application entry point",
+  "mimeType": "text/x-rust"
+}
+```
+
+<Info>
+  Resource links returned by tools are not guaranteed to appear in the results
+  of a `resources/list` request.
+</Info>
+
 #### Embedded Resources
 
-[Resources](/specification/draft/server/resources) **MAY** be embedded, to provide additional context
-or data, behind a URI that can be subscribed to or fetched again by the client later:
+A tool **MAY** return embedded [Resource contents](/specification/draft/server/resources), to provide additional context
+or data, along with a URI that can be subscribed to or fetched again by the client later:
 
 ```json
 {
   "type": "resource",
   "resource": {
-    "uri": "resource://example",
-    "mimeType": "text/plain",
-    "text": "Resource content"
+    "uri": "file:///project/src/main.rs",
+    "mimeType": "text/x-rust",
+    "text": "fn main() {\n    println!(\"Hello world!\");\n}"
   }
 }
 ```

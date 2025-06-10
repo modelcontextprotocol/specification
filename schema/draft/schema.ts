@@ -6,20 +6,8 @@
 export type JSONRPCMessage =
   | JSONRPCRequest
   | JSONRPCNotification
-  | JSONRPCBatchRequest
   | JSONRPCResponse
-  | JSONRPCError
-  | JSONRPCBatchResponse;
-
-/**
- * A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchRequest = (JSONRPCRequest | JSONRPCNotification)[];
-
-/**
- * A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchResponse = (JSONRPCResponse | JSONRPCError)[];
+  | JSONRPCError;
 
 export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v2";
 export const JSONRPC_VERSION = "2.0";
@@ -646,7 +634,16 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
+  content: ContentBlock;
+}
+
+/**
+ * A resource that the server is capable of reading, included in a prompt or tool call result.
+ *
+ * Note: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.
+ */
+export interface ResourceLink extends Resource {
+  type: "resource_link";
 }
 
 /**
@@ -664,7 +661,6 @@ export interface EmbeddedResource {
    */
   annotations?: Annotations;
 }
-
 /**
  * An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
  */
@@ -694,7 +690,7 @@ export interface CallToolResult extends Result {
   /**
    * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: ContentBlock[];
 
   /**
    * An optional JSON object that represents the structured result of the tool call.
@@ -964,6 +960,14 @@ export interface Annotations {
    */
   priority?: number;
 }
+
+/**  */
+export type ContentBlock =
+  | TextContent
+  | ImageContent
+  | AudioContent
+  | ResourceLink
+  | EmbeddedResource;
 
 /**
  * Text provided to or from an LLM.
@@ -1303,7 +1307,7 @@ export interface EnumSchema {
   title?: string;
   description?: string;
   enum: string[];
-  enumNames?: string[];  // Display names for enum values
+  enumNames?: string[]; // Display names for enum values
 }
 
 /**
@@ -1347,7 +1351,11 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
+export type ClientResult =
+  | EmptyResult
+  | CreateMessageResult
+  | ListRootsResult
+  | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
