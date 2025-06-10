@@ -29,6 +29,15 @@ model.
 
 ## Capabilities
 
+<Info>
+  As of the 2025-03-26 draft, servers SHOULD enumerate all features they support
+  in their `capabilities` object, not just a minimal subset. The set of
+  capabilities is open/extensible. Servers SHOULD include any client features
+  they support (e.g., roots, sampling, elicitation) if relevant, and vice versa.
+  See [discussion
+  #604](https://github.com/modelcontextprotocol/modelcontextprotocol/discussions/604).
+</Info>
+
 Servers that support prompts **MUST** declare the `prompts` capability during
 [initialization](/specification/draft/basic/lifecycle#initialization):
 

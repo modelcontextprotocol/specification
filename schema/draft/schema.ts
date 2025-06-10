@@ -189,6 +189,10 @@ export interface InitializedNotification extends Notification {
 
 /**
  * Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
+ *
+ * Clients SHOULD enumerate all features they support, not just a minimal subset. This enables servers to tailor responses to client capabilities (e.g., fallback to text if the client does not support embedded resources).
+ *
+ * The set of capabilities is open/extensible. Clients SHOULD include any server features they support (e.g., tools, resources) if relevant, and vice versa.
  */
 export interface ClientCapabilities {
   /**
@@ -212,10 +216,57 @@ export interface ClientCapabilities {
    * Present if the client supports elicitation from the server.
    */
   elicitation?: object;
+  /**
+   * Present if the client supports receiving log messages from the server.
+   */
+  logging?: object;
+  /**
+   * Present if the client supports argument autocompletion suggestions.
+   */
+  completions?: object;
+  /**
+   * Present if the client supports prompt templates.
+   */
+  prompts?: {
+    /**
+     * Whether this client supports notifications for changes to the prompt list.
+     */
+    listChanged?: boolean;
+  };
+  /**
+   * Present if the client supports resources.
+   */
+  resources?: {
+    /**
+     * Whether the client supports subscribing to resource updates.
+     */
+    subscribe?: boolean;
+    /**
+     * Whether the client supports notifications for changes to the resource list.
+     */
+    listChanged?: boolean;
+  };
+  /**
+   * Present if the client supports tools.
+   */
+  tools?: {
+    /**
+     * Whether the client supports notifications for changes to the tool list.
+     */
+    listChanged?: boolean;
+  };
+  /**
+   * [Extensible] Any additional capabilities may be included.
+   */
+  [key: string]: unknown;
 }
 
 /**
  * Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
+ *
+ * Servers SHOULD enumerate all features they support, not just a minimal subset. This enables clients to tailor requests to server capabilities.
+ *
+ * The set of capabilities is open/extensible. Servers SHOULD include any client features they support (e.g., roots, sampling, elicitation) if relevant, and vice versa.
  */
 export interface ServerCapabilities {
   /**
@@ -261,6 +312,27 @@ export interface ServerCapabilities {
      */
     listChanged?: boolean;
   };
+  /**
+   * Present if the server supports roots (e.g., for file system access).
+   */
+  roots?: {
+    /**
+     * Whether the server supports notifications for changes to the roots list.
+     */
+    listChanged?: boolean;
+  };
+  /**
+   * Present if the server supports sampling from an LLM.
+   */
+  sampling?: object;
+  /**
+   * Present if the server supports elicitation from the client.
+   */
+  elicitation?: object;
+  /**
+   * [Extensible] Any additional capabilities may be included.
+   */
+  [key: string]: unknown;
 }
 
 /**
