@@ -272,6 +272,11 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
+
+    /**
+     * Whether this server supports the tools/confirm request.
+     */
+    confirm?: boolean;
   };
 }
 
@@ -727,6 +732,33 @@ export interface CallToolRequest extends Request {
     name: string;
     arguments?: { [key: string]: unknown };
   };
+}
+
+/**
+ * Sent from the client to request confirmation details for a tool call.
+ */
+export interface ConfirmToolCallRequest extends Request {
+  method: "tools/confirm";
+  params: {
+    name: string;
+    arguments?: { [key: string]: unknown };
+  }
+}
+
+/**
+ * The server's response to a tools/confirm request from the client.
+ */
+export interface ConfirmToolCallResult extends Result {
+  /**
+   * A human-readable title for the confirmation. If this is omitted, the
+   * client may create a generic title based on the tool name.
+   */
+  title?: string;
+
+  /**
+   * Additional contextual details for the client to display.
+   */
+  content?: (TextContent | ImageContent | AudioContent)[];
 }
 
 /**
