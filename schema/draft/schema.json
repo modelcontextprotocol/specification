@@ -639,12 +639,6 @@
                     },
                     "type": "array"
                 },
-                "enumNames": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
                 "title": {
                     "type": "string"
                 },
@@ -2348,4 +2342,3 @@
         }
     }
 }
-
