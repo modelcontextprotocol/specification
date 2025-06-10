@@ -842,34 +842,6 @@
             ],
             "type": "object"
         },
-        "JSONRPCBatchRequest": {
-            "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
-            "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/definitions/JSONRPCRequest"
-                    },
-                    {
-                        "$ref": "#/definitions/JSONRPCNotification"
-                    }
-                ]
-            },
-            "type": "array"
-        },
-        "JSONRPCBatchResponse": {
-            "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
-            "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/definitions/JSONRPCResponse"
-                    },
-                    {
-                        "$ref": "#/definitions/JSONRPCError"
-                    }
-                ]
-            },
-            "type": "array"
-        },
         "JSONRPCError": {
             "description": "A response to a request that indicates an error occurred.",
             "properties": {
@@ -917,38 +889,10 @@
                     "$ref": "#/definitions/JSONRPCNotification"
                 },
                 {
-                    "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
-                    "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/JSONRPCRequest"
-                            },
-                            {
-                                "$ref": "#/definitions/JSONRPCNotification"
-                            }
-                        ]
-                    },
-                    "type": "array"
-                },
-                {
                     "$ref": "#/definitions/JSONRPCResponse"
                 },
                 {
                     "$ref": "#/definitions/JSONRPCError"
-                },
-                {
-                    "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
-                    "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/JSONRPCResponse"
-                            },
-                            {
-                                "$ref": "#/definitions/JSONRPCError"
-                            }
-                        ]
-                    },
-                    "type": "array"
                 }
             ],
             "description": "Refers to any valid JSON-RPC object that can be decoded off the wire, or encoded to be sent."
