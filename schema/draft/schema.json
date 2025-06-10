@@ -20,6 +20,40 @@
             },
             "type": "object"
         },
+        "AsyncOperation": {
+            "description": "Information about an asynchronous operation.",
+            "properties": {
+                "errorMessage": {
+                    "description": "Error message if the operation failed.",
+                    "type": "string"
+                },
+                "expiryInterval": {
+                    "description": "Time in seconds when the operation will expire.",
+                    "type": "integer"
+                },
+                "requestId": {
+                    "description": "The ID of the request that created this operation.",
+                    "type": [
+                        "string",
+                        "integer"
+                    ]
+                },
+                "resourceUri": {
+                    "description": "The URI of the resource that will contain the result when ready.",
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/OperationStatus",
+                    "description": "Current status of the operation."
+                }
+            },
+            "required": [
+                "requestId",
+                "resourceUri",
+                "status"
+            ],
+            "type": "object"
+        },
         "AudioContent": {
             "description": "Audio provided to or from an LLM.",
             "properties": {
@@ -92,6 +126,58 @@
             ],
             "type": "object"
         },
+        "CallToolAsyncRequest": {
+            "description": "Used by the client to invoke a tool asynchronously.",
+            "properties": {
+                "method": {
+                    "const": "tools/callAsync",
+                    "type": "string"
+                },
+                "params": {
+                    "$ref": "#/definitions/CallToolAsyncRequestParams"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "CallToolAsyncRequestParams": {
+            "description": "Parameters for calling a tool asynchronously.",
+            "properties": {
+                "arguments": {
+                    "additionalProperties": {},
+                    "description": "Arguments to pass to the tool.",
+                    "type": "object"
+                },
+                "keepAlive": {
+                    "description": "Number of seconds to keep the result available.",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the tool to call.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "CallToolAsyncResult": {
+            "description": "The server's response to an asynchronous tool call request.",
+            "properties": {
+                "operation": {
+                    "$ref": "#/definitions/AsyncOperation",
+                    "description": "Information about the asynchronous operation."
+                }
+            },
+            "required": [
+                "operation"
+            ],
+            "type": "object"
+        },
         "CallToolRequest": {
             "description": "Used by the client to invoke a tool provided by the server.",
             "properties": {
@@ -161,6 +247,52 @@
             },
             "required": [
                 "content"
+            ],
+            "type": "object"
+        },
+        "CancelOperationRequest": {
+            "description": "Used by the client to cancel an operation.",
+            "properties": {
+                "method": {
+                    "const": "operations/cancel",
+                    "type": "string"
+                },
+                "params": {
+                    "$ref": "#/definitions/CancelOperationRequestParams"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "CancelOperationRequestParams": {
+            "description": "Parameters for cancelling an operation.",
+            "properties": {
+                "requestId": {
+                    "description": "The ID of the request to cancel.",
+                    "type": [
+                        "string",
+                        "integer"
+                    ]
+                }
+            },
+            "required": [
+                "requestId"
+            ],
+            "type": "object"
+        },
+        "CancelOperationResult": {
+            "description": "The server's response to an operation cancellation request.",
+            "properties": {
+                "operation": {
+                    "$ref": "#/definitions/AsyncOperation",
+                    "description": "The updated state of the operation."
+                }
+            },
+            "required": [
+                "operation"
             ],
             "type": "object"
         },
@@ -643,6 +775,52 @@
             "required": [
                 "enum",
                 "type"
+            ],
+            "type": "object"
+        },
+        "GetOperationRequest": {
+            "description": "Used by the client to check an operation's status.",
+            "properties": {
+                "method": {
+                    "const": "operations/get",
+                    "type": "string"
+                },
+                "params": {
+                    "$ref": "#/definitions/GetOperationRequestParams"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "GetOperationRequestParams": {
+            "description": "Parameters for getting the status of an operation.",
+            "properties": {
+                "requestId": {
+                    "description": "The ID of the request to check.",
+                    "type": [
+                        "string",
+                        "integer"
+                    ]
+                }
+            },
+            "required": [
+                "requestId"
+            ],
+            "type": "object"
+        },
+        "GetOperationResult": {
+            "description": "The server's response to an operation status check.",
+            "properties": {
+                "operation": {
+                    "$ref": "#/definitions/AsyncOperation",
+                    "description": "The current state of the operation."
+                }
+            },
+            "required": [
+                "operation"
             ],
             "type": "object"
         },
@@ -1217,6 +1395,50 @@
             ],
             "type": "object"
         },
+        "ListToolsAsyncRequest": {
+            "properties": {
+                "method": {
+                    "const": "tools/listAsync",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "ListToolsAsyncResult": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                },
+                "tools": {
+                    "items": {
+                        "$ref": "#/definitions/Tool"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tools"
+            ],
+            "type": "object"
+        },
         "ListToolsRequest": {
             "description": "Sent from the client to request a list of tools the server has.",
             "properties": {
@@ -1400,6 +1622,18 @@
                 "type"
             ],
             "type": "object"
+        },
+        "OperationStatus": {
+            "description": "The status of an asynchronous operation.",
+            "enum": [
+                "ACTIVE",
+                "DELETE_UNSUCCESSFUL",
+                "DELETING",
+                "FAILED",
+                "PENDING",
+                "UPDATING"
+            ],
+            "type": "string"
         },
         "PaginatedRequest": {
             "properties": {
@@ -2242,6 +2476,10 @@
                 "annotations": {
                     "$ref": "#/definitions/ToolAnnotations",
                     "description": "Optional additional tool information."
+                },
+                "async": {
+                    "description": "If true, the tool is asynchronous.\n\nDefault: false",
+                    "type": "boolean"
                 },
                 "description": {
                     "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
