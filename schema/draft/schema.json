@@ -1435,6 +1435,50 @@
             ],
             "type": "object"
         },
+        "ListToolsAsyncRequest": {
+            "properties": {
+                "method": {
+                    "const": "tools/listAsync",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "ListToolsAsyncResult": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                },
+                "tools": {
+                    "items": {
+                        "$ref": "#/definitions/Tool"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tools"
+            ],
+            "type": "object"
+        },
         "ListToolsRequest": {
             "description": "Sent from the client to request a list of tools the server has.",
             "properties": {
@@ -2460,6 +2504,10 @@
                 "annotations": {
                     "$ref": "#/definitions/ToolAnnotations",
                     "description": "Optional additional tool information."
+                },
+                "async": {
+                    "description": "If true, the tool is asynchronous.\n\nDefault: false",
+                    "type": "boolean"
                 },
                 "description": {
                     "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",

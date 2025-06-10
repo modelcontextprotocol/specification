@@ -672,6 +672,21 @@ export interface PromptListChangedNotification extends Notification {
   method: "notifications/prompts/list_changed";
 }
 
+/* Async Tools /
+/*
+Sent from the client to request a list of async tools the server has.
+ */
+export interface ListToolsAsyncRequest extends PaginatedRequest {
+  method: "tools/listAsync";
+}
+
+/*
+The server's response to a tools/listAsync request from the client.
+ */
+export interface ListToolsAsyncResult extends PaginatedResult {
+  tools: Tool[]; // return Tools which has `async` as True
+}
+
 /* Tools */
 /**
  * Sent from the client to request a list of tools the server has.
@@ -950,6 +965,13 @@ export interface Tool {
    * Optional additional tool information.
    */
   annotations?: ToolAnnotations;
+
+  /**
+   * If true, the tool is asynchronous.
+   *
+   * Default: false
+   */
+  async?: boolean;
 }
 
 /* Logging */
