@@ -635,14 +635,23 @@ export type Role = "user" | "assistant";
 export interface PromptMessage {
   role: Role;
   content: ContentBlock;
-  toolCalls?: ToolCall[]; // Tool calls requested by the the Assistant
-  toolResult?: ToolResult[]; // Tool responses returned by the User (Host)
+  /**
+   * Tool calls requested by the the Assistant. 
+   * Should only be present if Role is Assistant
+   */
+  toolCalls?: ExampleToolCall[]; 
+  /**
+   * Tool calls results supplied by the User. 
+   * Should only be present if Role is User (Host)
+   */
+
+  toolResult?: ExampleToolResult[]; // Tool responses returned by the User (Host)
 }
 
 /**
  * A tool call initiated by the assistant.
  */
-export interface ToolCall {
+export interface ExampleToolCall {
   /**
    * A unique identifier for this tool call.
    * This ID is used to match tool calls with their results.
@@ -652,34 +661,24 @@ export interface ToolCall {
   /**
    * The name of the tool being called.
    */
-  name: string;
+  request: CallToolRequest;
 
-  /**
-   * The arguments passed to the tool, as a JSON object.
-   */
-  arguments: { [key: string]: unknown };
 }
 
 /**
  * A result returned from a tool call.
  */
-export interface ToolResult {
+export interface ExampleToolResult {
   /**
-   * The ID of the tool call this result is for.
-   * This must match the ID of a previous tool call.
+   * The identifier of the tool call this is the result for.
+   * This correlates this Result with the Request.
    */
   toolCallId: string;
 
   /**
-   * The content returned from the tool, typically text.
+   * The content returned from the tool.
    */
-  content: string;
-
-  /**
-   * Whether the tool call resulted in an error.
-   * If not specified, assumed to be false.
-   */
-  isError?: boolean;
+  result: CallToolResult;
 }
 
 /**

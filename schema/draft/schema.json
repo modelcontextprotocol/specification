@@ -268,10 +268,10 @@
                     "$ref": "#/definitions/GetPromptRequest"
                 },
                 {
-                    "$ref": "#/definitions/ListToolsRequest"
+                    "$ref": "#/definitions/CallToolRequest"
                 },
                 {
-                    "$ref": "#/definitions/CallToolRequest"
+                    "$ref": "#/definitions/ListToolsRequest"
                 },
                 {
                     "$ref": "#/definitions/SetLevelRequest"
@@ -666,6 +666,42 @@
             "required": [
                 "enum",
                 "type"
+            ],
+            "type": "object"
+        },
+        "ExampleToolCall": {
+            "description": "A tool call initiated by the assistant.",
+            "properties": {
+                "id": {
+                    "description": "A unique identifier for this tool call.\nThis ID is used to match tool calls with their results.",
+                    "type": "string"
+                },
+                "request": {
+                    "$ref": "#/definitions/CallToolRequest",
+                    "description": "The name of the tool being called."
+                }
+            },
+            "required": [
+                "id",
+                "request"
+            ],
+            "type": "object"
+        },
+        "ExampleToolResult": {
+            "description": "A result returned from a tool call.",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/CallToolResult",
+                    "description": "The content returned from the tool."
+                },
+                "toolCallId": {
+                    "description": "The identifier of the tool call this is the result for.\nThis correlates this Result with the Request.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "result",
+                "toolCallId"
             ],
             "type": "object"
         },
@@ -1572,14 +1608,16 @@
                     "$ref": "#/definitions/Role"
                 },
                 "toolCalls": {
+                    "description": "Tool calls requested by the the Assistant. \nShould only be present if Role is Assistant",
                     "items": {
-                        "$ref": "#/definitions/ToolCall"
+                        "$ref": "#/definitions/ExampleToolCall"
                     },
                     "type": "array"
                 },
                 "toolResult": {
+                    "description": "Tool calls results supplied by the User. \nShould only be present if Role is User (Host)",
                     "items": {
-                        "$ref": "#/definitions/ToolResult"
+                        "$ref": "#/definitions/ExampleToolResult"
                     },
                     "type": "array"
                 }
@@ -2102,10 +2140,10 @@
                     "$ref": "#/definitions/GetPromptResult"
                 },
                 {
-                    "$ref": "#/definitions/ListToolsResult"
+                    "$ref": "#/definitions/CallToolResult"
                 },
                 {
-                    "$ref": "#/definitions/CallToolResult"
+                    "$ref": "#/definitions/ListToolsResult"
                 },
                 {
                     "$ref": "#/definitions/CompleteResult"
@@ -2344,30 +2382,6 @@
             },
             "type": "object"
         },
-        "ToolCall": {
-            "description": "A tool call initiated by the assistant.",
-            "properties": {
-                "arguments": {
-                    "additionalProperties": {},
-                    "description": "The arguments passed to the tool, as a JSON object.",
-                    "type": "object"
-                },
-                "id": {
-                    "description": "A unique identifier for this tool call.\nThis ID is used to match tool calls with their results.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "The name of the tool being called.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "id",
-                "name"
-            ],
-            "type": "object"
-        },
         "ToolListChangedNotification": {
             "description": "An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.",
             "properties": {
@@ -2389,28 +2403,6 @@
             },
             "required": [
                 "method"
-            ],
-            "type": "object"
-        },
-        "ToolResult": {
-            "description": "A result returned from a tool call.",
-            "properties": {
-                "content": {
-                    "description": "The content returned from the tool, typically text.",
-                    "type": "string"
-                },
-                "isError": {
-                    "description": "Whether the tool call resulted in an error.\nIf not specified, assumed to be false.",
-                    "type": "boolean"
-                },
-                "toolCallId": {
-                    "description": "The ID of the tool call this result is for.\nThis must match the ID of a previous tool call.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "content",
-                "toolCallId"
             ],
             "type": "object"
         },
