@@ -645,7 +645,7 @@ export interface PromptMessage {
    * Should only be present if Role is User (Host)
    */
 
-  toolResult?: ExampleToolResult[]; // Tool responses returned by the User (Host)
+  toolResult?: ExampleToolResult[];
 }
 
 /**
