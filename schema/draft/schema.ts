@@ -639,12 +639,11 @@ export interface PromptMessage {
    * Tool calls requested by the the Assistant. 
    * Should only be present if Role is Assistant
    */
-  toolCalls?: ExampleToolCall[]; 
+  toolCall?: ExampleToolCall[]; 
   /**
    * Tool calls results supplied by the User. 
    * Should only be present if Role is User (Host)
    */
-
   toolResult?: ExampleToolResult[];
 }
 

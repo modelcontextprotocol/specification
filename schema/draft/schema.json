@@ -1607,7 +1607,7 @@
                 "role": {
                     "$ref": "#/definitions/Role"
                 },
-                "toolCalls": {
+                "toolCall": {
                     "description": "Tool calls requested by the the Assistant. \nShould only be present if Role is Assistant",
                     "items": {
                         "$ref": "#/definitions/ExampleToolCall"
