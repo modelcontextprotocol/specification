@@ -226,6 +226,9 @@
                     "$ref": "#/definitions/ListResourcesRequest"
                 },
                 {
+                    "$ref": "#/definitions/ListResourceTemplatesRequest"
+                },
+                {
                     "$ref": "#/definitions/ReadResourceRequest"
                 },
                 {
@@ -1898,6 +1901,9 @@
                     "$ref": "#/definitions/ListResourcesResult"
                 },
                 {
+                    "$ref": "#/definitions/ListResourceTemplatesResult"
+                },
+                {
                     "$ref": "#/definitions/ReadResourceResult"
                 },
                 {
@@ -2064,14 +2070,14 @@
             "type": "object"
         },
         "ToolAnnotations": {
-            "description": "Additional properties describing a Tool to clients.\n\nNOTE: all properties in ToolAnnotations are **hints**. \nThey are not guaranteed to provide a faithful description of \ntool behavior (including descriptive properties like `title`).\n\nClients should never make tool use decisions based on ToolAnnotations\nreceived from untrusted servers.",
+            "description": "Additional properties describing a Tool to clients.\n\nNOTE: all properties in ToolAnnotations are **hints**.\nThey are not guaranteed to provide a faithful description of\ntool behavior (including descriptive properties like `title`).\n\nClients should never make tool use decisions based on ToolAnnotations\nreceived from untrusted servers.",
             "properties": {
                 "destructiveHint": {
                     "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: true",
                     "type": "boolean"
                 },
                 "idempotentHint": {
-                    "description": "If true, calling the tool repeatedly with the same arguments \nwill have no additional effect on the its environment.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: false",
+                    "description": "If true, calling the tool repeatedly with the same arguments\nwill have no additional effect on the its environment.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: false",
                     "type": "boolean"
                 },
                 "openWorldHint": {

@@ -773,11 +773,11 @@ export interface ToolListChangedNotification extends Notification {
 
 /**
  * Additional properties describing a Tool to clients.
- * 
- * NOTE: all properties in ToolAnnotations are **hints**. 
- * They are not guaranteed to provide a faithful description of 
+ *
+ * NOTE: all properties in ToolAnnotations are **hints**.
+ * They are not guaranteed to provide a faithful description of
  * tool behavior (including descriptive properties like `title`).
- * 
+ *
  * Clients should never make tool use decisions based on ToolAnnotations
  * received from untrusted servers.
  */
@@ -789,7 +789,7 @@ export interface ToolAnnotations {
 
   /**
    * If true, the tool does not modify its environment.
-   * 
+   *
    * Default: false
    */
   readOnlyHint?: boolean;
@@ -797,19 +797,19 @@ export interface ToolAnnotations {
   /**
    * If true, the tool may perform destructive updates to its environment.
    * If false, the tool performs only additive updates.
-   * 
+   *
    * (This property is meaningful only when `readOnlyHint == false`)
-   * 
+   *
    * Default: true
    */
   destructiveHint?: boolean;
 
   /**
-   * If true, calling the tool repeatedly with the same arguments 
+   * If true, calling the tool repeatedly with the same arguments
    * will have no additional effect on the its environment.
-   * 
+   *
    * (This property is meaningful only when `readOnlyHint == false`)
-   * 
+   *
    * Default: false
    */
   idempotentHint?: boolean;
@@ -819,7 +819,7 @@ export interface ToolAnnotations {
    * entities. If false, the tool's domain of interaction is closed.
    * For example, the world of a web search tool is open, whereas that
    * of a memory tool is not.
-   * 
+   *
    * Default: true
    */
   openWorldHint?: boolean;
@@ -1264,6 +1264,7 @@ export type ClientRequest =
   | GetPromptRequest
   | ListPromptsRequest
   | ListResourcesRequest
+  | ListResourceTemplatesRequest
   | ReadResourceRequest
   | SubscribeRequest
   | UnsubscribeRequest
@@ -1299,6 +1300,7 @@ export type ServerResult =
   | CompleteResult
   | GetPromptResult
   | ListPromptsResult
+  | ListResourceTemplatesResult
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
