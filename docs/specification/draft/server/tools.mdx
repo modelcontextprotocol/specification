@@ -252,8 +252,8 @@ or data. In this case, the tool will return a URI that can be subscribed to or f
 
 #### Embedded Resources
 
-A tool **MAY** return embedded [Resource contents](/specification/draft/server/resources), to provide additional context
-or data, along with a URI that can be subscribed to or fetched again by the client later:
+[Resources](resources) **MAY** be embedded to provide additional context
+or data using a suitable [URI scheme](./resources#common-uri-schemes). Servers that use embedded resources **SHOULD** implement the `resources` capability:
 
 ```json
 {

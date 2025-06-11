@@ -959,6 +959,16 @@ export interface Annotations {
    * @maximum 1
    */
   priority?: number;
+
+  /**
+   * The moment the resource was last modified, as an ISO 8601 formatted string.
+   *
+   * Should be an ISO 8601 formatted string (e.g., "2025-01-12T15:00:58Z").
+   *
+   * Examples: last activity timestamp in an open file, timestamp when the resource
+   * was attached, etc.
+   */
+  lastModified?: string;
 }
 
 /**  */
@@ -1140,11 +1150,11 @@ export interface CompleteRequest extends Request {
      * Additional, optional context for completions
      */
     context?: {
-       /**
-        * Previously-resolved variables in a URI template or prompt.
-        */
-        arguments?: { [key: string]: string };
-     };
+      /**
+       * Previously-resolved variables in a URI template or prompt.
+       */
+      arguments?: { [key: string]: string };
+    };
   };
 }
 
@@ -1326,7 +1336,7 @@ export interface ElicitResult extends Result {
    * The submitted form data, only present when action is "accept".
    * Contains values matching the requested schema.
    */
-  content?: { [key: string]: unknown };
+  content?: { [key: string]: string | number | boolean };
 }
 
 /* Client messages */

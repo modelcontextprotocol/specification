@@ -11,6 +11,10 @@
                     },
                     "type": "array"
                 },
+                "lastModified": {
+                    "description": "The moment the resource was last modified, as an ISO 8601 formatted string.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").\n\nExamples: last activity timestamp in an open file, timestamp when the resource\nwas attached, etc.",
+                    "type": "string"
+                },
                 "priority": {
                     "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
                     "maximum": 1,
@@ -593,7 +597,13 @@
                     "type": "string"
                 },
                 "content": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "type": [
+                            "string",
+                            "integer",
+                            "boolean"
+                        ]
+                    },
                     "description": "The submitted form data, only present when action is \"accept\".\nContains values matching the requested schema.",
                     "type": "object"
                 }
