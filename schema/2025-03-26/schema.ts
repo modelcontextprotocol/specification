@@ -643,54 +643,7 @@ export type Role = "user" | "assistant";
 export interface PromptMessage {
   role: Role;
   content: TextContent | ImageContent | AudioContent | EmbeddedResource;
-  toolCalls?: ToolCall[]; // Tool calls requested by the the Assistant 
-  toolResult?: ToolResult[]; // Tool responses returned by the User (Host)
 }
-
-
-/**
- * A tool call initiated by the assistant.
- */
-export interface ToolCall {
-/**
- * A unique identifier for this tool call.
- * This ID is used to match tool calls with their results.
- */
-id: string;
-
-/**
- * The name of the tool being called.
- */
-name: string;
-
-/**
- * The arguments passed to the tool, as a JSON object.
- */
-arguments: { [key: string]: unknown };
-}
-
-/**
- * A result returned from a tool call.
- */
-export interface ToolResult {
-/**
- * The ID of the tool call this result is for.
- * This must match the ID of a previous tool call.
- */
-toolCallId: string;
-
-/**
- * The content returned from the tool, typically text.
- */
-content: string;
-
-/**
- * Whether the tool call resulted in an error.
- * If not specified, assumed to be false.
- */
-isError?: boolean;  
-}
-
 
 /**
  * The contents of a resource, embedded into a prompt or tool call result.

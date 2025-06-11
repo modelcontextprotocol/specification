@@ -11,10 +11,6 @@
                     },
                     "type": "array"
                 },
-                "lastModified": {
-                    "description": "The moment the resource was last modified, as an ISO 8601 formatted string.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").\n\nExamples: last activity timestamp in an open file, timestamp when the resource\nwas attached, etc.",
-                    "type": "string"
-                },
                 "priority": {
                     "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
                     "maximum": 1,
@@ -75,27 +71,6 @@
             ],
             "type": "object"
         },
-        "BooleanSchema": {
-            "properties": {
-                "default": {
-                    "type": "boolean"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "const": "boolean",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "type": "object"
-        },
         "CallToolRequest": {
             "description": "Used by the client to invoke a tool provided by the server.",
             "properties": {
@@ -126,7 +101,7 @@
             "type": "object"
         },
         "CallToolResult": {
-            "description": "The server's response to a tool call.",
+            "description": "The server's response to a tool call.\n\nAny errors that originate from the tool SHOULD be reported inside the result\nobject, with `isError` set to true, _not_ as an MCP protocol-level error\nresponse. Otherwise, the LLM would not be able to see that an error occurred\nand self-correct.\n\nHowever, any errors in _finding_ the tool, an error indicating that the\nserver does not support tool calls, or any other exceptional conditions,\nshould be reported as an MCP error response.",
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
@@ -134,20 +109,27 @@
                     "type": "object"
                 },
                 "content": {
-                    "description": "A list of content objects that represent the unstructured result of the tool call.",
                     "items": {
-                        "$ref": "#/definitions/ContentBlock"
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/TextContent"
+                            },
+                            {
+                                "$ref": "#/definitions/ImageContent"
+                            },
+                            {
+                                "$ref": "#/definitions/AudioContent"
+                            },
+                            {
+                                "$ref": "#/definitions/EmbeddedResource"
+                            }
+                        ]
                     },
                     "type": "array"
                 },
                 "isError": {
-                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).\n\nAny errors that originate from the tool SHOULD be reported inside the result\nobject, with `isError` set to true, _not_ as an MCP protocol-level error\nresponse. Otherwise, the LLM would not be able to see that an error occurred\nand self-correct.\n\nHowever, any errors in _finding_ the tool, an error indicating that the\nserver does not support tool calls, or any other exceptional conditions,\nshould be reported as an MCP error response.",
+                    "description": "Whether the tool call ended in an error.\n\nIf not set, this is assumed to be false (the call was successful).",
                     "type": "boolean"
-                },
-                "structuredContent": {
-                    "additionalProperties": {},
-                    "description": "An optional JSON object that represents the structured result of the tool call.",
-                    "type": "object"
                 }
             },
             "required": [
@@ -188,12 +170,6 @@
         "ClientCapabilities": {
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
-                "elicitation": {
-                    "additionalProperties": true,
-                    "description": "Present if the client supports elicitation from the server.",
-                    "properties": {},
-                    "type": "object"
-                },
                 "experimental": {
                     "additionalProperties": {
                         "additionalProperties": true,
@@ -291,9 +267,6 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsResult"
-                },
-                {
-                    "$ref": "#/definitions/ElicitResult"
                 }
             ]
         },
@@ -324,26 +297,13 @@
                             ],
                             "type": "object"
                         },
-                        "context": {
-                            "description": "Additional, optional context for completions",
-                            "properties": {
-                                "arguments": {
-                                    "additionalProperties": {
-                                        "type": "string"
-                                    },
-                                    "description": "Previously-resolved variables in a URI template or prompt.",
-                                    "type": "object"
-                                }
-                            },
-                            "type": "object"
-                        },
                         "ref": {
                             "anyOf": [
                                 {
                                     "$ref": "#/definitions/PromptReference"
                                 },
                                 {
-                                    "$ref": "#/definitions/ResourceTemplateReference"
+                                    "$ref": "#/definitions/ResourceReference"
                                 }
                             ]
                         }
@@ -397,25 +357,6 @@
                 "completion"
             ],
             "type": "object"
-        },
-        "ContentBlock": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/TextContent"
-                },
-                {
-                    "$ref": "#/definitions/ImageContent"
-                },
-                {
-                    "$ref": "#/definitions/AudioContent"
-                },
-                {
-                    "$ref": "#/definitions/ResourceLink"
-                },
-                {
-                    "$ref": "#/definitions/EmbeddedResource"
-                }
-            ]
         },
         "CreateMessageRequest": {
             "description": "A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.",
@@ -526,87 +467,6 @@
             "description": "An opaque token used to represent a cursor for pagination.",
             "type": "string"
         },
-        "ElicitRequest": {
-            "description": "A request from the server to elicit additional information from the user via the client.",
-            "properties": {
-                "method": {
-                    "const": "elicitation/create",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "message": {
-                            "description": "The message to present to the user.",
-                            "type": "string"
-                        },
-                        "requestedSchema": {
-                            "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.",
-                            "properties": {
-                                "properties": {
-                                    "additionalProperties": {
-                                        "$ref": "#/definitions/PrimitiveSchemaDefinition"
-                                    },
-                                    "type": "object"
-                                },
-                                "required": {
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "type": "array"
-                                },
-                                "type": {
-                                    "const": "object",
-                                    "type": "string"
-                                }
-                            },
-                            "required": [
-                                "properties",
-                                "type"
-                            ],
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "message",
-                        "requestedSchema"
-                    ],
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method",
-                "params"
-            ],
-            "type": "object"
-        },
-        "ElicitResult": {
-            "description": "The client's response to an elicitation request.",
-            "properties": {
-                "_meta": {
-                    "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
-                    "type": "object"
-                },
-                "action": {
-                    "description": "The user action in response to the elicitation.\n- \"accept\": User submitted the form/confirmed the action\n- \"decline\": User explicitly declined the action\n- \"cancel\": User dismissed without making an explicit choice",
-                    "enum": [
-                        "accept",
-                        "cancel",
-                        "decline"
-                    ],
-                    "type": "string"
-                },
-                "content": {
-                    "additionalProperties": {},
-                    "description": "The submitted form data, only present when action is \"accept\".\nContains values matching the requested schema.",
-                    "type": "object"
-                }
-            },
-            "required": [
-                "action"
-            ],
-            "type": "object"
-        },
         "EmbeddedResource": {
             "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
             "properties": {
@@ -637,37 +497,6 @@
         },
         "EmptyResult": {
             "$ref": "#/definitions/Result"
-        },
-        "EnumSchema": {
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "enum": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "enumNames": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "const": "string",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "enum",
-                "type"
-            ],
-            "type": "object"
         },
         "GetPromptRequest": {
             "description": "Used by the client to get a prompt provided by the server.",
@@ -858,6 +687,34 @@
             ],
             "type": "object"
         },
+        "JSONRPCBatchRequest": {
+            "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/JSONRPCRequest"
+                    },
+                    {
+                        "$ref": "#/definitions/JSONRPCNotification"
+                    }
+                ]
+            },
+            "type": "array"
+        },
+        "JSONRPCBatchResponse": {
+            "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/JSONRPCResponse"
+                    },
+                    {
+                        "$ref": "#/definitions/JSONRPCError"
+                    }
+                ]
+            },
+            "type": "array"
+        },
         "JSONRPCError": {
             "description": "A response to a request that indicates an error occurred.",
             "properties": {
@@ -905,10 +762,38 @@
                     "$ref": "#/definitions/JSONRPCNotification"
                 },
                 {
+                    "description": "A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/JSONRPCRequest"
+                            },
+                            {
+                                "$ref": "#/definitions/JSONRPCNotification"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                {
                     "$ref": "#/definitions/JSONRPCResponse"
                 },
                 {
                     "$ref": "#/definitions/JSONRPCError"
+                },
+                {
+                    "description": "A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/JSONRPCResponse"
+                            },
+                            {
+                                "$ref": "#/definitions/JSONRPCError"
+                            }
+                        ]
+                    },
+                    "type": "array"
                 }
             ],
             "description": "Refers to any valid JSON-RPC object that can be decoded off the wire, or encoded to be sent."
@@ -1341,33 +1226,6 @@
             ],
             "type": "object"
         },
-        "NumberSchema": {
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "maximum": {
-                    "type": "integer"
-                },
-                "minimum": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "integer",
-                        "number"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "type": "object"
-        },
         "PaginatedRequest": {
             "properties": {
                 "method": {
@@ -1429,23 +1287,6 @@
                 "method"
             ],
             "type": "object"
-        },
-        "PrimitiveSchemaDefinition": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/StringSchema"
-                },
-                {
-                    "$ref": "#/definitions/NumberSchema"
-                },
-                {
-                    "$ref": "#/definitions/BooleanSchema"
-                },
-                {
-                    "$ref": "#/definitions/EnumSchema"
-                }
-            ],
-            "description": "Restricted schema definitions that only allow primitive types\nwithout nested objects or arrays."
         },
         "ProgressNotification": {
             "description": "An out-of-band notification used to inform the receiver of a progress update for a long-running request.",
@@ -1566,10 +1407,35 @@
             "description": "Describes a message returned as part of a prompt.\n\nThis is similar to `SamplingMessage`, but also supports the embedding of\nresources from the MCP server.",
             "properties": {
                 "content": {
-                    "$ref": "#/definitions/ContentBlock"
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/TextContent"
+                        },
+                        {
+                            "$ref": "#/definitions/ImageContent"
+                        },
+                        {
+                            "$ref": "#/definitions/AudioContent"
+                        },
+                        {
+                            "$ref": "#/definitions/EmbeddedResource"
+                        }
+                    ]
                 },
                 "role": {
                     "$ref": "#/definitions/Role"
+                },
+                "toolCalls": {
+                    "items": {
+                        "$ref": "#/definitions/ToolCall"
+                    },
+                    "type": "array"
+                },
+                "toolResult": {
+                    "items": {
+                        "$ref": "#/definitions/ToolResult"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -1736,46 +1602,6 @@
             ],
             "type": "object"
         },
-        "ResourceLink": {
-            "description": "A resource that the server is capable of reading, included in a prompt or tool call result.\n\nNote: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.",
-            "properties": {
-                "annotations": {
-                    "$ref": "#/definitions/Annotations",
-                    "description": "Optional annotations for the client."
-                },
-                "description": {
-                    "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
-                    "type": "string"
-                },
-                "mimeType": {
-                    "description": "The MIME type of this resource, if known.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "A human-readable name for this resource.\n\nThis can be used by clients to populate UI elements.",
-                    "type": "string"
-                },
-                "size": {
-                    "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
-                    "type": "integer"
-                },
-                "type": {
-                    "const": "resource_link",
-                    "type": "string"
-                },
-                "uri": {
-                    "description": "The URI of this resource.",
-                    "format": "uri",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "type",
-                "uri"
-            ],
-            "type": "object"
-        },
         "ResourceListChangedNotification": {
             "description": "An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.",
             "properties": {
@@ -1797,6 +1623,25 @@
             },
             "required": [
                 "method"
+            ],
+            "type": "object"
+        },
+        "ResourceReference": {
+            "description": "A reference to a resource or resource template definition.",
+            "properties": {
+                "type": {
+                    "const": "ref/resource",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI or URI template of the resource.",
+                    "format": "uri-template",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "uri"
             ],
             "type": "object"
         },
@@ -1828,25 +1673,6 @@
             "required": [
                 "name",
                 "uriTemplate"
-            ],
-            "type": "object"
-        },
-        "ResourceTemplateReference": {
-            "description": "A reference to a resource or resource template definition.",
-            "properties": {
-                "type": {
-                    "const": "ref/resource",
-                    "type": "string"
-                },
-                "uri": {
-                    "description": "The URI or URI template of the resource.",
-                    "format": "uri-template",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type",
-                "uri"
             ],
             "type": "object"
         },
@@ -2060,9 +1886,6 @@
                 },
                 {
                     "$ref": "#/definitions/ListRootsRequest"
-                },
-                {
-                    "$ref": "#/definitions/ElicitRequest"
                 }
             ]
         },
@@ -2123,39 +1946,6 @@
             "required": [
                 "method",
                 "params"
-            ],
-            "type": "object"
-        },
-        "StringSchema": {
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "format": {
-                    "enum": [
-                        "date",
-                        "date-time",
-                        "email",
-                        "uri"
-                    ],
-                    "type": "string"
-                },
-                "maxLength": {
-                    "type": "integer"
-                },
-                "minLength": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "const": "string",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
             ],
             "type": "object"
         },
@@ -2271,33 +2061,6 @@
                 "name": {
                     "description": "The name of the tool.",
                     "type": "string"
-                },
-                "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a CallToolResult.",
-                    "properties": {
-                        "properties": {
-                            "additionalProperties": {
-                                "additionalProperties": true,
-                                "properties": {},
-                                "type": "object"
-                            },
-                            "type": "object"
-                        },
-                        "required": {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        "type": {
-                            "const": "object",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "type"
-                    ],
-                    "type": "object"
                 }
             },
             "required": [
@@ -2332,6 +2095,30 @@
             },
             "type": "object"
         },
+        "ToolCall": {
+            "description": "A tool call initiated by the assistant.",
+            "properties": {
+                "arguments": {
+                    "additionalProperties": {},
+                    "description": "The arguments passed to the tool, as a JSON object.",
+                    "type": "object"
+                },
+                "id": {
+                    "description": "A unique identifier for this tool call.\nThis ID is used to match tool calls with their results.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the tool being called.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "arguments",
+                "id",
+                "name"
+            ],
+            "type": "object"
+        },
         "ToolListChangedNotification": {
             "description": "An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.",
             "properties": {
@@ -2353,6 +2140,28 @@
             },
             "required": [
                 "method"
+            ],
+            "type": "object"
+        },
+        "ToolResult": {
+            "description": "A result returned from a tool call.",
+            "properties": {
+                "content": {
+                    "description": "The content returned from the tool, typically text.",
+                    "type": "string"
+                },
+                "isError": {
+                    "description": "Whether the tool call resulted in an error.\nIf not specified, assumed to be false.",
+                    "type": "boolean"
+                },
+                "toolCallId": {
+                    "description": "The ID of the tool call this result is for.\nThis must match the ID of a previous tool call.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "content",
+                "toolCallId"
             ],
             "type": "object"
         },
