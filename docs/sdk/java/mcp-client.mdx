@@ -16,15 +16,18 @@ The MCP Client is a key component in the Model Context Protocol (MCP) architectu
 - Optional features like roots management and sampling support
 
 <Tip>
-The core `io.modelcontextprotocol.sdk:mcp` module provides STDIO and SSE client transport implementations  without requiring external web frameworks. 
+
+The core `io.modelcontextprotocol.sdk:mcp` module provides STDIO and SSE client transport implementations without requiring external web frameworks.
 
 Spring-specific transport implementations are available as an **optional** dependency `io.modelcontextprotocol.sdk:mcp-spring-webflux` for [Spring Framework](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-client-boot-starter-docs.html) users.
+
 </Tip>
 
 The client provides both synchronous and asynchronous APIs for flexibility in different application contexts.
 
 <Tabs>
   <Tab title="Sync API">
+
 ```java
 // Create a sync client with custom configuration
 McpSyncClient client = McpClient.sync(transport)
@@ -44,7 +47,7 @@ ListToolsResult tools = client.listTools();
 
 // Call a tool
 CallToolResult result = client.callTool(
-    new CallToolRequest("calculator", 
+    new CallToolRequest("calculator",
         Map.of("operation", "add", "a", 2, "b", 3))
 );
 
@@ -67,9 +70,11 @@ client.removeRoot("file:///path");
 // Close client
 client.closeGracefully();
 ```
+
   </Tab>
 
   <Tab title="Async API">
+
 ```java
 // Create an async client with custom configuration
 McpAsyncClient client = McpClient.async(transport)
@@ -95,13 +100,13 @@ client.initialize()
     .flatMap(initResult -> client.listTools())
     .flatMap(tools -> {
         return client.callTool(new CallToolRequest(
-            "calculator", 
+            "calculator",
             Map.of("operation", "add", "a", 2, "b", 3)
         ));
     })
     .flatMap(result -> {
         return client.listResources()
-            .flatMap(resources -> 
+            .flatMap(resources ->
                 client.readResource(new ReadResourceRequest("resource://uri"))
             );
     })
@@ -109,20 +114,21 @@ client.initialize()
         return client.listPrompts()
             .flatMap(prompts ->
                 client.getPrompt(new GetPromptRequest(
-                    "greeting", 
+                    "greeting",
                     Map.of("name", "Spring")
                 ))
             );
     })
     .flatMap(prompt -> {
         return client.addRoot(new Root("file:///path", "description"))
-            .then(client.removeRoot("file:///path"));            
+            .then(client.removeRoot("file:///path"));
     })
     .doFinally(signalType -> {
         client.closeGracefully().subscribe();
     })
     .subscribe();
 ```
+
   </Tab>
 </Tabs>
 
@@ -132,6 +138,7 @@ The transport layer handles the communication between MCP clients and servers, p
 
 <Tabs>
     <Tab title="STDIO">
+
         Creates transport for in-process based communication
         ```java
         ServerParameters params = ServerParameters.builder("npx")
@@ -139,21 +146,27 @@ The transport layer handles the communication between MCP clients and servers, p
             .build();
         McpTransport transport = new StdioClientTransport(params);
         ```
+
     </Tab>
     <Tab title="SSE (HttpClient)">
+
         Creates a framework agnostic (pure Java API) SSE client transport. Included in the core mcp module.
         ```java
         McpTransport transport = new HttpClientSseClientTransport("http://your-mcp-server");
         ```
+
     </Tab>
     <Tab title="SSE (WebFlux)">
+
         Creates WebFlux-based SSE client transport. Requires the mcp-webflux-sse-transport dependency.
         ```java
         WebClient.Builder webClientBuilder = WebClient.builder()
             .baseUrl("http://your-mcp-server");
         McpTransport transport = new WebFluxSseClientTransport(webClientBuilder);
         ```
+
     </Tab>
+
 </Tabs>
 
 ## Client Capabilities
@@ -209,17 +222,17 @@ var client = McpClient.sync(transport)
 ```
 
 This capability allows:
+
 - Servers to leverage AI capabilities without requiring API keys
 - Clients to maintain control over model access and permissions
 - Support for both text and image-based interactions
 - Optional inclusion of MCP server context in prompts
 
-
 ### Logging Support
 
 The client can register a logging consumer to receive log messages from the server and set the minimum logging level to filter messages:
 
-```java	
+```java
 var mcpClient = McpClient.sync(transport)
         .loggingConsumer(notification -> {
             System.out.println("Received log message: " + notification.data());
@@ -233,6 +246,7 @@ mcpClient.setLoggingLevel(McpSchema.LoggingLevel.INFO);
 // Call the tool that can sends logging notifications
 CallToolResult result = mcpClient.callTool(new McpSchema.CallToolRequest("logging-test", Map.of()));
 ```
+
 Clients can control the minimum logging level they receive through the `mcpClient.setLoggingLevel(level)` request. Messages below the set level will be filtered out.
 Supported logging levels (in order of increasing severity): DEBUG (0), INFO (1), NOTICE (2), WARNING (3), ERROR (4), CRITICAL (5), ALERT (6), EMERGENCY (7)
 
@@ -244,6 +258,7 @@ Tools are server-side functions that clients can discover and execute. The MCP c
 
 <Tabs>
   <Tab title="Sync API">
+
 ```java
 // List available tools and their names
 var tools = client.listTools();
@@ -256,13 +271,15 @@ var result = client.callTool("calculator", Map.of(
     "b", 2
 ));
 ```
+
   </Tab>
 
   <Tab title="Async API">
+
 ```java
 // List available tools asynchronously
 client.listTools()
-    .doOnNext(tools -> tools.forEach(tool -> 
+    .doOnNext(tools -> tools.forEach(tool ->
         System.out.println(tool.getName())))
     .subscribe();
 
@@ -274,6 +291,7 @@ client.callTool("calculator", Map.of(
     ))
     .subscribe();
 ```
+
   </Tab>
 </Tabs>
 
@@ -283,6 +301,7 @@ Resources represent server-side data sources that clients can access using URI t
 
 <Tabs>
   <Tab title="Sync API">
+
 ```java
 // List available resources and their names
 var resources = client.listResources();
@@ -293,13 +312,15 @@ var content = client.getResource("file", Map.of(
     "path", "/path/to/file.txt"
 ));
 ```
+
   </Tab>
 
   <Tab title="Async API">
+
 ```java
 // List available resources asynchronously
 client.listResources()
-    .doOnNext(resources -> resources.forEach(resource -> 
+    .doOnNext(resources -> resources.forEach(resource ->
         System.out.println(resource.getName())))
     .subscribe();
 
@@ -309,6 +330,7 @@ client.getResource("file", Map.of(
     ))
     .subscribe();
 ```
+
   </Tab>
 </Tabs>
 
@@ -318,6 +340,7 @@ The prompt system enables interaction with server-side prompt templates. These t
 
 <Tabs>
   <Tab title="Sync API">
+
 ```java
 // List available prompt templates
 var prompts = client.listPrompts();
@@ -328,13 +351,15 @@ var response = client.executePrompt("echo", Map.of(
     "text", "Hello, World!"
 ));
 ```
+
   </Tab>
 
   <Tab title="Async API">
+
 ```java
 // List available prompt templates asynchronously
 client.listPrompts()
-    .doOnNext(prompts -> prompts.forEach(prompt -> 
+    .doOnNext(prompts -> prompts.forEach(prompt ->
         System.out.println(prompt.getName())))
     .subscribe();
 
@@ -344,12 +369,13 @@ client.executePrompt("echo", Map.of(
     ))
     .subscribe();
 ```
+
   </Tab>
 </Tabs>
 
 ### Using Completion
 
-As part of the [Completion capabilities](/specification/2025-03-26/server/utilities/completion), MCP provides a provides a standardized way for servers to offer argument autocompletion suggestions for prompts and resource URIs.
+As part of the [Completion capabilities](/specification/2025-03-26/server/utilities/completion), MCP provides a standardized way for servers to offer argument autocompletion suggestions for prompts and resource URIs.
 
 Check the [Server Completion capabilities](/sdk/java/mcp-server#completion-specification) to learn how to enable and configure completions on the server side.
 
@@ -367,6 +393,7 @@ CompleteRequest request = new CompleteRequest(
 CompleteResult result = syncMcpClient.completeCompletion(request);
 
 ```
+
   </Tab>
 
   <Tab title="Async API">
@@ -383,4 +410,3 @@ Mono<CompleteResult> result = mcpClient.completeCompletion(request);
 
   </Tab>
 </Tabs>
-

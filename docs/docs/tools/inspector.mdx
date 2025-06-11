@@ -11,7 +11,6 @@ The [MCP Inspector](https://github.com/modelcontextprotocol/inspector) is an int
 
 The Inspector runs directly through `npx` without requiring installation:
 
-
 ```bash
 npx @modelcontextprotocol/inspector <command>
 ```
@@ -27,19 +26,23 @@ A common way to start server packages from [NPM](https://npmjs.com) or [PyPi](ht
 <Tabs>
 
   <Tab title="NPM package">
-  ```bash
-  npx -y @modelcontextprotocol/inspector npx <package-name> <args>
-  # For example
-  npx -y @modelcontextprotocol/inspector npx server-postgres postgres://127.0.0.1/testdb
-  ```
+
+```bash
+npx -y @modelcontextprotocol/inspector npx <package-name> <args>
+# For example
+npx -y @modelcontextprotocol/inspector npx server-postgres postgres://127.0.0.1/testdb
+```
+
   </Tab>
 
   <Tab title="PyPi package">
-  ```bash
-  npx @modelcontextprotocol/inspector uvx <package-name> <args>
-  # For example
-  npx @modelcontextprotocol/inspector uvx mcp-server-git --repository ~/code/mcp/servers.git
-  ```
+
+```bash
+npx @modelcontextprotocol/inspector uvx <package-name> <args>
+# For example
+npx @modelcontextprotocol/inspector uvx mcp-server-git --repository ~/code/mcp/servers.git
+```
+
   </Tab>
 </Tabs>
 
@@ -50,19 +53,23 @@ way is:
 
 <Tabs>
   <Tab title="TypeScript">
-  ```bash
-  npx @modelcontextprotocol/inspector node path/to/server/index.js args...
-  ```
+
+```bash
+npx @modelcontextprotocol/inspector node path/to/server/index.js args...
+```
+
   </Tab>
   <Tab title="Python">
-  ```bash
-  npx @modelcontextprotocol/inspector \
-    uv \
-    --directory path/to/server \
-    run \
-    package-name \
-    args...
-  ```
+
+```bash
+npx @modelcontextprotocol/inspector \
+  uv \
+  --directory path/to/server \
+  run \
+  package-name \
+  args...
+```
+
   </Tab>
 </Tabs>
 
@@ -77,28 +84,33 @@ Please carefully read any attached README for the most accurate instructions.
 The Inspector provides several features for interacting with your MCP server:
 
 ### Server connection pane
+
 - Allows selecting the [transport](/docs/concepts/transports) for connecting to the server
 - For local servers, supports customizing the command-line arguments and environment
 
 ### Resources tab
+
 - Lists all available resources
 - Shows resource metadata (MIME types, descriptions)
 - Allows resource content inspection
 - Supports subscription testing
 
 ### Prompts tab
+
 - Displays available prompt templates
 - Shows prompt arguments and descriptions
 - Enables prompt testing with custom arguments
 - Previews generated messages
 
 ### Tools tab
+
 - Lists available tools
 - Shows tool schemas and descriptions
 - Enables tool testing with custom inputs
 - Displays tool execution results
 
 ### Notifications pane
+
 - Presents all logs recorded from the server
 - Shows notifications received from the server
 
@@ -107,11 +119,13 @@ The Inspector provides several features for interacting with your MCP server:
 ### Development workflow
 
 1. Start Development
+
    - Launch Inspector with your server
    - Verify basic connectivity
    - Check capability negotiation
 
 2. Iterative testing
+
    - Make server changes
    - Rebuild the server
    - Reconnect the Inspector
@@ -142,4 +156,5 @@ The Inspector provides several features for interacting with your MCP server:
     >
         Learn about broader debugging strategies
     </Card>
+
 </CardGroup>

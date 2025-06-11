@@ -2,6 +2,8 @@
 title: Resources
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) provides a standardized way for servers to expose
@@ -21,7 +23,7 @@ For example, applications could:
 - Allow the user to search through and filter available resources
 - Implement automatic context inclusion, based on heuristics or the AI model's selection
 
-![Example of resource context picker](resource-picker.png)
+![Example of resource context picker](/specification/draft/server/resource-picker.png)
 
 However, implementations are free to expose resources through any interface pattern that
 suits their needs&mdash;the protocol itself does not mandate any specific user
@@ -323,6 +325,11 @@ otherwise have a standard MIME type.
 ### git://
 
 Git version control integration.
+
+### Custom URI Schemes
+
+Custom URI schemes **MUST** be in accordance with [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986),
+taking the above guidance in to account.
 
 ## Error Handling
 

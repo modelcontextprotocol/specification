@@ -2,6 +2,8 @@
 title: Completion
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) provides a standardized way for servers to offer
@@ -76,6 +78,49 @@ what is being completed through a reference type:
 }
 ```
 
+For prompts or URI templates with multiple arguments, clients should resolve them in the order they are presented by the server, and include each previous completion in the `context.arguments` object to provide context for subsequent requests.
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "completion/complete",
+  "params": {
+    "ref": {
+      "type": "ref/prompt",
+      "name": "code_review"
+    },
+    "argument": {
+      "name": "framework",
+      "value": "fla"
+    },
+    "context": {
+      "arguments": {
+        "language": "python"
+      }
+    }
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "completion": {
+      "values": ["flask"],
+      "total": 1,
+      "hasMore": false
+    }
+  }
+}
+```
+
 ### Reference Types
 
 The protocol supports two types of completion references:
@@ -117,6 +162,8 @@ sequenceDiagram
 - `argument`: Object containing:
   - `name`: Argument name
   - `value`: Current value
+- `context`: Object containing:
+  - `arguments`: A mapping of already-resolved argument names to their values.
 
 ### CompleteResult
 

@@ -2,6 +2,8 @@
 title: Tools
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) allows servers to expose tools that can be invoked by
@@ -25,6 +27,7 @@ webhooks in tool call requests and enables servers to transmit tool call respons
 webhooks instead of the client.
 
 <Warning>
+
 For trust & safety and security, there **SHOULD** always
 be a human in the loop with the ability to deny tool invocations.
 
@@ -34,6 +37,7 @@ Applications **SHOULD**:
 - Insert clear visual indicators when tools are invoked
 - Present confirmation prompts to the user for operations, to ensure a human is in the
   loop
+
 </Warning>
 
 ## Capabilities
@@ -255,8 +259,12 @@ A tool definition includes:
 - `outputSchema`: Optional JSON Schema defining expected output structure
 - `annotations`: optional properties describing tool behavior
 
-<Warning>For trust & safety and security, clients **MUST** consider
-tool annotations to be untrusted unless they come from trusted servers.</Warning>
+<Warning>
+
+For trust & safety and security, clients **MUST** consider
+tool annotations to be untrusted unless they come from trusted servers.
+
+</Warning>
 
 ### Tool Result
 
@@ -293,25 +301,45 @@ Tool results may contain [**structured**](#structured-content) or **unstructured
 }
 ```
 
+#### Resource Links
+
+A tool **MAY** return links to [Resources](/specification/draft/server/resources), to provide additional context
+or data. In this case, the tool will return a URI that can be subscribed to or fetched by the client:
+
+```json
+{
+  "type": "resource_link",
+  "uri": "file:///project/src/main.rs",
+  "name": "main.rs",
+  "description": "Primary application entry point",
+  "mimeType": "text/x-rust"
+}
+```
+
+<Info>
+  Resource links returned by tools are not guaranteed to appear in the results
+  of a `resources/list` request.
+</Info>
+
 #### Embedded Resources
 
-[Resources](/specification/draft/server/resources) **MAY** be embedded, to provide additional context
-or data, behind a URI that can be subscribed to or fetched again by the client later:
+[Resources](resources) **MAY** be embedded to provide additional context
+or data using a suitable [URI scheme](./resources#common-uri-schemes). Servers that use embedded resources **SHOULD** implement the `resources` capability:
 
 ```json
 {
   "type": "resource",
   "resource": {
-    "uri": "resource://example",
-    "mimeType": "text/plain",
-    "text": "Resource content"
+    "uri": "file:///project/src/main.rs",
+    "mimeType": "text/x-rust",
+    "text": "fn main() {\n    println!(\"Hello world!\");\n}"
   }
 }
 ```
 
 #### Structured Content
 
-**Structured** content is returned as a JSON object in the `structuredContent` field of a result. 
+**Structured** content is returned as a JSON object in the `structuredContent` field of a result.
 
 For backwards compatibility, a tool that returns structured content SHOULD also return functionally equivalent unstructured content.
 (For example, serialized JSON can be returned in a `TextContent` block.)
@@ -320,8 +348,9 @@ For backwards compatibility, a tool that returns structured content SHOULD also 
 
 Tools may also provide an output schema for validation of structured results.
 If an output schema is provided:
-* Servers **MUST** provide structured results that conform to this schema.
-* Clients **SHOULD** validate structured results against this schema.
+
+- Servers **MUST** provide structured results that conform to this schema.
+- Clients **SHOULD** validate structured results against this schema.
 
 Example tool with output schema:
 

@@ -6,20 +6,8 @@
 export type JSONRPCMessage =
   | JSONRPCRequest
   | JSONRPCNotification
-  | JSONRPCBatchRequest
   | JSONRPCResponse
-  | JSONRPCError
-  | JSONRPCBatchResponse;
-
-/**
- * A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchRequest = (JSONRPCRequest | JSONRPCNotification)[];
-
-/**
- * A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchResponse = (JSONRPCResponse | JSONRPCError)[];
+  | JSONRPCError;
 
 export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v2";
 export const JSONRPC_VERSION = "2.0";
@@ -650,7 +638,16 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
+  content: ContentBlock;
+}
+
+/**
+ * A resource that the server is capable of reading, included in a prompt or tool call result.
+ *
+ * Note: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.
+ */
+export interface ResourceLink extends Resource {
+  type: "resource_link";
 }
 
 /**
@@ -668,7 +665,6 @@ export interface EmbeddedResource {
    */
   annotations?: Annotations;
 }
-
 /**
  * An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
  */
@@ -698,7 +694,7 @@ export interface CallToolResult extends Result {
   /**
    * A list of content objects that represent the unstructured result of the tool call.
    */
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  content: ContentBlock[];
 
   /**
    * An optional JSON object that represents the structured result of the tool call.
@@ -709,7 +705,7 @@ export interface CallToolResult extends Result {
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
-   * 
+   *
    * Any errors that originate from the tool SHOULD be reported inside the result
    * object, with `isError` set to true, _not_ as an MCP protocol-level error
    * response. Otherwise, the LLM would not be able to see that an error occurred
@@ -857,7 +853,7 @@ export interface Tool {
   };
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output returned in 
+   * An optional JSON Schema object defining the structure of the tool's output returned in
    * the structuredContent field of a CallToolResult.
    */
   outputSchema?: {
@@ -1004,7 +1000,25 @@ export interface Annotations {
    * @maximum 1
    */
   priority?: number;
+
+  /**
+   * The moment the resource was last modified, as an ISO 8601 formatted string.
+   *
+   * Should be an ISO 8601 formatted string (e.g., "2025-01-12T15:00:58Z").
+   *
+   * Examples: last activity timestamp in an open file, timestamp when the resource
+   * was attached, etc.
+   */
+  lastModified?: string;
 }
+
+/**  */
+export type ContentBlock =
+  | TextContent
+  | ImageContent
+  | AudioContent
+  | ResourceLink
+  | EmbeddedResource;
 
 /**
  * Text provided to or from an LLM.
@@ -1158,7 +1172,7 @@ export interface ModelHint {
 export interface CompleteRequest extends Request {
   method: "completion/complete";
   params: {
-    ref: PromptReference | ResourceReference;
+    ref: PromptReference | ResourceTemplateReference;
     /**
      * The argument's information
      */
@@ -1171,6 +1185,16 @@ export interface CompleteRequest extends Request {
        * The value of the argument to use for completion matching.
        */
       value: string;
+    };
+
+    /**
+     * Additional, optional context for completions
+     */
+    context?: {
+      /**
+       * Previously-resolved variables in a URI template or prompt.
+       */
+      arguments?: { [key: string]: string };
     };
   };
 }
@@ -1198,7 +1222,7 @@ export interface CompleteResult extends Result {
 /**
  * A reference to a resource or resource template definition.
  */
-export interface ResourceReference {
+export interface ResourceTemplateReference {
   type: "ref/resource";
   /**
    * The URI or URI template of the resource.
@@ -1299,7 +1323,7 @@ export interface ElicitRequest extends Request {
  * Restricted schema definitions that only allow primitive types
  * without nested objects or arrays.
  */
-export type PrimitiveSchemaDefinition = 
+export type PrimitiveSchemaDefinition =
   | StringSchema
   | NumberSchema
   | BooleanSchema
@@ -1334,7 +1358,7 @@ export interface EnumSchema {
   title?: string;
   description?: string;
   enum: string[];
-  enumNames?: string[];  // Display names for enum values
+  enumNames?: string[]; // Display names for enum values
 }
 
 /**
@@ -1348,12 +1372,12 @@ export interface ElicitResult extends Result {
    * - "cancel": User dismissed without making an explicit choice
    */
   action: "accept" | "decline" | "cancel";
-  
+
   /**
    * The submitted form data, only present when action is "accept".
    * Contains values matching the requested schema.
    */
-  content?: { [key: string]: unknown };
+  content?: { [key: string]: string | number | boolean };
 }
 
 /* Client messages */
@@ -1378,7 +1402,11 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
+export type ClientResult =
+  | EmptyResult
+  | CreateMessageResult
+  | ListRootsResult
+  | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
