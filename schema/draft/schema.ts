@@ -668,6 +668,21 @@ export interface PromptListChangedNotification extends Notification {
   method: "notifications/prompts/list_changed";
 }
 
+/* Async Tools /
+/*
+Sent from the client to request a list of async tools the server has.
+ */
+export interface ListToolsAsyncRequest extends PaginatedRequest {
+  method: "tools/listAsync";
+}
+
+/*
+The server's response to a tools/listAsync request from the client.
+ */
+export interface ListToolsAsyncResult extends PaginatedResult {
+  tools: Tool[]; // return Tools which has `async` as True
+}
+
 /* Tools */
 /**
  * Sent from the client to request a list of tools the server has.
@@ -681,6 +696,127 @@ export interface ListToolsRequest extends PaginatedRequest {
  */
 export interface ListToolsResult extends PaginatedResult {
   tools: Tool[];
+}
+
+/**
+ * Type definition for async operation tokens
+ */
+export type AsyncToken = string | number;
+
+/**
+ * Used by the client to call a tool asynchronously
+ */
+export interface CallToolAsyncRequest {
+  method: "tools/async/call";
+  params: {
+    name: string;
+    arguments?: { [key: string]: unknown };
+    /**
+     * Number of seconds to keep the result available.
+     * The server may adjust this value based on its policies.
+     */
+    keepAlive?: number;
+  };
+}
+
+/**
+ * Server response to an async tool call request
+ */
+export interface CallToolAsyncResult {
+  /**
+   * Token to use for checking status and retrieving results.
+   */
+  token: AsyncToken;
+  
+  /**
+   * Number of seconds from the received time that the result will be kept available.
+   * This may be different from the requested keepAlive if the server adjusted it.
+   */
+  keepAlive: number;
+}
+
+/**
+ * Used by the client to join an existing async tool call
+ */
+export interface JoinToolAsyncRequest {
+  method: "tools/async/join";
+  params: {
+    token: AsyncToken;
+    /**
+     * Optional request to extend the keepAlive time.
+     */
+    extendKeepAlive?: number;
+  };
+}
+
+/**
+ * Server response to a join request
+ */
+export interface JoinToolAsyncResult {
+  /**
+   * Updated number of seconds the result will be kept available.
+   */
+  keepAlive: number;
+  
+  /**
+   * Whether the join request was accepted.
+   */
+  accepted: boolean;
+}
+
+/**
+ * Used by the client to cancel an async tool call
+ */
+export interface CancelToolAsyncNotification {
+  method: "tools/async/cancel";
+  params: {
+    token: AsyncToken;
+  };
+}
+
+/**
+ * Used by the client to check the status of an async tool call
+ */
+export interface CheckToolAsyncStatusRequest {
+  method: "tools/async/status";
+  params: {
+    token: AsyncToken;
+  };
+}
+
+/**
+ * Server response to a status check request
+ */
+export interface CheckToolAsyncStatusResult {
+  /**
+   * Current status of the async operation.
+   */
+  status: "PENDING" | "ACTIVE" | "UPDATING" | "FAILED" | "DELETING" | "DELETE_UNSUCCESSFUL";
+  
+  /**
+   * Error message if status is "FAILED".
+   */
+  error?: string;
+}
+
+/**
+ * Used by the client to get the result of a completed async tool call
+ */
+export interface GetToolAsyncResultRequest {
+  method: "tools/async/result";
+  params: {
+    token: AsyncToken;
+  };
+}
+
+/**
+ * Server response containing the result of a completed async tool call
+ */
+export interface GetToolAsyncResultResult {
+  /**
+   * The result of the tool call.
+   */
+  result: CallToolResult;
 }
 
 /**
@@ -825,6 +961,13 @@ export interface Tool {
    * Optional additional tool information.
    */
   annotations?: ToolAnnotations;
+
+  /**
+   * If true, the tool is asynchronous.
+   *
+   * Default: false
+   */
+  async?: boolean;
 }
 
 /* Logging */

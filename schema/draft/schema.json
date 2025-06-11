@@ -24,6 +24,13 @@
             },
             "type": "object"
         },
+        "AsyncToken": {
+            "description": "Type definition for async operation tokens",
+            "type": [
+                "string",
+                "integer"
+            ]
+        },
         "AudioContent": {
             "description": "Audio provided to or from an LLM.",
             "properties": {
@@ -96,6 +103,57 @@
             ],
             "type": "object"
         },
+        "CallToolAsyncRequest": {
+            "description": "Used by the client to call a tool asynchronously",
+            "properties": {
+                "method": {
+                    "const": "tools/async/call",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "arguments": {
+                            "additionalProperties": {},
+                            "type": "object"
+                        },
+                        "keepAlive": {
+                            "description": "Number of seconds to keep the result available.\nThe server may adjust this value based on its policies.",
+                            "type": "integer"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "CallToolAsyncResult": {
+            "description": "Server response to an async tool call request",
+            "properties": {
+                "keepAlive": {
+                    "description": "Number of seconds from the received time that the result will be kept available.\nThis may be different from the requested keepAlive if the server adjusted it.",
+                    "type": "integer"
+                },
+                "token": {
+                    "$ref": "#/definitions/AsyncToken",
+                    "description": "Token to use for checking status and retrieving results."
+                }
+            },
+            "required": [
+                "keepAlive",
+                "token"
+            ],
+            "type": "object"
+        },
         "CallToolRequest": {
             "description": "Used by the client to invoke a tool provided by the server.",
             "properties": {
@@ -155,6 +213,31 @@
             ],
             "type": "object"
         },
+        "CancelToolAsyncNotification": {
+            "description": "Used by the client to cancel an async tool call",
+            "properties": {
+                "method": {
+                    "const": "tools/async/cancel",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "token": {
+                            "$ref": "#/definitions/AsyncToken"
+                        }
+                    },
+                    "required": [
+                        "token"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
         "CancelledNotification": {
             "description": "This notification can be sent by either side to indicate that it is cancelling a previously-issued request.\n\nThe request SHOULD still be in-flight, but due to communication latency, it is always possible that this notification MAY arrive after the request has already finished.\n\nThis notification indicates that the result will be unused, so any associated processing SHOULD cease.\n\nA client MUST NOT attempt to cancel its `initialize` request.",
             "properties": {
@@ -182,6 +265,56 @@
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "CheckToolAsyncStatusRequest": {
+            "description": "Used by the client to check the status of an async tool call",
+            "properties": {
+                "method": {
+                    "const": "tools/async/status",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "token": {
+                            "$ref": "#/definitions/AsyncToken"
+                        }
+                    },
+                    "required": [
+                        "token"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "CheckToolAsyncStatusResult": {
+            "description": "Server response to a status check request",
+            "properties": {
+                "error": {
+                    "description": "Error message if status is \"FAILED\".",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Current status of the async operation.",
+                    "enum": [
+                        "ACTIVE",
+                        "DELETE_UNSUCCESSFUL",
+                        "DELETING",
+                        "FAILED",
+                        "PENDING",
+                        "UPDATING"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "status"
             ],
             "type": "object"
         },
@@ -732,6 +865,44 @@
             ],
             "type": "object"
         },
+        "GetToolAsyncResultRequest": {
+            "description": "Used by the client to get the result of a completed async tool call",
+            "properties": {
+                "method": {
+                    "const": "tools/async/result",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "token": {
+                            "$ref": "#/definitions/AsyncToken"
+                        }
+                    },
+                    "required": [
+                        "token"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "GetToolAsyncResultResult": {
+            "description": "Server response containing the result of a completed async tool call",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/CallToolResult",
+                    "description": "The result of the tool call."
+                }
+            },
+            "required": [
+                "result"
+            ],
+            "type": "object"
+        },
         "ImageContent": {
             "description": "An image provided to or from an LLM.",
             "properties": {
@@ -1004,6 +1175,53 @@
             ],
             "type": "object"
         },
+        "JoinToolAsyncRequest": {
+            "description": "Used by the client to join an existing async tool call",
+            "properties": {
+                "method": {
+                    "const": "tools/async/join",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "extendKeepAlive": {
+                            "description": "Optional request to extend the keepAlive time.",
+                            "type": "integer"
+                        },
+                        "token": {
+                            "$ref": "#/definitions/AsyncToken"
+                        }
+                    },
+                    "required": [
+                        "token"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "JoinToolAsyncResult": {
+            "description": "Server response to a join request",
+            "properties": {
+                "accepted": {
+                    "description": "Whether the join request was accepted.",
+                    "type": "boolean"
+                },
+                "keepAlive": {
+                    "description": "Updated number of seconds the result will be kept available.",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "accepted",
+                "keepAlive"
+            ],
+            "type": "object"
+        },
         "ListPromptsRequest": {
             "description": "Sent from the client to request a list of prompts and prompt templates the server has.",
             "properties": {
@@ -1187,6 +1405,50 @@
             },
             "required": [
                 "roots"
+            ],
+            "type": "object"
+        },
+        "ListToolsAsyncRequest": {
+            "properties": {
+                "method": {
+                    "const": "tools/listAsync",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "ListToolsAsyncResult": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "type": "object"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                },
+                "tools": {
+                    "items": {
+                        "$ref": "#/definitions/Tool"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tools"
             ],
             "type": "object"
         },
@@ -2242,6 +2504,10 @@
                 "annotations": {
                     "$ref": "#/definitions/ToolAnnotations",
                     "description": "Optional additional tool information."
+                },
+                "async": {
+                    "description": "If true, the tool is asynchronous.\n\nDefault: false",
+                    "type": "boolean"
                 },
                 "description": {
                     "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
