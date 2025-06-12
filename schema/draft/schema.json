@@ -189,9 +189,13 @@
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
                 "elicitation": {
-                    "additionalProperties": true,
                     "description": "Present if the client supports elicitation from the server.",
-                    "properties": {},
+                    "properties": {
+                        "inBand": {
+                            "description": "Whether the client supports in-band elicitation requests.",
+                            "type": "boolean"
+                        }
+                    },
                     "type": "object"
                 },
                 "experimental": {

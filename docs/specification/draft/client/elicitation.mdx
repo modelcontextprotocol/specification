@@ -49,10 +49,19 @@ Clients that support elicitation **MUST** declare the `elicitation` capability d
 ```json
 {
   "capabilities": {
-    "elicitation": {}
+    "elicitation": {
+      "inBand": true
+    }
   }
 }
 ```
+
+The `inBand` sub-capability indicates that the client can handle elicitation requests
+directly within the current session. This means the client can present user interfaces,
+collect user input or other data, and return responses to the server.
+
+The remainder of this document describes in-band elicitation. Future sub-capabilities may
+be added in the future.
 
 ## Protocol Messages
 

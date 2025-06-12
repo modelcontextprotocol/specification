@@ -211,7 +211,12 @@ export interface ClientCapabilities {
   /**
    * Present if the client supports elicitation from the server.
    */
-  elicitation?: object;
+  elicitation?: {
+    /**
+     * Whether the client supports in-band elicitation requests.
+     */
+    inBand?: boolean;
+  };
 }
 
 /**
