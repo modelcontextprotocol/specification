@@ -60,20 +60,6 @@
         ]
       },
       {
-        "tab": "SDKs",
-        "icon": "book-open",
-        "groups": [
-          {
-            "group": "Java",
-            "pages": [
-              "sdk/java/mcp-overview",
-              "sdk/java/mcp-client",
-              "sdk/java/mcp-server"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Specification",
         "icon": "book",
         "groups": [
