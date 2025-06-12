@@ -472,6 +472,17 @@ export interface Resource {
    * This can be used by Hosts to display file sizes and estimate context window usage.
    */
   size?: number;
+
+  /**
+   * Indicates when the resource content may be read directly via its URI. Reading the resource this way can be more performant than reading via resources/read.
+   *
+   * If the value is "external", clients may attempt to read via the URI. If the read fails, clients should fall back to resources/read.
+   *
+   * If the value is "internal", clients must verify that the server is local before attempting to read via the URI. If the server is not local or the read fails, clients should fall back to resources/read.
+   *
+   * Regardless of this value, the resource may always be read via resources/read.
+   */
+  uriScope?: "external" | "internal";
 }
 
 /**
