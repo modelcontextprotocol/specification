@@ -472,6 +472,15 @@ export interface Resource {
    * This can be used by Hosts to display file sizes and estimate context window usage.
    */
   size?: number;
+
+  /**
+   * Whether this Resource supports subscriptions for updates.
+   * 
+   * Clients MAY attempt to subscribe to any resource regardless of this value. It can be used as a hint to improve
+   * user experience by indicating which resources are likely to send update notifications.
+   * 
+   */
+  subscribable?: boolean;
 }
 
 /**
