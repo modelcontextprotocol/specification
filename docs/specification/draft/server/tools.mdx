@@ -21,6 +21,11 @@ However, implementations are free to expose tools through any interface pattern 
 suits their needs&mdash;the protocol itself does not mandate any specific user
 interaction model.
 
+Servers typically receive tool call requests and respond to the client with the result.
+However, servers may offer webhook support for tool calls. This allows clients to specify
+webhooks in tool call requests and enables servers to transmit tool call responses to the
+webhooks instead of the client.
+
 <Warning>
 
 For trust & safety and security, there **SHOULD** always
@@ -43,7 +48,8 @@ Servers that support tools **MUST** declare the `tools` capability:
 {
   "capabilities": {
     "tools": {
-      "listChanged": true
+      "listChanged": true,
+      "webhooksSupported": true
     }
   }
 }
@@ -51,6 +57,9 @@ Servers that support tools **MUST** declare the `tools` capability:
 
 `listChanged` indicates whether the server will emit notifications when the list of
 available tools changes.
+
+`webhooksSupported` indicates whether the server offers support to transmit results to
+the webhooks provided by the client in the tool call request.
 
 ## Protocol Messages
 
@@ -121,6 +130,68 @@ To invoke a tool, clients send a `tools/call` request:
 ```
 
 **Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Current weather in New York:\nTemperature: 72°F\nConditions: Partly cloudy"
+      }
+    ],
+    "isError": false
+  }
+}
+```
+
+#### Calling Tools with Webhooks
+
+To invoke a tool with webhooks, when interacting with a webhook support enabled server,
+clients send a `tools/call` request with a list of webhooks:
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "get_weather",
+    "arguments": {
+      "location": "New York"
+    },
+    "webhooks": [
+      {
+        "url": "http://localhost:8000"
+      }
+    ]
+  }
+}
+```
+
+**Acknowledgement to Client:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Response will be forwarded to the webhook."
+      }
+    ],
+    "isError": false
+  }
+}
+```
+
+**Response to Webhook:**
 
 ```json
 {
@@ -401,11 +472,20 @@ Example tool execution error:
    - Implement proper access controls
    - Rate limit tool invocations
    - Sanitize tool outputs
+   - Verify veracity of webhook URLs to prevent Server-Side Request Forgery or
+     Distributed Denial of Service attacks against internal or 3rd party systems
 
 2. Clients **SHOULD**:
+
    - Prompt for user confirmation on sensitive operations
    - Show tool inputs to the user before calling the server, to avoid malicious or
      accidental data exfiltration
    - Validate tool results before passing to LLM
    - Implement timeouts for tool calls
    - Log tool usage for audit purposes
+   - Exercise caution when providing secrets in webhook credentials since they might be
+     susceptible to Man-in-the-Middle attacks
+
+3. Webhook servers **SHOULD**:
+
+    - Authenticate the received messages
