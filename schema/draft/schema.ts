@@ -389,7 +389,7 @@ export interface ResourceListChangedNotification extends Notification {
 /**
  * Sent from the client to request resources/updated notifications from the server whenever a particular resource changes.
  */
-export interface SubscribeRequest extends Request {
+export interface SubscribeRequest extends Request { // FIXME: Either make this a Notification, or define a SubscribeResult.
   method: "resources/subscribe";
   params: {
     /**
@@ -404,7 +404,7 @@ export interface SubscribeRequest extends Request {
 /**
  * Sent from the client to request cancellation of resources/updated notifications from the server. This should follow a previous resources/subscribe request.
  */
-export interface UnsubscribeRequest extends Request {
+export interface UnsubscribeRequest extends Request { // FIXME: Either make this a Notification, or define an UnsubscribeResult.
   method: "resources/unsubscribe";
   params: {
     /**
