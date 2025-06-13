@@ -598,7 +598,7 @@ async connectToServer(serverScriptPath: string) {
       command,
       args: [serverScriptPath],
     });
-    this.mcp.connect(this.transport);
+    await this.mcp.connect(this.transport);
 
     const toolsResult = await this.mcp.listTools();
     this.tools = toolsResult.tools.map((tool) => {
@@ -640,7 +640,6 @@ async processQuery(query: string) {
   });
 
   const finalText = [];
-  const toolResults = [];
 
   for (const content of response.content) {
     if (content.type === "text") {
@@ -653,7 +652,6 @@ async processQuery(query: string) {
         name: toolName,
         arguments: toolArgs,
       });
-      toolResults.push(result);
       finalText.push(
         `[Calling tool ${toolName} with args ${JSON.stringify(toolArgs)}]`
       );
@@ -1474,6 +1472,7 @@ Then, add the required dependencies to your project:
 dotnet add package ModelContextProtocol --prerelease
 dotnet add package Anthropic.SDK
 dotnet add package Microsoft.Extensions.Hosting
+dotnet add package Microsoft.Extensions.AI
 ```
 
 ## Setting up your API key

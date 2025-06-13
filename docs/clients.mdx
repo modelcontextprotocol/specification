@@ -58,12 +58,13 @@ This page provides an overview of applications that support the Model Context Pr
 | [TheiaAI/TheiaIDE][TheiaAI/TheiaIDE]             | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for Agents in Theia AI and the AI-powered Theia IDE                              |
 | [Tome][Tome]                                     | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools, manages MCP servers.                                                            |
 | [TypingMind App][TypingMind App]                 | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools at app-level (appear as plugins) or when assigned to Agents                      |
-| [VS Code GitHub Copilot][VS Code]                | ❌          | ❌        | ✅      | ✅                     | ❌         | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
+| [VS Code GitHub Copilot][VS Code]                | ✅          | ✅        | ✅      | ✅                     | ✅         | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
 | [Warp][Warp]                                     | ✅          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports tools, resources, and most of the discovery criteria                                   |
-| [WhatsMPC][WhatsMPC]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools for Remote MCP Servers in WhatsApp                                               |
+| [WhatsMCP][WhatsMCP]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools for Remote MCP Servers in WhatsApp                                               |
 | [Windsurf Editor][Windsurf]                      | ❌          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports tools with AI Flow for collaborative development.                                      |
 | [Witsy][Witsy]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools in Witsy.                                                                        |
 | [Zed][Zed]                                       | ❌          | ✅        | ❌      | ❌                     | ❌         | ❌    | Prompts appear as slash commands                                                                |
+| [Zencoder][Zencoder]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools                                                                                  |
 
 [5ire]: https://github.com/nanbingxyz/5ire
 [AgentAI]: https://github.com/AdamStrojek/rust-agentai
@@ -114,9 +115,10 @@ This page provides an overview of applications that support the Model Context Pr
 [Windsurf]: https://codeium.com/windsurf
 [gptme]: https://github.com/gptme/gptme
 [Warp]: https://www.warp.dev/
-[WhatsMPC]: https://wassist.app/mcp/
+[WhatsMCP]: https://wassist.app/mcp/
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
+[Zencoder]: https://zencoder.ai
 [Resources]: https://modelcontextprotocol.io/docs/concepts/resources
 [Prompts]: https://modelcontextprotocol.io/docs/concepts/prompts
 [Tools]: https://modelcontextprotocol.io/docs/concepts/tools
@@ -271,7 +273,7 @@ The Claude desktop application provides comprehensive support for MCP, enabling 
 
 [Continue](https://github.com/continuedev/continue) is an open-source AI code assistant, with built-in support for all MCP features.
 
-**Key features**
+**Key features:**
 
 - Type "@" to mention MCP resources
 - Prompt templates surface as slash commands
@@ -292,7 +294,7 @@ The Claude desktop application provides comprehensive support for MCP, enabling 
 
 [Cursor](https://docs.cursor.com/advanced/model-context-protocol) is an AI code editor.
 
-**Key Features**:
+**Key features:**
 
 - Support for MCP tools in Cursor Composer
 - Support for both STDIO and SSE
@@ -397,7 +399,7 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 
 [HyperAgent](https://github.com/hyperbrowserai/HyperAgent) is Playwright supercharged with AI. With HyperAgent, you no longer need brittle scripts, just powerful natural language commands. Using MCP servers, you can extend the capability of HyperAgent, without having to write any code.
 
-**Key features**
+**Key features:**
 
 - AI Commands: Simple APIs like page.ai(), page.extract() and executeTask() for any AI automation
 - Fallback to Regular Playwright: Use regular Playwright when AI isn't needed
@@ -474,7 +476,7 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 
 [MCPHub] is a powerful Neovim plugin that integrates MCP (Model Context Protocol) servers into your workflow.
 
-**Key features**
+**Key features:**
 
 - Install, configure and manage MCP servers with an intuitive UI.
 - Built-in Neovim MCP server with support for file operations (read, write, search, replace), command execution, terminal integration, LSP integration, buffers, and diagnostics.
@@ -583,7 +585,7 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 
 [Postman](https://postman.com/downloads) is the most popular API client and now supports MCP server testing and debugging.
 
-**Key features**:
+**Key features:**
 
 - Full support of all major MCP features (tools, prompts, resources, and subscriptions)
 - Fast, seamless UI for debugging MCP capabilities
@@ -708,9 +710,9 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - **Live tool/resource discovery**: view tools and resources from each running MCP server
 - **Configurable startup**: set MCP servers to start automatically with Warp or launch them manually as needed
 
-### WhatsMPC
+### WhatsMCP
 
-[WhatsMPC](https://wassist.app/mcp/) is an MCP client for WhatsApp. WhatsMCP lets you interact with your AI stack from the comfort of a WhatsApp chat.
+[WhatsMCP](https://wassist.app/mcp/) is an MCP client for WhatsApp. WhatsMCP lets you interact with your AI stack from the comfort of a WhatsApp chat.
 
 **Key features:**
 
@@ -753,6 +755,22 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 - Tool integration for enhanced coding workflows
 - Tight integration with editor features and workspace context
 - Does not support MCP resources
+
+### Zencoder
+
+[Zencoder](https://zecoder.ai) is a coding agent that's available as an extension for VS Code and JetBrains family of IDEs, meeting developers where they already work. It comes with RepoGrokking (deep contextual codebase understanding), agentic pipeline, and the ability to create and share custom agents.
+
+**Key features:**
+
+- RepoGrokking - deep contextual understanding of codebases
+- Agentic pipeline - runs, tests, and executes code before outputting it
+- Zen Agents platform - ability to build and create custom agents and share with the team
+- Integrated MCP tool library with one-click installations
+- Specialized agents for Unit and E2E Testing
+
+**Learn more:**
+
+- [Zencoder Documentation](https://docs.zencoder.ai)
 
 ## Adding MCP support to your application
 
