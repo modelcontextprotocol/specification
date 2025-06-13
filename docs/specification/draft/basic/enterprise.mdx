@@ -22,8 +22,9 @@ Enterprise-ready authorization for MCP Clients and Servers has two key benefits:
 * **Identity Provider (IdP)**: An entity that creates, maintains, and manages identity information, provides authentication services, and is trusted by a set of applications in an organization's app ecosystem.
 * **Identity Assertion**: A security token (e.g., ID Token, SAML Assertion) that contains information about an authenticated user and is issued by an Identity Provider trusted by the Authorization Server.
 * **Authorization Server**: This profile uses the term "Authorization Server" to refer to the authorization server that issues tokens to be used at the MCP server.
-
 * **Client**: In the context of this profile, the Client is the MCP Client.
+* **ID Token**: A security token that contains claims about the authentication of a user when using a client, as defined in [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#IDToken).
+* **Subject Token**: A security token that represents the identity of the user, such as an ID Token.
 
 
 ## 2. Identity Assertion Authorization Grant Overview
@@ -150,7 +151,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 
 ### 4.1 Processing Rules
 
-The IdP MUST validate the subject token, and MUST validate that the audience of the Subject Token (e.g. the `aud` claim of the ID Token) matches the `client_id` of the MCP client's client authentication.
+The IdP MUST validate the Subject Token, and MUST validate that the audience of the Subject Token (e.g. the `aud` claim of the ID Token) matches the Client Identifier of the MCP client making this request (e.g. by checking the `client_id` in the client authentication).
 
 The IdP evaluates administrator-defined policies for the token exchange request and determines if the MCP Client should be granted access to act on behalf of the user for the target MCP Server and scopes.
 
