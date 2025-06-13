@@ -8,11 +8,11 @@ title: Enterprise Authorization Profile
 
 ### 1.1 Purpose and Scope
 
-This document defines a profile of the "[Identity Assertion Authorization Grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/)" for use within enterprise deployments of the Model Context Protocol (MCP). It specifies how an MCP Client can obtain an access token from an MCP Server's Authorization Server by presenting an identity assertion, and how an MCP Server's Authorization Server validates and utilizes this identity assertion before issuing an access token. This profile is designed to facilitate secure and interoperable authorization within corporate environments, leveraging existing enterprise identity infrastructure.
+This document defines a profile of the "[Identity Assertion Authorization Grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/)" for use within enterprise deployments of the Model Context Protocol (MCP). It specifies how an MCP Client can obtain an access token from an MCP Server's Authorization Server by presenting an identity assertion, and how an MCP Server's Authorization Server validates and utilizes this identity assertion before issuing an access token. This profile is designed to facilitate secure and interoperable authorization within enterprise environments, leveraging the organization's existing identity infrastructure.
 
 Enterprise-ready authorization for MCP Clients and Servers has two key benefits:
 
-* For end users, this removes the need to manually connect and authorize the MCP Client to individual services within the organization.
+* For end users, this removes the need to manually connect and authorize the MCP Client to each MCP Server for use within the organization.
 * For enterprise admins, this enables visibility and control over which MCP Servers are able to be used within the organization.
 
 
@@ -23,6 +23,8 @@ Enterprise-ready authorization for MCP Clients and Servers has two key benefits:
 * **Identity Assertion**: A security token (e.g., ID Token, SAML Assertion) that contains information about an authenticated user and is issued by an Identity Provider trusted by the Authorization Server.
 * **Authorization Server**: This profile uses the term "Authorization Server" to refer to the authorization server that issues tokens to be used at the MCP server.
 
+* **Client**: In the context of this profile, the Client is the MCP Client.
+
 
 ## 2. Identity Assertion Authorization Grant Overview
 
@@ -30,8 +32,9 @@ This profile uses the "Identity Assertion Authorization Grant" as defined in [dr
 
 The Identity Assertion Authorization Grant follows two steps:
 
-1. Token Exchange ([RFC8623](https://datatracker.ietf.org/doc/html/rfc8693))
-2. A JWT Authorization Grant ([RFC7523](https://datatracker.ietf.org/doc/html/rfc7523))
+1. Single Sign-On to the MCP Client via OpenID Connect or SAML
+2. Token Exchange ([RFC8623](https://datatracker.ietf.org/doc/html/rfc8693))
+3. A JWT Authorization Grant ([RFC7523](https://datatracker.ietf.org/doc/html/rfc7523))
 
 The core flow is as follows:
 
@@ -81,7 +84,7 @@ sequenceDiagram
 
 To authenticate a user, the MCP Client initiates the process through a request with the IdP using OpenID Connect or SAML.
 
-The following is an example of a web app redirecting the user using OpenID Connect:
+For example, a web-based MCP client might initiate the user authentication process by redirecting the browser using OpenID Connect:
 
 ```
 302 Redirect
@@ -91,7 +94,7 @@ Location: https://acme.idp.example/authorize?response_type=code&scope=openid&cli
 The user authenticates with the IdP, and is redirected back to the Client with an authorization code, which it can then exchange for an ID Token.
 
 The enterprise IdP may enforce additional security controls such as multi-factor authentication before granting the user access to the MCP Client.
-A request and response from an Authorization Server handling the initial token acquisition may look like the following:
+For example, in an OpenID Connect flow, after receiving a redirect from the IdP with an authorization code, the MCP server makes a request to the Authorization Server and, if valid, receives a tokens in response:
 ```
 POST /token HTTP/1.1
 Host: acme.idp.example
@@ -151,7 +154,7 @@ The IdP MUST validate the subject token, and MUST validate that the audience of 
 
 The IdP evaluates administrator-defined policies for the token exchange request and determines if the MCP Client should be granted access to act on behalf of the user for the target MCP Server and scopes.
 
-The IdP may also introspect the authentication context described in the SSO assertion to determine if step-up authentication is required.
+The IdP may also introspect the authentication context described in the Identity Assertion to determine if step-up authentication is required.
 
 ### 4.2 Token Exchange Response
 
