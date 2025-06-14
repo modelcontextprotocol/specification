@@ -188,6 +188,7 @@ A tool definition includes:
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
 - `outputSchema`: Optional JSON Schema defining expected output structure
+- `examples`: Optional array of usage examples demonstrating tool behavior
 - `annotations`: optional properties describing tool behavior
 
 <Warning>
@@ -196,6 +197,102 @@ For trust & safety and security, clients **MUST** consider
 tool annotations to be untrusted unless they come from trusted servers.
 
 </Warning>
+
+#### Tool Examples
+
+Tools may provide examples that demonstrate typical usage patterns. These examples serve multiple purposes:
+
+- **1-shot learning**: Provide concrete examples for LLMs to understand tool behavior
+- **Human documentation**: Help developers understand how to use the tool effectively  
+- **Evaluation**: Enable testing and validation of tool functionality over time
+
+Each example contains:
+- `id`: Unique identifier for the example
+- `description`: Human-readable explanation of what the example demonstrates
+- `input`: Example input arguments matching the tool's input schema
+- `output`: Expected result structure with content, structured data, and error status
+
+Example tool with usage examples:
+
+```json
+{
+  "name": "calculate_fibonacci",
+  "description": "Calculate the nth Fibonacci number",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "n": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "The position in the Fibonacci sequence"
+      }
+    },
+    "required": ["n"]
+  },
+  "examples": [
+    {
+      "id": "basic_calculation",
+      "description": "Standard calculation case - compute the 5th Fibonacci number",
+      "input": {
+        "n": 5
+      },
+      "output": {
+        "content": [
+          {
+            "type": "text",
+            "text": "The 5th Fibonacci number is 5"
+          }
+        ],
+        "structuredContent": {
+          "result": 5,
+          "sequence": [0, 1, 1, 2, 3, 5]
+        }
+      }
+    },
+    {
+      "id": "edge_case_zero",
+      "description": "Edge case handling - base case when n=0",
+      "input": {
+        "n": 0
+      },
+      "output": {
+        "content": [
+          {
+            "type": "text", 
+            "text": "The 0th Fibonacci number is 0"
+          }
+        ],
+        "structuredContent": {
+          "result": 0,
+          "sequence": [0]
+        }
+      }
+    },
+    {
+      "id": "error_negative_input",
+      "description": "Error handling - invalid negative input validation",
+      "input": {
+        "n": -1
+      },
+      "output": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: Fibonacci sequence is not defined for negative numbers"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ]
+}
+```
+
+Examples help both humans and LLMs understand:
+- Expected input formats and valid values
+- Typical output structures and content types
+- Edge cases and error conditions
+- The relationship between inputs and outputs
 
 ### Tool Result
 
