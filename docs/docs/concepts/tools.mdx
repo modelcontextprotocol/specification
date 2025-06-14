@@ -213,6 +213,15 @@ When implementing tools:
 9. Consider rate limiting for resource-intensive operations
 10. Log tool usage for debugging and monitoring
 
+### Tool name conflicts
+
+MCP client applications and MCP server proxies may encounter tool name conflicts when building their own tool lists.
+To resolve these conflicts, we recommend maintaining a unique identifier for each connected MCP server, and prefixing that to the tool name with `___` (three underscores) as a separator.
+
+For example, if two web search MCP servers called `a` and `b` both expose a `search_web` tool, client applications or proxies may consider registering these as `a___search_web` and `b___search_web` to disambiguate them.
+
+For client applications with an MCP configuration file, we recommend using the name of the server as provided by the end-user in the configuration as a unique key. Server-provided names are not guaranteed to be unique.
+
 ## Security considerations
 
 When exposing tools:
