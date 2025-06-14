@@ -124,6 +124,30 @@ to indicate it is ready to begin normal operations:
   [logging](/specification/draft/server/utilities/logging) before receiving the `initialized`
   notification.
 
+#### What if requests are sent without the initialization being acknowledged in the server?
+
+If the client sends a request before initialization is completed (which may also be the case when a 
+server looses the session in a restart when not using session persistence or a session timeout), the 
+server **MUST** respond with a json error code of `-32080`.
+
+Clients **MUST** properly initialize in this case. If the client had a previous session
+running, it **MUST** consider that any previous session is invalid and that the server may have 
+changed  its capabilities and even protocol version and do a new initialization.
+
+Example error response:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32080,
+    "message": "Missing initialization"
+  }
+}
+```
+
+
 #### Version Negotiation
 
 In the `initialize` request, the client **MUST** send a protocol version it supports.
@@ -226,6 +250,7 @@ Implementations **SHOULD** be prepared to handle these error cases:
 
 - Protocol version mismatch
 - Failure to negotiate required capabilities
+- Initialization not completed (json error code `-32080`)
 - Request [timeouts](#timeouts)
 
 Example initialization error:
