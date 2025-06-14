@@ -15,8 +15,8 @@ Tools are designed to be **model-controlled**, meaning that tools are exposed fr
 
 Tools in MCP allow servers to expose executable functions that can be invoked by clients and used by LLMs to perform actions. Key aspects of tools include:
 
-- **Discovery**: Clients can list available tools through the `tools/list` endpoint
-- **Invocation**: Tools are called using the `tools/call` endpoint, where servers perform the requested operation and return results
+- **Discovery**: Clients can obtain a list of available tools by sending a `tools/list` request
+- **Invocation**: Tools are called using the `tools/call` request, where servers perform the requested operation and return results
 - **Flexibility**: Tools can range from simple calculations to complex API interactions
 
 Like [resources](/docs/concepts/resources), tools are identified by unique names and can include descriptions to guide their usage. However, unlike resources, tools represent dynamic operations that can modify state or interact with external systems.
