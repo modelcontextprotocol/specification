@@ -25,6 +25,9 @@ export type Cursor = string;
 export interface Request {
   method: string;
   params?: {
+    /**
+     * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+     */
     _meta?: {
       /**
        * If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
@@ -40,7 +43,7 @@ export interface Notification {
   method: string;
   params?: {
     /**
-     * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+     * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
      */
     _meta?: { [key: string]: unknown };
     [key: string]: unknown;
@@ -49,7 +52,7 @@ export interface Notification {
 
 export interface Result {
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
   [key: string]: unknown;
@@ -487,7 +490,7 @@ export interface Resource extends BaseMetadata {
   size?: number;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -521,7 +524,7 @@ export interface ResourceTemplate extends BaseMetadata {
   annotations?: Annotations;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -542,7 +545,7 @@ export interface ResourceContents {
   mimeType?: string;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -620,7 +623,7 @@ export interface Prompt extends BaseMetadata {
   arguments?: PromptArgument[];
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -680,7 +683,7 @@ export interface EmbeddedResource {
   annotations?: Annotations;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -847,7 +850,7 @@ export interface Tool extends BaseMetadata {
   annotations?: ToolAnnotations;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -1021,7 +1024,7 @@ export interface TextContent {
   annotations?: Annotations;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -1050,7 +1053,7 @@ export interface ImageContent {
   annotations?: Annotations;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -1079,7 +1082,7 @@ export interface AudioContent {
   annotations?: Annotations;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
@@ -1281,7 +1284,7 @@ export interface Root {
   name?: string;
 
   /**
-   * Reserved by MCP for protocol-level metadata; implementations must not make assumptions about its contents.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
 }
