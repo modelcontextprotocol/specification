@@ -35,6 +35,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Goose][Goose]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [gptme][gptme]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [HyperAgent][HyperAgent]                         | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
+| [JetBrains AI Assistant][JetBrains AI Assistant] | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools for all JetBrains IDEs.                                                                                 |
 | [Klavis AI Slack/Discord/Web][Klavis AI]         | ✅          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools and resources.                                                                   |
 | [LibreChat][LibreChat]                           | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for Agents                                                                       |
 | [Lutra][Lutra]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                                         |
@@ -58,7 +59,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [TheiaAI/TheiaIDE][TheiaAI/TheiaIDE]             | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for Agents in Theia AI and the AI-powered Theia IDE                              |
 | [Tome][Tome]                                     | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools, manages MCP servers.                                                            |
 | [TypingMind App][TypingMind App]                 | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools at app-level (appear as plugins) or when assigned to Agents                      |
-| [VS Code GitHub Copilot][VS Code]                | ❌          | ❌        | ✅      | ✅                     | ❌         | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
+| [VS Code GitHub Copilot][VS Code]                | ✅          | ✅        | ✅      | ✅                     | ✅         | ✅    | Supports dynamic tool/roots discovery, secure secret configuration, and explicit tool prompting |
 | [Warp][Warp]                                     | ✅          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports tools, resources, and most of the discovery criteria                                   |
 | [WhatsMCP][WhatsMCP]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools for Remote MCP Servers in WhatsApp                                               |
 | [Windsurf Editor][Windsurf]                      | ❌          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports tools with AI Flow for collaborative development.                                      |
@@ -90,6 +91,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
+[JetBrains AI Assistant]: https://plugins.jetbrains.com/plugin/22282-jetbrains-ai-assistant
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [Lutra]: https://lutra.ai
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
@@ -407,6 +409,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Cloud Ready – Instantly scale to hundreds of sessions via [Hyperbrowser](https://www.hyperbrowser.ai/)
 - MCP Client – Connect to tools like Composio for full workflows (e.g. writing web data to Google Sheets)
 
+### JetBrains AI Assistant
+
+[JetBrains AI Assistant](https://plugins.jetbrains.com/plugin/22282-jetbrains-ai-assistant) plugin provides AI-powered features for software development available in all JetBrains IDEs.
+
+**Key features:**
+
+- Unlimited code completion powered by Mellum, JetBrains’ proprietary AI model.
+- Context-aware AI chat that understands your code and helps you in real time.
+- Access to top-tier models from OpenAI, Anthropic, and Google.
+- Offline mode with connected local LLMs via Ollama or LM Studio.
+- Deep integration into IDE workflows, including code suggestions in the editor, VCS assistance, runtime error explanation, and more.
+
 ### Klavis AI Slack/Discord/Web
 
 [Klavis AI](https://www.klavis.ai/) is an Open-Source Infra to Use, Build & Scale MCPs with ease.
@@ -590,7 +604,7 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Full support of all major MCP features (tools, prompts, resources, and subscriptions)
 - Fast, seamless UI for debugging MCP capabilities
 - MCP config integration (Claude, VSCode, etc.) for fast first-time experience in testing MCPs
-- Integration with history, varibles, and collections for re-use and collaboration
+- Integration with history, variables, and collections for reuse and collaboration
 
 ### Slack MCP Client
 
@@ -735,7 +749,7 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 
 ### Witsy
 
-[Witsy](https://github.com/nbonamy/witsy) is an AI desktop assistant, supoorting Anthropic models and MCP servers as LLM tools.
+[Witsy](https://github.com/nbonamy/witsy) is an AI desktop assistant, supporting Anthropic models and MCP servers as LLM tools.
 
 **Key features:**
 

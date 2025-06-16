@@ -3,7 +3,7 @@ title: "For Client Developers"
 description: "Get started building your own client that can integrate with all MCP servers."
 ---
 
-In this tutorial, you'll learn how to build a LLM-powered chatbot client that connects to MCP servers. It helps to have gone through the [Server quickstart](/quickstart/server) that guides you through the basic of building your first server.
+In this tutorial, you'll learn how to build an LLM-powered chatbot client that connects to MCP servers. It helps to have gone through the [Server quickstart](/quickstart/server) that guides you through the basics of building your first server.
 
 <Tabs>
 <Tab title="Python">
@@ -640,7 +640,6 @@ async processQuery(query: string) {
   });
 
   const finalText = [];
-  const toolResults = [];
 
   for (const content of response.content) {
     if (content.type === "text") {
@@ -653,7 +652,6 @@ async processQuery(query: string) {
         name: toolName,
         arguments: toolArgs,
       });
-      toolResults.push(result);
       finalText.push(
         `[Calling tool ${toolName} with args ${JSON.stringify(toolArgs)}]`
       );
@@ -1474,6 +1472,7 @@ Then, add the required dependencies to your project:
 dotnet add package ModelContextProtocol --prerelease
 dotnet add package Anthropic.SDK
 dotnet add package Microsoft.Extensions.Hosting
+dotnet add package Microsoft.Extensions.AI
 ```
 
 ## Setting up your API key
