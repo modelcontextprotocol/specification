@@ -26,6 +26,16 @@ the previous revision, [2025-03-26](/specification/2025-03-26).
    (PR [#382](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/382))
 7. Added support for **[resource links](/specification/draft/server/tools#resource-links)** in
    tool call results. (PR [#603](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/603))
+7. Added support for **differential synchronization** with `get` methods and `changedIds` notifications:
+   - Added [`tools/get`](/specification/draft/server/tools#getting-a-tool) method to retrieve individual tool definitions
+   - Added [`resources/get`](/specification/draft/server/resources#getting-resource-metadata) method to retrieve individual resource metadata
+   - Added [`prompts/getDefinition`](/specification/draft/server/prompts#getting-a-prompt-definition) method to retrieve individual prompt definitions
+   - Enhanced `*_list_changed` notifications with optional `changedIds` parameter for efficient sync
+8. Added support for **batch retrieval** in list methods to avoid N+1 query problems:
+   - Enhanced [`tools/list`](/specification/draft/server/tools#listing-tools) with optional `names` parameter for batch retrieval
+   - Enhanced [`resources/list`](/specification/draft/server/resources#listing-resources) with optional `uris` parameter for batch retrieval
+   - Enhanced [`prompts/list`](/specification/draft/server/prompts#listing-prompts) with optional `names` parameter for batch retrieval
+   - Added `listByIds` capability flags for servers to advertise batch retrieval support
 
 ## Other schema changes
 

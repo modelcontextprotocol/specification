@@ -36,14 +36,17 @@ Servers that support prompts **MUST** declare the `prompts` capability during
 {
   "capabilities": {
     "prompts": {
-      "listChanged": true
+      "listChanged": true,
+      "getDefinition": true,
+      "listByIds": true
     }
   }
 }
 ```
 
-`listChanged` indicates whether the server will emit notifications when the list of
-available prompts changes.
+- `listChanged` indicates whether the server will emit notifications when the list of available prompts changes.
+- `getDefinition` indicates whether the server supports retrieving individual prompt definitions.
+- `listByIds` indicates whether the server supports retrieving multiple prompts by name in a single list request.
 
 ## Protocol Messages
 
@@ -64,6 +67,27 @@ supports [pagination](/specification/draft/server/utilities/pagination).
   }
 }
 ```
+
+**Batch Retrieval Request:**
+
+If the server supports the `listByIds` capability, clients can request specific prompts by name:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "prompts/list",
+  "params": {
+    "names": ["code_review", "explain_error"]
+  }
+}
+```
+
+When `names` is provided:
+- The server returns only the requested prompts that exist
+- Any `cursor` parameter in the request SHOULD be ignored
+- The response MUST NOT include `nextCursor` (as this is not a paginated operation)
+- Non-existent prompts are silently omitted from the response
 
 **Response:**
 
@@ -133,6 +157,50 @@ auto-completed through [the completion API](/specification/draft/server/utilitie
 }
 ```
 
+### Getting a Prompt Definition
+
+To retrieve a specific prompt definition without expanding it, clients send a `prompts/getDefinition` request. This method requires the server to declare the `getDefinition` capability:
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "prompts/getDefinition",
+  "params": {
+    "name": "code_review"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "prompt": {
+      "name": "code_review",
+      "title": "Request Code Review",
+      "description": "Asks the LLM to analyze code quality and suggest improvements",
+      "arguments": [
+        {
+          "name": "code",
+          "description": "The code to review",
+          "required": true
+        }
+      ]
+    }
+  }
+}
+```
+
+<Note>
+This method returns only the prompt definition, not the expanded messages. To get the expanded prompt with messages, use `prompts/get`.
+</Note>
+
 ### List Changed Notification
 
 When the list of available prompts changes, servers that declared the `listChanged`
@@ -144,6 +212,20 @@ capability **SHOULD** send a notification:
   "method": "notifications/prompts/list_changed"
 }
 ```
+
+If the server also supports the `getDefinition` capability, it **MAY** include a `changedIds` parameter to enable efficient differential synchronization:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/prompts/list_changed",
+  "params": {
+    "changedIds": ["code_review", "explain_error"]
+  }
+}
+```
+
+When `changedIds` is provided, clients can use `prompts/getDefinition` to fetch only the changed prompt definitions instead of re-fetching the entire list.
 
 ## Message Flow
 
@@ -160,11 +242,18 @@ sequenceDiagram
     Client->>Server: prompts/get
     Server-->>Client: Prompt content
 
-    opt listChanged
+    opt listChanged (full refresh)
       Note over Client,Server: Changes
       Server--)Client: prompts/list_changed
       Client->>Server: prompts/list
       Server-->>Client: Updated prompts
+    end
+
+    opt listChanged with getDefinition (differential sync)
+      Note over Client,Server: Changes
+      Server--)Client: prompts/list_changed with changedIds
+      Client->>Server: prompts/getDefinition (for each changed ID)
+      Server-->>Client: Individual prompt definitions
     end
 ```
 

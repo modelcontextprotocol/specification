@@ -707,6 +707,50 @@
             ],
             "type": "object"
         },
+        "GetPromptDefinitionRequest": {
+            "description": "Used by the client to get a prompt definition by name.",
+            "properties": {
+                "method": {
+                    "const": "prompts/getDefinition",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "name": {
+                            "description": "The name of the prompt to retrieve.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "GetPromptDefinitionResult": {
+            "description": "The server's response to a prompts/getDefinition request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "prompt": {
+                    "$ref": "#/definitions/Prompt",
+                    "description": "The requested prompt definition."
+                }
+            },
+            "required": [
+                "prompt"
+            ],
+            "type": "object"
+        },
         "GetPromptRequest": {
             "description": "Used by the client to get a prompt provided by the server.",
             "properties": {
@@ -761,6 +805,95 @@
             },
             "required": [
                 "messages"
+            ],
+            "type": "object"
+        },
+        "GetResourceRequest": {
+            "description": "Used by the client to get resource metadata by URI.",
+            "properties": {
+                "method": {
+                    "const": "resources/get",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "uri": {
+                            "description": "The URI of the resource to retrieve.",
+                            "format": "uri",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "uri"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "GetResourceResult": {
+            "description": "The server's response to a resources/get request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "resource": {
+                    "$ref": "#/definitions/Resource",
+                    "description": "The requested resource metadata."
+                }
+            },
+            "required": [
+                "resource"
+            ],
+            "type": "object"
+        },
+        "GetToolRequest": {
+            "description": "Used by the client to get a tool definition by name.",
+            "properties": {
+                "method": {
+                    "const": "tools/get",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "name": {
+                            "description": "The name of the tool to retrieve.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "GetToolResult": {
+            "description": "The server's response to a tools/get request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "tool": {
+                    "$ref": "#/definitions/Tool",
+                    "description": "The requested tool definition."
+                }
+            },
+            "required": [
+                "tool"
             ],
             "type": "object"
         },
@@ -1056,13 +1189,29 @@
                     "type": "string"
                 },
                 "params": {
-                    "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
+                    "allOf": [
+                        {
+                            "properties": {
+                                "cursor": {
+                                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "names": {
+                                    "description": "An optional array of prompt names to retrieve.\nIf provided, the server should return only the prompts with these names.\nPagination is ignored when this parameter is present.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1148,13 +1297,29 @@
                     "type": "string"
                 },
                 "params": {
-                    "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
+                    "allOf": [
+                        {
+                            "properties": {
+                                "cursor": {
+                                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "uris": {
+                                    "description": "An optional array of resource URIs to retrieve.\nIf provided, the server should return only the resources with these URIs.\nPagination is ignored when this parameter is present.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1244,13 +1409,29 @@
                     "type": "string"
                 },
                 "params": {
-                    "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
+                    "allOf": [
+                        {
+                            "properties": {
+                                "cursor": {
+                                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "names": {
+                                    "description": "An optional array of tool names to retrieve.\nIf provided, the server should return only the tools with these names.\nPagination is ignored when this parameter is present.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1613,12 +1794,13 @@
                     "type": "string"
                 },
                 "params": {
-                    "additionalProperties": {},
                     "properties": {
-                        "_meta": {
-                            "additionalProperties": {},
-                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                            "type": "object"
+                        "changedIds": {
+                            "description": "An optional array of prompt names that have changed.\nIf provided, the client can use prompts/getDefinition to fetch individual prompts instead of re-fetching the entire list.\nIf not provided, the client should re-fetch the entire list.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
                         }
                     },
                     "type": "object"
@@ -1880,12 +2062,13 @@
                     "type": "string"
                 },
                 "params": {
-                    "additionalProperties": {},
                     "properties": {
-                        "_meta": {
-                            "additionalProperties": {},
-                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                            "type": "object"
+                        "changedIds": {
+                            "description": "An optional array of resource URIs that have changed.\nIf provided, the client can use resources/get to fetch individual resources instead of re-fetching the entire list.\nIf not provided, the client should re-fetch the entire list.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
                         }
                     },
                     "type": "object"
@@ -2101,6 +2284,14 @@
                 "prompts": {
                     "description": "Present if the server offers any prompt templates.",
                     "properties": {
+                        "getDefinition": {
+                            "description": "Whether this server supports retrieving individual prompt definitions.",
+                            "type": "boolean"
+                        },
+                        "listByIds": {
+                            "description": "Whether this server supports retrieving multiple prompts by name in a single list request.",
+                            "type": "boolean"
+                        },
                         "listChanged": {
                             "description": "Whether this server supports notifications for changes to the prompt list.",
                             "type": "boolean"
@@ -2111,6 +2302,14 @@
                 "resources": {
                     "description": "Present if the server offers any resources to read.",
                     "properties": {
+                        "get": {
+                            "description": "Whether this server supports retrieving individual resource metadata.",
+                            "type": "boolean"
+                        },
+                        "listByIds": {
+                            "description": "Whether this server supports retrieving multiple resources by URI in a single list request.",
+                            "type": "boolean"
+                        },
                         "listChanged": {
                             "description": "Whether this server supports notifications for changes to the resource list.",
                             "type": "boolean"
@@ -2125,6 +2324,14 @@
                 "tools": {
                     "description": "Present if the server offers any tools to call.",
                     "properties": {
+                        "get": {
+                            "description": "Whether this server supports retrieving individual tool definitions.",
+                            "type": "boolean"
+                        },
+                        "listByIds": {
+                            "description": "Whether this server supports retrieving multiple tools by name in a single list request.",
+                            "type": "boolean"
+                        },
                         "listChanged": {
                             "description": "Whether this server supports notifications for changes to the tool list.",
                             "type": "boolean"
@@ -2469,12 +2676,13 @@
                     "type": "string"
                 },
                 "params": {
-                    "additionalProperties": {},
                     "properties": {
-                        "_meta": {
-                            "additionalProperties": {},
-                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                            "type": "object"
+                        "changedIds": {
+                            "description": "An optional array of tool names that have changed.\nIf provided, the client can use tools/get to fetch individual tools instead of re-fetching the entire list.\nIf not provided, the client should re-fetch the entire list.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
                         }
                     },
                     "type": "object"

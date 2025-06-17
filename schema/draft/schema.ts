@@ -242,6 +242,14 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the prompt list.
      */
     listChanged?: boolean;
+    /**
+     * Whether this server supports retrieving individual prompt definitions.
+     */
+    getDefinition?: boolean;
+    /**
+     * Whether this server supports retrieving multiple prompts by name in a single list request.
+     */
+    listByIds?: boolean;
   };
   /**
    * Present if the server offers any resources to read.
@@ -255,6 +263,14 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the resource list.
      */
     listChanged?: boolean;
+    /**
+     * Whether this server supports retrieving individual resource metadata.
+     */
+    get?: boolean;
+    /**
+     * Whether this server supports retrieving multiple resources by URI in a single list request.
+     */
+    listByIds?: boolean;
   };
   /**
    * Present if the server offers any tools to call.
@@ -264,6 +280,14 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
+    /**
+     * Whether this server supports retrieving individual tool definitions.
+     */
+    get?: boolean;
+    /**
+     * Whether this server supports retrieving multiple tools by name in a single list request.
+     */
+    listByIds?: boolean;
   };
 }
 
@@ -357,6 +381,14 @@ export interface PaginatedResult extends Result {
  */
 export interface ListResourcesRequest extends PaginatedRequest {
   method: "resources/list";
+  params?: PaginatedRequest['params'] & {
+    /**
+     * An optional array of resource URIs to retrieve.
+     * If provided, the server should return only the resources with these URIs.
+     * Pagination is ignored when this parameter is present.
+     */
+    uris?: string[];
+  };
 }
 
 /**
@@ -403,10 +435,42 @@ export interface ReadResourceResult extends Result {
 }
 
 /**
+ * Used by the client to get resource metadata by URI.
+ */
+export interface GetResourceRequest extends Request {
+  method: "resources/get";
+  params: {
+    /**
+     * The URI of the resource to retrieve.
+     * @format uri
+     */
+    uri: string;
+  };
+}
+
+/**
+ * The server's response to a resources/get request from the client.
+ */
+export interface GetResourceResult extends Result {
+  /**
+   * The requested resource metadata.
+   */
+  resource: Resource;
+}
+
+/**
  * An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.
  */
 export interface ResourceListChangedNotification extends Notification {
   method: "notifications/resources/list_changed";
+  params?: {
+    /**
+     * An optional array of resource URIs that have changed.
+     * If provided, the client can use resources/get to fetch individual resources instead of re-fetching the entire list.
+     * If not provided, the client should re-fetch the entire list.
+     */
+    changedIds?: string[];
+  };
 }
 
 /**
@@ -572,6 +636,14 @@ export interface BlobResourceContents extends ResourceContents {
  */
 export interface ListPromptsRequest extends PaginatedRequest {
   method: "prompts/list";
+  params?: PaginatedRequest['params'] & {
+    /**
+     * An optional array of prompt names to retrieve.
+     * If provided, the server should return only the prompts with these names.
+     * Pagination is ignored when this parameter is present.
+     */
+    names?: string[];
+  };
 }
 
 /**
@@ -607,6 +679,29 @@ export interface GetPromptResult extends Result {
    */
   description?: string;
   messages: PromptMessage[];
+}
+
+/**
+ * Used by the client to get a prompt definition by name.
+ */
+export interface GetPromptDefinitionRequest extends Request {
+  method: "prompts/getDefinition";
+  params: {
+    /**
+     * The name of the prompt to retrieve.
+     */
+    name: string;
+  };
+}
+
+/**
+ * The server's response to a prompts/getDefinition request from the client.
+ */
+export interface GetPromptDefinitionResult extends Result {
+  /**
+   * The requested prompt definition.
+   */
+  prompt: Prompt;
 }
 
 /**
@@ -692,6 +787,14 @@ export interface EmbeddedResource {
  */
 export interface PromptListChangedNotification extends Notification {
   method: "notifications/prompts/list_changed";
+  params?: {
+    /**
+     * An optional array of prompt names that have changed.
+     * If provided, the client can use prompts/getDefinition to fetch individual prompts instead of re-fetching the entire list.
+     * If not provided, the client should re-fetch the entire list.
+     */
+    changedIds?: string[];
+  };
 }
 
 /* Tools */
@@ -700,6 +803,14 @@ export interface PromptListChangedNotification extends Notification {
  */
 export interface ListToolsRequest extends PaginatedRequest {
   method: "tools/list";
+  params?: PaginatedRequest['params'] & {
+    /**
+     * An optional array of tool names to retrieve.
+     * If provided, the server should return only the tools with these names.
+     * Pagination is ignored when this parameter is present.
+     */
+    names?: string[];
+  };
 }
 
 /**
@@ -752,10 +863,41 @@ export interface CallToolRequest extends Request {
 }
 
 /**
+ * Used by the client to get a tool definition by name.
+ */
+export interface GetToolRequest extends Request {
+  method: "tools/get";
+  params: {
+    /**
+     * The name of the tool to retrieve.
+     */
+    name: string;
+  };
+}
+
+/**
+ * The server's response to a tools/get request from the client.
+ */
+export interface GetToolResult extends Result {
+  /**
+   * The requested tool definition.
+   */
+  tool: Tool;
+}
+
+/**
  * An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.
  */
 export interface ToolListChangedNotification extends Notification {
   method: "notifications/tools/list_changed";
+  params?: {
+    /**
+     * An optional array of tool names that have changed.
+     * If provided, the client can use tools/get to fetch individual tools instead of re-fetching the entire list.
+     * If not provided, the client should re-fetch the entire list.
+     */
+    changedIds?: string[];
+  };
 }
 
 /**
