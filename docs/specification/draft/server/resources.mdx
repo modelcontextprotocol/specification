@@ -39,21 +39,23 @@ Servers that support resources **MUST** declare the `resources` capability:
     "resources": {
       "subscribe": true,
       "listChanged": true,
-      "get": true
+      "get": true,
+      "listByIds": true
     }
   }
 }
 ```
 
-The capability supports three optional features:
+The capability supports four optional features:
 
 - `subscribe`: whether the client can subscribe to be notified of changes to individual
   resources.
 - `listChanged`: whether the server will emit notifications when the list of available
   resources changes.
 - `get`: whether the server supports retrieving individual resource metadata.
+- `listByIds`: whether the server supports retrieving multiple resources by URI in a single list request.
 
-All three features are optional&mdash;servers can support any combination:
+All four features are optional&mdash;servers can support any combination:
 
 ```json
 {
@@ -102,6 +104,27 @@ supports [pagination](/specification/draft/server/utilities/pagination).
   }
 }
 ```
+
+**Batch Retrieval Request:**
+
+If the server supports the `listByIds` capability, clients can request specific resources by URI:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "resources/list",
+  "params": {
+    "uris": ["file:///project/src/main.rs", "file:///project/src/lib.rs"]
+  }
+}
+```
+
+When `uris` is provided:
+- The server returns only the requested resources that exist
+- Any `cursor` parameter in the request SHOULD be ignored
+- The response MUST NOT include `nextCursor` (as this is not a paginated operation)
+- Non-existent resources are silently omitted from the response
 
 **Response:**
 

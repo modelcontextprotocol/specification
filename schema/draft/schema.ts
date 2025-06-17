@@ -246,6 +246,10 @@ export interface ServerCapabilities {
      * Whether this server supports retrieving individual prompt definitions.
      */
     getDefinition?: boolean;
+    /**
+     * Whether this server supports retrieving multiple prompts by name in a single list request.
+     */
+    listByIds?: boolean;
   };
   /**
    * Present if the server offers any resources to read.
@@ -263,6 +267,10 @@ export interface ServerCapabilities {
      * Whether this server supports retrieving individual resource metadata.
      */
     get?: boolean;
+    /**
+     * Whether this server supports retrieving multiple resources by URI in a single list request.
+     */
+    listByIds?: boolean;
   };
   /**
    * Present if the server offers any tools to call.
@@ -276,6 +284,10 @@ export interface ServerCapabilities {
      * Whether this server supports retrieving individual tool definitions.
      */
     get?: boolean;
+    /**
+     * Whether this server supports retrieving multiple tools by name in a single list request.
+     */
+    listByIds?: boolean;
   };
 }
 
@@ -369,6 +381,14 @@ export interface PaginatedResult extends Result {
  */
 export interface ListResourcesRequest extends PaginatedRequest {
   method: "resources/list";
+  params?: PaginatedRequest['params'] & {
+    /**
+     * An optional array of resource URIs to retrieve.
+     * If provided, the server should return only the resources with these URIs.
+     * Pagination is ignored when this parameter is present.
+     */
+    uris?: string[];
+  };
 }
 
 /**
@@ -616,6 +636,14 @@ export interface BlobResourceContents extends ResourceContents {
  */
 export interface ListPromptsRequest extends PaginatedRequest {
   method: "prompts/list";
+  params?: PaginatedRequest['params'] & {
+    /**
+     * An optional array of prompt names to retrieve.
+     * If provided, the server should return only the prompts with these names.
+     * Pagination is ignored when this parameter is present.
+     */
+    names?: string[];
+  };
 }
 
 /**
@@ -775,6 +803,14 @@ export interface PromptListChangedNotification extends Notification {
  */
 export interface ListToolsRequest extends PaginatedRequest {
   method: "tools/list";
+  params?: PaginatedRequest['params'] & {
+    /**
+     * An optional array of tool names to retrieve.
+     * If provided, the server should return only the tools with these names.
+     * Pagination is ignored when this parameter is present.
+     */
+    names?: string[];
+  };
 }
 
 /**

@@ -44,7 +44,8 @@ Servers that support tools **MUST** declare the `tools` capability:
   "capabilities": {
     "tools": {
       "listChanged": true,
-      "get": true
+      "get": true,
+      "listByIds": true
     }
   }
 }
@@ -52,6 +53,7 @@ Servers that support tools **MUST** declare the `tools` capability:
 
 - `listChanged` indicates whether the server will emit notifications when the list of available tools changes.
 - `get` indicates whether the server supports retrieving individual tool definitions.
+- `listByIds` indicates whether the server supports retrieving multiple tools by name in a single list request.
 
 ## Protocol Messages
 
@@ -72,6 +74,27 @@ To discover available tools, clients send a `tools/list` request. This operation
   }
 }
 ```
+
+**Batch Retrieval Request:**
+
+If the server supports the `listByIds` capability, clients can request specific tools by name:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/list",
+  "params": {
+    "names": ["get_weather", "calculate_tax"]
+  }
+}
+```
+
+When `names` is provided:
+- The server returns only the requested tools that exist
+- Any `cursor` parameter in the request SHOULD be ignored
+- The response MUST NOT include `nextCursor` (as this is not a paginated operation)
+- Non-existent tools are silently omitted from the response
 
 **Response:**
 

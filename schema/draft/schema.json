@@ -1189,13 +1189,29 @@
                     "type": "string"
                 },
                 "params": {
-                    "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
+                    "allOf": [
+                        {
+                            "properties": {
+                                "cursor": {
+                                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "names": {
+                                    "description": "An optional array of prompt names to retrieve.\nIf provided, the server should return only the prompts with these names.\nPagination is ignored when this parameter is present.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1281,13 +1297,29 @@
                     "type": "string"
                 },
                 "params": {
-                    "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
+                    "allOf": [
+                        {
+                            "properties": {
+                                "cursor": {
+                                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "uris": {
+                                    "description": "An optional array of resource URIs to retrieve.\nIf provided, the server should return only the resources with these URIs.\nPagination is ignored when this parameter is present.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1377,13 +1409,29 @@
                     "type": "string"
                 },
                 "params": {
-                    "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
+                    "allOf": [
+                        {
+                            "properties": {
+                                "cursor": {
+                                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "names": {
+                                    "description": "An optional array of tool names to retrieve.\nIf provided, the server should return only the tools with these names.\nPagination is ignored when this parameter is present.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -2240,6 +2288,10 @@
                             "description": "Whether this server supports retrieving individual prompt definitions.",
                             "type": "boolean"
                         },
+                        "listByIds": {
+                            "description": "Whether this server supports retrieving multiple prompts by name in a single list request.",
+                            "type": "boolean"
+                        },
                         "listChanged": {
                             "description": "Whether this server supports notifications for changes to the prompt list.",
                             "type": "boolean"
@@ -2252,6 +2304,10 @@
                     "properties": {
                         "get": {
                             "description": "Whether this server supports retrieving individual resource metadata.",
+                            "type": "boolean"
+                        },
+                        "listByIds": {
+                            "description": "Whether this server supports retrieving multiple resources by URI in a single list request.",
                             "type": "boolean"
                         },
                         "listChanged": {
@@ -2270,6 +2326,10 @@
                     "properties": {
                         "get": {
                             "description": "Whether this server supports retrieving individual tool definitions.",
+                            "type": "boolean"
+                        },
+                        "listByIds": {
+                            "description": "Whether this server supports retrieving multiple tools by name in a single list request.",
                             "type": "boolean"
                         },
                         "listChanged": {

@@ -37,7 +37,8 @@ Servers that support prompts **MUST** declare the `prompts` capability during
   "capabilities": {
     "prompts": {
       "listChanged": true,
-      "getDefinition": true
+      "getDefinition": true,
+      "listByIds": true
     }
   }
 }
@@ -45,6 +46,7 @@ Servers that support prompts **MUST** declare the `prompts` capability during
 
 - `listChanged` indicates whether the server will emit notifications when the list of available prompts changes.
 - `getDefinition` indicates whether the server supports retrieving individual prompt definitions.
+- `listByIds` indicates whether the server supports retrieving multiple prompts by name in a single list request.
 
 ## Protocol Messages
 
@@ -65,6 +67,27 @@ supports [pagination](/specification/draft/server/utilities/pagination).
   }
 }
 ```
+
+**Batch Retrieval Request:**
+
+If the server supports the `listByIds` capability, clients can request specific prompts by name:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "prompts/list",
+  "params": {
+    "names": ["code_review", "explain_error"]
+  }
+}
+```
+
+When `names` is provided:
+- The server returns only the requested prompts that exist
+- Any `cursor` parameter in the request SHOULD be ignored
+- The response MUST NOT include `nextCursor` (as this is not a paginated operation)
+- Non-existent prompts are silently omitted from the response
 
 **Response:**
 
