@@ -23,6 +23,11 @@ the previous revision, [2025-03-26](/specification/2025-03-26).
    (PR [#382](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/382))
 6. Added support for **[resource links](/specification/draft/server/tools#resource-links)** in
    tool call results. (PR [#603](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/603))
+7. Added support for **differential synchronization** with `get` methods and `changedIds` notifications:
+   - Added [`tools/get`](/specification/draft/server/tools#getting-a-tool) method to retrieve individual tool definitions
+   - Added [`resources/get`](/specification/draft/server/resources#getting-resource-metadata) method to retrieve individual resource metadata
+   - Added [`prompts/getDefinition`](/specification/draft/server/prompts#getting-a-prompt-definition) method to retrieve individual prompt definitions
+   - Enhanced `*_list_changed` notifications with optional `changedIds` parameter for efficient sync
 
 ## Other schema changes
 

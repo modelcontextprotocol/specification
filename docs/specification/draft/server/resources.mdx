@@ -38,21 +38,22 @@ Servers that support resources **MUST** declare the `resources` capability:
   "capabilities": {
     "resources": {
       "subscribe": true,
-      "listChanged": true
+      "listChanged": true,
+      "get": true
     }
   }
 }
 ```
 
-The capability supports two optional features:
+The capability supports three optional features:
 
 - `subscribe`: whether the client can subscribe to be notified of changes to individual
   resources.
 - `listChanged`: whether the server will emit notifications when the list of available
   resources changes.
+- `get`: whether the server supports retrieving individual resource metadata.
 
-Both `subscribe` and `listChanged` are optional&mdash;servers can support neither,
-either, or both:
+All three features are optional&mdash;servers can support any combination:
 
 ```json
 {
@@ -160,6 +161,45 @@ To retrieve resource contents, clients send a `resources/read` request:
 }
 ```
 
+### Getting Resource Metadata
+
+To retrieve metadata for a specific resource, clients send a `resources/get` request. This method requires the server to declare the `get` capability:
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "resources/get",
+  "params": {
+    "uri": "file:///project/src/main.rs"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "resource": {
+      "uri": "file:///project/src/main.rs",
+      "name": "main.rs",
+      "title": "Rust Software Application Main File",
+      "description": "Primary application entry point",
+      "mimeType": "text/x-rust"
+    }
+  }
+}
+```
+
+<Note>
+This method returns only the resource metadata, not the content. To read the actual content, use `resources/read`.
+</Note>
+
 ### Resource Templates
 
 Resource templates allow servers to expose parameterized resources using
@@ -207,6 +247,20 @@ capability **SHOULD** send a notification:
   "method": "notifications/resources/list_changed"
 }
 ```
+
+If the server also supports the `get` capability, it **MAY** include a `changedIds` parameter to enable efficient differential synchronization:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/resources/list_changed",
+  "params": {
+    "changedIds": ["file:///project/src/main.rs", "file:///project/src/lib.rs"]
+  }
+}
+```
+
+When `changedIds` is provided, clients can use `resources/get` to fetch only the changed resource metadata instead of re-fetching the entire list.
 
 ### Subscriptions
 

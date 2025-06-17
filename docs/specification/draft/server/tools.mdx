@@ -43,14 +43,15 @@ Servers that support tools **MUST** declare the `tools` capability:
 {
   "capabilities": {
     "tools": {
-      "listChanged": true
+      "listChanged": true,
+      "get": true
     }
   }
 }
 ```
 
-`listChanged` indicates whether the server will emit notifications when the list of
-available tools changes.
+- `listChanged` indicates whether the server will emit notifications when the list of available tools changes.
+- `get` indicates whether the server supports retrieving individual tool definitions.
 
 ## Protocol Messages
 
@@ -139,6 +140,49 @@ To invoke a tool, clients send a `tools/call` request:
 }
 ```
 
+### Getting a Tool
+
+To retrieve a specific tool definition, clients send a `tools/get` request. This method requires the server to declare the `get` capability:
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/get",
+  "params": {
+    "name": "get_weather"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "tool": {
+      "name": "get_weather",
+      "title": "Weather Information Provider",
+      "description": "Get current weather information for a location",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "City name or zip code"
+          }
+        },
+        "required": ["location"]
+      }
+    }
+  }
+}
+```
+
 ### List Changed Notification
 
 When the list of available tools changes, servers that declared the `listChanged`
@@ -150,6 +194,20 @@ capability **SHOULD** send a notification:
   "method": "notifications/tools/list_changed"
 }
 ```
+
+If the server also supports the `get` capability, it **MAY** include a `changedIds` parameter to enable efficient differential synchronization:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/tools/list_changed",
+  "params": {
+    "changedIds": ["get_weather", "calculate_tax"]
+  }
+}
+```
+
+When `changedIds` is provided, clients can use `tools/get` to fetch only the changed tools instead of re-fetching the entire list.
 
 ## Message Flow
 
@@ -171,10 +229,15 @@ sequenceDiagram
     Server-->>Client: Tool result
     Client->>LLM: Process result
 
-    Note over Client,Server: Updates
+    Note over Client,Server: Updates (full refresh)
     Server--)Client: tools/list_changed
     Client->>Server: tools/list
     Server-->>Client: Updated tools
+
+    Note over Client,Server: Updates (differential sync)
+    Server--)Client: tools/list_changed with changedIds
+    Client->>Server: tools/get (for each changed ID)
+    Server-->>Client: Individual tool definitions
 ```
 
 ## Data Types
