@@ -178,18 +178,57 @@ sequenceDiagram
         A->>C: Client Credentials
     end
 
-    Note over C: Generate PKCE parameters
-    C->>B: Open browser with authorization URL + code_challenge
-    B->>A: Authorization request
+    Note over C: Generate PKCE parameters<br/>Include resource parameter
+    C->>B: Open browser with authorization URL + code_challenge + resource
+    B->>A: Authorization request with resource parameter
     Note over A: User authorizes
     A->>B: Redirect to callback with authorization code
     B->>C: Authorization code callback
-    C->>A: Token request + code_verifier
+    C->>A: Token request + code_verifier + resource
     A->>C: Access token (+ refresh token)
     C->>M: MCP request with access token
     M-->>C: MCP response
     Note over C,M: MCP communication continues with valid token
 ```
+
+#### Resource Parameter Implementation
+
+MCP clients **MUST** implement Resource Indicators for OAuth 2.0 as defined in [RFC 8707](https://www.rfc-editor.org/rfc/rfc8707.html)
+to explicitly specify the target resource for which the token is being requested. The `resource` parameter:
+
+1. **MUST** be included in both authorization requests and token requests.
+2. **MUST** identify the MCP server that the client intends to use the token with.
+3. **MUST** use the canonical URI of the MCP server as defined in [RFC 8707 Section 2](https://www.rfc-editor.org/rfc/rfc8707.html#name-access-token-request).
+
+##### Canonical Server URI
+
+For the purposes of this specification, the canonical URI of an MCP server is defined as the resource identifier as specified in
+[RFC 8707 Section 2](https://www.rfc-editor.org/rfc/rfc8707.html#section-2) and aligns with the `resource` parameter in
+[RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728).
+
+MCP clients **SHOULD** provide the most specific URI that they can for the MCP server they intend to access, following the guidance in [RFC 8707](https://www.rfc-editor.org/rfc/rfc8707). While the canonical form uses lowercase scheme and host components, implementations **SHOULD** accept uppercase scheme and host components for robustness and interoperability.
+
+Examples of valid canonical URIs:
+
+- `https://mcp.example.com/mcp`
+- `https://mcp.example.com`
+- `https://mcp.example.com:8443`
+- `https://mcp.example.com/server/mcp` (when path component is necessary to identify individual MCP server)
+
+Examples of invalid canonical URIs:
+
+- `mcp.example.com` (missing scheme)
+- `https://mcp.example.com#fragment` (contains fragment)
+
+> **Note:** While both `https://mcp.example.com/` (with trailing slash) and `https://mcp.example.com` (without trailing slash) are technically valid absolute URIs according to [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986), implementations **SHOULD** consistently use the form without the trailing slash for better interoperability unless the trailing slash is semantically significant for the specific resource.
+
+For example, if accessing an MCP server at `https://mcp.example.com`, the authorization request would include:
+
+```
+&resource=https%3A%2F%2Fmcp.example.com
+```
+
+MCP clients **MUST** send this parameter regardless of whether authorization servers support it.
 
 ### Access Token Usage
 
@@ -214,7 +253,7 @@ even if they are part of the same logical session.
 Example request:
 
 ```http
-GET /v1/contexts HTTP/1.1
+GET /mcp HTTP/1.1
 Host: mcp.example.com
 Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 ```
@@ -223,6 +262,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 
 MCP servers, acting in their role as an OAuth 2.1 resource server, **MUST** validate access tokens as described in
 [OAuth 2.1 Section 5.2](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.2).
+MCP servers **MUST** validate that access tokens were issued specifically for them as the intended audience,
+according to [RFC 8707 Section 2](https://www.rfc-editor.org/rfc/rfc8707.html#section-2).
 If validation fails, servers **MUST** respond according to
 [OAuth 2.1 Section 5.3](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-5.3)
 error handling requirements. Invalid or expired tokens **MUST** receive a HTTP 401
@@ -313,8 +354,11 @@ MCP servers **MUST** validate access tokens before processing the request, ensur
 
 A MCP server **MUST** follow the guidelines in [OAuth 2.1 - Section 5.2](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#section-5.2) to validate inbound tokens.
 
-MCP servers **MUST** only accept tokens specifically intended for themselves.
+MCP servers **MUST** only accept tokens specifically intended for themselves and **MUST** reject tokens that do not include them in the audience claim or otherwise verify that they are the intended recipient of the token. See the [Security Best Practices Token Passthrough section](/specification/draft/basic/security_best_practices#token-passthrough) for details.
 
 If the MCP server makes requests to upstream APIs, it may act as an OAuth client to them. The access token used at the upstream API is a seperate token, issued by the upstream authorization server. The MCP server **MUST NOT** pass through the token it received from the MCP client.
 
-If the authorization server supports the `resource` parameter, it is recommended that implementers follow [RFC 8707](https://www.rfc-editor.org/rfc/rfc8707.html) to prevent token misuse.
+MCP clients **MUST** implement and use the `resource` parameter as defined in [RFC 8707 - Resource Indicators for OAuth 2.0](https://www.rfc-editor.org/rfc/rfc8707.html)
+to explicitly specify the target resource for which the token is being requested. This requirement aligns with the recommendation in
+[RFC 9728 Section 7.4](https://datatracker.ietf.org/doc/html/rfc9728#section-7.4). This ensures that access tokens are bound to their intended resources and
+cannot be misused across different services.

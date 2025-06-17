@@ -11,6 +11,7 @@ The Model Context Protocol consists of several key components that work together
 - **Base Protocol**: Core JSON-RPC message types
 - **Lifecycle Management**: Connection initialization, capability negotiation, and
   session control
+- **Authorization**: Authentication and authorization framework for HTTP-based transports
 - **Server Features**: Resources, prompts, and tools exposed by servers
 - **Client Features**: Sampling and root directory lists provided by clients
 - **Utilities**: Cross-cutting concerns like logging and argument completion
@@ -127,7 +128,7 @@ The `_meta` property/parameter is reserved by MCP to allow clients and servers
 to attach additional metadata to their interactions.
 
 Certain key names are reserved by MCP for protocol-level metadata, as specified below;
-implementations must not make assumptions about values at these keys.
+implementations MUST NOT make assumptions about values at these keys.
 
 Additionally, definitions in the [schema](https://github.com/modelcontextprotocol/specification/blob/main/schema/draft/schema.ts)
 may reserve particular names for purpose-specific metadata, as declared in those definitions.
@@ -136,11 +137,11 @@ may reserve particular names for purpose-specific metadata, as declared in those
 
 **Prefix:**
 
-- If specified, must be a series of labels separated by dots (`.`), followed by a slash (`/`).
-  - Labels must start with a letter and end with a letter or digit; interior characters can be letters, digits, or hyphens (`-`).
+- If specified, MUST be a series of labels separated by dots (`.`), followed by a slash (`/`).
+  - Labels MUST start with a letter and end with a letter or digit; interior characters can be letters, digits, or hyphens (`-`).
 - The `modelcontextprotocol.[*]/` and `mcp.[*]/` prefixes are reserved for MCP use (where `[*]` stands for any top-level domain).
 
 **Name:**
 
-- Unless empty, must begin and end with an alphanumeric character (`[a-z0-9A-Z]`).
-- Could contain hyphens (`-`), underscores (`_`), dots (`.`), and alphanumerics in between.
+- Unless empty, MUST begin and end with an alphanumeric character (`[a-z0-9A-Z]`).
+- MAY contain hyphens (`-`), underscores (`_`), dots (`.`), and alphanumerics in between.
