@@ -9,7 +9,9 @@ This page provides an overview of applications that support the Model Context Pr
 
 <div id="feature-support-matrix-wrapper">
 
-| Client                                           | [Resources] | [Prompts] | [Tools] | [Discovery][Discovery] | [Sampling] | Roots | Notes                                                                                           |
+{/* prettier-ignore-start */}
+
+| Client                                           | [Resources] | [Prompts] | [Tools] | [Discovery] | [Sampling] | [Roots] | Notes                                                                                           |
 | ------------------------------------------------ | ----------- | --------- | ------- | ---------------------- | ---------- | ----- | ----------------------------------------------------------------------------------------------- |
 | [5ire][5ire]                                     | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [AgentAI][AgentAI]                               | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Agent Library written in Rust with tools support                                                |
@@ -39,12 +41,13 @@ This page provides an overview of applications that support the Model Context Pr
 | [Klavis AI Slack/Discord/Web][Klavis AI]         | ✅          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools and resources.                                                                   |
 | [LibreChat][LibreChat]                           | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for Agents                                                                       |
 | [Lutra][Lutra]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                                         |
-| [mcp-agent][mcp-agent]                           | ❌          | ❌        | ✅      | ❓                     | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.                              |
+| [mcp-agent][mcp-agent]                           | ✅          | ✅        | ✅      | ❓                     | ⚠️         | ✅    | Supports tools, prompts, resources, roots, server connection management, and agent workflows.   |
 | [mcp-use][mcp-use]                               | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.                           |
 | [MCPHub][MCPHub]                                 | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports tools, resources, and prompts in Neovim                                                |
 | [MCPOmni-Connect][MCPOmni-Connect]               | ✅          | ✅        | ✅      | ❓                     | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.                         |
 | [Microsoft Copilot Studio]                       | ❌          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports tools & discovery                                                                      |
 | [MindPal][MindPal]                               | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for no-code AI agents and multi-agent workflows.                                 |
+| [MooPoint][MooPoint]                             | ❌          | ❌        | ✅      | ❓                     | ✅         | ❌    | Web-Hosted client with tool calling support                                 |
 | [Msty Studio][Msty Studio]                       | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools                                                                                  |
 | [NVIDIA Agent Intelligence toolkit][AIQ toolkit] | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools in agentic workflows.                                                            |
 | [OpenSumi][OpenSumi]                             | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools in OpenSumi                                                                      |
@@ -67,6 +70,14 @@ This page provides an overview of applications that support the Model Context Pr
 | [Zed][Zed]                                       | ❌          | ✅        | ❌      | ❌                     | ❌         | ❌    | Prompts appear as slash commands                                                                |
 | [Zencoder][Zencoder]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools                                                                                  |
 
+{/* prettier-ignore-end */}
+
+[Resources]: /docs/concepts/resources
+[Prompts]: /docs/concepts/prompts
+[Tools]: /docs/concepts/tools
+[Discovery]: /docs/concepts/tools#tool-discovery-and-updates
+[Sampling]: /docs/concepts/sampling
+[Roots]: /docs/concepts/roots
 [5ire]: https://github.com/nanbingxyz/5ire
 [AgentAI]: https://github.com/AdamStrojek/rust-agentai
 [AgenticFlow]: https://agenticflow.ai/mcp
@@ -100,6 +111,7 @@ This page provides an overview of applications that support the Model Context Pr
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
 [MindPal]: https://mindpal.io
+[MooPoint]: https://moopoint.io
 [Msty Studio]: https://msty.ai
 [OpenSumi]: https://github.com/opensumi/core
 [oterm]: https://github.com/ggozad/oterm
@@ -121,12 +133,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Zencoder]: https://zencoder.ai
-[Resources]: https://modelcontextprotocol.io/docs/concepts/resources
-[Prompts]: https://modelcontextprotocol.io/docs/concepts/prompts
-[Tools]: https://modelcontextprotocol.io/docs/concepts/tools
-[Sampling]: https://modelcontextprotocol.io/docs/concepts/sampling
 [HyperAgent]: https://github.com/hyperbrowserai/HyperAgent
-[Discovery]: /docs/concepts/tools#tool-discovery-and-updates
 
 </div>
 
@@ -535,6 +542,20 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 **Learn more:**
 
 - [MindPal MCP Documentation](https://docs.mindpal.io/agent/mcp)
+
+### MooPoint
+
+[MooPoint](https://moopoint.io)
+
+MooPoint is a web-based AI chat platform built for developers and advanced users, letting you interact with multiple large language models (LLMs) through a single, unified interface. Connect your own API keys (OpenAI, Anthropic, and more) and securely manage custom MCP server integrations.
+
+**Key features:**
+
+- Accessible from any PC or smartphone—no installation required
+- Choose your preferred LLM provider
+- Supports `SSE`, `Streamable HTTP`, `npx`, and `uvx` MCP servers
+- OAuth and sampling support
+- New features added daily
 
 ### Msty Studio
 
