@@ -179,9 +179,9 @@ To request information from a user, servers send an `elicitation/create` request
 
 ```mermaid
 sequenceDiagram
-    participant Server
-    participant Client
     participant User
+    participant Client
+    participant Server
 
     Note over Server,Client: Server initiates elicitation
     Server->>Client: elicitation/create

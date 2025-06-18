@@ -39,33 +39,36 @@ while maintaining simplicity:
 
 ## Authorization Flow
 
+### Roles
+
+A protected _MCP server_ acts as an [OAuth 2.1 resource server](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
+capable of accepting and responding to protected resource requests using access tokens.
+
+An _MCP client_ acts as an [OAuth 2.1 client](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
+making protected resource requests on behalf of a resource owner.
+
+The _authorization server_ is responsible for interacting with the user (if necessary) and issuing access tokens for use at the MCP server.
+The implementation details of the authorization server are beyond the scope of this specification. It may be hosted with the
+resource server or a separate entity. The [Authorization Server Discovery section](#authorization-server-discovery)
+specifies how an MCP server indicates the location of its corresponding authorization server to a client.
+
 ### Overview
 
-1. MCP authorization servers **MUST** implement OAuth 2.1 with appropriate security
+1. Authorization servers **MUST** implement OAuth 2.1 with appropriate security
    measures for both confidential and public clients.
 
-1. MCP authorization servers and MCP clients **SHOULD** support the OAuth 2.0 Dynamic Client Registration
+1. Authorization servers and MCP clients **SHOULD** support the OAuth 2.0 Dynamic Client Registration
    Protocol ([RFC7591](https://datatracker.ietf.org/doc/html/rfc7591)).
 
 1. MCP servers **MUST** implement OAuth 2.0 Protected Resource Metadata ([RFC9728](https://datatracker.ietf.org/doc/html/rfc9728)).
    MCP clients **MUST** use OAuth 2.0 Protected Resource Metadata for authorization server discovery.
 
-1. MCP authorization servers **MUST** provide OAuth 2.0 Authorization
-   Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)).
-   MCP clients **MUST** use the OAuth 2.0 Authorization Server Metadata.
+1. Authorization servers **MUST** provide _at least one_ of the following discovery mechanisms:
 
-### Roles
+   - OAuth 2.0 Authorization Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414))
+   - [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0-final.html)
 
-A protected MCP server acts as an [OAuth 2.1 resource server](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
-capable of accepting and responding to protected resource requests using access tokens.
-
-An MCP client acts as an [OAuth 2.1 client](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#name-roles),
-making protected resource requests on behalf of a resource owner.
-
-The authorization server is responsible for interacting with the user (if necessary) and issuing access tokens for use at the MCP server.
-The implementation details of the authorization server are beyond the scope of this specification. It may be hosted with the
-resource server or a separate entity. The [Authorization Server Discovery section](#authorization-server-discovery)
-specifies how an MCP server indicates the location of its corresponding authorization server to a client.
+   MCP clients **MUST** support both discovery mechanisms to obtain the information required to interact with the authorization server.
 
 ### Authorization Server Discovery
 
@@ -91,11 +94,6 @@ as described in [RFC9728 Section 5.1 "WWW-Authenticate Response"](https://datatr
 
 MCP clients **MUST** be able to parse `WWW-Authenticate` headers and respond appropriately to `HTTP 401 Unauthorized` responses from the MCP server.
 
-#### Server Metadata Discovery
-
-MCP clients **MUST** follow the OAuth 2.0 Authorization Server Metadata [RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)
-specification to obtain the information required to interact with the authorization server.
-
 #### Sequence Diagram
 
 The following diagram outlines an example flow:
@@ -114,7 +112,11 @@ sequenceDiagram
     M-->>C: Resource metadata with authorization server URL
     Note over C: Validate RS metadata,<br />build AS metadata URL
 
-    C->>A: GET /.well-known/oauth-authorization-server
+    alt OAuth 2.0 Authorization Server Metadata
+        C->>A: GET /.well-known/oauth-authorization-server
+    else OpenID Connect Discovery
+        C->>A: GET /.well-known/openid-configuration
+    end
     A-->>C: Authorization server metadata
 
     Note over C,A: OAuth 2.1 authorization flow happens here
@@ -140,7 +142,7 @@ for MCP because:
 - It enables seamless connection to new MCP servers and their authorization servers.
 - Authorization servers can implement their own registration policies.
 
-Any MCP authorization servers that _do not_ support Dynamic Client Registration need to provide
+Any authorization servers that _do not_ support Dynamic Client Registration need to provide
 alternative ways to obtain a client ID (and, if applicable, client credentials). For one of
 these authorization servers, MCP clients will have to either:
 
@@ -170,7 +172,11 @@ sequenceDiagram
 
     Note over C: Parse metadata and extract authorization server(s)<br/>Client determines AS to use
 
-    C->>A: GET /.well-known/oauth-authorization-server
+    alt OAuth 2.0 Authorization Server Metadata
+        C->>A: GET /.well-known/oauth-authorization-server
+    else OpenID Connect Discovery
+        C->>A: GET /.well-known/openid-configuration
+    end
     A->>C: Authorization server metadata response
 
     alt Dynamic client registration
@@ -271,7 +277,7 @@ response.
 
 MCP clients **MUST NOT** send tokens to the MCP server other than ones issued by the MCP server's authorization server.
 
-MCP authorization servers **MUST** only accept tokens that are valid for use with their
+Authorization servers **MUST** only accept tokens that are valid for use with their
 own resources.
 
 MCP servers **MUST NOT** accept or transit any other tokens.
@@ -298,8 +304,8 @@ requests that appear legitimate to resource servers.
 Clients and servers **MUST** implement secure token storage and follow OAuth best practices,
 as outlined in [OAuth 2.1, Section 7.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-7.1).
 
-MCP authorization servers SHOULD issue short-lived access tokens to reduce the impact of leaked tokens.
-For public clients, MCP authorization servers **MUST** rotate refresh tokens as described in [OAuth 2.1 Section 4.3.1 "Refresh Token Grant"](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-4.3.1).
+Authorization servers **SHOULD** issue short-lived access tokens to reduce the impact of leaked tokens.
+For public clients, authorization servers **MUST** rotate refresh tokens as described in [OAuth 2.1 Section 4.3.1 "Refresh Token Grant"](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-12#section-4.3.1).
 
 ### Communication Security
 
