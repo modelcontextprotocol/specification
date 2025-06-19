@@ -24,12 +24,6 @@ Servers can connect to any client. We've chosen Claude for Desktop here for simp
 
 </Note>
 
-<Accordion title="Why Claude for Desktop and not Claude.ai?">
-
-Because servers are locally run, MCP currently only supports desktop hosts. Remote hosts are in active development.
-
-</Accordion>
-
 ### Core MCP Concepts
 
 MCP servers can provide three main types of capabilities:
@@ -1085,7 +1079,7 @@ Create a new boot starter application using the `spring-ai-starter-mcp-client` d
 ```
 
 and set the `spring.ai.mcp.client.stdio.servers-configuration` property to point to your `claude_desktop_config.json`.
-You can re-use the existing Anthropic Desktop configuration:
+You can reuse the existing Anthropic Desktop configuration:
 
 ```properties
 spring.ai.mcp.client.stdio.servers-configuration=file:PATH/TO/claude_desktop_config.json
@@ -1573,7 +1567,7 @@ await app.RunAsync();
 
 <Note>
 
-When creating the `ApplicationHostBuilder`, ensure you use `CreateEmptyApplicationBuilder` instead of `CreateDefaultBuilder`. This ensures that the server does not write any additional messages to the console. This is only neccessary for servers using STDIO transport.
+When creating the `ApplicationHostBuilder`, ensure you use `CreateEmptyApplicationBuilder` instead of `CreateDefaultBuilder`. This ensures that the server does not write any additional messages to the console. This is only necessary for servers using STDIO transport.
 
 </Note>
 

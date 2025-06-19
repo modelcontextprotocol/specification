@@ -9,7 +9,9 @@ This page provides an overview of applications that support the Model Context Pr
 
 <div id="feature-support-matrix-wrapper">
 
-| Client                                           | [Resources] | [Prompts] | [Tools] | [Discovery][Discovery] | [Sampling] | Roots | Notes                                                                                           |
+{/* prettier-ignore-start */}
+
+| Client                                           | [Resources] | [Prompts] | [Tools] | [Discovery] | [Sampling] | [Roots] | Notes                                                                                           |
 | ------------------------------------------------ | ----------- | --------- | ------- | ---------------------- | ---------- | ----- | ----------------------------------------------------------------------------------------------- |
 | [5ire][5ire]                                     | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [AgentAI][AgentAI]                               | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Agent Library written in Rust with tools support                                                |
@@ -35,15 +37,17 @@ This page provides an overview of applications that support the Model Context Pr
 | [Goose][Goose]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [gptme][gptme]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [HyperAgent][HyperAgent]                         | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
+| [JetBrains AI Assistant][JetBrains AI Assistant] | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools for all JetBrains IDEs.                                                          |
 | [Klavis AI Slack/Discord/Web][Klavis AI]         | ✅          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools and resources.                                                                   |
 | [LibreChat][LibreChat]                           | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for Agents                                                                       |
 | [Lutra][Lutra]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                                         |
-| [mcp-agent][mcp-agent]                           | ❌          | ❌        | ✅      | ❓                     | ⚠️         | ❌    | Supports tools, server connection management, and agent workflows.                              |
+| [mcp-agent][mcp-agent]                           | ✅          | ✅        | ✅      | ❓                     | ⚠️         | ✅    | Supports tools, prompts, resources, roots, server connection management, and agent workflows.   |
 | [mcp-use][mcp-use]                               | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.                           |
 | [MCPHub][MCPHub]                                 | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports tools, resources, and prompts in Neovim                                                |
 | [MCPOmni-Connect][MCPOmni-Connect]               | ✅          | ✅        | ✅      | ❓                     | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.                         |
 | [Microsoft Copilot Studio]                       | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools                                                                                  |
 | [MindPal][MindPal]                               | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for no-code AI agents and multi-agent workflows.                                 |
+| [MooPoint][MooPoint]                             | ❌          | ❌        | ✅      | ❓                     | ✅         | ❌    | Web-Hosted client with tool calling support                                 |
 | [Msty Studio][Msty Studio]                       | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools                                                                                  |
 | [NVIDIA Agent Intelligence toolkit][AIQ toolkit] | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools in agentic workflows.                                                            |
 | [OpenSumi][OpenSumi]                             | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools in OpenSumi                                                                      |
@@ -66,6 +70,14 @@ This page provides an overview of applications that support the Model Context Pr
 | [Zed][Zed]                                       | ❌          | ✅        | ❌      | ❌                     | ❌         | ❌    | Prompts appear as slash commands                                                                |
 | [Zencoder][Zencoder]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools                                                                                  |
 
+{/* prettier-ignore-end */}
+
+[Resources]: /docs/concepts/resources
+[Prompts]: /docs/concepts/prompts
+[Tools]: /docs/concepts/tools
+[Discovery]: /docs/concepts/tools#tool-discovery-and-updates
+[Sampling]: /docs/concepts/sampling
+[Roots]: /docs/concepts/roots
 [5ire]: https://github.com/nanbingxyz/5ire
 [AgentAI]: https://github.com/AdamStrojek/rust-agentai
 [AgenticFlow]: https://agenticflow.ai/mcp
@@ -90,6 +102,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
+[JetBrains AI Assistant]: https://plugins.jetbrains.com/plugin/22282-jetbrains-ai-assistant
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [Lutra]: https://lutra.ai
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
@@ -98,6 +111,7 @@ This page provides an overview of applications that support the Model Context Pr
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
 [MindPal]: https://mindpal.io
+[MooPoint]: https://moopoint.io
 [Msty Studio]: https://msty.ai
 [OpenSumi]: https://github.com/opensumi/core
 [oterm]: https://github.com/ggozad/oterm
@@ -119,12 +133,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Witsy]: https://github.com/nbonamy/witsy
 [Zed]: https://zed.dev
 [Zencoder]: https://zencoder.ai
-[Resources]: https://modelcontextprotocol.io/docs/concepts/resources
-[Prompts]: https://modelcontextprotocol.io/docs/concepts/prompts
-[Tools]: https://modelcontextprotocol.io/docs/concepts/tools
-[Sampling]: https://modelcontextprotocol.io/docs/concepts/sampling
 [HyperAgent]: https://github.com/hyperbrowserai/HyperAgent
-[Discovery]: /docs/concepts/tools#tool-discovery-and-updates
 
 </div>
 
@@ -407,6 +416,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Cloud Ready – Instantly scale to hundreds of sessions via [Hyperbrowser](https://www.hyperbrowser.ai/)
 - MCP Client – Connect to tools like Composio for full workflows (e.g. writing web data to Google Sheets)
 
+### JetBrains AI Assistant
+
+[JetBrains AI Assistant](https://plugins.jetbrains.com/plugin/22282-jetbrains-ai-assistant) plugin provides AI-powered features for software development available in all JetBrains IDEs.
+
+**Key features:**
+
+- Unlimited code completion powered by Mellum, JetBrains’ proprietary AI model.
+- Context-aware AI chat that understands your code and helps you in real time.
+- Access to top-tier models from OpenAI, Anthropic, and Google.
+- Offline mode with connected local LLMs via Ollama or LM Studio.
+- Deep integration into IDE workflows, including code suggestions in the editor, VCS assistance, runtime error explanation, and more.
+
 ### Klavis AI Slack/Discord/Web
 
 [Klavis AI](https://www.klavis.ai/) is an Open-Source Infra to Use, Build & Scale MCPs with ease.
@@ -522,6 +543,20 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 
 - [MindPal MCP Documentation](https://docs.mindpal.io/agent/mcp)
 
+### MooPoint
+
+[MooPoint](https://moopoint.io)
+
+MooPoint is a web-based AI chat platform built for developers and advanced users, letting you interact with multiple large language models (LLMs) through a single, unified interface. Connect your own API keys (OpenAI, Anthropic, and more) and securely manage custom MCP server integrations.
+
+**Key features:**
+
+- Accessible from any PC or smartphone—no installation required
+- Choose your preferred LLM provider
+- Supports `SSE`, `Streamable HTTP`, `npx`, and `uvx` MCP servers
+- OAuth and sampling support
+- New features added daily
+
 ### Msty Studio
 
 [Msty Studio](https://msty.ai) is a privacy-first AI productivity platform that seamlessly integrates local and online language models (LLMs) into customizable workflows. Designed for both technical and non-technical users, Msty Studio offers a suite of tools to enhance AI interactions, automate tasks, and maintain full control over data and model behavior.
@@ -590,7 +625,7 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Full support of all major MCP features (tools, prompts, resources, and subscriptions)
 - Fast, seamless UI for debugging MCP capabilities
 - MCP config integration (Claude, VSCode, etc.) for fast first-time experience in testing MCPs
-- Integration with history, varibles, and collections for re-use and collaboration
+- Integration with history, variables, and collections for reuse and collaboration
 
 ### Slack MCP Client
 
@@ -735,7 +770,7 @@ Theia AI and Theia IDE's MCP integration provide users with flexibility, making 
 
 ### Witsy
 
-[Witsy](https://github.com/nbonamy/witsy) is an AI desktop assistant, supoorting Anthropic models and MCP servers as LLM tools.
+[Witsy](https://github.com/nbonamy/witsy) is an AI desktop assistant, supporting Anthropic models and MCP servers as LLM tools.
 
 **Key features:**
 

@@ -1,16 +1,9 @@
 ---
-title: MCP Server
+title: Java MCP Server
 description: Learn how to implement and configure a Model Context Protocol (MCP) server
 ---
 
-<Note>
-
-### Breaking Changes in 0.8.x ⚠️
-
-**Note:** Version 0.8.x introduces several breaking changes including a new session-based architecture.
-If you're upgrading from 0.7.0, please refer to the [Migration Guide](https://github.com/modelcontextprotocol/java-sdk/blob/main/migration-0.8.0.md) for detailed instructions.
-
-</Note>
+Go to the [Java MCP Client](/sdk/java/mcp-client) to learn how to build MCP clients or [Java MCP Overview](/sdk/java/mcp-overview) for a general overview of the Model Context Protocol (MCP) in Java.
 
 ## Overview
 
@@ -30,6 +23,11 @@ The core `io.modelcontextprotocol.sdk:mcp` module provides STDIO and SSE server 
 
 Spring-specific transport implementations are available as an **optional** dependencies `io.modelcontextprotocol.sdk:mcp-spring-webflux`, `io.modelcontextprotocol.sdk:mcp-spring-webmvc` for [Spring Framework](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-client-boot-starter-docs.html) users.
 
+</Tip>
+
+<Tip>
+  This [quickstart demo](/quickstart/server), based on Spring AI MCP, will show
+  you how to build an MCP server.
 </Tip>
 
 The server supports both synchronous and asynchronous APIs, allowing for flexible integration in different application contexts.
@@ -508,7 +506,7 @@ var mcpServer = McpServer.async(mcpServerTransportProvider)
 </Tabs>
 
 The `McpSchema.CompletionReference` definition defines the type (`PromptRefernce` or `ResourceRefernce`) and the identifier for the completion specification (e.g handler).
-The handler function processes requests and returns the complition response.
+The handler function processes requests and returns the completion response.
 The first argument is `McpAsyncServerExchange` for client interaction, and the second argument is a `CompleteRequest` instance.
 
 Check the [using completion](/sdk/java/mcp-client#using-completion) to learn how to use the completion capabilities on the client side.
