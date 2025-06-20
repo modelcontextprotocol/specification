@@ -2363,8 +2363,15 @@
                     "description": "Optional additional tool information.\n\nDisplay name precedence order is: title, annotations.title, then name."
                 },
                 "description": {
-                    "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
+                    "description": "A description of the tool for both human developers and LLMs.\n\nThis should clearly explain what the tool does and when to use it. The description \nserves as documentation for human developers and as contextual guidance for LLMs\nto understand the tool's purpose and select it appropriately. It can be thought \nof like a \"hint\" to the model.",
                     "type": "string"
+                },
+                "examples": {
+                    "description": "Optional examples demonstrating typical tool usage patterns.\n\nThese examples serve multiple purposes:\n- Provide 1-shot learning examples for LLMs\n- Serve as human-readable documentation\n- Enable evaluation and testing of tool functionality over time\n\nEach example includes a description, input parameters, and expected output result.",
+                    "items": {
+                        "$ref": "#/definitions/ToolExample"
+                    },
+                    "type": "array"
                 },
                 "inputSchema": {
                     "description": "A JSON Schema object defining the expected parameters for the tool.",
@@ -2459,6 +2466,66 @@
                     "type": "string"
                 }
             },
+            "type": "object"
+        },
+        "ToolExample": {
+            "description": "An example demonstrating how to use a tool, including input and expected output.",
+            "properties": {
+                "description": {
+                    "description": "A description of what this example demonstrates, intended for both human developers and LLMs.\n\nThis should clearly describe the specific use case, scenario, or edge case being illustrated.\nThe description helps human developers understand the example's purpose and enables LLMs to\ndistinguish between different example types and select the most appropriate usage pattern\nfor their current context and task requirements.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "A unique identifier for this example within the tool's examples array.\nThis helps LLMs distinguish between different use cases and enables\nautomated testing and validation.",
+                    "type": "string"
+                },
+                "input": {
+                    "additionalProperties": {},
+                    "description": "Example input arguments that would be passed to the tool.\nThis should match the structure defined in the tool's inputSchema.",
+                    "type": "object"
+                },
+                "output": {
+                    "description": "The expected result from calling the tool with the given input.\nThis represents what would be returned in the CallToolResult.",
+                    "properties": {
+                        "content": {
+                            "description": "The expected content objects returned by the tool.",
+                            "items": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/definitions/TextContent"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/ImageContent"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/AudioContent"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/EmbeddedResource"
+                                    }
+                                ]
+                            },
+                            "type": "array"
+                        },
+                        "isError": {
+                            "description": "Whether this example demonstrates an error case.",
+                            "type": "boolean"
+                        },
+                        "structuredContent": {
+                            "additionalProperties": {},
+                            "description": "The expected structured result, if the tool provides one.",
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "id",
+                "input",
+                "output"
+            ],
             "type": "object"
         },
         "ToolListChangedNotification": {

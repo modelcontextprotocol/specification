@@ -33,6 +33,7 @@ Each tool is defined with the following structure:
     type: "object",
     properties: { ... }  // Tool-specific parameters
   },
+  examples?: ToolExample[];  // Optional usage examples
   annotations?: {        // Optional hints about tool behavior
     title?: string;      // Human-readable title for the tool
     readOnlyHint?: boolean;    // If true, the tool does not modify its environment
@@ -40,6 +41,78 @@ Each tool is defined with the following structure:
     idempotentHint?: boolean;  // If true, repeated calls with same args have no additional effect
     openWorldHint?: boolean;   // If true, tool interacts with external entities
   }
+}
+```
+
+### Tool Examples
+
+Tools can include examples that demonstrate typical usage patterns. These examples serve multiple purposes:
+
+- **LLM guidance**: Provide concrete examples for AI models to understand tool behavior and expected input/output formats
+- **Human documentation**: Help developers understand how to use the tool effectively
+- **Testing and validation**: Enable evaluation of tool functionality over time
+
+Each example contains:
+- `id`: Unique identifier for the example to enable automated testing and LLM disambiguation
+- `description`: Human-readable explanation that clearly describes the specific use case or scenario
+- `input`: Example input arguments matching the tool's input schema
+- `output`: Expected result structure including content, structured data, and error status
+
+Here's a tool definition with examples:
+
+```typescript
+{
+  name: "weather_lookup",
+  description: "Get current weather information for a location",
+  inputSchema: {
+    type: "object",
+    properties: {
+      location: { 
+        type: "string",
+        description: "City name or coordinates"
+      },
+      units: {
+        type: "string",
+        enum: ["celsius", "fahrenheit"],
+        default: "celsius"
+      }
+    },
+    required: ["location"]
+  },
+  examples: [
+    {
+      id: "weather_lookup_success",
+      description: "Successful weather lookup - standard city name query",
+      input: {
+        location: "San Francisco",
+        units: "celsius"
+      },
+      output: {
+        content: [
+          {
+            type: "text",
+            text: "Current weather in San Francisco: 18°C, partly cloudy"
+          }
+        ]
+      }
+    },
+    {
+      id: "weather_lookup_error",
+      description: "Error handling - invalid location name validation",
+      input: {
+        location: "Nonexistent City"
+      },
+      output: {
+        content: [
+          {
+            type: "text", 
+            text: "Error: Location 'Nonexistent City' not found"
+          }
+        ],
+        isError: true
+      }
+    }
+  ]
 }
 ```
 
@@ -204,7 +277,7 @@ When implementing tools:
 
 1. Provide clear, descriptive names and descriptions
 2. Use detailed JSON Schema definitions for parameters
-3. Include examples in tool descriptions to demonstrate how the model should use them
+3. Include examples to demonstrate typical usage patterns and edge cases
 4. Implement proper error handling and validation
 5. Use progress reporting for long operations
 6. Keep tool operations focused and atomic
@@ -212,6 +285,16 @@ When implementing tools:
 8. Implement proper timeouts
 9. Consider rate limiting for resource-intensive operations
 10. Log tool usage for debugging and monitoring
+
+### Using examples effectively
+
+When providing tool examples:
+
+- **Cover common use cases**: Show the most typical usage patterns
+- **Include edge cases**: Demonstrate how the tool handles boundary conditions
+- **Show error scenarios**: Provide examples of error conditions and expected error responses
+- **Use realistic data**: Include examples with representative input values and outputs
+- **Keep examples concise**: Focus on demonstrating key behaviors without unnecessary complexity
 
 ## Security considerations
 
