@@ -936,6 +936,8 @@ export interface ToolAnnotations {
 export interface Tool {
   /**
    * The name of the tool.
+   *
+   * Tooling **MUST** at least support 128 character length strings and the characters `a-z`, `A-Z`, `0-9`, `_`, `-`, `.`, `@`, and `/`.
    */
   name: string;
 
