@@ -6,22 +6,10 @@
 export type JSONRPCMessage =
   | JSONRPCRequest
   | JSONRPCNotification
-  | JSONRPCBatchRequest
   | JSONRPCResponse
-  | JSONRPCError
-  | JSONRPCBatchResponse;
+  | JSONRPCError;
 
-/**
- * A JSON-RPC batch request, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchRequest = (JSONRPCRequest | JSONRPCNotification)[];
-
-/**
- * A JSON-RPC batch response, as described in https://www.jsonrpc.org/specification#batch.
- */
-export type JSONRPCBatchResponse = (JSONRPCResponse | JSONRPCError)[];
-
-export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v2";
+export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v3";
 export const JSONRPC_VERSION = "2.0";
 
 /**
@@ -37,11 +25,15 @@ export type Cursor = string;
 export interface Request {
   method: string;
   params?: {
+    /**
+     * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+     */
     _meta?: {
       /**
        * If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
        */
       progressToken?: ProgressToken;
+      [key: string]: unknown;
     };
     [key: string]: unknown;
   };
@@ -51,7 +43,7 @@ export interface Notification {
   method: string;
   params?: {
     /**
-     * This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
+     * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
      */
     _meta?: { [key: string]: unknown };
     [key: string]: unknown;
@@ -60,7 +52,7 @@ export interface Notification {
 
 export interface Result {
   /**
-   * This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
   _meta?: { [key: string]: unknown };
   [key: string]: unknown;
@@ -220,6 +212,10 @@ export interface ClientCapabilities {
    * Present if the client supports sampling from an LLM.
    */
   sampling?: object;
+  /**
+   * Present if the client supports elicitation from the server.
+   */
+  elicitation?: object;
 }
 
 /**
@@ -281,10 +277,29 @@ export interface ServerCapabilities {
 }
 
 /**
- * Describes the name and version of an MCP implementation.
+ * Base interface for metadata with name (identifier) and title (display name) properties.
  */
-export interface Implementation {
+export interface BaseMetadata {
+  /**
+   * Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).
+   */
   name: string;
+
+  /**
+   * Intended for UI and end-user contexts — optimized to be human-readable and easily understood,
+   * even by those unfamiliar with domain-specific terminology.
+   *
+   * If not provided, the name should be used for display (except for Tool,
+   * where `annotations.title` should be given precedence over using `name`,
+   * if present).
+   */
+  title?: string;
+}
+
+/**
+ * Describes the name and version of an MCP implementation, with an optional title for UI representation.
+ */
+export interface Implementation extends BaseMetadata {
   version: string;
 }
 
@@ -451,20 +466,13 @@ export interface ResourceUpdatedNotification extends Notification {
 /**
  * A known resource that the server is capable of reading.
  */
-export interface Resource {
+export interface Resource extends BaseMetadata {
   /**
    * The URI of this resource.
    *
    * @format uri
    */
   uri: string;
-
-  /**
-   * A human-readable name for this resource.
-   *
-   * This can be used by clients to populate UI elements.
-   */
-  name: string;
 
   /**
    * A description of what this resource represents.
@@ -489,25 +497,23 @@ export interface Resource {
    * This can be used by Hosts to display file sizes and estimate context window usage.
    */
   size?: number;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 /**
  * A template description for resources available on the server.
  */
-export interface ResourceTemplate {
+export interface ResourceTemplate extends BaseMetadata {
   /**
    * A URI template (according to RFC 6570) that can be used to construct resource URIs.
    *
    * @format uri-template
    */
   uriTemplate: string;
-
-  /**
-   * A human-readable name for the type of resource this template refers to.
-   *
-   * This can be used by clients to populate UI elements.
-   */
-  name: string;
 
   /**
    * A description of what this template is for.
@@ -525,6 +531,11 @@ export interface ResourceTemplate {
    * Optional annotations for the client.
    */
   annotations?: Annotations;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 /**
@@ -541,6 +552,11 @@ export interface ResourceContents {
    * The MIME type of this resource, if known.
    */
   mimeType?: string;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 export interface TextResourceContents extends ResourceContents {
@@ -605,11 +621,7 @@ export interface GetPromptResult extends Result {
 /**
  * A prompt or prompt template that the server offers.
  */
-export interface Prompt {
-  /**
-   * The name of the prompt or prompt template.
-   */
-  name: string;
+export interface Prompt extends BaseMetadata {
   /**
    * An optional description of what this prompt provides
    */
@@ -618,16 +630,17 @@ export interface Prompt {
    * A list of arguments to use for templating the prompt.
    */
   arguments?: PromptArgument[];
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 /**
  * Describes an argument that a prompt can accept.
  */
-export interface PromptArgument {
-  /**
-   * The name of the argument.
-   */
-  name: string;
+export interface PromptArgument extends BaseMetadata {
   /**
    * A human-readable description of the argument.
    */
@@ -651,7 +664,16 @@ export type Role = "user" | "assistant";
  */
 export interface PromptMessage {
   role: Role;
-  content: TextContent | ImageContent | AudioContent | EmbeddedResource;
+  content: ContentBlock;
+}
+
+/**
+ * A resource that the server is capable of reading, included in a prompt or tool call result.
+ *
+ * Note: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.
+ */
+export interface ResourceLink extends Resource {
+  type: "resource_link";
 }
 
 /**
@@ -668,8 +690,12 @@ export interface EmbeddedResource {
    * Optional annotations for the client.
    */
   annotations?: Annotations;
-}
 
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
+}
 /**
  * An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
  */
@@ -711,23 +737,31 @@ export interface NamespacedListToolsResult extends PaginatedResult {
 
 /**
  * The server's response to a tool call.
- *
- * Any errors that originate from the tool SHOULD be reported inside the result
- * object, with `isError` set to true, _not_ as an MCP protocol-level error
- * response. Otherwise, the LLM would not be able to see that an error occurred
- * and self-correct.
- *
- * However, any errors in _finding_ the tool, an error indicating that the
- * server does not support tool calls, or any other exceptional conditions,
- * should be reported as an MCP error response.
  */
 export interface CallToolResult extends Result {
-  content: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+  /**
+   * A list of content objects that represent the unstructured result of the tool call.
+   */
+  content: ContentBlock[];
+
+  /**
+   * An optional JSON object that represents the structured result of the tool call.
+   */
+  structuredContent?: { [key: string]: unknown };
 
   /**
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
+   *
+   * Any errors that originate from the tool SHOULD be reported inside the result
+   * object, with `isError` set to true, _not_ as an MCP protocol-level error
+   * response. Otherwise, the LLM would not be able to see that an error occurred
+   * and self-correct.
+   *
+   * However, any errors in _finding_ the tool, an error indicating that the
+   * server does not support tool calls, or any other exceptional conditions,
+   * should be reported as an MCP error response.
    */
   isError?: boolean;
 }
@@ -807,12 +841,7 @@ export interface ToolAnnotations {
 /**
  * Definition for a tool the client can call.
  */
-export interface Tool {
-  /**
-   * The name of the tool.
-   */
-  name: string;
-
+export interface Tool extends BaseMetadata {
   /**
    * A human-readable description of the tool.
    *
@@ -830,9 +859,26 @@ export interface Tool {
   };
 
   /**
+   * An optional JSON Schema object defining the structure of the tool's output returned in
+   * the structuredContent field of a CallToolResult.
+   */
+  outputSchema?: {
+    type: "object";
+    properties?: { [key: string]: object };
+    required?: string[];
+  };
+
+  /**
    * Optional additional tool information.
+   *
+   * Display name precedence order is: title, annotations.title, then name.
    */
   annotations?: ToolAnnotations;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 
@@ -1003,7 +1049,25 @@ export interface Annotations {
    * @maximum 1
    */
   priority?: number;
+
+  /**
+   * The moment the resource was last modified, as an ISO 8601 formatted string.
+   *
+   * Should be an ISO 8601 formatted string (e.g., "2025-01-12T15:00:58Z").
+   *
+   * Examples: last activity timestamp in an open file, timestamp when the resource
+   * was attached, etc.
+   */
+  lastModified?: string;
 }
+
+/**  */
+export type ContentBlock =
+  | TextContent
+  | ImageContent
+  | AudioContent
+  | ResourceLink
+  | EmbeddedResource;
 
 /**
  * Text provided to or from an LLM.
@@ -1020,6 +1084,11 @@ export interface TextContent {
    * Optional annotations for the client.
    */
   annotations?: Annotations;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 /**
@@ -1044,6 +1113,11 @@ export interface ImageContent {
    * Optional annotations for the client.
    */
   annotations?: Annotations;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 /**
@@ -1068,6 +1142,11 @@ export interface AudioContent {
    * Optional annotations for the client.
    */
   annotations?: Annotations;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 /**
@@ -1157,7 +1236,7 @@ export interface ModelHint {
 export interface CompleteRequest extends Request {
   method: "completion/complete";
   params: {
-    ref: PromptReference | ResourceReference;
+    ref: PromptReference | ResourceTemplateReference;
     /**
      * The argument's information
      */
@@ -1170,6 +1249,16 @@ export interface CompleteRequest extends Request {
        * The value of the argument to use for completion matching.
        */
       value: string;
+    };
+
+    /**
+     * Additional, optional context for completions
+     */
+    context?: {
+      /**
+       * Previously-resolved variables in a URI template or prompt.
+       */
+      arguments?: { [key: string]: string };
     };
   };
 }
@@ -1197,7 +1286,7 @@ export interface CompleteResult extends Result {
 /**
  * A reference to a resource or resource template definition.
  */
-export interface ResourceReference {
+export interface ResourceTemplateReference {
   type: "ref/resource";
   /**
    * The URI or URI template of the resource.
@@ -1210,12 +1299,8 @@ export interface ResourceReference {
 /**
  * Identifies a prompt.
  */
-export interface PromptReference {
+export interface PromptReference extends BaseMetadata {
   type: "ref/prompt";
-  /**
-   * The name of the prompt or prompt template
-   */
-  name: string;
 }
 
 /* Roots */
@@ -1259,6 +1344,11 @@ export interface Root {
    * referencing the root in other parts of the application.
    */
   name?: string;
+
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: { [key: string]: unknown };
 }
 
 /**
@@ -1268,6 +1358,91 @@ export interface Root {
  */
 export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
+}
+
+/**
+ * A request from the server to elicit additional information from the user via the client.
+ */
+export interface ElicitRequest extends Request {
+  method: "elicitation/create";
+  params: {
+    /**
+     * The message to present to the user.
+     */
+    message: string;
+    /**
+     * A restricted subset of JSON Schema.
+     * Only top-level properties are allowed, without nesting.
+     */
+    requestedSchema: {
+      type: "object";
+      properties: {
+        [key: string]: PrimitiveSchemaDefinition;
+      };
+      required?: string[];
+    };
+  };
+}
+
+/**
+ * Restricted schema definitions that only allow primitive types
+ * without nested objects or arrays.
+ */
+export type PrimitiveSchemaDefinition =
+  | StringSchema
+  | NumberSchema
+  | BooleanSchema
+  | EnumSchema;
+
+export interface StringSchema {
+  type: "string";
+  title?: string;
+  description?: string;
+  minLength?: number;
+  maxLength?: number;
+  format?: "email" | "uri" | "date" | "date-time";
+}
+
+export interface NumberSchema {
+  type: "number" | "integer";
+  title?: string;
+  description?: string;
+  minimum?: number;
+  maximum?: number;
+}
+
+export interface BooleanSchema {
+  type: "boolean";
+  title?: string;
+  description?: string;
+  default?: boolean;
+}
+
+export interface EnumSchema {
+  type: "string";
+  title?: string;
+  description?: string;
+  enum: string[];
+  enumNames?: string[]; // Display names for enum values
+}
+
+/**
+ * The client's response to an elicitation request.
+ */
+export interface ElicitResult extends Result {
+  /**
+   * The user action in response to the elicitation.
+   * - "accept": User submitted the form/confirmed the action
+   * - "reject": User explicitly rejected the action
+   * - "cancel": User dismissed without making an explicit choice
+   */
+  action: "accept" | "reject" | "cancel";
+
+  /**
+   * The submitted form data, only present when action is "accept".
+   * Contains values matching the requested schema.
+   */
+  content?: { [key: string]: string | number | boolean };
 }
 
 /* Client messages */
@@ -1294,13 +1469,18 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult;
+export type ClientResult =
+  | EmptyResult
+  | CreateMessageResult
+  | ListRootsResult
+  | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
-  | ListRootsRequest;
+  | ListRootsRequest
+  | ElicitRequest;
 
 export type ServerNotification =
   | CancelledNotification

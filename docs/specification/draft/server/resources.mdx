@@ -2,6 +2,8 @@
 title: Resources
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) provides a standardized way for servers to expose
@@ -21,7 +23,7 @@ For example, applications could:
 - Allow the user to search through and filter available resources
 - Implement automatic context inclusion, based on heuristics or the AI model's selection
 
-![Example of resource context picker](resource-picker.png)
+![Example of resource context picker](/specification/draft/server/resource-picker.png)
 
 However, implementations are free to expose resources through any interface pattern that
 suits their needs&mdash;the protocol itself does not mandate any specific user
@@ -111,6 +113,7 @@ supports [pagination](/specification/draft/server/utilities/pagination).
       {
         "uri": "file:///project/src/main.rs",
         "name": "main.rs",
+        "title": "Rust Software Application Main File",
         "description": "Primary application entry point",
         "mimeType": "text/x-rust"
       }
@@ -147,6 +150,8 @@ To retrieve resource contents, clients send a `resources/read` request:
     "contents": [
       {
         "uri": "file:///project/src/main.rs",
+        "name": "main.rs",
+        "title": "Rust Software Application Main File",
         "mimeType": "text/x-rust",
         "text": "fn main() {\n    println!(\"Hello world!\");\n}"
       }
@@ -182,6 +187,7 @@ auto-completed through [the completion API](/specification/draft/server/utilitie
       {
         "uriTemplate": "file:///{path}",
         "name": "Project Files",
+        "title": "📁 Project Files",
         "description": "Access files in the project directory",
         "mimeType": "application/octet-stream"
       }
@@ -227,7 +233,8 @@ to specific resources and receive notifications when they change:
   "jsonrpc": "2.0",
   "method": "notifications/resources/updated",
   "params": {
-    "uri": "file:///project/src/main.rs"
+    "uri": "file:///project/src/main.rs",
+    "title": "Rust Software Application Main File"
   }
 }
 ```
@@ -272,7 +279,8 @@ sequenceDiagram
 A resource definition includes:
 
 - `uri`: Unique identifier for the resource
-- `name`: Human-readable name
+- `name`: The name of the resource.
+- `title`: Optional human-readable name of the resource for display purposes.
 - `description`: Optional description
 - `mimeType`: Optional MIME type
 - `size`: Optional size in bytes
@@ -286,6 +294,8 @@ Resources can contain either text or binary data:
 ```json
 {
   "uri": "file:///example.txt",
+  "name": "example.txt",
+  "title": "Example Text File",
   "mimeType": "text/plain",
   "text": "Resource content"
 }
@@ -296,6 +306,8 @@ Resources can contain either text or binary data:
 ```json
 {
   "uri": "file:///example.png",
+  "name": "example.png",
+  "title": "Example Image",
   "mimeType": "image/png",
   "blob": "base64-encoded-data"
 }
@@ -331,6 +343,11 @@ otherwise have a standard MIME type.
 ### git://
 
 Git version control integration.
+
+### Custom URI Schemes
+
+Custom URI schemes **MUST** be in accordance with [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986),
+taking the above guidance in to account.
 
 ## Error Handling
 

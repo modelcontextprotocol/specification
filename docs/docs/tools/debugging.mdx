@@ -6,7 +6,9 @@ description: A comprehensive guide to debugging Model Context Protocol (MCP) int
 Effective debugging is essential when developing MCP servers or integrating them with applications. This guide covers the debugging tools and approaches available in the MCP ecosystem.
 
 <Info>
-  This guide is for macOS. Guides for other platforms are coming soon.
+
+This guide is for macOS. Guides for other platforms are coming soon.
+
 </Info>
 
 ## Debugging tools overview
@@ -14,11 +16,13 @@ Effective debugging is essential when developing MCP servers or integrating them
 MCP provides several tools for debugging at different levels:
 
 1. **MCP Inspector**
+
    - Interactive debugging interface
    - Direct server testing
    - See the [Inspector guide](/docs/tools/inspector) for details
 
 2. **Claude Desktop Developer Tools**
+
    - Integration testing
    - Log collection
    - Chrome DevTools integration
@@ -35,10 +39,11 @@ MCP provides several tools for debugging at different levels:
 The Claude.app interface provides basic server status information:
 
 1. Click the <img src="/images/claude-desktop-mcp-plug-icon.svg" style={{display: 'inline', margin: 0, height: '1.3em'}} /> icon to view:
+
    - Connected servers
    - Available prompts and resources
 
-2. Click the <img src="/images/claude-desktop-mcp-hammer-icon.svg" style={{display: 'inline', margin: 0, height: '1.3em'}} /> icon to view:
+2. Click the "Search and tools" <img src="/images/claude-desktop-mcp-slider.svg" style={{display: 'inline', margin: 0, height: '1.3em'}} /> icon to view:
    - Tools made available to the model
 
 ### Viewing logs
@@ -51,6 +56,7 @@ tail -n 20 -F ~/Library/Logs/Claude/mcp*.log
 ```
 
 The logs capture:
+
 - Server connection events
 - Configuration issues
 - Runtime errors
@@ -69,12 +75,14 @@ echo '{"allowDevTools": true}' > ~/Library/Application\ Support/Claude/developer
 2. Open DevTools: `Command-Option-Shift-i`
 
 Note: You'll see two DevTools windows:
+
 - Main content window
 - App title bar window
 
 Use the Console panel to inspect client-side errors.
 
 Use the Network panel to inspect:
+
 - Message payloads
 - Connection timing
 
@@ -89,12 +97,18 @@ When using MCP servers with Claude Desktop:
 - For testing servers directly via command line, the working directory will be where you run the command
 
 For example in `claude_desktop_config.json`, use:
+
 ```json
 {
   "command": "npx",
-  "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/username/data"]
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-filesystem",
+    "/Users/username/data"
+  ]
 }
 ```
+
 Instead of relative paths like `./data`
 
 ### Environment variables
@@ -108,7 +122,7 @@ To override the default variables or provide your own, you can specify an `env` 
   "myserver": {
     "command": "mcp-server-myapp",
     "env": {
-      "MYAPP_API_KEY": "some_key",
+      "MYAPP_API_KEY": "some_key"
     }
   }
 }
@@ -119,12 +133,14 @@ To override the default variables or provide your own, you can specify an `env` 
 Common initialization problems:
 
 1. **Path Issues**
+
    - Incorrect server executable path
    - Missing required files
    - Permission problems
    - Try using an absolute path for `command`
 
 2. **Configuration Errors**
+
    - Invalid JSON syntax
    - Missing required fields
    - Type mismatches
@@ -150,31 +166,38 @@ When servers fail to connect:
 When building a server that uses the local stdio [transport](/docs/concepts/transports), all messages logged to stderr (standard error) will be captured by the host application (e.g., Claude Desktop) automatically.
 
 <Warning>
-  Local MCP servers should not log messages to stdout (standard out), as this will interfere with protocol operation.
+
+Local MCP servers should not log messages to stdout (standard out), as this will interfere with protocol operation.
+
 </Warning>
 
 For all [transports](/docs/concepts/transports), you can also provide logging to the client by sending a log message notification:
 
 <Tabs>
   <Tab title="Python">
+
     ```python
     server.request_context.session.send_log_message(
       level="info",
       data="Server started successfully",
     )
     ```
+
   </Tab>
   <Tab title="TypeScript">
+
     ```typescript
     server.sendLoggingMessage({
       level: "info",
       data: "Server started successfully",
     });
     ```
+
   </Tab>
 </Tabs>
 
 Important events to log:
+
 - Initialization steps
 - Resource access
 - Tool execution
@@ -195,6 +218,7 @@ In client applications:
 ### Development cycle
 
 1. Initial Development
+
    - Use [Inspector](/docs/tools/inspector) for basic testing
    - Implement core functionality
    - Add logging points
@@ -217,12 +241,14 @@ To test changes efficiently:
 ### Logging strategy
 
 1. **Structured Logging**
+
    - Use consistent formats
    - Include context
    - Add timestamps
    - Track request IDs
 
 2. **Error Handling**
+
    - Log stack traces
    - Include error context
    - Track error patterns
@@ -239,6 +265,7 @@ To test changes efficiently:
 When debugging:
 
 1. **Sensitive Data**
+
    - Sanitize logs
    - Protect credentials
    - Mask personal information
@@ -253,12 +280,14 @@ When debugging:
 When encountering issues:
 
 1. **First Steps**
+
    - Check server logs
    - Test with [Inspector](/docs/tools/inspector)
    - Review configuration
    - Verify environment
 
 2. **Support Channels**
+
    - GitHub issues
    - GitHub discussions
 

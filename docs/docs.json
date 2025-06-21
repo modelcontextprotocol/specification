@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "willow",
+  "theme": "mint",
   "name": "Model Context Protocol",
   "colors": {
     "primary": "#09090b",
@@ -8,13 +8,21 @@
     "dark": "#09090b"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
+  "navbar": {
+    "links": [
       {
-        "tab": "User Guide",
+        "label": "GitHub",
+        "href": "https://github.com/modelcontextprotocol"
+      }
+    ]
+  },
+  "navigation": {
+    "versions": [
+      {
+        "version": "Version 2025-06-18 (latest)",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "User Guide",
             "pages": [
               "introduction",
               {
@@ -25,61 +33,150 @@
                   "quickstart/user"
                 ]
               },
-              "examples",
-              "clients",
+              {
+                "group": "Concepts",
+                "pages": [
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
+                ]
+              },
+              {
+                "group": "Examples",
+                "pages": ["examples", "clients"]
+              },
+              {
+                "group": "Tutorials",
+                "pages": [
+                  "tutorials/building-mcp-with-llms",
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
+                ]
+              },
               "faqs"
             ]
           },
           {
-            "group": "Tutorials",
+            "group": "Protocol",
             "pages": [
-              "tutorials/building-mcp-with-llms",
-              "docs/tools/debugging",
-              "docs/tools/inspector"
-            ]
-          },
-          {
-            "group": "Concepts",
-            "pages": [
-              "docs/concepts/architecture",
-              "docs/concepts/resources",
-              "docs/concepts/prompts",
-              "docs/concepts/tools",
-              "docs/concepts/sampling",
-              "docs/concepts/roots",
-              "docs/concepts/transports"
+              "specification/2025-06-18/index",
+              "specification/2025-06-18/changelog",
+              "specification/2025-06-18/architecture/index",
+              {
+                "group": "Base Protocol",
+                "pages": [
+                  "specification/2025-06-18/basic/index",
+                  "specification/2025-06-18/basic/lifecycle",
+                  "specification/2025-06-18/basic/transports",
+                  "specification/2025-06-18/basic/authorization",
+                  "specification/2025-06-18/basic/security_best_practices",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/2025-06-18/basic/utilities/cancellation",
+                      "specification/2025-06-18/basic/utilities/ping",
+                      "specification/2025-06-18/basic/utilities/progress"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Client Features",
+                "pages": [
+                  "specification/2025-06-18/client/roots",
+                  "specification/2025-06-18/client/sampling",
+                  "specification/2025-06-18/client/elicitation"
+                ]
+              },
+              {
+                "group": "Server Features",
+                "pages": [
+                  "specification/2025-06-18/server/index",
+                  "specification/2025-06-18/server/prompts",
+                  "specification/2025-06-18/server/resources",
+                  "specification/2025-06-18/server/tools",
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "specification/2025-06-18/server/utilities/completion",
+                      "specification/2025-06-18/server/utilities/logging",
+                      "specification/2025-06-18/server/utilities/pagination"
+                    ]
+                  }
+                ]
+              }
             ]
           },
           {
             "group": "Development",
             "pages": [
-              "development/updates",
+              "specification/versioning",
               "development/roadmap",
               "development/contributing"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "SDKs",
-        "icon": "book-open",
-        "groups": [
+          },
           {
-            "group": "Java",
+            "group": "SDKs",
             "pages": [
-              "sdk/java/mcp-overview",
-              "sdk/java/mcp-client",
-              "sdk/java/mcp-server"
+              "links/sdks/csharp",
+              "links/sdks/java",
+              "links/sdks/kotlin",
+              "links/sdks/python",
+              "links/sdks/ruby",
+              "links/sdks/swift",
+              "links/sdks/typescript"
             ]
           }
         ]
       },
       {
-        "tab": "Specification",
-        "icon": "book",
+        "version": "Version 2025-03-26",
         "groups": [
           {
-            "group": "2025-03-26 (Latest)",
+            "group": "User Guide",
+            "pages": [
+              "introduction",
+              {
+                "group": "Quickstart",
+                "pages": [
+                  "quickstart/server",
+                  "quickstart/client",
+                  "quickstart/user"
+                ]
+              },
+              {
+                "group": "Concepts",
+                "pages": [
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
+                ]
+              },
+              {
+                "group": "Examples",
+                "pages": ["examples", "clients"]
+              },
+              {
+                "group": "Tutorials",
+                "pages": [
+                  "tutorials/building-mcp-with-llms",
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
+                ]
+              },
+              "faqs"
+            ]
+          },
+          {
+            "group": "Protocol",
             "pages": [
               "specification/2025-03-26/index",
               "specification/2025-03-26/changelog",
@@ -128,7 +225,71 @@
             ]
           },
           {
-            "group": "2024-11-05",
+            "group": "Development",
+            "pages": [
+              "specification/versioning",
+              "development/roadmap",
+              "development/contributing"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": [
+              "links/sdks/csharp",
+              "links/sdks/java",
+              "links/sdks/kotlin",
+              "links/sdks/python",
+              "links/sdks/ruby",
+              "links/sdks/swift",
+              "links/sdks/typescript"
+            ]
+          }
+        ]
+      },
+      {
+        "version": "Version 2024-11-05",
+        "groups": [
+          {
+            "group": "User Guide",
+            "pages": [
+              "introduction",
+              {
+                "group": "Quickstart",
+                "pages": [
+                  "quickstart/server",
+                  "quickstart/client",
+                  "quickstart/user"
+                ]
+              },
+              {
+                "group": "Concepts",
+                "pages": [
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
+                ]
+              },
+              {
+                "group": "Examples",
+                "pages": ["examples", "clients"]
+              },
+              {
+                "group": "Tutorials",
+                "pages": [
+                  "tutorials/building-mcp-with-llms",
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
+                ]
+              },
+              "faqs"
+            ]
+          },
+          {
+            "group": "Protocol",
             "pages": [
               "specification/2024-11-05/index",
               "specification/2024-11-05/architecture/index",
@@ -176,7 +337,71 @@
             ]
           },
           {
-            "group": "draft",
+            "group": "Development",
+            "pages": [
+              "specification/versioning",
+              "development/roadmap",
+              "development/contributing"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": [
+              "links/sdks/csharp",
+              "links/sdks/java",
+              "links/sdks/kotlin",
+              "links/sdks/python",
+              "links/sdks/ruby",
+              "links/sdks/swift",
+              "links/sdks/typescript"
+            ]
+          }
+        ]
+      },
+      {
+        "version": "Draft",
+        "groups": [
+          {
+            "group": "User Guide",
+            "pages": [
+              "introduction",
+              {
+                "group": "Quickstart",
+                "pages": [
+                  "quickstart/server",
+                  "quickstart/client",
+                  "quickstart/user"
+                ]
+              },
+              {
+                "group": "Concepts",
+                "pages": [
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
+                ]
+              },
+              {
+                "group": "Examples",
+                "pages": ["examples", "clients"]
+              },
+              {
+                "group": "Tutorials",
+                "pages": [
+                  "tutorials/building-mcp-with-llms",
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
+                ]
+              },
+              "faqs"
+            ]
+          },
+          {
+            "group": "Protocol",
             "pages": [
               "specification/draft/index",
               "specification/draft/changelog",
@@ -188,6 +413,7 @@
                   "specification/draft/basic/lifecycle",
                   "specification/draft/basic/transports",
                   "specification/draft/basic/authorization",
+                  "specification/draft/basic/security_best_practices",
                   {
                     "group": "Utilities",
                     "pages": [
@@ -202,7 +428,8 @@
                 "group": "Client Features",
                 "pages": [
                   "specification/draft/client/roots",
-                  "specification/draft/client/sampling"
+                  "specification/draft/client/sampling",
+                  "specification/draft/client/elicitation"
                 ]
               },
               {
@@ -225,56 +452,32 @@
             ]
           },
           {
-            "group": "Resources",
+            "group": "Development",
             "pages": [
               "specification/versioning",
-              "specification/contributing"
+              "development/roadmap",
+              "development/contributing"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": [
+              "links/sdks/csharp",
+              "links/sdks/java",
+              "links/sdks/kotlin",
+              "links/sdks/python",
+              "links/sdks/ruby",
+              "links/sdks/swift",
+              "links/sdks/typescript"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Python SDK",
-          "href": "https://github.com/modelcontextprotocol/python-sdk",
-          "icon": "python"
-        },
-        {
-          "anchor": "TypeScript SDK",
-          "href": "https://github.com/modelcontextprotocol/typescript-sdk",
-          "icon": "square-js"
-        },
-        {
-          "anchor": "Java SDK",
-          "href": "https://github.com/modelcontextprotocol/java-sdk",
-          "icon": "java"
-        },
-        {
-          "anchor": "Kotlin SDK",
-          "href": "https://github.com/modelcontextprotocol/kotlin-sdk",
-          "icon": "square-k"
-        },
-        {
-          "anchor": "C# SDK",
-          "href": "https://github.com/modelcontextprotocol/csharp-sdk",
-          "icon": "square-c"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [],
-    "primary": {
-      "type": "button",
-      "label": "GitHub",
-      "href": "https://github.com/modelcontextprotocol"
-    }
   },
   "seo": {
     "metatags": {
@@ -298,14 +501,11 @@
     },
     {
       "source": "/specification/latest",
-      "destination": "/specification/2025-03-26",
+      "destination": "/specification/2025-06-18",
       "permanent": false
     }
   ],
   "contextual": {
-    "options": [
-      "copy",
-      "view"
-    ]
+    "options": ["copy", "view"]
   }
 }

@@ -2,6 +2,8 @@
 title: Transports
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 MCP uses JSON-RPC to encode messages. JSON-RPC messages **MUST** be UTF-8 encoded.
@@ -49,10 +51,14 @@ sequenceDiagram
 
 ## Streamable HTTP
 
-<Info>This replaces the [HTTP+SSE
+<Info>
+
+This replaces the [HTTP+SSE
 transport](/specification/2024-11-05/basic/transports#http-with-sse) from
 protocol version 2024-11-05. See the [backwards compatibility](#backwards-compatibility)
-guide below.</Info>
+guide below.
+
+</Info>
 
 In the **Streamable HTTP** transport, the server operates as an independent process that
 can handle multiple client connections. This transport uses HTTP POST and GET requests.
@@ -232,6 +238,25 @@ sequenceDiagram
     deactivate Server
 
 ```
+
+### Protocol Version Header
+
+If using HTTP, the client **MUST** include the `MCP-Protocol-Version:
+<protocol-version>` HTTP header on all subsequent requests to the MCP
+server, allowing the MCP server to respond based on the MCP protocol version.
+
+For example: `MCP-Protocol-Version: 2025-06-18`
+
+The protocol version sent by the client **SHOULD** be the one [negotiated during
+initialization](/specification/draft/basic/lifecycle#version-negotiation).
+
+For backwards compatibility, if the server does _not_ receive an `MCP-Protocol-Version`
+header, and has no other way to identify the version - for example, by relying on the
+protocol version negotiated during initialization - the server **SHOULD** assume protocol
+version `2025-06-18`.
+
+If the server receives a request with an invalid or unsupported
+`MCP-Protocol-Version`, it **MUST** respond with `400 Bad Request`.
 
 ### Backwards Compatibility
 
