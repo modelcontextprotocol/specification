@@ -2,6 +2,8 @@
 title: Transports
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 MCP uses JSON-RPC to encode messages. JSON-RPC messages **MUST** be UTF-8 encoded.
@@ -243,7 +245,7 @@ If using HTTP, the client **MUST** include the `MCP-Protocol-Version:
 <protocol-version>` HTTP header on all subsequent requests to the MCP
 server, allowing the MCP server to respond based on the MCP protocol version.
 
-For example: `MCP-Protocol-Version: 2025-03-26`
+For example: `MCP-Protocol-Version: 2025-06-18`
 
 The protocol version sent by the client **SHOULD** be the one [negotiated during
 initialization](/specification/draft/basic/lifecycle#version-negotiation).
@@ -251,7 +253,7 @@ initialization](/specification/draft/basic/lifecycle#version-negotiation).
 For backwards compatibility, if the server does _not_ receive an `MCP-Protocol-Version`
 header, and has no other way to identify the version - for example, by relying on the
 protocol version negotiated during initialization - the server **SHOULD** assume protocol
-version `2025-03-26`.
+version `2025-06-18`.
 
 If the server receives a request with an invalid or unsupported
 `MCP-Protocol-Version`, it **MUST** respond with `400 Bad Request`.
