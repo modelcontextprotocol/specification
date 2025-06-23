@@ -26,7 +26,7 @@ In the **stdio** transport:
 - The client launches the MCP server as a subprocess.
 - The server reads JSON-RPC messages from its standard input (`stdin`) and sends messages
   to its standard output (`stdout`).
-- Messages are individual JSON-RPC requests, notifications, or responses.
+- Messages are individual JSON-RPC requests, notifications, or responses (batches are not supported).
 - Messages are delimited by newlines, and **MUST NOT** contain embedded newlines.
 - The server **MAY** write UTF-8 strings to its standard error (`stderr`) for logging
   purposes. Clients **MAY** capture, forward, or ignore this logging.
@@ -270,6 +270,7 @@ protocol version 2024-11-05) as follows:
   new "MCP endpoint" defined for the Streamable HTTP transport.
   - It is also possible to combine the old POST endpoint and the new MCP endpoint, but
     this may introduce unneeded complexity.
+- Continue to support batch requests from the client.
 
 **Clients** wanting to support older servers should:
 

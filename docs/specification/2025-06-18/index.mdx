@@ -53,6 +53,10 @@ and tools into the ecosystem of AI applications.
 - Stateful connections
 - Server and client capability negotiation
 
+MCP deviates slightly from the JSON-RPC 2.0 specification in two respects:
+- Unlike base JSON-RPC, the `id` of a request/response (notifications excluded) **MUST NOT** be `null`.
+- Unlike base JSON-RPC, MCP does not support batching requests. Clients MUST NOT send batch requests, and servers MUST NOT respond to them.
+
 ### Features
 
 Servers offer any of the following features to clients:
