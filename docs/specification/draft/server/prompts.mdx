@@ -75,6 +75,7 @@ supports [pagination](/specification/draft/server/utilities/pagination).
     "prompts": [
       {
         "name": "code_review",
+        "title": "Request Code Review",
         "description": "Asks the LLM to analyze code quality and suggest improvements",
         "arguments": [
           {
@@ -174,6 +175,7 @@ sequenceDiagram
 A prompt definition includes:
 
 - `name`: Unique identifier for the prompt
+- `title`: Optional human-readable name of the prompt for display purposes.
 - `description`: Optional human-readable description
 - `arguments`: Optional list of arguments for customization
 
@@ -236,6 +238,8 @@ Embedded resources allow referencing server-side resources directly in messages:
   "type": "resource",
   "resource": {
     "uri": "resource://example",
+    "name": "example",
+    "title": "My Example Resource",
     "mimeType": "text/plain",
     "text": "Resource content"
   }
