@@ -82,6 +82,7 @@ To discover available tools, clients send a `tools/list` request. This operation
     "tools": [
       {
         "name": "get_weather",
+        "title": "Weather Information Provider",
         "description": "Get current weather information for a location",
         "inputSchema": {
           "type": "object",
@@ -183,6 +184,7 @@ sequenceDiagram
 A tool definition includes:
 
 - `name`: Unique identifier for the tool
+- `title`: Optional human-readable name of the tool for display purposes.
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
 - `outputSchema`: Optional JSON Schema defining expected output structure
@@ -260,6 +262,7 @@ or data using a suitable [URI scheme](./resources#common-uri-schemes). Servers t
   "type": "resource",
   "resource": {
     "uri": "file:///project/src/main.rs",
+    "title": "Project Rust Main File",
     "mimeType": "text/x-rust",
     "text": "fn main() {\n    println!(\"Hello world!\");\n}"
   }
@@ -286,6 +289,7 @@ Example tool with output schema:
 ```json
 {
   "name": "get_weather_data",
+  "title": "Weather Data Retriever",
   "description": "Get current weather data for a location",
   "inputSchema": {
     "type": "object",
