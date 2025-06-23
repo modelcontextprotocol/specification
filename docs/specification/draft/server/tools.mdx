@@ -2,6 +2,8 @@
 title: Tools
 ---
 
+<div id="enable-section-numbers" />
+
 <Info>**Protocol Revision**: draft</Info>
 
 The Model Context Protocol (MCP) allows servers to expose tools that can be invoked by
@@ -20,6 +22,7 @@ suits their needs&mdash;the protocol itself does not mandate any specific user
 interaction model.
 
 <Warning>
+
 For trust & safety and security, there **SHOULD** always
 be a human in the loop with the ability to deny tool invocations.
 
@@ -29,6 +32,7 @@ Applications **SHOULD**:
 - Insert clear visual indicators when tools are invoked
 - Present confirmation prompts to the user for operations, to ensure a human is in the
   loop
+
 </Warning>
 
 ## Capabilities
@@ -78,6 +82,7 @@ To discover available tools, clients send a `tools/list` request. This operation
     "tools": [
       {
         "name": "get_weather",
+        "title": "Weather Information Provider",
         "description": "Get current weather information for a location",
         "inputSchema": {
           "type": "object",
@@ -179,13 +184,18 @@ sequenceDiagram
 A tool definition includes:
 
 - `name`: Unique identifier for the tool
+- `title`: Optional human-readable name of the tool for display purposes.
 - `description`: Human-readable description of functionality
 - `inputSchema`: JSON Schema defining expected parameters
 - `outputSchema`: Optional JSON Schema defining expected output structure
 - `annotations`: optional properties describing tool behavior
 
-<Warning>For trust & safety and security, clients **MUST** consider
-tool annotations to be untrusted unless they come from trusted servers.</Warning>
+<Warning>
+
+For trust & safety and security, clients **MUST** consider
+tool annotations to be untrusted unless they come from trusted servers.
+
+</Warning>
 
 ### Tool Result
 
@@ -222,25 +232,46 @@ Tool results may contain [**structured**](#structured-content) or **unstructured
 }
 ```
 
+#### Resource Links
+
+A tool **MAY** return links to [Resources](/specification/draft/server/resources), to provide additional context
+or data. In this case, the tool will return a URI that can be subscribed to or fetched by the client:
+
+```json
+{
+  "type": "resource_link",
+  "uri": "file:///project/src/main.rs",
+  "name": "main.rs",
+  "description": "Primary application entry point",
+  "mimeType": "text/x-rust"
+}
+```
+
+<Info>
+  Resource links returned by tools are not guaranteed to appear in the results
+  of a `resources/list` request.
+</Info>
+
 #### Embedded Resources
 
-[Resources](/specification/draft/server/resources) **MAY** be embedded, to provide additional context
-or data, behind a URI that can be subscribed to or fetched again by the client later:
+[Resources](/specification/draft/server/resources) **MAY** be embedded to provide additional context
+or data using a suitable [URI scheme](./resources#common-uri-schemes). Servers that use embedded resources **SHOULD** implement the `resources` capability:
 
 ```json
 {
   "type": "resource",
   "resource": {
-    "uri": "resource://example",
-    "mimeType": "text/plain",
-    "text": "Resource content"
+    "uri": "file:///project/src/main.rs",
+    "title": "Project Rust Main File",
+    "mimeType": "text/x-rust",
+    "text": "fn main() {\n    println!(\"Hello world!\");\n}"
   }
 }
 ```
 
 #### Structured Content
 
-**Structured** content is returned as a JSON object in the `structuredContent` field of a result. 
+**Structured** content is returned as a JSON object in the `structuredContent` field of a result.
 
 For backwards compatibility, a tool that returns structured content SHOULD also return functionally equivalent unstructured content.
 (For example, serialized JSON can be returned in a `TextContent` block.)
@@ -249,14 +280,16 @@ For backwards compatibility, a tool that returns structured content SHOULD also 
 
 Tools may also provide an output schema for validation of structured results.
 If an output schema is provided:
-* Servers **MUST** provide structured results that conform to this schema.
-* Clients **SHOULD** validate structured results against this schema.
+
+- Servers **MUST** provide structured results that conform to this schema.
+- Clients **SHOULD** validate structured results against this schema.
 
 Example tool with output schema:
 
 ```json
 {
   "name": "get_weather_data",
+  "title": "Weather Data Retriever",
   "description": "Get current weather data for a location",
   "inputSchema": {
     "type": "object",
