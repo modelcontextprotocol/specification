@@ -27,6 +27,11 @@
         "AudioContent": {
             "description": "Audio provided to or from an LLM.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/Annotations",
                     "description": "Optional annotations for the client."
@@ -52,8 +57,30 @@
             ],
             "type": "object"
         },
+        "BaseMetadata": {
+            "description": "Base interface for metadata with name (identifier) and title (display name) properties.",
+            "properties": {
+                "name": {
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
         "BlobResourceContents": {
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "blob": {
                     "description": "A base64-encoded string representing the binary data of the item.",
                     "format": "byte",
@@ -130,7 +157,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "content": {
@@ -366,7 +393,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "completion": {
@@ -487,7 +514,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "content": {
@@ -574,15 +601,15 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "action": {
-                    "description": "The user action in response to the elicitation.\n- \"accept\": User submitted the form/confirmed the action\n- \"decline\": User explicitly declined the action\n- \"cancel\": User dismissed without making an explicit choice",
+                    "description": "The user action in response to the elicitation.\n- \"accept\": User submitted the form/confirmed the action\n- \"reject\": User explicitly rejected the action\n- \"cancel\": User dismissed without making an explicit choice",
                     "enum": [
                         "accept",
                         "cancel",
-                        "decline"
+                        "reject"
                     ],
                     "type": "string"
                 },
@@ -606,6 +633,11 @@
         "EmbeddedResource": {
             "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/Annotations",
                     "description": "Optional annotations for the client."
@@ -703,7 +735,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "description": {
@@ -725,6 +757,11 @@
         "ImageContent": {
             "description": "An image provided to or from an LLM.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/Annotations",
                     "description": "Optional annotations for the client."
@@ -751,9 +788,14 @@
             "type": "object"
         },
         "Implementation": {
-            "description": "Describes the name and version of an MCP implementation.",
+            "description": "Describes the name and version of an MCP implementation, with an optional title for UI representation.",
             "properties": {
                 "name": {
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
                     "type": "string"
                 },
                 "version": {
@@ -805,7 +847,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "capabilities": {
@@ -842,7 +884,7 @@
                     "properties": {
                         "_meta": {
                             "additionalProperties": {},
-                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "type": "object"
                         }
                     },
@@ -924,7 +966,7 @@
                     "properties": {
                         "_meta": {
                             "additionalProperties": {},
-                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "type": "object"
                         }
                     },
@@ -954,6 +996,8 @@
                     "additionalProperties": {},
                     "properties": {
                         "_meta": {
+                            "additionalProperties": {},
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "properties": {
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
@@ -1021,7 +1065,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "nextCursor": {
@@ -1067,7 +1111,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "nextCursor": {
@@ -1113,7 +1157,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "nextCursor": {
@@ -1143,6 +1187,8 @@
                     "additionalProperties": {},
                     "properties": {
                         "_meta": {
+                            "additionalProperties": {},
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "properties": {
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
@@ -1165,7 +1211,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "roots": {
@@ -1207,7 +1253,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "nextCursor": {
@@ -1325,7 +1371,7 @@
                     "properties": {
                         "_meta": {
                             "additionalProperties": {},
-                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "type": "object"
                         }
                     },
@@ -1388,7 +1434,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "nextCursor": {
@@ -1409,6 +1455,8 @@
                     "additionalProperties": {},
                     "properties": {
                         "_meta": {
+                            "additionalProperties": {},
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "properties": {
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
@@ -1492,6 +1540,11 @@
         "Prompt": {
             "description": "A prompt or prompt template that the server offers.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "arguments": {
                     "description": "A list of arguments to use for templating the prompt.",
                     "items": {
@@ -1504,7 +1557,11 @@
                     "type": "string"
                 },
                 "name": {
-                    "description": "The name of the prompt or prompt template.",
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
                     "type": "string"
                 }
             },
@@ -1521,12 +1578,16 @@
                     "type": "string"
                 },
                 "name": {
-                    "description": "The name of the argument.",
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
                 },
                 "required": {
                     "description": "Whether this argument must be provided.",
                     "type": "boolean"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
+                    "type": "string"
                 }
             },
             "required": [
@@ -1546,7 +1607,7 @@
                     "properties": {
                         "_meta": {
                             "additionalProperties": {},
-                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "type": "object"
                         }
                     },
@@ -1578,7 +1639,11 @@
             "description": "Identifies a prompt.",
             "properties": {
                 "name": {
-                    "description": "The name of the prompt or prompt template",
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
                     "type": "string"
                 },
                 "type": {
@@ -1624,7 +1689,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "contents": {
@@ -1655,6 +1720,8 @@
                     "additionalProperties": {},
                     "properties": {
                         "_meta": {
+                            "additionalProperties": {},
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "properties": {
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
@@ -1682,6 +1749,11 @@
         "Resource": {
             "description": "A known resource that the server is capable of reading.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/Annotations",
                     "description": "Optional annotations for the client."
@@ -1695,12 +1767,16 @@
                     "type": "string"
                 },
                 "name": {
-                    "description": "A human-readable name for this resource.\n\nThis can be used by clients to populate UI elements.",
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
                 },
                 "size": {
                     "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
                     "type": "integer"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
+                    "type": "string"
                 },
                 "uri": {
                     "description": "The URI of this resource.",
@@ -1717,6 +1793,11 @@
         "ResourceContents": {
             "description": "The contents of a specific resource or sub-resource.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "mimeType": {
                     "description": "The MIME type of this resource, if known.",
                     "type": "string"
@@ -1735,6 +1816,11 @@
         "ResourceLink": {
             "description": "A resource that the server is capable of reading, included in a prompt or tool call result.\n\nNote: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/Annotations",
                     "description": "Optional annotations for the client."
@@ -1748,12 +1834,16 @@
                     "type": "string"
                 },
                 "name": {
-                    "description": "A human-readable name for this resource.\n\nThis can be used by clients to populate UI elements.",
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
                 },
                 "size": {
                     "description": "The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.\n\nThis can be used by Hosts to display file sizes and estimate context window usage.",
                     "type": "integer"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
+                    "type": "string"
                 },
                 "type": {
                     "const": "resource_link",
@@ -1784,7 +1874,7 @@
                     "properties": {
                         "_meta": {
                             "additionalProperties": {},
-                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "type": "object"
                         }
                     },
@@ -1799,6 +1889,11 @@
         "ResourceTemplate": {
             "description": "A template description for resources available on the server.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/Annotations",
                     "description": "Optional annotations for the client."
@@ -1812,7 +1907,11 @@
                     "type": "string"
                 },
                 "name": {
-                    "description": "A human-readable name for the type of resource this template refers to.\n\nThis can be used by clients to populate UI elements.",
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
                     "type": "string"
                 },
                 "uriTemplate": {
@@ -1878,7 +1977,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 }
             },
@@ -1895,6 +1994,11 @@
         "Root": {
             "description": "Represents a root directory or file that the server can operate on.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "name": {
                     "description": "An optional name for the root. This can be used to provide a human-readable\nidentifier for the root, which may be useful for display purposes or for\nreferencing the root in other parts of the application.",
                     "type": "string"
@@ -1922,7 +2026,7 @@
                     "properties": {
                         "_meta": {
                             "additionalProperties": {},
-                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "type": "object"
                         }
                     },
@@ -2175,6 +2279,11 @@
         "TextContent": {
             "description": "Text provided to or from an LLM.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/Annotations",
                     "description": "Optional annotations for the client."
@@ -2196,6 +2305,11 @@
         },
         "TextResourceContents": {
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "mimeType": {
                     "description": "The MIME type of this resource, if known.",
                     "type": "string"
@@ -2219,9 +2333,14 @@
         "Tool": {
             "description": "Definition for a tool the client can call.",
             "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
                 "annotations": {
                     "$ref": "#/definitions/ToolAnnotations",
-                    "description": "Optional additional tool information."
+                    "description": "Optional additional tool information.\n\nDisplay name precedence order is: title, annotations.title, then name."
                 },
                 "description": {
                     "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
@@ -2255,7 +2374,7 @@
                     "type": "object"
                 },
                 "name": {
-                    "description": "The name of the tool.",
+                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
                 },
                 "outputSchema": {
@@ -2284,6 +2403,10 @@
                         "type"
                     ],
                     "type": "object"
+                },
+                "title": {
+                    "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for Tool,\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
+                    "type": "string"
                 }
             },
             "required": [
@@ -2330,7 +2453,7 @@
                     "properties": {
                         "_meta": {
                             "additionalProperties": {},
-                            "description": "This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.",
+                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                             "type": "object"
                         }
                     },
