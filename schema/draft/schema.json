@@ -216,9 +216,20 @@
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
                 "elicitation": {
-                    "additionalProperties": true,
                     "description": "Present if the client supports elicitation from the server.",
-                    "properties": {},
+                    "properties": {
+                        "modes": {
+                            "description": "The elicitation modes that the client supports.\nIf not specified, the server MUST assume the client only supports \"form\" mode.",
+                            "items": {
+                                "enum": [
+                                    "form",
+                                    "oob"
+                                ],
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
                     "type": "object"
                 },
                 "experimental": {
@@ -563,11 +574,19 @@
                 "params": {
                     "properties": {
                         "message": {
-                            "description": "The message to present to the user.",
+                            "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
+                            "type": "string"
+                        },
+                        "mode": {
+                            "description": "The mode of elicitation.\n- \"form\": In-band structured data collection with optional schema validation\n- \"oob\": Out-of-band interaction via URL navigation\n\nIf not specified, \"form\" is assumed.",
+                            "enum": [
+                                "form",
+                                "oob"
+                            ],
                             "type": "string"
                         },
                         "requestedSchema": {
-                            "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.",
+                            "description": "For form mode only: A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.\n\nRequired when mode is \"form\" or unspecified.\nMust NOT be present when mode is \"oob\".",
                             "properties": {
                                 "properties": {
                                     "additionalProperties": {
@@ -591,11 +610,15 @@
                                 "type"
                             ],
                             "type": "object"
+                        },
+                        "url": {
+                            "description": "For out-of-band mode only: The URL that the user should navigate to.\n\nRequired when mode is \"oob\".\nMust NOT be present when mode is \"form\".",
+                            "format": "uri",
+                            "type": "string"
                         }
                     },
                     "required": [
-                        "message",
-                        "requestedSchema"
+                        "message"
                     ],
                     "type": "object"
                 }
@@ -631,7 +654,7 @@
                             "boolean"
                         ]
                     },
-                    "description": "The submitted form data, only present when action is \"accept\".\nContains values matching the requested schema.",
+                    "description": "The submitted form data, only present when action is \"accept\" and mode was \"form\".\nContains values matching the requested schema.\nOmitted for out-of-band mode responses.",
                     "type": "object"
                 }
             },

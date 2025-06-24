@@ -93,6 +93,7 @@ export const INVALID_REQUEST = -32600;
 export const METHOD_NOT_FOUND = -32601;
 export const INVALID_PARAMS = -32602;
 export const INTERNAL_ERROR = -32603;
+export const ELICITATION_REQUIRED = -32604; // TODO finalize error number
 
 /**
  * A response to a request that indicates an error occurred.
@@ -215,7 +216,13 @@ export interface ClientCapabilities {
   /**
    * Present if the client supports elicitation from the server.
    */
-  elicitation?: object;
+  elicitation?: {
+    /**
+     * The elicitation modes that the client supports.
+     * If not specified, the server MUST assume the client only supports "form" mode.
+     */
+    modes?: ("form" | "oob")[];
+  };
 }
 
 /**
@@ -1305,20 +1312,45 @@ export interface ElicitRequest extends Request {
   method: "elicitation/create";
   params: {
     /**
+     * The mode of elicitation.
+     * - "form": In-band structured data collection with optional schema validation
+     * - "oob": Out-of-band interaction via URL navigation
+     *
+     * If not specified, "form" is assumed.
+     */
+    mode?: "form" | "oob";
+
+    /**
      * The message to present to the user.
+     * For form mode: Describes what information is being requested.
+     * For out-of-band mode: Explains why the interaction is needed.
      */
     message: string;
+
     /**
-     * A restricted subset of JSON Schema.
+     * For form mode only: A restricted subset of JSON Schema.
      * Only top-level properties are allowed, without nesting.
+     *
+     * Required when mode is "form" or unspecified.
+     * Must NOT be present when mode is "oob".
      */
-    requestedSchema: {
+    requestedSchema?: {
       type: "object";
       properties: {
         [key: string]: PrimitiveSchemaDefinition;
       };
       required?: string[];
     };
+
+    /**
+     * For out-of-band mode only: The URL that the user should navigate to.
+     *
+     * Required when mode is "oob".
+     * Must NOT be present when mode is "form".
+     *
+     * @format uri
+     */
+    url?: string;
   };
 }
 
@@ -1377,8 +1409,9 @@ export interface ElicitResult extends Result {
   action: "accept" | "reject" | "cancel";
 
   /**
-   * The submitted form data, only present when action is "accept".
+   * The submitted form data, only present when action is "accept" and mode was "form".
    * Contains values matching the requested schema.
+   * Omitted for out-of-band mode responses.
    */
   content?: { [key: string]: string | number | boolean };
 }
@@ -1405,11 +1438,7 @@ export type ClientNotification =
   | InitializedNotification
   | RootsListChangedNotification;
 
-export type ClientResult =
-  | EmptyResult
-  | CreateMessageResult
-  | ListRootsResult
-  | ElicitResult;
+export type ClientResult = EmptyResult | CreateMessageResult | ListRootsResult | ElicitResult;
 
 /* Server messages */
 export type ServerRequest =
