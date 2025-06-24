@@ -165,7 +165,7 @@ MCP clients **SHOULD** specify an appropriate `application_type` during Dynamic 
 ##### Authorization Server Behavior
 
 Authorization servers implementing OIDC **MAY** enforce these constraints and **MAY** reject client registration requests
-that violate the redirect URI requirements for the specified application type, as defined in
+that violate the redirect URI requirements for the specified application type, as defined in the
 [OpenID Connect Dynamic Client Registration 1.0 "Client Metadata" section](https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata).
 
 MCP clients **SHOULD** be prepared to handle registration failures due to redirect URI constraints and may need to adjust their `application_type` or redirect URIs accordingly.
