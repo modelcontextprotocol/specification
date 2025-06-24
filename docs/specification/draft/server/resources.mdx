@@ -113,6 +113,7 @@ supports [pagination](/specification/draft/server/utilities/pagination).
       {
         "uri": "file:///project/src/main.rs",
         "name": "main.rs",
+        "title": "Rust Software Application Main File",
         "description": "Primary application entry point",
         "mimeType": "text/x-rust"
       }
@@ -149,6 +150,8 @@ To retrieve resource contents, clients send a `resources/read` request:
     "contents": [
       {
         "uri": "file:///project/src/main.rs",
+        "name": "main.rs",
+        "title": "Rust Software Application Main File",
         "mimeType": "text/x-rust",
         "text": "fn main() {\n    println!(\"Hello world!\");\n}"
       }
@@ -184,6 +187,7 @@ auto-completed through [the completion API](/specification/draft/server/utilitie
       {
         "uriTemplate": "file:///{path}",
         "name": "Project Files",
+        "title": "📁 Project Files",
         "description": "Access files in the project directory",
         "mimeType": "application/octet-stream"
       }
@@ -229,7 +233,8 @@ to specific resources and receive notifications when they change:
   "jsonrpc": "2.0",
   "method": "notifications/resources/updated",
   "params": {
-    "uri": "file:///project/src/main.rs"
+    "uri": "file:///project/src/main.rs",
+    "title": "Rust Software Application Main File"
   }
 }
 ```
@@ -266,7 +271,8 @@ sequenceDiagram
 A resource definition includes:
 
 - `uri`: Unique identifier for the resource
-- `name`: Human-readable name
+- `name`: The name of the resource.
+- `title`: Optional human-readable name of the resource for display purposes.
 - `description`: Optional description
 - `mimeType`: Optional MIME type
 - `size`: Optional size in bytes
@@ -280,6 +286,8 @@ Resources can contain either text or binary data:
 ```json
 {
   "uri": "file:///example.txt",
+  "name": "example.txt",
+  "title": "Example Text File",
   "mimeType": "text/plain",
   "text": "Resource content"
 }
@@ -290,6 +298,8 @@ Resources can contain either text or binary data:
 ```json
 {
   "uri": "file:///example.png",
+  "name": "example.png",
+  "title": "Example Image",
   "mimeType": "image/png",
   "blob": "base64-encoded-data"
 }
