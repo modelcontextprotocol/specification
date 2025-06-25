@@ -4,7 +4,7 @@ title: Authorization
 
 <div id="enable-section-numbers" />
 
-<Info>**Protocol Revision**: draft</Info>
+<Info>**Protocol Revision**: 2025-06-18</Info>
 
 ## Introduction
 
@@ -63,7 +63,7 @@ specifies how an MCP server indicates the location of its corresponding authoriz
 1. MCP servers **MUST** implement OAuth 2.0 Protected Resource Metadata ([RFC9728](https://datatracker.ietf.org/doc/html/rfc9728)).
    MCP clients **MUST** use OAuth 2.0 Protected Resource Metadata for authorization server discovery.
 
-1. MCP authorization servers **MUST** provide OAuth 2.0 Authorization
+1. Authorization servers **MUST** provide OAuth 2.0 Authorization
    Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)).
    MCP clients **MUST** use the OAuth 2.0 Authorization Server Metadata.
 
@@ -346,7 +346,7 @@ Authorization servers **SHOULD** only automatically redirect the user agent if i
 
 ### Confused Deputy Problem
 
-Attackers can exploit MCP servers acting as intermediaries to third-party APIs, leading to [confused deputy vulnerabilities](/specification/draft/basic/security_best_practices#confused-deputy-problem).
+Attackers can exploit MCP servers acting as intermediaries to third-party APIs, leading to [confused deputy vulnerabilities](/specification/2025-06-18/basic/security_best_practices#confused-deputy-problem).
 By using stolen authorization codes, they can obtain access tokens without user consent.
 
 MCP proxy servers using static client IDs **MUST** obtain user consent for each dynamically
@@ -365,7 +365,7 @@ MCP servers **MUST** validate access tokens before processing the request, ensur
 
 A MCP server **MUST** follow the guidelines in [OAuth 2.1 - Section 5.2](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-12.html#section-5.2) to validate inbound tokens.
 
-MCP servers **MUST** only accept tokens specifically intended for themselves and **MUST** reject tokens that do not include them in the audience claim or otherwise verify that they are the intended recipient of the token. See the [Security Best Practices Token Passthrough section](/specification/draft/basic/security_best_practices#token-passthrough) for details.
+MCP servers **MUST** only accept tokens specifically intended for themselves and **MUST** reject tokens that do not include them in the audience claim or otherwise verify that they are the intended recipient of the token. See the [Security Best Practices Token Passthrough section](/specification/2025-06-18/basic/security_best_practices#token-passthrough) for details.
 
 If the MCP server makes requests to upstream APIs, it may act as an OAuth client to them. The access token used at the upstream API is a seperate token, issued by the upstream authorization server. The MCP server **MUST NOT** pass through the token it received from the MCP client.
 

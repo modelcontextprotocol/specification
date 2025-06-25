@@ -18,6 +18,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [AgenticFlow][AgenticFlow]                       | ✅          | ✅        | ✅      | ✅                     | ❌         | ❌    | Supports tools, prompts, and resources for no-code AI agents and multi-agent workflows.         |
 | [Amazon Q CLI][Amazon Q CLI]                     | ❌          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports prompts and tools.                                                                     |
 | [Apify MCP Tester][Apify MCP Tester]             | ❌          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports remote MCP servers and tool discovery.                                                 |
+| [Augment Code][AugmentCode]                      | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools in local and remote agents.                                                                                 |
 | [BeeAI Framework][BeeAI Framework]               | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools in agentic workflows.                                                            |
 | [BoltAI][BoltAI]                                 | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [Claude.ai][Claude.ai]                           | ✅          | ✅        | ✅      | ❌                     | ❌         | ❌    | Supports tools, prompts, and resources for remote MCP servers.                                  |
@@ -45,7 +46,11 @@ This page provides an overview of applications that support the Model Context Pr
 | [mcp-use][mcp-use]                               | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.                           |
 | [MCPHub][MCPHub]                                 | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports tools, resources, and prompts in Neovim                                                |
 | [MCPOmni-Connect][MCPOmni-Connect]               | ✅          | ✅        | ✅      | ❓                     | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.                         |
+
+| [Memex][Memex]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Support tools. Also support *building and testing* MCP server, all-in-one desktop app.          |
 | [Microsoft Copilot Studio]                       | ❌          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports tools & discovery                                                                      |
+
+  
 | [MindPal][MindPal]                               | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for no-code AI agents and multi-agent workflows.                                 |
 | [MooPoint][MooPoint]                             | ❌          | ❌        | ✅      | ❓                     | ✅         | ❌    | Web-Hosted client with tool calling support                                 |
 | [Msty Studio][Msty Studio]                       | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools                                                                                  |
@@ -84,6 +89,7 @@ This page provides an overview of applications that support the Model Context Pr
 [AIQ toolkit]: https://github.com/NVIDIA/AIQToolkit
 [Amazon Q CLI]: https://github.com/aws/amazon-q-developer-cli
 [Apify MCP Tester]: https://apify.com/jiri.spilka/tester-mcp-client
+[AugmentCode]: https://augmentcode.com
 [BeeAI Framework]: https://i-am-bee.github.io/beeai-framework
 [BoltAI]: https://boltai.com
 [Claude.ai]: https://claude.ai
@@ -109,6 +115,7 @@ This page provides an overview of applications that support the Model Context Pr
 [mcp-use]: https://github.com/pietrozullo/mcp-use
 [MCPHub]: https://github.com/ravitemer/mcphub.nvim
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
+[Memex]: https://memex.tech/
 [Microsoft Copilot Studio]: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
 [MindPal]: https://mindpal.io
 [MooPoint]: https://moopoint.io
@@ -206,6 +213,17 @@ It uses plain JavaScript (old-school style) and is hosted on Apify, allowing you
 - Connects to any MCP server via SSE.
 - Works with the [Apify MCP Server](https://apify.com/apify/actors-mcp-server) to interact with one or more Apify [Actors](https://apify.com/store).
 - Dynamically utilizes tools based on context and user queries (if supported by the server).
+
+### Augment Code
+
+[Augment Code](https://augmentcode.com) is an AI-powered coding platform for VS Code and JetBrains with autonomous agents, chat, and completions. Both local and remote agents are backed by full codebase awareness and native support for MCP, enabling enhanced context through external sources and tools.
+
+**Key features:**
+
+- Full MCP support in local and remote agents.
+- Add additional context through MCP servers.
+- Automate your development workflows with MCP tools.
+- Works in VS Code and JetBrains IDEs.
 
 ### BeeAI Framework
 
@@ -516,6 +534,22 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Dynamic tool and resource management across multiple servers
 - Support for both stdio and SSE transport protocols
 - Comprehensive tool orchestration and resource analysis capabilities
+
+### Memex
+
+[Memex](https://memex.tech/) is the first MCP client and MCP server builder - all-in-one desktop app. Unlike traditional MCP clients that only consume existing servers, Memex can create custom MCP servers from natural language prompts, immediately integrate them into its toolkit, and use them to solve problems—all within a single conversation.
+
+**Key features:**
+
+- **Prompt-to-MCP Server**: Generate fully functional MCP servers from natural language descriptions
+- **Self-Testing & Debugging**: Autonomously test, debug, and improve created MCP servers
+- **Universal MCP Client**: Works with any MCP server through intuitive, natural language integration
+- **Curated MCP Directory**: Access to tested, one-click installable MCP servers (Neon, Netlify, GitHub, Context7, and more)
+- **Multi-Server Orchestration**: Leverage multiple MCP servers simultaneously for complex workflows
+
+**Learn more:**
+
+- [Memex Launch 2: MCP Teams and Agent API](https://memex.tech/blog/memex-launch-2-mcp-teams-and-agent-api-private-preview-125f)
 
 ### Microsoft Copilot Studio
 
