@@ -120,8 +120,8 @@ To request a JWT Assertion Grant, the MCP Client **MUST** make a Token Exchange 
 | Parameter              | Required/Optional | Description                                                                                                                                                              | Example/Allowed Values                                                                                 |
 | ---------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
 | `requested_token_type` | REQUIRED          | Indicates that an ID Assertion JWT is being requested.                                                                                                                   | `urn:ietf:params:oauth:token-type:id-jag`                                                              |
-| `resource`             | REQUIRED          | The Issuer URL of the MCP server's authorization server.                                                                                                                 | `https://mcp.example.com/auth`                                                                         |
-| `audience`             | MUST NOT be used  | The audience parameter MUST NOT be used to indicate the authorization server.                                                                                            | —                                                                                                      |
+| `audience`             | REQUIRED          | The Issuer URL of the MCP server's authorization server.                                                                                                                 | `https://mcp.example.com/auth`                                                                         |
+| `resource`             | REQUIRED          | The RFC9728 Resource Identifier of the MCP server.                                                                                            | —                                                                                                      |
 | `scope`                | OPTIONAL          | The space-separated list of scopes at the MCP Server that are being requested.                                                                                           | `scope1 scope2`                                                                                        |
 | `subject_token`        | REQUIRED          | The identity assertion (e.g. the OpenID Connect ID Token or SAML assertion) for the target end-user.                                                                     | (JWT or SAML assertion string)                                                                         |
 | `subject_token_type`   | REQUIRED          | Indicates the type of the security token in the `subject_token` parameter, as specified in [RFC8693 Section 3](https://datatracker.ietf.org/doc/html/rfc8693#section-3). | `urn:ietf:params:oauth:token-type:id_token` (OIDC)<br/>`urn:ietf:params:oauth:token-type:saml2` (SAML) |
@@ -139,7 +139,7 @@ Content-Type: application/x-www-form-urlencoded
 
 grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 &requested_token_type=urn:ietf:params:oauth:token-type:id-jag
-&resource=https://acme.chat.example/
+&audience=https://acme.chat.example/
 &scope=chat.read+chat.history
 &subject_token=eyJraWQiOiJzMTZ0cVNtODhwREo4VGZCXzdrSEtQ...
 &subject_token_type=urn:ietf:params:oauth:token-type:id_token
