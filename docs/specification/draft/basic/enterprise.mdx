@@ -51,9 +51,9 @@ The following diagram outlines an example flow:
 sequenceDiagram
     participant UA as Browser
     participant C as MCP Client
+    participant IdP as Identity Provider
     participant MAS as MCP Authorization Server
     participant MRS as MCP Resource Server
-    participant IdP as Identity Provider
 
     C-->>UA: Redirect to IdP
     UA->>IdP: Redirect to IdP
