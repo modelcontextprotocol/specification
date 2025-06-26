@@ -61,16 +61,16 @@ sequenceDiagram
     IdP-->>UA: IdP Authorization Code
     UA->>C: IdP Authorization Code
     C->>IdP: Token Request with IdP Authorization Code
-    IdP-->C: ID Token
+    IdP-->>C: ID Token
 
     note over C: User is logged<br/>in to MCP Client.<br/>Client stores ID Token.
 
-    C->IdP: Exchange ID Token for ID-JAG
+    C->>IdP: Exchange ID Token for ID-JAG
     note over IdP: Evaluate Policy
-    IdP-->C: Responds with ID-JAG
-    C->MAS: Token Request with ID-JAG
+    IdP-->>C: Responds with ID-JAG
+    C->>MAS: Token Request with ID-JAG
     note over MAS: Validate ID-JAG
-    MAS-->C: MCP Access Token
+    MAS-->>C: MCP Access Token
 
     loop
     C->>MRS: Call MCP API with Access Token
