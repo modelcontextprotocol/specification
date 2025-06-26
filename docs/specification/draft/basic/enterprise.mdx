@@ -120,8 +120,8 @@ To request a JWT Assertion Grant, the MCP Client **MUST** make a Token Exchange 
 | Parameter              | Required/Optional | Description                                                                                                                                                              | Example/Allowed Values                                                                                 |
 | ---------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
 | `requested_token_type` | REQUIRED          | Indicates that an ID Assertion JWT is being requested.                                                                                                                   | `urn:ietf:params:oauth:token-type:id-jag`                                                              |
-| `audience`             | REQUIRED          | The Issuer URL of the MCP server's authorization server.                                                                                                                 | `https://mcp.example.com/auth`                                                                         |
-| `resource`             | REQUIRED          | The RFC9728 Resource Identifier of the MCP server.                                                                                            | —                                                                                                      |
+| `audience`             | REQUIRED          | The Issuer URL of the MCP server's authorization server.                                                                                                                 | `https://auth.chat.example/`                                                                           |
+| `resource`             | REQUIRED          | The RFC9728 Resource Identifier of the MCP server.                                                                                                                       | `https://mcp.chat.example/`                                                                            |
 | `scope`                | OPTIONAL          | The space-separated list of scopes at the MCP Server that are being requested.                                                                                           | `scope1 scope2`                                                                                        |
 | `subject_token`        | REQUIRED          | The identity assertion (e.g. the OpenID Connect ID Token or SAML assertion) for the target end-user.                                                                     | (JWT or SAML assertion string)                                                                         |
 | `subject_token_type`   | REQUIRED          | Indicates the type of the security token in the `subject_token` parameter, as specified in [RFC8693 Section 3](https://datatracker.ietf.org/doc/html/rfc8693#section-3). | `urn:ietf:params:oauth:token-type:id_token` (OIDC)<br/>`urn:ietf:params:oauth:token-type:saml2` (SAML) |
@@ -139,7 +139,8 @@ Content-Type: application/x-www-form-urlencoded
 
 grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 &requested_token_type=urn:ietf:params:oauth:token-type:id-jag
-&audience=https://acme.chat.example/
+&audience=https://auth.chat.example/
+&resource=https://mcp.chat.example/
 &scope=chat.read+chat.history
 &subject_token=eyJraWQiOiJzMTZ0cVNtODhwREo4VGZCXzdrSEtQ...
 &subject_token_type=urn:ietf:params:oauth:token-type:id_token
@@ -206,6 +207,7 @@ The Identity Assertion Authorization Grant JWT is issued and signed by the IdP, 
 | `iss`       | REQUIRED          | The IdP issuer URL.                                                                                                                                             | [Section 4.1.1 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1)                     |
 | `sub`       | REQUIRED          | The subject identifier (e.g., user ID) of the user at the MCP Server.                                                                                           | [Section 4.1.2 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2)                     |
 | `aud`       | REQUIRED          | The Issuer URL of the MCP Server's authorization server.                                                                                                        | [Section 4.1.3 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3)                     |
+| `resource`  | REQUIRED          | The Resource Identifier of the MCP Server.                                                                                                                      | [Section 1.2 of RFC9728](https://datatracker.ietf.org/doc/html/rfc9728#section-1.2)                         |
 | `client_id` | REQUIRED          | An identifier of the MCP Client registered at the Authorization Server that this JWT was issued to; SHOULD be a client_id as defined in Section 4.3 of RFC8693. | [Section 4.3 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-4.3)                         |
 | `jti`       | REQUIRED          | Unique ID of this JWT.                                                                                                                                          | [Section 4.1.7 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7)                     |
 | `exp`       | REQUIRED          | Expiration time of this JWT (Unix timestamp in seconds).                                                                                                        | [Section 4.1.4 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4)                     |
@@ -225,7 +227,8 @@ An example JWT shown with expanded header and payload claims may look like this:
   "jti": "9e43f81b64a33f20116179",
   "iss": "https://acme.idp.example",
   "sub": "U019488227",
-  "aud": "https://acme.chat.example/",
+  "aud": "https://auth.chat.example/",
+  "resource": "https://mcp.chat.example/",
   "client_id": "f53f191f9311af35",
   "exp": 1311281970,
   "iat": 1311280970,
@@ -260,7 +263,7 @@ An example request may look like this:
 
 ```
 POST /oauth2/token HTTP/1.1
-Host: acme.chat.example
+Host: auth.chat.example
 Authorization: Basic yZS1yYW5kb20tc2VjcmV0v3JOkF0XG5Qx2
 
 grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
