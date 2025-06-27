@@ -38,7 +38,7 @@ which requires OAuth 2.1 compliance. Implementations **MAY** support additional
 established security patterns such as:
 
 - Role-Based Access Control (RBAC)
-- Attribute-Based Access Control (ABAC)  
+- Attribute-Based Access Control (ABAC)
 - Policy-based access control
 - Custom authorization models
 
@@ -66,10 +66,10 @@ information disclosure about unauthorized capabilities.
 
 MCP primitives can be classified into two authorization categories:
 
-| Primitive Class | Description |
-|:---|:---|
-| **Public** | Anyone with access to the MCP server, whether authorized or not, has access to the primitive. |
-| **Restricted** | To access the primitive, the MCP server must assess whether the requestor is authorized to access that specific entity. |
+| Primitive Class | Description                                                                                                             |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| **Public**      | Anyone with access to the MCP server, whether authorized or not, has access to the primitive.                           |
+| **Restricted**  | To access the primitive, the MCP server must assess whether the requestor is authorized to access that specific entity. |
 
 ### Authorization Metadata
 
@@ -108,7 +108,7 @@ requirements.
         "description": "The file path where the file should be created"
       },
       "content": {
-        "type": "string", 
+        "type": "string",
         "description": "The content to write to the file"
       }
     },
@@ -162,7 +162,7 @@ For the tool definition shown above, an authorized client would receive:
             "description": "The file path where the file should be created"
           },
           "content": {
-            "type": "string", 
+            "type": "string",
             "description": "The content to write to the file"
           }
         },
@@ -271,7 +271,7 @@ servers **MAY**:
 Servers have full discretion over policy interpretation, including:
 
 - Whether **all** or **any** requirements must be satisfied
-- How to handle policy conflicts or ambiguities  
+- How to handle policy conflicts or ambiguities
 - When to require additional authorization flows
 - Caching strategies for authorization decisions
 
