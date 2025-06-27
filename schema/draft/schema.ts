@@ -1425,9 +1425,9 @@ export interface StreamCreateNotification extends Notification {
 }
 
 /**
- * A request from the client to the server to begin receiving notifications
- * from a stream. The server should send all unsent messages to the client
- * when this method is called. If the stream is closed, the server may send
+ * A request from the client to the server to begin receiving messages
+ * from a stream. The server SHOULD send all unsent messages to the client
+ * when this method is called. If the stream is closed, the server MUST send
  * a `notifications/stream/end` notification after sending its messages.
  */
 export interface StreamResumeRequest extends Request {
@@ -1443,9 +1443,9 @@ export interface StreamResumeRequest extends Request {
   };
 }
 /**
- * A request from the client to the server to begin receiving notifications
- * from a stream. The server should include all unsent messages to the client
- * when this method is called. If the stream is closed, the server may append
+ * A request from the client to the server to retrieve any new messages from
+ * the stream. The server MUST include all unsent messages to the client
+ * when this method is called. If the stream is closed, the server MUST append
  * a `notifications/stream/end` notification to the end of the resulting messages.
  */
 export interface StreamPollRequest extends Request {
