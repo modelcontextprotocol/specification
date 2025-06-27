@@ -278,6 +278,12 @@ interface Icon {
    * The URI for retrieving the icon.
    */
   uri: string;
+
+  /**
+   * The UI mode for which this icon is intended.
+   *
+   */
+   mode: "light" | "dark" | "all";
 }
 
 

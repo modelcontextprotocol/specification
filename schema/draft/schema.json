@@ -774,6 +774,15 @@
                     "description": "The MIME type of the icon.",
                     "type": "string"
                 },
+                "mode": {
+                    "description": "The UI mode for which this icon is intended.",
+                    "enum": [
+                        "all",
+                        "dark",
+                        "light"
+                    ],
+                    "type": "string"
+                },
                 "uri": {
                     "description": "The URI for retrieving the icon.",
                     "type": "string"
@@ -781,6 +790,7 @@
             },
             "required": [
                 "mimeType",
+                "mode",
                 "uri"
             ],
             "type": "object"
