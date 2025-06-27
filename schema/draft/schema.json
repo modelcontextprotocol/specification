@@ -60,6 +60,10 @@
         "BaseMetadata": {
             "description": "Base interface for metadata with name (identifier) and title (display name) properties.",
             "properties": {
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
+                },
                 "name": {
                     "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
@@ -764,6 +768,23 @@
             ],
             "type": "object"
         },
+        "Icon": {
+            "properties": {
+                "mimeType": {
+                    "description": "The MIME type of the icon.",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI for retrieving the icon.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "mimeType",
+                "uri"
+            ],
+            "type": "object"
+        },
         "ImageContent": {
             "description": "An image provided to or from an LLM.",
             "properties": {
@@ -800,6 +821,10 @@
         "Implementation": {
             "description": "Describes the name and version of an MCP implementation, with an optional title for UI representation.",
             "properties": {
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
+                },
                 "name": {
                     "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
@@ -1566,6 +1591,10 @@
                     "description": "An optional description of what this prompt provides",
                     "type": "string"
                 },
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
+                },
                 "name": {
                     "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
@@ -1586,6 +1615,10 @@
                 "description": {
                     "description": "A human-readable description of the argument.",
                     "type": "string"
+                },
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
                 },
                 "name": {
                     "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
@@ -1648,6 +1681,10 @@
         "PromptReference": {
             "description": "Identifies a prompt.",
             "properties": {
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
+                },
                 "name": {
                     "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
                     "type": "string"
@@ -1772,6 +1809,10 @@
                     "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
                 },
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
+                },
                 "mimeType": {
                     "description": "The MIME type of this resource, if known.",
                     "type": "string"
@@ -1838,6 +1879,10 @@
                 "description": {
                     "description": "A description of what this resource represents.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
+                },
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
                 },
                 "mimeType": {
                     "description": "The MIME type of this resource, if known.",
@@ -1911,6 +1956,10 @@
                 "description": {
                     "description": "A description of what this template is for.\n\nThis can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
+                },
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
                 },
                 "mimeType": {
                     "description": "The MIME type for all resources that match this template. This should only be included if all resources matching this template have the same type.",
@@ -2365,6 +2414,10 @@
                 "description": {
                     "description": "A human-readable description of the tool.\n\nThis can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a \"hint\" to the model.",
                     "type": "string"
+                },
+                "icon": {
+                    "$ref": "#/definitions/Icon",
+                    "description": "Intended for UI and end-user contexts"
                 },
                 "inputSchema": {
                     "description": "A JSON Schema object defining the expected parameters for the tool.",

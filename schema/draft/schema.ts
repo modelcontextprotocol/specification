@@ -267,6 +267,20 @@ export interface ServerCapabilities {
   };
 }
 
+
+interface Icon {
+  /**
+   * The MIME type of the icon.
+   */
+  mimeType: string;
+
+  /**
+   * The URI for retrieving the icon.
+   */
+  uri: string;
+}
+
+
 /**
  * Base interface for metadata with name (identifier) and title (display name) properties.
  */
@@ -285,6 +299,11 @@ export interface BaseMetadata {
    * if present).
    */
   title?: string;
+
+  /**
+   * Intended for UI and end-user contexts
+   */
+  icon?: Icon;
 }
 
 /**
