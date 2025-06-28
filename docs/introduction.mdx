@@ -23,16 +23,17 @@ flowchart LR
         Host["Host with MCP Client\n(Claude, IDEs, Tools)"]
         S1["MCP Server A"]
         S2["MCP Server B"]
-        S3["MCP Server C"]
         Host <-->|"MCP Protocol"| S1
         Host <-->|"MCP Protocol"| S2
-        Host <-->|"MCP Protocol"| S3
         S1 <--> D1[("Local\nData Source A")]
         S2 <--> D2[("Local\nData Source B")]
     end
     subgraph "Internet"
-        S3 <-->|"Web APIs"| D3[("Remote\nService C")]
+        S3["MCP Server C"]
+        D3[("Remote\nService C")]
+        S3 <-->|"Web APIs"| D3
     end
+    Host <-->|"MCP Protocol"| S3
 ```
 
 - **MCP Hosts**: Programs like Claude Desktop, IDEs, or AI tools that want to access data through MCP
