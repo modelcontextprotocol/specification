@@ -46,6 +46,15 @@ This quickstart assumes you have familiarity with:
 - Python
 - LLMs like Claude
 
+### A Note About Proper Logging Practices
+
+When implementing MCP servers, it's critical that you do not write logging output to stdout or stderr. Logging messages on these streams could corrupt the structured output and format expected by the clients thus breaking the protocol. Using print functionality in your programming language of choice to send log messages to standard output could make your MCP server unusable. Here are some tips you can use to avoid this problem:
+
+- You can redirect logging to a File or Socket
+- Use a Logging Framework That Avoids stdout/stderr by Default
+- Suppress All stdout/stderr During Processing
+
+
 ### System requirements
 
 - Python 3.10 or higher installed.
