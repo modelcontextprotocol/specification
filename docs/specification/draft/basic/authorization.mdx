@@ -63,9 +63,12 @@ specifies how an MCP server indicates the location of its corresponding authoriz
 1. MCP servers **MUST** implement OAuth 2.0 Protected Resource Metadata ([RFC9728](https://datatracker.ietf.org/doc/html/rfc9728)).
    MCP clients **MUST** use OAuth 2.0 Protected Resource Metadata for authorization server discovery.
 
-1. MCP authorization servers **MUST** provide OAuth 2.0 Authorization
-   Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)).
-   MCP clients **MUST** use the OAuth 2.0 Authorization Server Metadata.
+1. MCP authorization servers **MUST** provide at least one of the following discovery mechanisms:
+
+   - OAuth 2.0 Authorization Server Metadata ([RFC8414](https://datatracker.ietf.org/doc/html/rfc8414))
+   - [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html)
+
+   MCP clients **MUST** support both discovery mechanisms to obtain the information required to interact with the authorization server.
 
 ### Authorization Server Discovery
 
@@ -91,11 +94,6 @@ as described in [RFC9728 Section 5.1 "WWW-Authenticate Response"](https://datatr
 
 MCP clients **MUST** be able to parse `WWW-Authenticate` headers and respond appropriately to `HTTP 401 Unauthorized` responses from the MCP server.
 
-#### Server Metadata Discovery
-
-MCP clients **MUST** follow the OAuth 2.0 Authorization Server Metadata [RFC8414](https://datatracker.ietf.org/doc/html/rfc8414)
-specification to obtain the information required to interact with the authorization server.
-
 #### Sequence Diagram
 
 The following diagram outlines an example flow:
@@ -114,7 +112,11 @@ sequenceDiagram
     M-->>C: Resource metadata with authorization server URL
     Note over C: Validate RS metadata,<br />build AS metadata URL
 
-    C->>A: GET /.well-known/oauth-authorization-server
+    alt OAuth 2.0 Authorization Server Metadata
+        C->>A: GET /.well-known/oauth-authorization-server
+    else OpenID Connect Discovery
+        C->>A: GET /.well-known/openid-configuration
+    end
     A-->>C: Authorization server metadata
 
     Note over C,A: OAuth 2.1 authorization flow happens here
@@ -170,7 +172,11 @@ sequenceDiagram
 
     Note over C: Parse metadata and extract authorization server(s)<br/>Client determines AS to use
 
-    C->>A: GET /.well-known/oauth-authorization-server
+    alt OAuth 2.0 Authorization Server Metadata
+        C->>A: GET /.well-known/oauth-authorization-server
+    else OpenID Connect Discovery
+        C->>A: GET /.well-known/openid-configuration
+    end
     A->>C: Authorization server metadata response
 
     alt Dynamic client registration
