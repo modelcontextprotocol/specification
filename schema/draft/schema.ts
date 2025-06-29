@@ -1464,7 +1464,7 @@ export interface StreamPollRequest extends Request {
 /**
  * A response to the `stream/poll` request.
  */
-export interface StreamPollResponse extends Response {
+export interface StreamPollResult extends Result {
   /**
    * Messages and notifications to be delivered to the client on the stream.
    * The client should respond to any pending requests found in this list.
