@@ -22,19 +22,22 @@ export type ProgressToken = string | number;
  */
 export type Cursor = string;
 
+export interface RequestParamsMeta {
+  /**
+   * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
+   */
+  _meta?: {
+    /**
+     * If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
+     */
+    progressToken?: ProgressToken;
+    [key: string]: unknown;
+  };
+}
+
 export interface Request {
   method: string;
-  params?: {
-    /**
-     * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
-     */
-    _meta?: {
-      /**
-       * If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-       */
-      progressToken?: ProgressToken;
-      [key: string]: unknown;
-    };
+  params?: RequestParamsMeta & {
     [key: string]: unknown;
   };
 }
@@ -93,7 +96,7 @@ export const INVALID_REQUEST = -32600;
 export const METHOD_NOT_FOUND = -32601;
 export const INVALID_PARAMS = -32602;
 export const INTERNAL_ERROR = -32603;
-export const ELICITATION_REQUIRED = -32604; // TODO finalize error number
+export const ELICITATION_REQUIRED = -32604;
 
 /**
  * A response to a request that indicates an error occurred.
@@ -114,6 +117,20 @@ export interface JSONRPCError {
      * Additional information about the error. The value of this member is defined by the sender (e.g. detailed error information, nested errors etc.).
      */
     data?: unknown;
+  };
+}
+
+/**
+ * An error response that indicates that the server requires the client to provide additional information via an elicitation request.
+ */
+export interface ElicitationRequiredError extends JSONRPCError {
+  error: {
+    code: typeof ELICITATION_REQUIRED;
+    message: string;
+    data: {
+      elicitations: OutOfBandElicitRequestParams[];
+      [key: string]: unknown;
+    };
   };
 }
 
@@ -216,13 +233,10 @@ export interface ClientCapabilities {
   /**
    * Present if the client supports elicitation from the server.
    */
-  elicitation?: {
-    /**
-     * The elicitation modes that the client supports.
-     * If not specified, the server MUST assume the client only supports "form" mode.
-     */
-    modes?: ("form" | "oob")[];
-  };
+  elicitation?:
+  | { form: object; oob?: object }
+  | { form?: object; oob: object }
+  | { form: object; oob: object };
 }
 
 /**
@@ -1305,53 +1319,74 @@ export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
 }
 
+export interface FormElicitRequestParams extends ElicitRequestParams {
+  /**
+   * The mode of elicitation.
+   */
+  mode: "form";
+
+  /**
+   * A restricted subset of JSON Schema.
+   * Only top-level properties are allowed, without nesting.
+   *
+   * Required when mode is "form" or unspecified.
+   */
+  requestedSchema?: {
+    type: "object";
+    properties: {
+      [key: string]: PrimitiveSchemaDefinition;
+    };
+    required?: string[];
+  };
+}
+
+export interface OutOfBandElicitRequestParams extends ElicitRequestParams {
+  /**
+   * The mode of elicitation.
+   */
+  mode: "oob";
+
+  /**
+   * The ID of the elicitation, which must be unique within the context of the server.
+   * The client MUST treat this ID as an opaque value.
+   */
+  elicitationId: string;
+
+  /**
+   * The URL that the user should navigate to.
+   *
+   * @format uri
+   */
+  url: string;
+}
+
+/**
+ * The parameters for a request to elicit additional information from the user via the client.
+ */
+export interface ElicitRequestParams extends RequestParamsMeta {
+  /**
+   * The mode of elicitation.
+   * - "form": In-band structured data collection with optional schema validation
+   * - "oob": Out-of-band interaction via URL navigation
+   */
+  mode: "form" | "oob";
+
+  /**
+   * The message to present to the user.
+   * For form mode: Describes what information is being requested.
+   * For out-of-band mode: Explains why the interaction is needed.
+   */
+  message: string;
+
+  [key: string]: unknown;
+}
+
 /**
  * A request from the server to elicit additional information from the user via the client.
  */
 export interface ElicitRequest extends Request {
   method: "elicitation/create";
-  params: {
-    /**
-     * The mode of elicitation.
-     * - "form": In-band structured data collection with optional schema validation
-     * - "oob": Out-of-band interaction via URL navigation
-     *
-     * If not specified, "form" is assumed.
-     */
-    mode?: "form" | "oob";
-
-    /**
-     * The message to present to the user.
-     * For form mode: Describes what information is being requested.
-     * For out-of-band mode: Explains why the interaction is needed.
-     */
-    message: string;
-
-    /**
-     * For form mode only: A restricted subset of JSON Schema.
-     * Only top-level properties are allowed, without nesting.
-     *
-     * Required when mode is "form" or unspecified.
-     * Must NOT be present when mode is "oob".
-     */
-    requestedSchema?: {
-      type: "object";
-      properties: {
-        [key: string]: PrimitiveSchemaDefinition;
-      };
-      required?: string[];
-    };
-
-    /**
-     * For out-of-band mode only: The URL that the user should navigate to.
-     *
-     * Required when mode is "oob".
-     * Must NOT be present when mode is "form".
-     *
-     * @format uri
-     */
-    url?: string;
-  };
+  params: FormElicitRequestParams | OutOfBandElicitRequestParams;
 }
 
 /**

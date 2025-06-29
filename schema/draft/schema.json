@@ -216,21 +216,64 @@
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
                 "elicitation": {
-                    "description": "Present if the client supports elicitation from the server.",
-                    "properties": {
-                        "modes": {
-                            "description": "The elicitation modes that the client supports.\nIf not specified, the server MUST assume the client only supports \"form\" mode.",
-                            "items": {
-                                "enum": [
-                                    "form",
-                                    "oob"
-                                ],
-                                "type": "string"
+                    "anyOf": [
+                        {
+                            "properties": {
+                                "form": {
+                                    "additionalProperties": true,
+                                    "properties": {},
+                                    "type": "object"
+                                },
+                                "oob": {
+                                    "additionalProperties": true,
+                                    "properties": {},
+                                    "type": "object"
+                                }
                             },
-                            "type": "array"
+                            "required": [
+                                "form"
+                            ],
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "form": {
+                                    "additionalProperties": true,
+                                    "properties": {},
+                                    "type": "object"
+                                },
+                                "oob": {
+                                    "additionalProperties": true,
+                                    "properties": {},
+                                    "type": "object"
+                                }
+                            },
+                            "required": [
+                                "oob"
+                            ],
+                            "type": "object"
+                        },
+                        {
+                            "properties": {
+                                "form": {
+                                    "additionalProperties": true,
+                                    "properties": {},
+                                    "type": "object"
+                                },
+                                "oob": {
+                                    "additionalProperties": true,
+                                    "properties": {},
+                                    "type": "object"
+                                }
+                            },
+                            "required": [
+                                "form",
+                                "oob"
+                            ],
+                            "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ],
+                    "description": "Present if the client supports elicitation from the server."
                 },
                 "experimental": {
                     "additionalProperties": {
@@ -572,60 +615,53 @@
                     "type": "string"
                 },
                 "params": {
-                    "properties": {
-                        "message": {
-                            "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
-                            "type": "string"
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/OutOfBandElicitRequestParams"
                         },
-                        "mode": {
-                            "description": "The mode of elicitation.\n- \"form\": In-band structured data collection with optional schema validation\n- \"oob\": Out-of-band interaction via URL navigation\n\nIf not specified, \"form\" is assumed.",
-                            "enum": [
-                                "form",
-                                "oob"
-                            ],
-                            "type": "string"
-                        },
-                        "requestedSchema": {
-                            "description": "For form mode only: A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.\n\nRequired when mode is \"form\" or unspecified.\nMust NOT be present when mode is \"oob\".",
-                            "properties": {
-                                "properties": {
-                                    "additionalProperties": {
-                                        "$ref": "#/definitions/PrimitiveSchemaDefinition"
-                                    },
-                                    "type": "object"
-                                },
-                                "required": {
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "type": "array"
-                                },
-                                "type": {
-                                    "const": "object",
-                                    "type": "string"
-                                }
-                            },
-                            "required": [
-                                "properties",
-                                "type"
-                            ],
-                            "type": "object"
-                        },
-                        "url": {
-                            "description": "For out-of-band mode only: The URL that the user should navigate to.\n\nRequired when mode is \"oob\".\nMust NOT be present when mode is \"form\".",
-                            "format": "uri",
-                            "type": "string"
+                        {
+                            "$ref": "#/definitions/FormElicitRequestParams"
                         }
-                    },
-                    "required": [
-                        "message"
-                    ],
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "ElicitRequestParams": {
+            "additionalProperties": {},
+            "description": "The parameters for a request to elicit additional information from the user via the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                        }
+                    },
+                    "type": "object"
+                },
+                "message": {
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
+                    "type": "string"
+                },
+                "mode": {
+                    "description": "The mode of elicitation.\n- \"form\": In-band structured data collection with optional schema validation\n- \"oob\": Out-of-band interaction via URL navigation",
+                    "enum": [
+                        "form",
+                        "oob"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "message",
+                "mode"
             ],
             "type": "object"
         },
@@ -660,6 +696,56 @@
             },
             "required": [
                 "action"
+            ],
+            "type": "object"
+        },
+        "ElicitationRequiredError": {
+            "description": "An error response that indicates that the server requires the client to provide additional information via an elicitation request.",
+            "properties": {
+                "error": {
+                    "properties": {
+                        "code": {
+                            "const": -32604,
+                            "type": "integer"
+                        },
+                        "data": {
+                            "additionalProperties": {},
+                            "properties": {
+                                "elicitations": {
+                                    "items": {
+                                        "$ref": "#/definitions/OutOfBandElicitRequestParams"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "required": [
+                                "elicitations"
+                            ],
+                            "type": "object"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "code",
+                        "data",
+                        "message"
+                    ],
+                    "type": "object"
+                },
+                "id": {
+                    "$ref": "#/definitions/RequestId"
+                },
+                "jsonrpc": {
+                    "const": "2.0",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "error",
+                "id",
+                "jsonrpc"
             ],
             "type": "object"
         },
@@ -727,6 +813,61 @@
             "required": [
                 "enum",
                 "type"
+            ],
+            "type": "object"
+        },
+        "FormElicitRequestParams": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                        }
+                    },
+                    "type": "object"
+                },
+                "message": {
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
+                    "type": "string"
+                },
+                "mode": {
+                    "const": "form",
+                    "description": "The mode of elicitation.",
+                    "type": "string"
+                },
+                "requestedSchema": {
+                    "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.\n\nRequired when mode is \"form\" or unspecified.",
+                    "properties": {
+                        "properties": {
+                            "additionalProperties": {
+                                "$ref": "#/definitions/PrimitiveSchemaDefinition"
+                            },
+                            "type": "object"
+                        },
+                        "required": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "type": {
+                            "const": "object",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "properties",
+                        "type"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "message",
+                "mode"
             ],
             "type": "object"
         },
@@ -1026,21 +1167,15 @@
                     "type": "string"
                 },
                 "params": {
-                    "additionalProperties": {},
-                    "properties": {
-                        "_meta": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RequestParamsMeta"
+                        },
+                        {
                             "additionalProperties": {},
-                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                            "properties": {
-                                "progressToken": {
-                                    "$ref": "#/definitions/ProgressToken",
-                                    "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
-                                }
-                            },
                             "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1217,21 +1352,15 @@
                     "type": "string"
                 },
                 "params": {
-                    "additionalProperties": {},
-                    "properties": {
-                        "_meta": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RequestParamsMeta"
+                        },
+                        {
                             "additionalProperties": {},
-                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                            "properties": {
-                                "progressToken": {
-                                    "$ref": "#/definitions/ProgressToken",
-                                    "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
-                                }
-                            },
                             "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1443,6 +1572,46 @@
             ],
             "type": "object"
         },
+        "OutOfBandElicitRequestParams": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                        }
+                    },
+                    "type": "object"
+                },
+                "elicitationId": {
+                    "description": "The ID of the elicitation, which must be unique within the context of the server.\nThe client MUST treat this ID as an opaque value.",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
+                    "type": "string"
+                },
+                "mode": {
+                    "const": "oob",
+                    "description": "The mode of elicitation.",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "The URL that the user should navigate to.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "elicitationId",
+                "message",
+                "mode",
+                "url"
+            ],
+            "type": "object"
+        },
         "PaginatedRequest": {
             "properties": {
                 "method": {
@@ -1485,21 +1654,15 @@
                     "type": "string"
                 },
                 "params": {
-                    "additionalProperties": {},
-                    "properties": {
-                        "_meta": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RequestParamsMeta"
+                        },
+                        {
                             "additionalProperties": {},
-                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                            "properties": {
-                                "progressToken": {
-                                    "$ref": "#/definitions/ProgressToken",
-                                    "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
-                                }
-                            },
                             "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1750,21 +1913,15 @@
                     "type": "string"
                 },
                 "params": {
-                    "additionalProperties": {},
-                    "properties": {
-                        "_meta": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RequestParamsMeta"
+                        },
+                        {
                             "additionalProperties": {},
-                            "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                            "properties": {
-                                "progressToken": {
-                                    "$ref": "#/definitions/ProgressToken",
-                                    "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
-                                }
-                            },
                             "type": "object"
                         }
-                    },
-                    "type": "object"
+                    ]
                 }
             },
             "required": [
@@ -1778,6 +1935,22 @@
                 "string",
                 "integer"
             ]
+        },
+        "RequestParamsMeta": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
         },
         "Resource": {
             "description": "A known resource that the server is capable of reading.",
