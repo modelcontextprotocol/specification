@@ -1463,9 +1463,14 @@ export interface StreamPollRequest extends Request {
 }
 
 /**
- * A response to the `stream/poll` request.
+ * The status of a stream.
  */
-export interface StreamPollResult extends Result {
+export interface StreamStatus {
+  /**
+   * The ID of the stream.
+   */
+  streamId: string;
+
   /**
    * The current status of the stream.
    */
@@ -1485,6 +1490,30 @@ export interface StreamPollResult extends Result {
    * Whether the stream's pending messages include an error result.
    */
   hasError: boolean;
+}
+
+/**
+ * A response to a `stream/poll` request.
+ */
+export interface StreamPollResult extends Result, StreamStatus {
+}
+
+/**
+ * A request from the client to the server to check the status of all current
+ * streams.
+ *
+ * The server SHOULD reset each stream's abandonment timer when responding to
+ * this request.
+ */
+export interface StreamPollAllRequest extends Request {
+  method: "stream/poll/all";
+}
+
+/**
+ * A response to a `stream/poll/all` request.
+ */
+export interface StreamPollAllResult extends Result {
+  statuses: StreamStatus[];
 }
 
 export interface StreamEndNotification extends Notification {
