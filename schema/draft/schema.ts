@@ -1412,7 +1412,8 @@ export interface Stream extends BaseMetadata {
 }
 
 /**
- * A notification to the client that a stream was created.
+ * A notification to the client that a stream was created. Messages may be sent
+ * on the stream immediately after the creation notification.
  */
 export interface StreamCreateNotification extends Notification {
   method: "notifications/stream/create";
@@ -1465,7 +1466,7 @@ export interface StreamPollRequest extends Request {
 /**
  * The status of a stream.
  */
-export interface StreamStatus {
+export interface StreamStatus extends BaseMetadata {
   /**
    * The ID of the stream.
    */
