@@ -76,12 +76,12 @@ To request information from a user, servers send an `elicitation/create` request
 
 All elicitation requests **MUST** include the following parameters:
 
-| Name      | Type   | Options           | Description                                                        |
-| --------- | ------ | ----------------- | ------------------------------------------------------------------ |
+| Name      | Type   | Options       | Description                                                        |
+| --------- | ------ | ------------- | ------------------------------------------------------------------ |
 | `mode`    | string | `form`, `oob` | The mode of the elicitation.                                       |
-| `message` | string |                   | A human-readable message explaining why the interaction is needed. |
+| `message` | string |               | A human-readable message explaining why the interaction is needed. |
 
- The `mode` parameter specifies the type of elicitation:
+The `mode` parameter specifies the type of elicitation:
 
 - `"form"`: In-band structured data collection with optional schema validation. Data is exposed to the client.
 - `"oob"`: Out-of-band interaction via URL navigation. Data is **not** exposed to the client.
@@ -95,7 +95,6 @@ Form elicitation requests **MUST** specify `mode: "form"` and include these para
 | Name              | Type   | Description                                                    |
 | ----------------- | ------ | -------------------------------------------------------------- |
 | `requestedSchema` | object | A JSON Schema defining the structure of the expected response. |
-
 
 #### Request Schema
 
@@ -273,10 +272,6 @@ Out-of-band elicitation requests **MUST** specify `mode: "oob"` and include thes
 
 The `url` parameter **MUST** contain a valid URL. The `message` parameter **MUST NOT** contain a URL.
 
-<Note>
-In most cases, implementing out-of-band elicitation requires that the server be stateful: it must keep track of some state about the user (authorized/not authorized, paid/not paid, etc).
-</Note>
-
 #### Example: Request Sensitive Data
 
 This example shows an out-of-band elicitation request directing the user to a secure URL where they can provide sensitive information (an API key, for example).
@@ -313,7 +308,6 @@ The same request could direct the user into an OAuth authorization flow, or a pa
 The response with `action: "accept"` indicates that the user has consented to the
 interaction. It does not mean that the interaction is complete. The interaction occurs out
 of band and the client is not aware of the outcome, unless the client requests progress updates.
-
 
 ### Progress Tracking
 
@@ -485,9 +479,6 @@ sequenceDiagram
     Client->>Server: Retry tools/call (optional)
 ```
 
-
-
-
 ## Response Actions
 
 Elicitation responses use a three-action model to clearly distinguish between different user actions. These actions apply to both form and out-of-band elicitation modes.
@@ -531,6 +522,109 @@ Servers should handle each state appropriately:
 
 ## Implementation Considerations
 
+### Statefulness Requirements
+
+Most practical uses of elicitation require that the server maintain state about users:
+
+- Whether required information has been collected (e.g., the user's display name via form elicitation)
+- Authentication status for protected resources (e.g., API keys or OAuth via out-of-band elicitation)
+- Progress of multi-step workflows (e.g., a payment flow)
+
+Servers implementing elicitation **MUST** securely associate this state with individual users following the guidelines in the [security best practices](../basic/security_best_practices) document. Specifically:
+
+- State **MUST NOT** be associated with session IDs alone
+- User identification **MUST** be derived from authenticated tokens
+- State storage **MUST** be protected against unauthorized access
+
+<Note>
+  The examples in this section are non-normative and illustrate potential uses
+  of elicitation. Implementers should adapt these patterns to their specific
+  requirements while maintaining security best practices.
+</Note>
+
+### Out-of-Band Elicitation for Sensitive Data
+
+For servers that interact with APIs requiring sensitive credentials (e.g. LLM APIs), out-of-band elicitation provides a secure mechanism for collecting API keys without exposing them to the MCP client or host application.
+
+In this pattern:
+
+1. The server directs users to a secure web page (served over HTTPS)
+2. The page presents a branded form UI on a domain the user trusts
+3. Users enter sensitive credentials directly into the secure form
+4. The server stores credentials securely, bound to the user's identity
+5. Subsequent MCP requests use these stored credentials for API access
+
+This approach ensures that sensitive credentials never pass through the MCP client or any intermediate MCP servers, reducing the risk of exposure through client-side logging or other means.
+
+### Out-of-Band Elicitation for OAuth Flows
+
+Out-of-band elicitation enables a pattern where MCP servers act as OAuth clients to third-party resource servers. This "downstream authorization" is distinct from [MCP authorization](../basic/authorization) between clients and servers.
+
+#### Understanding the Distinction
+
+- **MCP Authorization**: Required OAuth flow between the MCP client and MCP server (covered in the [authorization specification](../basic/authorization))
+- **Downstream Authorization**: Optional OAuth flow between the MCP server and a third-party resource server, initiated via out-of-band elicitation
+
+In downstream authorization, the server acts as both:
+
+- An OAuth 2.1 resource server (to the MCP client)
+- An OAuth client (to the third-party resource server)
+
+The access token used by the client to communicate with the server does not change as a result of downstream authorization, because the client is intentionally excluded from the third-party OAuth flow. This separation is crucial to maintain the proper security boundary between the client and the server.
+
+<Note>
+  For more background, read the [token passthrough
+  section](../basic/security_best_practices#token-passthrough) of the Security
+  Best Practices document to understand why MCP servers cannot act as
+  pass-through proxies.
+</Note>
+
+#### Implementation Pattern
+
+When implementing downstream authorization via out-of-band elicitation:
+
+1. The MCP server generates an authorization URL, acting as an OAuth client to the third-party service
+2. The server creates an out-of-band elicitation request with this URL
+3. The user completes the OAuth flow directly with the third-party authorization server
+4. The third-party authorization server redirects back to the MCP server
+5. The MCP server securely stores the third-party tokens, bound to the user's identity
+6. Future MCP requests can leverage these stored tokens for API access to the third-party resource server
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UserAgent as User Agent (Browser)
+    participant 3AS as 3rd Party AS
+    participant 3RS as 3rd Party RS
+    participant Client as MCP Client
+    participant Server as MCP Server
+
+    Client->>Server: tools/call
+    Note over Server: Needs 3rd-party authorization for user
+    Note over Server: Store state (which user this auth flow is for)
+    Server->>Client: ElicitationRequired error<br> (mode: "oob", url: "example.com/authorize?...")
+    Note over Client: Client notes the tools/call request can be retried later
+    Client->>User: Present consent to open URL
+    User->>Client: Provide consent
+    Client->>UserAgent: Open URL
+    Client->>Server: Accept response
+    Client-->>Server: elicitation/track request (optional)
+    UserAgent->>3AS: Load authorize route
+    Note over 3AS,User: User interaction (OAuth flow):<br>User consents to scoped MCP Server access
+    3AS->>UserAgent: redirect to MCP Server's redirect_uri
+    UserAgent->>Server: load redirect_uri page
+    Note over Server: Confirm: redirect_uri belongs to MCP Server
+    Note over Server: Confirm: elicitation matches user session<br>Confirm: user is logged into MCP Server or MCP AS
+    Server->>3AS: Exchange authorization code for  OAuth tokens
+    3AS->>Server: Grants tokens
+    Note over Server: Bind tokens to MCP user identity
+    Server-->>Client: elicitation/track response (optional)
+    Client->>Server: Retry tools/call
+    Note over Server: Retrieve token bound to user identity
+    Server->>3RS: Call 3rd-party API
+```
+
+This pattern maintains clear security boundaries while enabling rich integrations with third-party services that require user authorization.
 
 ## Security Considerations
 
