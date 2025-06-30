@@ -1442,11 +1442,12 @@ export interface StreamResumeRequest extends Request {
     streamId: string;
   };
 }
+
 /**
- * A request from the client to the server to retrieve any new messages from
- * the stream. The server MUST include all unsent messages to the client
- * when this method is called. If the stream is closed, the server MUST append
- * a `notifications/stream/end` notification to the end of the resulting messages.
+ * A request from the client to the server to check the status of a stream.
+ *
+ * The server SHOULD reset the stream's abandonment timer when responding to
+ * this request.
  */
 export interface StreamPollRequest extends Request {
   method: "stream/poll";
@@ -1462,19 +1463,57 @@ export interface StreamPollRequest extends Request {
 }
 
 /**
- * A response to the `stream/poll` request.
+ * The status of a stream.
  */
-export interface StreamPollResponse extends Response {
+export interface StreamStatus {
   /**
-   * Messages and notifications to be delivered to the client on the stream.
-   * The client should respond to any pending requests found in this list.
+   * The ID of the stream.
    */
-  messages: (ServerNotification | ServerRequest)[];
+  streamId: string;
 
   /**
-   * Optionally-updated properties for the stream.
+   * The current status of the stream.
    */
-  stream?: String;
+  status: "live" | "completed" | "abandoned";
+
+  /**
+   * Whether the stream has pending messages.
+   */
+  pendingMessages: boolean;
+
+  /**
+   * Whether the stream's pending messages include a server-sent request.
+   */
+  hasRequest: boolean;
+
+  /**
+   * Whether the stream's pending messages include an error result.
+   */
+  hasError: boolean;
+}
+
+/**
+ * A response to a `stream/poll` request.
+ */
+export interface StreamPollResult extends Result, StreamStatus {
+}
+
+/**
+ * A request from the client to the server to check the status of all current
+ * streams.
+ *
+ * The server SHOULD reset each stream's abandonment timer when responding to
+ * this request.
+ */
+export interface StreamPollAllRequest extends PaginatedRequest {
+  method: "stream/poll/all";
+}
+
+/**
+ * A response to a `stream/poll/all` request.
+ */
+export interface StreamPollAllResult extends PaginatedResult {
+  statuses: StreamStatus[];
 }
 
 export interface StreamEndNotification extends Notification {
