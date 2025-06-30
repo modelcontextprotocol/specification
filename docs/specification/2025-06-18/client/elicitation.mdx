@@ -4,7 +4,7 @@ title: Elicitation
 
 <div id="enable-section-numbers" />
 
-<Info>**Protocol Revision**: draft</Info>
+<Info>**Protocol Revision**: 2025-06-18</Info>
 
 <Note>
 
@@ -44,7 +44,7 @@ Applications **SHOULD**:
 ## Capabilities
 
 Clients that support elicitation **MUST** declare the `elicitation` capability during
-[initialization](/specification/draft/basic/lifecycle#initialization):
+[initialization](/specification/2025-06-18/basic/lifecycle#initialization):
 
 ```json
 {
@@ -232,8 +232,7 @@ The schema is restricted to these primitive types:
      "description": "Description text",
      "minLength": 3,
      "maxLength": 50,
-     "pattern": "^[A-Za-z]+$",
-     "format": "email"
+     "format": "email" // Supported: "email", "uri", "date", "date-time"
    }
    ```
 

@@ -1,3 +1,13 @@
+#content-area {
+  h5 {
+    font-weight: 500;
+  }
+
+  h6 {
+    font-weight: 400;
+  }
+}
+
 #feature-support-matrix-wrapper {
   overflow-x: auto;
 }
@@ -72,13 +82,5 @@ body:has(#enable-section-numbers) {
     counter-increment: h6-counter;
     content: counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter)
       "." counter(h5-counter) "." counter(h6-counter) " ";
-  }
-
-  #content-area h5 {
-    font-weight: 500;
-  }
-
-  #content-area h6 {
-    font-weight: 400;
   }
 }
