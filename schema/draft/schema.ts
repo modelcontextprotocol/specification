@@ -1388,7 +1388,7 @@ export interface ElicitResult extends Result {
   content?: { [key: string]: string | number | boolean };
 }
 
-export interface Stream extends BaseMetadata {
+export interface Stream {
   /**
    * A unique identifier for the stream. If the stream is resumable, this ID
    * should be globally unique across instances of the server.
@@ -1466,7 +1466,7 @@ export interface StreamPollRequest extends Request {
 /**
  * The status of a stream.
  */
-export interface StreamStatus extends BaseMetadata {
+export interface StreamStatus {
   /**
    * The ID of the stream.
    */
