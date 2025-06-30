@@ -37,7 +37,7 @@ For trust & safety and security:
 
 - Servers **MUST NOT** use form mode elicitation to request sensitive information
 - Servers **MUST** use out-of-band mode for auth flows and other security-sensitive interactions
-- URLs **MUST NOT** appear in form mode messages or schemas
+- URLs **MUST NOT** appear in any field of an elicitation request other than the `url` field for out-of-band mode
 
 Applications **SHOULD**:
 
@@ -70,18 +70,102 @@ Servers **MUST NOT** send elicitation requests with modes that are not supported
 
 ## Protocol Messages
 
-### Creating Elicitation Requests
+### Elicitation Requests
 
-To request information from a user, servers send an `elicitation/create` request. The request **SHOULD** include a `mode` parameter that specifies the type of elicitation:
+To request information from a user, servers send an `elicitation/create` request.
+
+All elicitation requests **MUST** include the following parameters:
+
+| Name      | Type   | Options           | Description                                                        |
+| --------- | ------ | ----------------- | ------------------------------------------------------------------ |
+| `mode`    | string | `form`, `oob` | The mode of the elicitation.                                       |
+| `message` | string |                   | A human-readable message explaining why the interaction is needed. |
+
+ The `mode` parameter specifies the type of elicitation:
 
 - `"form"`: In-band structured data collection with optional schema validation. Data is exposed to the client.
 - `"oob"`: Out-of-band interaction via URL navigation. Data is **not** exposed to the client.
 
-#### Form Mode (In-Band)
+### Form Elicitation Requests
 
-Form mode allows servers to collect structured data directly through the MCP client.
+Form elicitation allows servers to collect structured data directly through the MCP client.
 
-##### Simple Text Request
+Form elicitation requests **MUST** specify `mode: "form"` and include these parameters:
+
+| Name              | Type   | Description                                                    |
+| ----------------- | ------ | -------------------------------------------------------------- |
+| `requestedSchema` | object | A JSON Schema defining the structure of the expected response. |
+
+
+#### Request Schema
+
+The `requestedSchema` parameter allows servers to define the structure of the expected
+response using a restricted subset of JSON Schema.
+
+To simplify implementation for clients, elicitation schemas are limited to flat objects
+with primitive properties only.
+
+The schema is restricted to these primitive types:
+
+1. **String Schema**
+
+   ```json
+   {
+     "type": "string",
+     "title": "Display Name",
+     "description": "Description text",
+     "minLength": 3,
+     "maxLength": 50,
+     "pattern": "^[A-Za-z]+$",
+     "format": "email"
+   }
+   ```
+
+   Supported formats: `email`, `uri`, `date`, `date-time`
+
+2. **Number Schema**
+
+   ```json
+   {
+     "type": "number", // or "integer"
+     "title": "Display Name",
+     "description": "Description text",
+     "minimum": 0,
+     "maximum": 100
+   }
+   ```
+
+3. **Boolean Schema**
+
+   ```json
+   {
+     "type": "boolean",
+     "title": "Display Name",
+     "description": "Description text",
+     "default": false
+   }
+   ```
+
+4. **Enum Schema**
+   ```json
+   {
+     "type": "string",
+     "title": "Display Name",
+     "description": "Description text",
+     "enum": ["option1", "option2", "option3"],
+     "enumNames": ["Option 1", "Option 2", "Option 3"]
+   }
+   ```
+
+Clients can use this schema to:
+
+1. Generate appropriate input forms
+2. Validate user input before sending
+3. Provide better guidance to users
+
+Note that complex nested structures, arrays of objects, and other advanced JSON Schema features are intentionally not supported to simplify client implementation.
+
+#### Example: Simple Text Request
 
 **Request:**
 
@@ -121,7 +205,7 @@ Form mode allows servers to collect structured data directly through the MCP cli
 }
 ```
 
-##### Structured Data Request
+#### Example: Structured Data Request
 
 **Request:**
 
@@ -174,11 +258,29 @@ Form mode allows servers to collect structured data directly through the MCP cli
 }
 ```
 
-#### Out-of-Band Mode
+### Out-of-Band Elicitation Requests
 
-Out-of-band mode enables servers to direct users to external URLs for interactions that
+Out-of-band elicitation enables servers to direct users to external URLs for interactions that
 must not pass through the MCP client. This is essential for auth flows, payment
 processing, and other sensitive or secure operations.
+
+Out-of-band elicitation requests **MUST** specify `mode: "oob"` and include these parameters:
+
+| Name            | Type   | Description                               |
+| --------------- | ------ | ----------------------------------------- |
+| `url`           | string | The URL that the user should navigate to. |
+| `elicitationId` | string | A unique identifier for the elicitation.  |
+
+The `url` parameter **MUST** contain a valid URL. The `message` parameter **MUST NOT** contain a URL.
+
+<Note>
+In most cases, implementing out-of-band elicitation requires that the server be stateful: it must keep track of some state about the user (authorized/not authorized, paid/not paid, etc).
+</Note>
+
+#### Example: Request Sensitive Data
+
+This example shows an out-of-band elicitation request directing the user to a secure URL where they can provide sensitive information (an API key, for example).
+The same request could direct the user into an OAuth authorization flow, or a payment flow; the only difference is the URL and the message.
 
 **Request:**
 
@@ -190,8 +292,8 @@ processing, and other sensitive or secure operations.
   "params": {
     "mode": "oob",
     "elicitationId": "550e8400-e29b-41d4-a716-446655440000",
-    "url": "https://oauth.example.com/authorize?client_id=abc123&response_type=code&...",
-    "message": "Authorization is required to access your Example Co files."
+    "url": "https://mcp.example.com/ui/set_api_key",
+    "message": "Please provide your API key to continue."
   }
 }
 ```
@@ -210,14 +312,24 @@ processing, and other sensitive or secure operations.
 
 The response with `action: "accept"` indicates that the user has consented to the
 interaction. It does not mean that the interaction is complete. The interaction occurs out
-of band and the client is not aware of the outcome.
+of band and the client is not aware of the outcome, unless the client requests progress updates.
 
-The client **MAY** send an `elicitation/track` request and use the [Progress utility](/specification/draft/basic/utilities/progress),
-when supported by the server, to track the progress of the interaction.
+
+### Progress Tracking
+
+The client **MAY** request progress updates from the server by sending an `elicitation/track` request with a [progress token](/specification/draft/basic/utilities/progress#progress-token). This is particularly useful in out-of-band mode, because the client is not involved in the interaction.
+
+The client **MUST** include an `elicitationId` in the request to identify which elicitation to send progress updates for. The client **SHOULD** include a `progressToken` in the request's `_meta` field.
+
+The server **MUST** ignore any `elicitation/track` requests containing an `elicitationId` that is not known or does not belong to the client.
+
+The server **MAY** send a `notifications/progress` notification to the client with the progress token and the progress status.
+
+The server **SHOULD** send a `elicitation/track` response to the client once the elicitation is complete.
+
+#### Example
 
 **Progress Tracking Request:**
-
-The client **MAY** send an `elicitation/track` request to the server to track the progress of the interaction:
 
 ```json
 {
@@ -225,16 +337,14 @@ The client **MAY** send an `elicitation/track` request to the server to track th
   "id": 4,
   "method": "elicitation/track",
   "params": {
-    "elicitationId": "550e8400-e29b-41d4-a716-446655440000",
     "_meta": {
       "progressToken": "abc123"
-    }
+    },
+    "elicitationId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
 **Progress Tracking Notification:**
-
-The server **MAY** send a `notifications/progress` notification to the client with the progress token and the progress status:
 
 ```json
 {
@@ -250,43 +360,12 @@ The server **MAY** send a `notifications/progress` notification to the client wi
 
 **Progress Tracking Response:**
 
-The server **SHOULD** send a `elicitation/track` response to the client once the elicitation is complete.
-
 ```json
 {
   "jsonrpc": "2.0",
   "id": 4,
   "result": {
     "status": "complete"
-  }
-}
-```
-
-#### Decline and Cancel Responses
-
-For all non-accept responses, the `content` field is omitted.
-The response payloads are identical for either form or out-of-band mode.
-
-**Reject Response Example:**
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "result": {
-    "action": "reject"
-  }
-}
-```
-
-**Cancel Response Example:**
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "result": {
-    "action": "cancel"
   }
 }
 ```
@@ -365,17 +444,17 @@ sequenceDiagram
 
     Client->>UserAgent: Open URL
     Client->>Server: Accept response
-    Client-->>Server: elicitation/track (optional)
+    Client-->>Server: elicitation/track request (optional)
 
     Note over User,UserAgent: User interaction
     Server-->>Client: notifications/progress (optional)
     UserAgent-->>Server: Interaction complete
-    Server-->>Client: elicitation/track complete (optional)
+    Server-->>Client: elicitation/track response (optional)
 
     Note over Server: Continue processing with new information
 ```
 
-### Elicitation Required Error Flow
+### Out-of-Band Mode With Elicitation Required Error Flow
 
 ```mermaid
 sequenceDiagram
@@ -388,174 +467,30 @@ sequenceDiagram
 
     Note over Server: Server needs authorization
     Server->>Client: ElicitationRequired error
-    Note over Client: Client notes the tools/call can be retried after elicitation
+    Note over Client: Client notes the original request can be retried after elicitation
 
     Client->>User: Present consent to open URL
     User-->>Client: Provide consent
 
     Client->>UserAgent: Open URL
-    Client-->>Server: elicitation/track (optional)
+    Client->>Server: Accept response
+    Client-->>Server: elicitation/track request (optional)
 
     Note over User,UserAgent: User interaction
     Server-->>Client: notifications/progress (optional)
 
     UserAgent-->>Server: Interaction complete
-    Server-->>Client: elicitation/track complete (optional)
+    Server-->>Client: elicitation/track response (optional)
 
     Client->>Server: Retry tools/call (optional)
 ```
 
-## Request Schema
 
-Common parameters for all elicitation requests are:
 
-| Name      | Type   | Options           | Description                                                        |
-| --------- | ------ | ----------------- | ------------------------------------------------------------------ |
-| `mode`    | string | `"form"`, `"oob"` | The mode of the elicitation.                                       |
-| `message` | string |                   | A human-readable message explaining why the interaction is needed. |
-
-### Form Mode Schema
-
-For `form` mode, the `requestedSchema` parameter allows servers to define the structure of the expected
-response using a restricted subset of JSON Schema.
-
-Request parameters specific to `form` mode are:
-
-| Name              | Type   | Description                                                    |
-| ----------------- | ------ | -------------------------------------------------------------- |
-| `requestedSchema` | object | A JSON Schema defining the structure of the expected response. |
-
-To simplify implementation for clients, elicitation schemas are limited to flat objects
-with primitive properties only:
-
-```json
-{
-  "mode": "form",
-  "message": "Please provide some required information",
-  "requestedSchema": {
-    "type": "object",
-    "properties": {
-      "propertyName": {
-        "type": "string",
-        "title": "Display Name",
-        "description": "Description of the property"
-      },
-      "anotherProperty": {
-        "type": "number",
-        "minimum": 0,
-        "maximum": 100
-      }
-    },
-    "required": ["propertyName"]
-  }
-}
-```
-
-#### Supported Schema Types
-
-The schema is restricted to these primitive types:
-
-1. **String Schema**
-
-   ```json
-   {
-     "type": "string",
-     "title": "Display Name",
-     "description": "Description text",
-     "minLength": 3,
-     "maxLength": 50,
-     "pattern": "^[A-Za-z]+$",
-     "format": "email"
-   }
-   ```
-
-   Supported formats: `email`, `uri`, `date`, `date-time`
-
-2. **Number Schema**
-
-   ```json
-   {
-     "type": "number", // or "integer"
-     "title": "Display Name",
-     "description": "Description text",
-     "minimum": 0,
-     "maximum": 100
-   }
-   ```
-
-3. **Boolean Schema**
-
-   ```json
-   {
-     "type": "boolean",
-     "title": "Display Name",
-     "description": "Description text",
-     "default": false
-   }
-   ```
-
-4. **Enum Schema**
-   ```json
-   {
-     "type": "string",
-     "title": "Display Name",
-     "description": "Description text",
-     "enum": ["option1", "option2", "option3"],
-     "enumNames": ["Option 1", "Option 2", "Option 3"]
-   }
-   ```
-
-Clients can use this schema to:
-
-1. Generate appropriate input forms
-2. Validate user input before sending
-3. Provide better guidance to users
-
-Note that complex nested structures, arrays of objects, and other advanced JSON Schema features are intentionally not supported to simplify client implementation.
-
-### Out-of-Band Mode Parameters
-
-For `oob` mode elicitation, the `mode` parameter **MUST** be set to `"oob"` and `elicitationId` **MUST** be provided.
-
-Request parameters specific to `oob` mode are:
-
-| Name            | Type   | Description                               |
-| --------------- | ------ | ----------------------------------------- |
-| `url`           | string | The URL that the user should navigate to. |
-| `elicitationId` | string | A unique identifier for the elicitation.  |
-
-Parameters **MUST NOT** include:
-
-- `requestedSchema` - Only used for form mode
-- Any URLs in the `message` field; URLs must only appear in the `url` field
-
-```json
-{
-  "mode": "oob",
-  "elicitationId": "550e8400-e29b-41d4-a716-446655440000",
-  "url": "https://oauth.example.com/authorize?client_id=abc123&response_type=code&...",
-  "message": "Authorization is required to access your Example Co files."
-}
-```
-
-## Progress Tracking
-
-The client **MAY** choose to request progress updates from the server. This is particularly useful in out-of-band mode, because the client is not involved in the interaction.
-Elicitation leverages MCP's [Progress utility](/specification/draft/basic/utilities/progress) to track the progress of the interaction.
-
-The client **MAY** send a `elicitation/track` request to the server to request progress updates.
-
-The client **MUST** include an `elicitationId` in the request to identify which elicitation to send progress updates for. The server **MUST** ignore any `elicitation/track` requests containing an `elicitationId` that is not known or does not belong to the client.
-
-The client **MUST** include a `progressToken` in the request. How that progress token is generated is left to the client implementation.
-
-The server **MAY** send a `notifications/progress` notification to the client with the progress token and the progress status.
-
-The server **SHOULD** send a `elicitation/track` response to the client once the elicitation is complete.=
 
 ## Response Actions
 
-Elicitation responses use a three-action model to clearly distinguish between different user actions.
+Elicitation responses use a three-action model to clearly distinguish between different user actions. These actions apply to both form and out-of-band elicitation modes.
 
 ```json
 {
@@ -593,6 +528,9 @@ Servers should handle each state appropriately:
 - **Accept**: Process the submitted data or proceed with the interaction
 - **Decline**: Handle explicit rejection (e.g., offer alternatives)
 - **Cancel**: Handle dismissal (e.g., prompt again later)
+
+## Implementation Considerations
+
 
 ## Security Considerations
 
