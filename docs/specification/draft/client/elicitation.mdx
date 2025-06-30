@@ -633,6 +633,7 @@ This pattern maintains clear security boundaries while enabling rich integration
 3. Clients **SHOULD** allow users to reject elicitation requests at any time
 4. Clients **SHOULD** implement rate limiting
 5. Clients **SHOULD** present elicitation requests in a way that makes it clear what information is being requested and why
+6. Servers **MUST** bind elicitation requests to the user's identity
 
 ### URL Safety
 
@@ -664,21 +665,18 @@ Non-normative examples:
 
 #### Server-Side Request Forgery (SSRF)
 
-Since clients open URLs provided by servers, they **MUST** implement SSRF protection, including:
+Since clients facilitate the opening of URLs provided by servers, they **MUST** implement SSRF protections, including:
 
-- Block requests to internal IP ranges (e.g., 127.0.0.1, 10.0.0.0/8, etc.)
-- Require the `https://` scheme for all out-of-band URLs (no HTTP, file://, etc.)
-- Clearly render or distinguish Unicode characters (e.g. punycode URLs) to avoid "look-alike" misdirections
-- Clearly communicate the destination server and target URL to the user when asking for consent
+- Requiring the `https://` scheme for all out-of-band URLs (no HTTP, `file://`, etc.)
+- Blocking requests to internal IP ranges (e.g., `127.0.0.1`, `10.0.0.0/8`, etc.)
+- Clearly rendering or distinguishing Unicode characters (e.g. punycode URLs) to avoid "look-alike" misdirections
+- Clearly communicating the destination server and target URL to the user when asking for consent
+
+Further recommendations can be found in the OWASP [SSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html).
 
 #### Phishing
 
-One use of out-of-band elicitation is to perform OAuth flows where the server acts as an
-OAuth client of another resource server. In this case, the server generates an
-authorization URL to the third-party resource server and passes it to the client in the
-form of an `oob` elicitation request.
-
-Without proper mitigation, the following phishing attack is possible:
+Out-of-band elicitation may be used to perform OAuth flows where the server acts as an OAuth client of another resource server. Without proper mitigation, the following phishing attack is possible:
 
 1. A malicious user (Alice) connected to a benign server triggers an elicitation request
 2. The benign server generates an authorization URL, acting as an OAuth client of a third-party authorization server
@@ -688,8 +686,5 @@ Without proper mitigation, the following phishing attack is possible:
 6. The benign server receives a callback/redirect form the third-party authorization server, and assumes it's Alice's request
 7. The tokens for the third-party server are bound to Alice's session and identity, instead of Bob's, resulting in an account takeover
 
-To prevent this attack, the server **MUST** check the identity of the user (step 6 in the
-above example), and confirm that the user who is completing the authorization is the same
-user who initiated the elicitation request. Typically this is done by
-leveraging the [MCP authorization server](/specification/draft/basic/authorization) to
-identify the user, through a session cookie or equivalent in the browser.
+To prevent this attack, the server **MUST** check the identity of the user (step 6 in the above example), and confirm that the user who is completing the authorization is the same user who initiated the elicitation request.
+Typically this is done by leveraging the [MCP authorization server](/specification/draft/basic/authorization) to identify the user, through a session cookie or equivalent in the browser.
