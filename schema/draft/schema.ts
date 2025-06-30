@@ -1505,14 +1505,14 @@ export interface StreamPollResult extends Result, StreamStatus {
  * The server SHOULD reset each stream's abandonment timer when responding to
  * this request.
  */
-export interface StreamPollAllRequest extends Request {
+export interface StreamPollAllRequest extends PaginatedRequest {
   method: "stream/poll/all";
 }
 
 /**
  * A response to a `stream/poll/all` request.
  */
-export interface StreamPollAllResult extends Result {
+export interface StreamPollAllResult extends PaginatedResult {
   statuses: StreamStatus[];
 }
 
