@@ -813,13 +813,65 @@ export interface ToolAnnotations {
 }
 
 /**
+ * An example demonstrating how to use a tool, including input and expected output.
+ */
+export interface ToolExample {
+  /**
+   * A unique identifier for this example within the tool's examples array.
+   * This helps LLMs distinguish between different use cases and enables
+   * automated testing and validation.
+   */
+  id: string;
+
+  /**
+   * A description of what this example demonstrates, intended for both human developers and LLMs.
+   * 
+   * This should clearly describe the specific use case, scenario, or edge case being illustrated.
+   * The description helps human developers understand the example's purpose and enables LLMs to
+   * distinguish between different example types and select the most appropriate usage pattern
+   * for their current context and task requirements.
+   */
+  description: string;
+
+  /**
+   * Example input arguments that would be passed to the tool.
+   * This should match the structure defined in the tool's inputSchema.
+   */
+  input: { [key: string]: unknown };
+
+  /**
+   * The expected result from calling the tool with the given input.
+   * This represents what would be returned in the CallToolResult.
+   */
+  output: {
+    /**
+     * The expected content objects returned by the tool.
+     */
+    content?: (TextContent | ImageContent | AudioContent | EmbeddedResource)[];
+
+    /**
+     * The expected structured result, if the tool provides one.
+     */
+    structuredContent?: { [key: string]: unknown };
+
+    /**
+     * Whether this example demonstrates an error case.
+     */
+    isError?: boolean;
+  };
+}
+
+/**
  * Definition for a tool the client can call.
  */
 export interface Tool extends BaseMetadata {
   /**
-   * A human-readable description of the tool.
+   * A description of the tool for both human developers and LLMs.
    *
-   * This can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a "hint" to the model.
+   * This should clearly explain what the tool does and when to use it. The description 
+   * serves as documentation for human developers and as contextual guidance for LLMs
+   * to understand the tool's purpose and select it appropriately. It can be thought 
+   * of like a "hint" to the model.
    */
   description?: string;
 
@@ -841,6 +893,18 @@ export interface Tool extends BaseMetadata {
     properties?: { [key: string]: object };
     required?: string[];
   };
+
+  /**
+   * Optional examples demonstrating typical tool usage patterns.
+   * 
+   * These examples serve multiple purposes:
+   * - Provide 1-shot learning examples for LLMs
+   * - Serve as human-readable documentation
+   * - Enable evaluation and testing of tool functionality over time
+   * 
+   * Each example includes a description, input parameters, and expected output result.
+   */
+  examples?: ToolExample[];
 
   /**
    * Optional additional tool information.
