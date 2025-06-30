@@ -191,7 +191,7 @@ processing, and other sensitive or secure operations.
     "mode": "oob",
     "elicitationId": "550e8400-e29b-41d4-a716-446655440000",
     "url": "https://oauth.example.com/authorize?client_id=abc123&response_type=code&...",
-    "message": "Authorization is required to access your Example Co files.",
+    "message": "Authorization is required to access your Example Co files."
   }
 }
 ```
@@ -203,7 +203,7 @@ processing, and other sensitive or secure operations.
   "jsonrpc": "2.0",
   "id": 3,
   "result": {
-    "action": "accept",
+    "action": "accept"
   }
 }
 ```
@@ -214,7 +214,6 @@ of band and the client is not aware of the outcome.
 
 The client **MAY** send an `elicitation/track` request and use the [Progress utility](/specification/draft/basic/utilities/progress),
 when supported by the server, to track the progress of the interaction.
-
 
 **Progress Tracking Request:**
 
@@ -319,14 +318,13 @@ Servers that want elicit data from the user via form mode **SHOULD** make a sepa
           "mode": "oob",
           "elicitionId": "550e8400-e29b-41d4-a716-446655440000",
           "url": "https://oauth.example.com/authorize?client_id=abc123&response_type=code&...",
-          "message": "Authorization is required to access your Example Co files.",
+          "message": "Authorization is required to access your Example Co files."
         }
       ]
     }
   }
 }
 ```
-
 
 ## Message Flow
 
@@ -411,10 +409,10 @@ sequenceDiagram
 
 Common parameters for all elicitation requests are:
 
-| Name            | Type   | Options           | Description                                                          |
-|-----------------|--------|-------------------|----------------------------------------------------------------------|
-| `mode`          | string | `"form"`, `"oob"` | The mode of the elicitation.                                         |
-| `message`       | string |                   | A human-readable message explaining why the interaction is needed.   |
+| Name      | Type   | Options           | Description                                                        |
+| --------- | ------ | ----------------- | ------------------------------------------------------------------ |
+| `mode`    | string | `"form"`, `"oob"` | The mode of the elicitation.                                       |
+| `message` | string |                   | A human-readable message explaining why the interaction is needed. |
 
 ### Form Mode Schema
 
@@ -423,9 +421,9 @@ response using a restricted subset of JSON Schema.
 
 Request parameters specific to `form` mode are:
 
-| Name             | Type   | Description                                                      |
-|------------------|--------|------------------------------------------------------------------|
-| `requestedSchema`| object | A JSON Schema defining the structure of the expected response.   |
+| Name              | Type   | Description                                                    |
+| ----------------- | ------ | -------------------------------------------------------------- |
+| `requestedSchema` | object | A JSON Schema defining the structure of the expected response. |
 
 To simplify implementation for clients, elicitation schemas are limited to flat objects
 with primitive properties only:
@@ -521,10 +519,10 @@ For `oob` mode elicitation, the `mode` parameter **MUST** be set to `"oob"` and 
 
 Request parameters specific to `oob` mode are:
 
-| Name            | Type   | Description                                 |
-|-----------------|--------|---------------------------------------------|
-| `url`           | string | The URL that the user should navigate to.   |
-| `elicitationId` | string | A unique identifier for the elicitation.    |
+| Name            | Type   | Description                               |
+| --------------- | ------ | ----------------------------------------- |
+| `url`           | string | The URL that the user should navigate to. |
+| `elicitationId` | string | A unique identifier for the elicitation.  |
 
 Parameters **MUST NOT** include:
 
@@ -618,6 +616,7 @@ Servers **MUST NOT** rely on client-provided user identification, as this can be
 Instead, servers **SHOULD** follow [security best practices](/specification/draft/basic/security_best_practices).
 
 Non-normative examples:
+
 - Incorrect: Treat user input like "I am joe@example.com" as authoritative
 - Correct: Rely on the [MCP authorization server](/specification/draft/basic/authorization) to identify the user
 
@@ -648,6 +647,7 @@ authorization URL to the third-party resource server and passes it to the client
 form of an `oob` elicitation request.
 
 Without proper mitigation, the following phishing attack is possible:
+
 1. A malicious user (Alice) connected to a benign server triggers an elicitation request
 2. The benign server generates an authorization URL, acting as an OAuth client of a third-party authorization server
 3. Alice's client displays the URL and asks for consent
