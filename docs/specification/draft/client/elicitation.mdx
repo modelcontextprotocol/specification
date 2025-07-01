@@ -263,6 +263,15 @@ Out-of-band elicitation enables servers to direct users to external URLs for int
 must not pass through the MCP client. This is essential for auth flows, payment
 processing, and other sensitive or secure operations.
 
+<Note>
+  **Important**: Out-of-band elicitation is *not* for re-authorizing the MCP
+  client's access to the MCP server (that is covered by [MCP
+  authorization](../basic/authorization)). It's specifically for scenarios where
+  the MCP server needs to obtain sensitive information or authorization for
+  third-party services on behalf of the user. The MCP client's authorization
+  (bearer) token remains unchanged throughout this process.
+</Note>
+
 Out-of-band elicitation requests **MUST** specify `mode: "oob"` and include these parameters:
 
 | Name            | Type   | Description                               |
@@ -522,7 +531,7 @@ Servers should handle each state appropriately:
 
 ## Implementation Considerations
 
-### Statefulness Requirements
+### Statefulness
 
 Most practical uses of elicitation require that the server maintain state about users:
 
@@ -558,7 +567,16 @@ This approach ensures that sensitive credentials never pass through the MCP clie
 
 ### Out-of-Band Elicitation for OAuth Flows
 
-Out-of-band elicitation enables a pattern where MCP servers act as OAuth clients to third-party resource servers. This "downstream authorization" is distinct from [MCP authorization](../basic/authorization) between clients and servers.
+Out-of-band elicitation enables a pattern where MCP servers act as OAuth clients to third-party resource servers.
+The "downstream authorization" enabled by out-of-band elicitation is fundamentally separate from [MCP authorization](../basic/authorization).
+
+<Note>
+  This distinction is critical to understand. Out-of-band elicitation is *not*
+  about authorizing (or re-authorizing) the MCP client to access the MCP server.
+  It *can* be used to enable the MCP server to access third-party resources or
+  APIs on behalf of the user, without exposing sensitive credentials or tokens
+  to the MCP client.
+</Note>
 
 #### Understanding the Distinction
 
@@ -567,10 +585,22 @@ Out-of-band elicitation enables a pattern where MCP servers act as OAuth clients
 
 In downstream authorization, the server acts as both:
 
-- An OAuth 2.1 resource server (to the MCP client)
+- An OAuth resource server (to the MCP client)
 - An OAuth client (to the third-party resource server)
 
-The access token used by the client to communicate with the server does not change as a result of downstream authorization, because the client is intentionally excluded from the third-party OAuth flow. This separation is crucial to maintain the proper security boundary between the client and the server.
+Consider this hypothetical scenario:
+
+- Claude Desktop (the MCP client) connects to Bob's Productivity Server (an HTTPS MCP server)
+- Bob's Productivity Server integrates with Dropbox and Google APIs
+- When Claude calls a tool that requires Dropbox access, the MCP server needs Dropbox credentials
+
+The critical security requirements are:
+
+1. **The Dropbox token MUST NOT transit through Claude Desktop**: The client should never see third-party credentials
+2. **The MCP server MUST NOT use its Claude access token for Dropbox**: That would be [token passthrough](../basic/security_best_practices#token-passthrough), which is forbidden
+3. **The user must authorize the MCP server directly**: The interaction happens outside the MCP protocol
+
+The tokens from these flows are never mixed or passed through. The MCP client's token is for the MCP server only, and the third-party tokens never leave the MCP server.
 
 <Note>
   For more background, read the [token passthrough
