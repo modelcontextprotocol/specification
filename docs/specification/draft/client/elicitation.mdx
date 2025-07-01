@@ -20,7 +20,7 @@ necessary information dynamically.
 Elicitation supports two modes:
 
 - **Form mode** (in-band): Servers can request structured data from users with optional JSON schemas to validate responses
-- **Out-of-band mode**: Servers can direct users to external URLs for interactions that must _not_ pass through the MCP client, such as OAuth authorization flows
+- **Out-of-band mode**: Servers can direct users to external URLs for sensitive nteractions that must _not_ pass through the MCP client
 
 ## User Interaction Model
 
@@ -36,8 +36,8 @@ model.
 For trust & safety and security:
 
 - Servers **MUST NOT** use form mode elicitation to request sensitive information
-- Servers **MUST** use out-of-band mode for auth flows and other security-sensitive interactions
-- URLs **MUST NOT** appear in any field of an elicitation request other than the `url` field for out-of-band mode
+- Servers **MUST** use out-of-band mode for interactions involving sensitive information, such as credentials
+- URLs **MUST NOT** appear in any field of an elicitation request, other than the `url` field in an out-of-band mode request
 
 Applications **SHOULD**:
 
@@ -96,7 +96,7 @@ Form elicitation requests **MUST** specify `mode: "form"` and include these para
 | ----------------- | ------ | -------------------------------------------------------------- |
 | `requestedSchema` | object | A JSON Schema defining the structure of the expected response. |
 
-#### Request Schema
+#### Requested Schema
 
 The `requestedSchema` parameter allows servers to define the structure of the expected
 response using a restricted subset of JSON Schema.
@@ -259,17 +259,11 @@ Note that complex nested structures, arrays of objects, and other advanced JSON 
 
 ### Out-of-Band Elicitation Requests
 
-Out-of-band elicitation enables servers to direct users to external URLs for interactions that
-must not pass through the MCP client. This is essential for auth flows, payment
-processing, and other sensitive or secure operations.
+Out-of-band elicitation enables servers to direct users to external URLs for interactions that must not pass through the MCP client. This is essential for auth flows, payment processing, and other sensitive or secure operations.
 
 <Note>
-  **Important**: Out-of-band elicitation is *not* for re-authorizing the MCP
-  client's access to the MCP server (that is covered by [MCP
-  authorization](../basic/authorization)). It's specifically for scenarios where
-  the MCP server needs to obtain sensitive information or authorization for
-  third-party services on behalf of the user. The MCP client's authorization
-  (bearer) token remains unchanged throughout this process.
+  **Important**: Out-of-band elicitation is *not* for re-authorizing the MCP client's access to the MCP server (that is covered by [MCP authorization](../basic/authorization)).
+  It's specifically for scenarios where the MCP server needs to obtain sensitive information, or authorization for third-party services on behalf of the user. The MCP client's authorization (bearer) token remains unchanged throughout this process.
 </Note>
 
 Out-of-band elicitation requests **MUST** specify `mode: "oob"` and include these parameters:
@@ -284,7 +278,7 @@ The `url` parameter **MUST** contain a valid URL. The `message` parameter **MUST
 #### Example: Request Sensitive Data
 
 This example shows an out-of-band elicitation request directing the user to a secure URL where they can provide sensitive information (an API key, for example).
-The same request could direct the user into an OAuth authorization flow, or a payment flow; the only difference is the URL and the message.
+The same request could direct the user into an OAuth authorization flow, or a payment flow. The only difference is the URL and the message.
 
 **Request:**
 
@@ -344,6 +338,7 @@ The server **SHOULD** send a `elicitation/track` response to the client once the
       "progressToken": "abc123"
     },
     "elicitationId": "550e8400-e29b-41d4-a716-446655440000"
+  }
 }
 ```
 
@@ -375,12 +370,9 @@ The server **SHOULD** send a `elicitation/track` response to the client once the
 
 ### Elicitation Required Error
 
-When another request cannot be processed until an elicitation is completed, the server **SHOULD**
-return an [ElicitationRequired error](/docs/concepts/architecture#error-handling) (code `-32604`) to indicate to
-the client that an elicitation is required.
+When another request cannot be processed until an elicitation is completed, the server **SHOULD** return an [ElicitationRequired error](/docs/concepts/architecture#error-handling) (code `-32604`) to indicate to the client that an elicitation is required.
 
-The error **MUST** include a list of elicitations that are required to complete before the original
-can be retried.
+The error **MUST** include a list of elicitations that are required to complete before the original can be retried.
 
 Any elicitations returned in the error **MUST** be out-of-band mode elicitations and have an `elicitationId` property.
 Servers that want elicit data from the user via form mode **SHOULD** make a separate elicitation request for each form mode elicitation.
