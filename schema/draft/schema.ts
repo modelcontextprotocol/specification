@@ -22,7 +22,7 @@ export type ProgressToken = string | number;
  */
 export type Cursor = string;
 
-export interface RequestParamsMeta {
+export interface RequestParams {
   /**
    * See [specification/draft/basic/index#general-fields] for notes on _meta usage.
    */
@@ -33,13 +33,16 @@ export interface RequestParamsMeta {
     progressToken?: ProgressToken;
     [key: string]: unknown;
   };
+
+  /**
+   * Allow any unknown parameters to be passed in.
+   */
+  [key: string]: unknown;
 }
 
 export interface Request {
   method: string;
-  params?: RequestParamsMeta & {
-    [key: string]: unknown;
-  };
+  params?: RequestParams;
 }
 
 export interface Notification {
@@ -1361,7 +1364,7 @@ export interface OutOfBandElicitRequestParams extends ElicitRequestParams {
 /**
  * The parameters for a request to elicit additional information from the user via the client.
  */
-export interface ElicitRequestParams extends RequestParamsMeta {
+export interface ElicitRequestParams extends RequestParams {
   /**
    * The mode of elicitation.
    * - "form": In-band structured data collection with optional schema validation
@@ -1375,8 +1378,6 @@ export interface ElicitRequestParams extends RequestParamsMeta {
    * For out-of-band mode: Explains why the interaction is needed.
    */
   message: string;
-
-  [key: string]: unknown;
 }
 
 /**

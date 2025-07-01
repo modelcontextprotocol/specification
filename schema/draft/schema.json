@@ -632,7 +632,6 @@
             "type": "object"
         },
         "ElicitRequestParams": {
-            "additionalProperties": {},
             "description": "The parameters for a request to elicit additional information from the user via the client.",
             "properties": {
                 "_meta": {
@@ -1167,15 +1166,7 @@
                     "type": "string"
                 },
                 "params": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/RequestParamsMeta"
-                        },
-                        {
-                            "additionalProperties": {},
-                            "type": "object"
-                        }
-                    ]
+                    "$ref": "#/definitions/RequestParams"
                 }
             },
             "required": [
@@ -1352,15 +1343,7 @@
                     "type": "string"
                 },
                 "params": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/RequestParamsMeta"
-                        },
-                        {
-                            "additionalProperties": {},
-                            "type": "object"
-                        }
-                    ]
+                    "$ref": "#/definitions/RequestParams"
                 }
             },
             "required": [
@@ -1654,15 +1637,7 @@
                     "type": "string"
                 },
                 "params": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/RequestParamsMeta"
-                        },
-                        {
-                            "additionalProperties": {},
-                            "type": "object"
-                        }
-                    ]
+                    "$ref": "#/definitions/RequestParams"
                 }
             },
             "required": [
@@ -1913,15 +1888,7 @@
                     "type": "string"
                 },
                 "params": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/RequestParamsMeta"
-                        },
-                        {
-                            "additionalProperties": {},
-                            "type": "object"
-                        }
-                    ]
+                    "$ref": "#/definitions/RequestParams"
                 }
             },
             "required": [
@@ -1936,7 +1903,8 @@
                 "integer"
             ]
         },
-        "RequestParamsMeta": {
+        "RequestParams": {
+            "additionalProperties": {},
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
