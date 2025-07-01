@@ -690,7 +690,11 @@ Further recommendations can be found in the OWASP [SSRF Prevention Cheat Sheet](
 
 #### Phishing
 
-Out-of-band elicitation may be used to perform OAuth flows where the server acts as an OAuth client of another resource server. Without proper mitigation, the following phishing attack is possible:
+Out-of-band elicitation returns a URL that an attacker can use to send to a victim. The MCP Server **MUST** verify the identity of the user who opens the URL before accepting information.
+
+Typically identity verification is done by leveraging the [MCP authorization server](/specification/draft/basic/authorization) to identify the user, through a session cookie or equivalent in the browser.
+
+For example, out-of-band elicitation may be used to perform OAuth flows where the server acts as an OAuth client of another resource server. Without proper mitigation, the following phishing attack is possible:
 
 1. A malicious user (Alice) connected to a benign server triggers an elicitation request
 2. The benign server generates an authorization URL, acting as an OAuth client of a third-party authorization server
@@ -701,4 +705,3 @@ Out-of-band elicitation may be used to perform OAuth flows where the server acts
 7. The tokens for the third-party server are bound to Alice's session and identity, instead of Bob's, resulting in an account takeover
 
 To prevent this attack, the server **MUST** check the identity of the user (step 6 in the above example), and confirm that the user who is completing the authorization is the same user who initiated the elicitation request.
-Typically this is done by leveraging the [MCP authorization server](/specification/draft/basic/authorization) to identify the user, through a session cookie or equivalent in the browser.
