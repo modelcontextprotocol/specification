@@ -835,11 +835,11 @@
                 },
                 "mode": {
                     "const": "form",
-                    "description": "The mode of elicitation.",
+                    "description": "The elicitation mode.",
                     "type": "string"
                 },
                 "requestedSchema": {
-                    "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.\n\nRequired when mode is \"form\" or unspecified.",
+                    "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.",
                     "properties": {
                         "properties": {
                             "additionalProperties": {
@@ -1595,7 +1595,7 @@
                 },
                 "mode": {
                     "const": "oob",
-                    "description": "The mode of elicitation.",
+                    "description": "The elicitation mode.",
                     "type": "string"
                 },
                 "url": {

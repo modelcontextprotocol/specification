@@ -1321,15 +1321,13 @@ export interface RootsListChangedNotification extends Notification {
 
 export interface FormElicitRequestParams extends ElicitRequestParams {
   /**
-   * The mode of elicitation.
+   * The elicitation mode.
    */
   mode: "form";
 
   /**
    * A restricted subset of JSON Schema.
    * Only top-level properties are allowed, without nesting.
-   *
-   * Required when mode is "form" or unspecified.
    */
   requestedSchema?: {
     type: "object";
@@ -1342,7 +1340,7 @@ export interface FormElicitRequestParams extends ElicitRequestParams {
 
 export interface OutOfBandElicitRequestParams extends ElicitRequestParams {
   /**
-   * The mode of elicitation.
+   * The elicitation mode.
    */
   mode: "oob";
 
