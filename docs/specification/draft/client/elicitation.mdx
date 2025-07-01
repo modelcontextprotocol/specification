@@ -528,8 +528,7 @@ Servers should handle each state appropriately:
 Most practical uses of elicitation require that the server maintain state about users:
 
 - Whether required information has been collected (e.g., the user's display name via form elicitation)
-- Authentication status for protected resources (e.g., API keys or OAuth via out-of-band elicitation)
-- Progress of multi-step workflows (e.g., a payment flow)
+- Status of resource access (e.g., API keys or a payment flow via out-of-band elicitation)
 
 Servers implementing elicitation **MUST** securely associate this state with individual users following the guidelines in the [security best practices](../basic/security_best_practices) document. Specifically:
 
@@ -538,9 +537,7 @@ Servers implementing elicitation **MUST** securely associate this state with ind
 - State storage **MUST** be protected against unauthorized access
 
 <Note>
-  The examples in this section are non-normative and illustrate potential uses
-  of elicitation. Implementers should adapt these patterns to their specific
-  requirements while maintaining security best practices.
+  The examples in this section are non-normative and illustrate potential uses of elicitation. Implementers should adapt these patterns to their specific requirements while maintaining security best practices.
 </Note>
 
 ### Out-of-Band Elicitation for Sensitive Data
@@ -555,7 +552,7 @@ In this pattern:
 4. The server stores credentials securely, bound to the user's identity
 5. Subsequent MCP requests use these stored credentials for API access
 
-This approach ensures that sensitive credentials never pass through the MCP client or any intermediate MCP servers, reducing the risk of exposure through client-side logging or other means.
+This approach ensures that sensitive credentials never pass through the MCP client or any intermediate MCP servers, reducing the risk of exposure through client-side logging or other attack vectors.
 
 ### Out-of-Band Elicitation for OAuth Flows
 
@@ -563,11 +560,8 @@ Out-of-band elicitation enables a pattern where MCP servers act as OAuth clients
 The "downstream authorization" enabled by out-of-band elicitation is fundamentally separate from [MCP authorization](../basic/authorization).
 
 <Note>
-  This distinction is critical to understand. Out-of-band elicitation is *not*
-  about authorizing (or re-authorizing) the MCP client to access the MCP server.
-  It *can* be used to enable the MCP server to access third-party resources or
-  APIs on behalf of the user, without exposing sensitive credentials or tokens
-  to the MCP client.
+  This distinction is critical to understand. Out-of-band elicitation is *not* about authorizing (or re-authorizing) the MCP client to access the MCP server.
+  It *can* be used to enable the MCP server to access third-party resources or APIs on behalf of the user, without exposing sensitive credentials or tokens to the MCP client.
 </Note>
 
 #### Understanding the Distinction
@@ -588,17 +582,14 @@ Consider this hypothetical scenario:
 
 The critical security requirements are:
 
-1. **The Dropbox token MUST NOT transit through Claude Desktop**: The client should never see third-party credentials
+1. **The Dropbox token MUST NOT transit through Claude Desktop**: The client must never see third-party credentials
 2. **The MCP server MUST NOT use its Claude access token for Dropbox**: That would be [token passthrough](../basic/security_best_practices#token-passthrough), which is forbidden
 3. **The user must authorize the MCP server directly**: The interaction happens outside the MCP protocol
 
 The tokens from these flows are never mixed or passed through. The MCP client's token is for the MCP server only, and the third-party tokens never leave the MCP server.
 
 <Note>
-  For more background, read the [token passthrough
-  section](../basic/security_best_practices#token-passthrough) of the Security
-  Best Practices document to understand why MCP servers cannot act as
-  pass-through proxies.
+  For more background, read the [token passthrough section](../basic/security_best_practices#token-passthrough) of the Security Best Practices document to understand why MCP servers cannot act as pass-through proxies.
 </Note>
 
 #### Implementation Pattern
@@ -657,13 +648,14 @@ This pattern maintains clear security boundaries while enabling rich integration
 5. Clients **SHOULD** present elicitation requests in a way that makes it clear what information is being requested and why
 6. Servers **MUST** bind elicitation requests to the user's identity
 
-### URL Safety
+### Safe URL Handling
 
-Clients implementing out-of-band elicitation **MUST** implement the safety checks for URLs described below. These strict controls, including obtaining consent from the user, help prevent users from unknowingly clicking malicious links.
+Clients implementing out-of-band elicitation **MUST** handle URLs carefully to prevent users from unknowingly clicking malicious links.
 
-URLs **MUST NOT** be present in any message or schema fields as part of an out-of-band elicitation request EXCEPT for the `url` field.
+1. Servers **MUST NOT** include URLs in any message or schema fields as part of a form elicitation request.
+2. Servers **MUST NOT** include URLs in any message or schema fields as part of an out-of-band elicitation request, except for the `url` field.
 
-URLs **MUST NOT** be present in any message or schema fields as part of a form elicitation request.
+These requirements ensure that client implementations have clear rules about when to present a URL to the user, so that other rules about user consent and SSRF protection (below) can be consistently applied.
 
 ### Identifying the User
 
@@ -683,7 +675,7 @@ Non-normative examples:
 
 ### Out-of-Band Mode Security
 
-1. Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent from the user
+Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent from the user
 
 #### Server-Side Request Forgery (SSRF)
 
