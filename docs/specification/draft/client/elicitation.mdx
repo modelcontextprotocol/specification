@@ -323,7 +323,7 @@ The client **MAY** request progress updates from the server by sending an `elici
 
 The client **MUST** include an `elicitationId` in the request to identify which elicitation to send progress updates for. The client **SHOULD** include a `progressToken` in the request's `_meta` field.
 
-The server **MUST** ignore any `elicitation/track` requests containing an `elicitationId` that is not known or does not belong to the client.
+The server **MUST** not accept any `elicitation/track` requests containing an `elicitationId` that is not known or does not belong to the client (i.e. respond with an [error](/docs/concepts/architecture#error-handling)).
 
 The server **MAY** send a `notifications/progress` notification to the client with the progress token and the progress status.
 
