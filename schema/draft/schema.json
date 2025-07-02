@@ -2270,31 +2270,6 @@
             ],
             "type": "object"
         },
-        "Stream": {
-            "properties": {
-                "resumeInterval": {
-                    "properties": {
-                        "max": {
-                            "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection. A value of 0 indicates that the stream\nis not resumable, and that the work will be cancelled upon disconnect.",
-                            "type": "integer"
-                        },
-                        "min": {
-                            "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection or between `stream/poll` requests.",
-                            "type": "integer"
-                        }
-                    },
-                    "type": "object"
-                },
-                "streamId": {
-                    "description": "A unique identifier for the stream. If the stream is resumable, this ID\nshould be globally unique across instances of the server.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "streamId"
-            ],
-            "type": "object"
-        },
         "StreamCreateNotification": {
             "description": "A notification to the client that a stream was created. Messages may be sent\non the stream immediately after the creation notification.",
             "properties": {
@@ -2304,13 +2279,26 @@
                 },
                 "params": {
                     "properties": {
-                        "stream": {
-                            "$ref": "#/definitions/Stream",
-                            "description": "The stream that was created."
+                        "resumeInterval": {
+                            "properties": {
+                                "max": {
+                                    "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection. A value of 0 indicates that the stream\nis not resumable, and that the work will be cancelled upon disconnect.",
+                                    "type": "integer"
+                                },
+                                "min": {
+                                    "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection or between `stream/poll` requests.",
+                                    "type": "integer"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "streamId": {
+                            "description": "A unique identifier for the stream. If the stream is resumable, this ID\nshould be globally unique across instances of the server.",
+                            "type": "string"
                         }
                     },
                     "required": [
-                        "stream"
+                        "streamId"
                     ],
                     "type": "object"
                 }

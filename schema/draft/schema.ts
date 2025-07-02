@@ -1392,29 +1392,6 @@ export interface ElicitResult extends Result {
   content?: { [key: string]: string | number | boolean };
 }
 
-export interface Stream {
-  /**
-   * A unique identifier for the stream. If the stream is resumable, this ID
-   * should be globally unique across instances of the server.
-   */
-  streamId: string;
-
-  resumeInterval?: {
-    /**
-     * The minimum number of seconds a client should wait before resuming
-     * the stream after reconnection or between `stream/poll` requests.
-     */
-    min?: number;
-
-    /**
-     * The minimum number of seconds a client should wait before resuming
-     * the stream after reconnection. A value of 0 indicates that the stream
-     * is not resumable, and that the work will be cancelled upon disconnect.
-     */
-    max?: number;
-  }
-}
-
 /**
  * A notification to the client that a stream was created. Messages may be sent
  * on the stream immediately after the creation notification.
@@ -1423,9 +1400,25 @@ export interface StreamCreateNotification extends Notification {
   method: "notifications/stream/create";
   params: {
     /**
-     * The stream that was created.
+     * A unique identifier for the stream. If the stream is resumable, this ID
+     * should be globally unique across instances of the server.
      */
-    stream: Stream;
+    streamId: string;
+
+    resumeInterval?: {
+      /**
+       * The minimum number of seconds a client should wait before resuming
+       * the stream after reconnection or between `stream/poll` requests.
+       */
+      min?: number;
+
+      /**
+       * The minimum number of seconds a client should wait before resuming
+       * the stream after reconnection. A value of 0 indicates that the stream
+       * is not resumable, and that the work will be cancelled upon disconnect.
+       */
+      max?: number;
+    }
   }
 }
 

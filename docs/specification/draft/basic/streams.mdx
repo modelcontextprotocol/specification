@@ -21,9 +21,9 @@ Streams provide a way to manage long-running operations and ensure message deliv
 
 A stream follows a defined lifecycle:
 
-1. **Creation**: The server creates a stream and sends a `stream/create` notification with a unique stream ID
+1. **Creation**: The server creates a stream and sends a `notifications/stream/create` notification with a unique stream ID
 2. **Live**: Messages are exchanged on the stream.
-3. **Completion**: Server sends a `stream/end` notification when the stream is complete
+3. **Completion**: Server sends a `notifications/stream/end` notification when the stream is complete
 
 A client may use the `stream/resume` request to receive messages from a live stream, and `stream/poll` to poll a stream's state. A client may also use `stream/poll/all` to poll all available streams.
 
@@ -110,7 +110,7 @@ When a client sends a `stream/resume` request, the server should:
 
 #### Streamable HTTP Considerations
 
-When using the Streamable HTTP transport, streams are implemented using the Server-Sent Events (SSE) protocol. When served over HTTP, a server cannot definitively when any given message is delivered. Clients use the `Last-Event-ID` HTTP header to resume their SSE connection to Streamable HTTP servers.
+When using the Streamable HTTP transport, streams are implemented using the Server-Sent Events (SSE) protocol. When served over HTTP, a server cannot definitively know when any given message is delivered. Clients use the `Last-Event-ID` HTTP header to resume their SSE connection to Streamable HTTP servers.
 
 In order to deliver durable message guarantees, servers may maintain a buffer of recently sent messages (a two minute window aligns with common TCP idle timeout configurations), and use a scheme to correlate message IDs across streams, such as by using a strictly monotonic counter. When a client reconnects after a disconnection, the `Last-Event-ID` header can be used to derive the point from which its view of streams will resume and poll from.
 
@@ -175,7 +175,7 @@ The response includes:
 
 ### Abandonment
 
-If a client fails to resume or poll a stream within the `resumeInterval.max` period, the server may consider the stream abandoned and reclaim resources. The next time a client attempts to resume or poll the stream, the server will respond with an error.
+If a client fails to resume or poll a stream within the `resumeInterval.max` period, the server may consider the stream abandoned and reclaim resources. The next time a client attempts to resume or poll the stream, the server may either respond with an error or a
 
 ```mermaid
 sequenceDiagram
