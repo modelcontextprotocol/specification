@@ -218,59 +218,68 @@
                 "elicitation": {
                     "anyOf": [
                         {
-                            "properties": {
-                                "form": {
-                                    "additionalProperties": true,
-                                    "properties": {},
+                            "allOf": [
+                                {
+                                    "properties": {
+                                        "form": {
+                                            "additionalProperties": true,
+                                            "properties": {},
+                                            "type": "object"
+                                        },
+                                        "oob": {
+                                            "additionalProperties": true,
+                                            "properties": {},
+                                            "type": "object"
+                                        }
+                                    },
                                     "type": "object"
                                 },
-                                "oob": {
-                                    "additionalProperties": true,
-                                    "properties": {},
+                                {
+                                    "properties": {
+                                        "form": {
+                                            "additionalProperties": true,
+                                            "properties": {},
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "form"
+                                    ],
                                     "type": "object"
                                 }
-                            },
-                            "required": [
-                                "form"
-                            ],
-                            "type": "object"
+                            ]
                         },
                         {
-                            "properties": {
-                                "form": {
-                                    "additionalProperties": true,
-                                    "properties": {},
+                            "allOf": [
+                                {
+                                    "properties": {
+                                        "form": {
+                                            "additionalProperties": true,
+                                            "properties": {},
+                                            "type": "object"
+                                        },
+                                        "oob": {
+                                            "additionalProperties": true,
+                                            "properties": {},
+                                            "type": "object"
+                                        }
+                                    },
                                     "type": "object"
                                 },
-                                "oob": {
-                                    "additionalProperties": true,
-                                    "properties": {},
+                                {
+                                    "properties": {
+                                        "oob": {
+                                            "additionalProperties": true,
+                                            "properties": {},
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "oob"
+                                    ],
                                     "type": "object"
                                 }
-                            },
-                            "required": [
-                                "oob"
-                            ],
-                            "type": "object"
-                        },
-                        {
-                            "properties": {
-                                "form": {
-                                    "additionalProperties": true,
-                                    "properties": {},
-                                    "type": "object"
-                                },
-                                "oob": {
-                                    "additionalProperties": true,
-                                    "properties": {},
-                                    "type": "object"
-                                }
-                            },
-                            "required": [
-                                "form",
-                                "oob"
-                            ],
-                            "type": "object"
+                            ]
                         }
                     ],
                     "description": "Present if the client supports elicitation from the server."
