@@ -1,9 +1,9 @@
 ---
-title: "Building an STDIO to HTTP Adapter"
-description: "Learn how to build an adapter that bridges STDIO-based MCP servers to HTTP/SSE transport"
+title: "Building an STDIO to Streamable HTTP Adapter"
+description: "Learn how to build an adapter that bridges STDIO-based MCP servers to Streamable HTTP transport"
 ---
 
-In this tutorial, we'll build an adapter that allows STDIO-based MCP servers to be accessed via HTTP APIs with Server-Sent Events (SSE) for streaming. This is useful when you want to expose local MCP servers to web applications or remote clients.
+In this tutorial, we'll build an adapter that allows STDIO-based MCP servers to be accessed via Streamable HTTP transport. This transport uses HTTP POST for client-to-server communication and can respond with either JSON or Server-Sent Events (SSE) for streaming. This is useful when you want to expose local MCP servers to web applications or remote clients.
 
 ### What we'll be building
 
@@ -19,7 +19,7 @@ Many MCP servers use STDIO (standard input/output) for communication, which work
 Before we dive in, let's understand the key components:
 
 1. **STDIO Transport**: Uses standard input/output streams for communication
-2. **HTTP Transport with SSE**: Uses HTTP POST for requests and Server-Sent Events for responses
+2. **Streamable HTTP Transport**: Uses HTTP POST for requests and can respond with either JSON or Server-Sent Events (SSE) for streaming
 3. **Transport Proxy**: Bridges messages between different transport types
 4. **Session Management**: Handles multiple concurrent client connections
 
@@ -105,7 +105,7 @@ import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/in
 
 ### Creating the Transport Proxy
 
-The transport proxy is the heart of our adapter. It forwards messages between the HTTP transport (server-side) and STDIO transport (client-side):
+The transport proxy is the heart of our adapter. It forwards messages between the Streamable HTTP transport (server-side) and STDIO transport (client-side):
 
 ```typescript
 const isCancelledNotification = (value: unknown): value is CancelledNotification =>
@@ -161,7 +161,7 @@ const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
 ### Handling HTTP POST Requests
 
-The main endpoint handles initialization and subsequent requests:
+The main endpoint handles initialization and subsequent requests. Based on the Streamable HTTP specification, the server can respond with either a single JSON response or an SSE stream:
 
 ```typescript
 const mcpPostHandler = async (req: Request, res: Response) => {
@@ -309,7 +309,7 @@ Finally, let's start the server and handle graceful shutdown:
 
 ```typescript
 app.listen(PORT, () => {
-  console.log(`MCP Streamable HTTP Server listening on port ${PORT}`);
+  console.log(`MCP STDIO to Streamable HTTP Adapter listening on port ${PORT}`);
 });
 
 // Handle graceful shutdown
@@ -388,28 +388,39 @@ curl -X POST http://localhost:3000/mcp \
 
 ## Key Features Explained
 
-### 1. **Transport Bridging**
+### 1. **Streamable HTTP Transport**
+
+The Streamable HTTP transport provides flexible communication patterns:
+
+- **Client-to-Server**: All messages are sent as HTTP POST requests with JSON bodies
+- **Server-to-Client**: Responses can be either:
+  - Single JSON responses (`Content-Type: application/json`) for simple request/response patterns
+  - SSE streams (`Content-Type: text/event-stream`) for multiple messages or server-initiated communication
+- **Session Support**: Maintains stateful connections across multiple HTTP requests
+- **Resumability**: Supports reconnection and message replay using SSE event IDs
+
+### 2. **Transport Bridging**
 
 The `proxyTransports` function creates a bidirectional bridge between two different transport types. It:
 - Forwards all messages between transports
 - Propagates close events to ensure clean shutdown
 - Handles special cases like cancelled notifications
 
-### 2. **Session Management**
+### 3. **Session Management**
 
 Each client connection gets a unique session ID that:
 - Identifies which STDIO subprocess to route messages to
 - Enables connection resumption if the client disconnects
 - Allows multiple clients to use different MCP servers simultaneously
 
-### 3. **Error Handling**
+### 4. **Error Handling**
 
 The adapter includes comprehensive error handling:
 - Validates requests before processing
 - Returns appropriate HTTP status codes
 - Cleans up resources on errors
 
-### 4. **Resumability**
+### 5. **Resumability**
 
 Using `InMemoryEventStore`, the adapter supports:
 - Client reconnection after network issues
@@ -429,7 +440,7 @@ Using `InMemoryEventStore`, the adapter supports:
    - Build distributed MCP systems
 
 3. **Protocol Translation**
-   - Bridge between different MCP transport types
+   - Bridge between STDIO and Streamable HTTP transports
    - Add HTTP authentication to STDIO servers
    - Implement custom routing logic
 
@@ -477,7 +488,7 @@ Using `InMemoryEventStore`, the adapter supports:
 
 ## Next Steps
 
-Now that you have a working STDIO to HTTP adapter, you can:
+Now that you have a working STDIO to Streamable HTTP adapter, you can:
 
 - Add authentication and authorization
 - Implement connection pooling for better performance
