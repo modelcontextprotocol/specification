@@ -221,6 +221,10 @@ export interface ClientCapabilities {
    * Present if the client supports elicitation from the server.
    */
   elicitation?: object;
+  /**
+   * Present if the client supports resumable streams.
+   */
+  streams?: object;
 }
 
 /**
