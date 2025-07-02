@@ -245,6 +245,12 @@
                     "description": "Present if the client supports sampling from an LLM.",
                     "properties": {},
                     "type": "object"
+                },
+                "streams": {
+                    "additionalProperties": true,
+                    "description": "Present if the client supports resumable streams.",
+                    "properties": {},
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -262,6 +268,9 @@
                 },
                 {
                     "$ref": "#/definitions/RootsListChangedNotification"
+                },
+                {
+                    "$ref": "#/definitions/StreamResumeRequest"
                 }
             ]
         },
@@ -305,6 +314,9 @@
                 },
                 {
                     "$ref": "#/definitions/CompleteRequest"
+                },
+                {
+                    "$ref": "#/definitions/StreamPollRequest"
                 }
             ]
         },
@@ -1012,6 +1024,10 @@
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                                },
+                                "streamId": {
+                                    "description": "If specified, the caller is making this request on a stream previously\ninitiated via or `stream/start` or `stream/resume`.",
+                                    "type": "string"
                                 }
                             },
                             "type": "object"
@@ -1203,6 +1219,10 @@
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                                },
+                                "streamId": {
+                                    "description": "If specified, the caller is making this request on a stream previously\ninitiated via or `stream/start` or `stream/resume`.",
+                                    "type": "string"
                                 }
                             },
                             "type": "object"
@@ -1471,6 +1491,10 @@
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                                },
+                                "streamId": {
+                                    "description": "If specified, the caller is making this request on a stream previously\ninitiated via or `stream/start` or `stream/resume`.",
+                                    "type": "string"
                                 }
                             },
                             "type": "object"
@@ -1736,6 +1760,10 @@
                                 "progressToken": {
                                     "$ref": "#/definitions/ProgressToken",
                                     "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                                },
+                                "streamId": {
+                                    "description": "If specified, the caller is making this request on a stream previously\ninitiated via or `stream/start` or `stream/resume`.",
+                                    "type": "string"
                                 }
                             },
                             "type": "object"
@@ -2157,6 +2185,12 @@
                 },
                 {
                     "$ref": "#/definitions/LoggingMessageNotification"
+                },
+                {
+                    "$ref": "#/definitions/StreamCreateNotification"
+                },
+                {
+                    "$ref": "#/definitions/StreamEndNotification"
                 }
             ]
         },
@@ -2233,6 +2267,261 @@
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "Stream": {
+            "properties": {
+                "resumeInterval": {
+                    "properties": {
+                        "max": {
+                            "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection. A value of 0 indicates that the stream\nis not resumable, and that the work will be cancelled upon disconnect.",
+                            "type": "integer"
+                        },
+                        "min": {
+                            "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection or between `stream/poll` requests.",
+                            "type": "integer"
+                        }
+                    },
+                    "type": "object"
+                },
+                "streamId": {
+                    "description": "A unique identifier for the stream. If the stream is resumable, this ID\nshould be globally unique across instances of the server.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "streamId"
+            ],
+            "type": "object"
+        },
+        "StreamCreateNotification": {
+            "description": "A notification to the client that a stream was created. Messages may be sent\non the stream immediately after the creation notification.",
+            "properties": {
+                "method": {
+                    "const": "notifications/stream/create",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "stream": {
+                            "$ref": "#/definitions/Stream",
+                            "description": "The stream that was created."
+                        }
+                    },
+                    "required": [
+                        "stream"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "StreamEndNotification": {
+            "properties": {
+                "method": {
+                    "const": "notifications/stream/end",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "streamId": {
+                            "description": "The ID of the stream that ended.\n\nThe MUST correspond to the ID of a stream previously created.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "streamId"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "StreamPollAllRequest": {
+            "description": "A request from the client to the server to check the status of all current\nstreams.\n\nThe server SHOULD reset each stream's abandonment timer when responding to\nthis request.",
+            "properties": {
+                "method": {
+                    "const": "stream/poll/all",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "StreamPollAllResult": {
+            "description": "A response to a `stream/poll/all` request.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                },
+                "statuses": {
+                    "items": {
+                        "$ref": "#/definitions/StreamStatus"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "statuses"
+            ],
+            "type": "object"
+        },
+        "StreamPollRequest": {
+            "description": "A request from the client to the server to check the status of a stream.\n\nThe server SHOULD reset the stream's abandonment timer when responding to\nthis request.",
+            "properties": {
+                "method": {
+                    "const": "stream/poll",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "streamId": {
+                            "description": "The ID of the stream to poll.\n\nThis MUST correspond to the ID of a stream previously created. If the\nstream does not exist, the server MUST respond with an error.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "streamId"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "StreamPollResult": {
+            "description": "A response to a `stream/poll` request.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "hasError": {
+                    "description": "Whether the stream's pending messages include an error result.",
+                    "type": "boolean"
+                },
+                "hasRequest": {
+                    "description": "Whether the stream's pending messages include a server-sent request.",
+                    "type": "boolean"
+                },
+                "pendingMessages": {
+                    "description": "Whether the stream has pending messages.",
+                    "type": "boolean"
+                },
+                "status": {
+                    "description": "The current status of the stream.",
+                    "enum": [
+                        "abandoned",
+                        "completed",
+                        "live"
+                    ],
+                    "type": "string"
+                },
+                "streamId": {
+                    "description": "The ID of the stream.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "hasError",
+                "hasRequest",
+                "pendingMessages",
+                "status",
+                "streamId"
+            ],
+            "type": "object"
+        },
+        "StreamResumeRequest": {
+            "description": "A request from the client to the server to begin receiving messages\nfrom a stream. The server SHOULD send all unsent messages to the client\nwhen this method is called. If the stream is closed, the server MUST send\na `notifications/stream/end` notification after sending its messages.",
+            "properties": {
+                "method": {
+                    "const": "stream/resume",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "streamId": {
+                            "description": "The ID of the stream to resume.\n\nThis MUST correspond to the ID of a stream previously created. If the\nstream does not exist, the server MUST respond with an error.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "streamId"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "StreamStatus": {
+            "description": "The status of a stream.",
+            "properties": {
+                "hasError": {
+                    "description": "Whether the stream's pending messages include an error result.",
+                    "type": "boolean"
+                },
+                "hasRequest": {
+                    "description": "Whether the stream's pending messages include a server-sent request.",
+                    "type": "boolean"
+                },
+                "pendingMessages": {
+                    "description": "Whether the stream has pending messages.",
+                    "type": "boolean"
+                },
+                "status": {
+                    "description": "The current status of the stream.",
+                    "enum": [
+                        "abandoned",
+                        "completed",
+                        "live"
+                    ],
+                    "type": "string"
+                },
+                "streamId": {
+                    "description": "The ID of the stream.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "hasError",
+                "hasRequest",
+                "pendingMessages",
+                "status",
+                "streamId"
             ],
             "type": "object"
         },
