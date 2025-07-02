@@ -692,12 +692,14 @@ Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent f
 
 #### Server-Side Request Forgery (SSRF)
 
-Since clients facilitate the opening of URLs provided by servers, they **MUST** implement SSRF protections, including:
+Since clients facilitate the opening of URLs provided by servers, they **MUST** implement SSRF protections.
 
-- Requiring the `https://` scheme for all url mode URLs (no HTTP, `file://`, etc.)
-- Blocking requests to internal IP ranges (e.g., `127.0.0.1`, `10.0.0.0/8`, etc.)
-- Clearly rendering or distinguishing Unicode characters (e.g. punycode URLs) to avoid "look-alike" misdirections
-- Clearly communicating the destination server and target URL to the user when asking for consent
+The following are recommendations for implementing SSRF protections. Servers that choose to relax these contraints should be aware of the risks.
+
+- Require the `https://` scheme for all url mode URLs (no HTTP, `file://`, etc.)
+- Block requests to internal IP ranges (e.g., `127.0.0.1`, `10.0.0.0/8`, etc.)
+- Clearly render or distinguish Unicode characters (e.g. punycode URLs) to avoid "look-alike" misdirections
+- Clearly communicate the destination server and target URL to the user when asking for consent before opening the URL
 
 Further recommendations can be found in the OWASP [SSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html).
 
