@@ -262,12 +262,13 @@ Note that complex nested structures, arrays of objects, and other advanced JSON 
 URL elicitation enables servers to direct users to external URLs for out-of-band interactions that must not pass through the MCP client. This is essential for auth flows, payment processing, and other sensitive or secure operations.
 
 <Note>
-  **Important**: URL elicitation is *not* for re-authorizing the MCP client's
-  access to the MCP server (that is covered by [MCP
-  authorization](../basic/authorization)). It's specifically for scenarios where
-  the MCP server needs to obtain sensitive information, or authorization for
-  third-party services on behalf of the user. The MCP client's authorization
-  (bearer) token remains unchanged throughout this process.
+  **Important**: URL elicitation is *not* for authorizing the MCP client's
+  access to the MCP server (that's handled by [MCP
+  authorization](../basic/authorization)). Instead, it's used when the MCP
+  server needs to obtain sensitive information or third-party authorization on
+  behalf of the user. The MCP client's bearer token remains unchanged. The
+  client's only responsibility is to provide the user with context about the
+  elicitation URL the server wants them to open.
 </Note>
 
 URL elicitation requests **MUST** specify `mode: "url"` and include these parameters:
