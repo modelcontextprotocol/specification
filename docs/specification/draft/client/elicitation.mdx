@@ -538,8 +538,8 @@ Most practical uses of elicitation require that the server maintain state about 
 Servers implementing elicitation **MUST** securely associate this state with individual users following the guidelines in the [security best practices](../basic/security_best_practices) document. Specifically:
 
 - State **MUST NOT** be associated with session IDs alone
-- User identification **MUST** be derived from authenticated tokens
 - State storage **MUST** be protected against unauthorized access
+- When using remote communication, user identification **MUST** be derived from authenticated tokens acquired via [MCP authorization](../basic/authorization)
 
 <Note>
   The examples in this section are non-normative and illustrate potential uses
