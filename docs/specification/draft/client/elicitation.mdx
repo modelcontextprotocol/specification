@@ -20,7 +20,7 @@ necessary information dynamically.
 Elicitation supports two modes:
 
 - **Form mode** (in-band): Servers can request structured data from users with optional JSON schemas to validate responses
-- **Out-of-band mode**: Servers can direct users to external URLs for sensitive interactions that must _not_ pass through the MCP client
+- **URL mode** (out-of-band): Servers can direct users to external URLs for sensitive interactions that must _not_ pass through the MCP client
 
 ## User Interaction Model
 
@@ -36,13 +36,13 @@ model.
 For trust & safety and security:
 
 - Servers **MUST NOT** use form mode elicitation to request sensitive information
-- Servers **MUST** use out-of-band mode for interactions involving sensitive information, such as credentials
-- URLs **MUST NOT** appear in any field of an elicitation request, other than the `url` field in an out-of-band mode request
+- Servers **MUST** use url mode for interactions involving sensitive information, such as credentials
+- URLs **MUST NOT** appear in any field of an elicitation request, other than the `url` field in an url mode request
 
 Applications **SHOULD**:
 
 - Provide UI that makes it clear which server is requesting information
-- For out-of-band mode, clearly display the target domain/host before navigation
+- For url mode, clearly display the target domain/host before navigation
 - Allow users to review and modify their responses before sending
 - Respect user privacy and provide clear reject and cancel options
 
@@ -58,13 +58,13 @@ Clients that support elicitation **MUST** declare the `elicitation` capability d
   "capabilities": {
     "elicitation": {
       "form": {},
-      "oob": {}
+      "url": {}
     }
   }
 }
 ```
 
-Clients declaring the `elicitation` capability **MUST** support at least one mode (`form` or `oob`).
+Clients declaring the `elicitation` capability **MUST** support at least one mode (`form` or `url`).
 
 Servers **MUST NOT** send elicitation requests with modes that are not supported by the client.
 
@@ -78,13 +78,13 @@ All elicitation requests **MUST** include the following parameters:
 
 | Name      | Type   | Options       | Description                                                        |
 | --------- | ------ | ------------- | ------------------------------------------------------------------ |
-| `mode`    | string | `form`, `oob` | The mode of the elicitation.                                       |
+| `mode`    | string | `form`, `url` | The mode of the elicitation.                                       |
 | `message` | string |               | A human-readable message explaining why the interaction is needed. |
 
 The `mode` parameter specifies the type of elicitation:
 
 - `"form"`: In-band structured data collection with optional schema validation. Data is exposed to the client.
-- `"oob"`: Out-of-band interaction via URL navigation. Data is **not** exposed to the client.
+- `"url"`: Out-of-band interaction via URL navigation. Data is **not** exposed to the client.
 
 ### Form Elicitation Requests
 
@@ -257,20 +257,20 @@ Note that complex nested structures, arrays of objects, and other advanced JSON 
 }
 ```
 
-### Out-of-Band Elicitation Requests
+### URL Elicitation Requests
 
-Out-of-band elicitation enables servers to direct users to external URLs for interactions that must not pass through the MCP client. This is essential for auth flows, payment processing, and other sensitive or secure operations.
+URL elicitation enables servers to direct users to external URLs for out-of-band interactions that must not pass through the MCP client. This is essential for auth flows, payment processing, and other sensitive or secure operations.
 
 <Note>
-  **Important**: Out-of-band elicitation is *not* for re-authorizing the MCP
-  client's access to the MCP server (that is covered by [MCP
+  **Important**: URL elicitation is *not* for re-authorizing the MCP client's
+  access to the MCP server (that is covered by [MCP
   authorization](../basic/authorization)). It's specifically for scenarios where
   the MCP server needs to obtain sensitive information, or authorization for
   third-party services on behalf of the user. The MCP client's authorization
   (bearer) token remains unchanged throughout this process.
 </Note>
 
-Out-of-band elicitation requests **MUST** specify `mode: "oob"` and include these parameters:
+URL elicitation requests **MUST** specify `mode: "url"` and include these parameters:
 
 | Name            | Type   | Description                               |
 | --------------- | ------ | ----------------------------------------- |
@@ -281,7 +281,7 @@ The `url` parameter **MUST** contain a valid URL. The `message` parameter **MUST
 
 #### Example: Request Sensitive Data
 
-This example shows an out-of-band elicitation request directing the user to a secure URL where they can provide sensitive information (an API key, for example).
+This example shows a url elicitation request directing the user to a secure URL where they can provide sensitive information (an API key, for example).
 The same request could direct the user into an OAuth authorization flow, or a payment flow. The only difference is the URL and the message.
 
 **Request:**
@@ -292,7 +292,7 @@ The same request could direct the user into an OAuth authorization flow, or a pa
   "id": 3,
   "method": "elicitation/create",
   "params": {
-    "mode": "oob",
+    "mode": "url",
     "elicitationId": "550e8400-e29b-41d4-a716-446655440000",
     "url": "https://mcp.example.com/ui/set_api_key",
     "message": "Please provide your API key to continue."
@@ -318,7 +318,7 @@ of band and the client is not aware of the outcome, unless the client requests p
 
 ### Progress Tracking
 
-The client **MAY** request progress updates from the server by sending an `elicitation/track` request with a [progress token](/specification/draft/basic/utilities/progress#progress-token). This is particularly useful in out-of-band mode, because the client is not involved in the interaction.
+The client **MAY** request progress updates from the server by sending an `elicitation/track` request with a [progress token](/specification/draft/basic/utilities/progress#progress-token). This is particularly useful in url mode, because the client is not involved in the interaction.
 
 The client **MUST** include an `elicitationId` in the request to identify which elicitation to send progress updates for. The client **SHOULD** include a `progressToken` in the request's `_meta` field.
 
@@ -378,7 +378,7 @@ When another request cannot be processed until an elicitation is completed, the 
 
 The error **MUST** include a list of elicitations that are required to complete before the original can be retried.
 
-Any elicitations returned in the error **MUST** be out-of-band mode elicitations and have an `elicitationId` property.
+Any elicitations returned in the error **MUST** be url mode elicitations and have an `elicitationId` property.
 Servers that want elicit data from the user via form mode **SHOULD** make a separate elicitation request for each form mode elicitation.
 
 **Error Response:**
@@ -393,7 +393,7 @@ Servers that want elicit data from the user via form mode **SHOULD** make a sepa
     "data": {
       "elicitations": [
         {
-          "mode": "oob",
+          "mode": "url",
           "elicitionId": "550e8400-e29b-41d4-a716-446655440000",
           "url": "https://oauth.example.com/authorize?client_id=abc123&response_type=code&...",
           "message": "Authorization is required to access your Example Co files."
@@ -426,7 +426,7 @@ sequenceDiagram
     Note over Server: Continue processing with new information
 ```
 
-### Out-of-Band Mode Flow
+### URL Mode Flow
 
 ```mermaid
 sequenceDiagram
@@ -436,7 +436,7 @@ sequenceDiagram
     participant Server
 
     Note over Server: Server initiates elicitation
-    Server->>Client: elicitation/create (mode: oob)
+    Server->>Client: elicitation/create (mode: url)
 
     Client->>User: Present consent to open URL
     User-->>Client: Provide consent
@@ -453,7 +453,7 @@ sequenceDiagram
     Note over Server: Continue processing with new information
 ```
 
-### Out-of-Band Mode With Elicitation Required Error Flow
+### URL Mode With Elicitation Required Error Flow
 
 ```mermaid
 sequenceDiagram
@@ -486,7 +486,7 @@ sequenceDiagram
 
 ## Response Actions
 
-Elicitation responses use a three-action model to clearly distinguish between different user actions. These actions apply to both form and out-of-band elicitation modes.
+Elicitation responses use a three-action model to clearly distinguish between different user actions. These actions apply to both form and url elicitation modes.
 
 ```json
 {
@@ -507,7 +507,7 @@ The three response actions are:
 1. **Accept** (`action: "accept"`): User explicitly approved and submitted with data
 
    - For form mode: The `content` field contains the submitted data matching the requested schema
-   - For out-of-band mode: The `content` field is omitted
+   - For url mode: The `content` field is omitted
    - Example: User clicked "Submit", "OK", "Confirm", etc.
 
 2. **Reject** (`action: "reject"`): User explicitly rejected the request
@@ -532,7 +532,7 @@ Servers should handle each state appropriately:
 Most practical uses of elicitation require that the server maintain state about users:
 
 - Whether required information has been collected (e.g., the user's display name via form elicitation)
-- Status of resource access (e.g., API keys or a payment flow via out-of-band elicitation)
+- Status of resource access (e.g., API keys or a payment flow via url elicitation)
 
 Servers implementing elicitation **MUST** securely associate this state with individual users following the guidelines in the [security best practices](../basic/security_best_practices) document. Specifically:
 
@@ -546,9 +546,9 @@ Servers implementing elicitation **MUST** securely associate this state with ind
   requirements while maintaining security best practices.
 </Note>
 
-### Out-of-Band Elicitation for Sensitive Data
+### URL Elicitation for Sensitive Data
 
-For servers that interact with APIs requiring sensitive credentials (e.g. LLM APIs), out-of-band elicitation provides a secure mechanism for collecting API keys without exposing them to the MCP client or host application.
+For servers that interact with APIs requiring sensitive credentials (e.g. LLM APIs), url elicitation provides a secure mechanism for collecting API keys without exposing them to the MCP client or host application.
 
 In this pattern:
 
@@ -560,23 +560,23 @@ In this pattern:
 
 This approach ensures that sensitive credentials never pass through the MCP client or any intermediate MCP servers, reducing the risk of exposure through client-side logging or other attack vectors.
 
-### Out-of-Band Elicitation for OAuth Flows
+### URL Elicitation for OAuth Flows
 
-Out-of-band elicitation enables a pattern where MCP servers act as OAuth clients to third-party resource servers.
-The "downstream authorization" enabled by out-of-band elicitation is fundamentally separate from [MCP authorization](../basic/authorization).
+URL elicitation enables a pattern where MCP servers act as OAuth clients to third-party resource servers.
+The "downstream authorization" enabled by url elicitation is fundamentally separate from [MCP authorization](../basic/authorization).
 
 <Note>
-  This distinction is critical to understand. Out-of-band elicitation is *not*
-  about authorizing (or re-authorizing) the MCP client to access the MCP server.
-  It *can* be used to enable the MCP server to access third-party resources or
-  APIs on behalf of the user, without exposing sensitive credentials or tokens
-  to the MCP client.
+  This distinction is critical to understand. URL elicitation is *not* about
+  authorizing (or re-authorizing) the MCP client to access the MCP server. It
+  *can* be used to enable the MCP server to access third-party resources or APIs
+  on behalf of the user, without exposing sensitive credentials or tokens to the
+  MCP client.
 </Note>
 
 #### Understanding the Distinction
 
 - **MCP Authorization**: Required OAuth flow between the MCP client and MCP server (covered in the [authorization specification](../basic/authorization))
-- **Downstream Authorization**: Optional authorization between the MCP server and a third-party resource server, initiated via out-of-band elicitation
+- **Downstream Authorization**: Optional authorization between the MCP server and a third-party resource server, initiated via url elicitation
 
 In downstream authorization, the server acts as both:
 
@@ -606,10 +606,10 @@ The tokens from these flows are never mixed or passed through. The MCP client's 
 
 #### Implementation Pattern
 
-When implementing downstream authorization via out-of-band elicitation:
+When implementing downstream authorization via url elicitation:
 
 1. The MCP server generates an authorization URL, acting as an OAuth client to the third-party service
-2. The server creates an out-of-band elicitation request with this URL
+2. The server creates a url elicitation request with this URL
 3. The user completes the OAuth flow directly with the third-party authorization server
 4. The third-party authorization server redirects back to the MCP server
 5. The MCP server securely stores the third-party tokens, bound to the user's identity
@@ -627,7 +627,7 @@ sequenceDiagram
     Client->>Server: tools/call
     Note over Server: Needs 3rd-party authorization for user
     Note over Server: Store state (which user this auth flow is for)
-    Server->>Client: ElicitationRequired error<br> (mode: "oob", url: "example.com/authorize?...")
+    Server->>Client: ElicitationRequired error<br> (mode: "url", url: "example.com/authorize?...")
     Note over Client: Client notes the tools/call request can be retried later
     Client->>User: Present consent to open URL
     User->>Client: Provide consent
@@ -662,10 +662,10 @@ This pattern maintains clear security boundaries while enabling rich integration
 
 ### Safe URL Handling
 
-Clients implementing out-of-band elicitation **MUST** handle URLs carefully to prevent users from unknowingly clicking malicious links.
+Clients implementing url elicitation **MUST** handle URLs carefully to prevent users from unknowingly clicking malicious links.
 
 1. Servers **MUST NOT** include URLs in any message or schema fields as part of a form elicitation request.
-2. Servers **MUST NOT** include URLs in any message or schema fields as part of an out-of-band elicitation request, except for the `url` field.
+2. Servers **MUST NOT** include URLs in any message or schema fields as part of an url elicitation request, except for the `url` field.
 
 These requirements ensure that client implementations have clear rules about when to present a URL to the user, so that other rules about user consent and SSRF protection (below) can be consistently applied.
 
@@ -685,7 +685,7 @@ Non-normative examples:
 2. Clients **SHOULD** validate all responses against the provided schema
 3. Servers **SHOULD** validate received data matches the requested schema
 
-### Out-of-Band Mode Security
+### URL Mode Security
 
 Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent from the user
 
@@ -693,7 +693,7 @@ Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent f
 
 Since clients facilitate the opening of URLs provided by servers, they **MUST** implement SSRF protections, including:
 
-- Requiring the `https://` scheme for all out-of-band URLs (no HTTP, `file://`, etc.)
+- Requiring the `https://` scheme for all url mode URLs (no HTTP, `file://`, etc.)
 - Blocking requests to internal IP ranges (e.g., `127.0.0.1`, `10.0.0.0/8`, etc.)
 - Clearly rendering or distinguishing Unicode characters (e.g. punycode URLs) to avoid "look-alike" misdirections
 - Clearly communicating the destination server and target URL to the user when asking for consent
@@ -702,11 +702,11 @@ Further recommendations can be found in the OWASP [SSRF Prevention Cheat Sheet](
 
 #### Phishing
 
-Out-of-band elicitation returns a URL that an attacker can use to send to a victim. The MCP Server **MUST** verify the identity of the user who opens the URL before accepting information.
+URL elicitation returns a URL that an attacker can use to send to a victim. The MCP Server **MUST** verify the identity of the user who opens the URL before accepting information.
 
 Typically identity verification is done by leveraging the [MCP authorization server](/specification/draft/basic/authorization) to identify the user, through a session cookie or equivalent in the browser.
 
-For example, out-of-band elicitation may be used to perform OAuth flows where the server acts as an OAuth client of another resource server. Without proper mitigation, the following phishing attack is possible:
+For example, url elicitation may be used to perform OAuth flows where the server acts as an OAuth client of another resource server. Without proper mitigation, the following phishing attack is possible:
 
 1. A malicious user (Alice) connected to a benign server triggers an elicitation request
 2. The benign server generates an authorization URL, acting as an OAuth client of a third-party authorization server

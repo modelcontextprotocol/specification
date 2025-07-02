@@ -226,7 +226,7 @@
                                             "properties": {},
                                             "type": "object"
                                         },
-                                        "oob": {
+                                        "url": {
                                             "additionalProperties": true,
                                             "properties": {},
                                             "type": "object"
@@ -258,7 +258,7 @@
                                             "properties": {},
                                             "type": "object"
                                         },
-                                        "oob": {
+                                        "url": {
                                             "additionalProperties": true,
                                             "properties": {},
                                             "type": "object"
@@ -268,14 +268,14 @@
                                 },
                                 {
                                     "properties": {
-                                        "oob": {
+                                        "url": {
                                             "additionalProperties": true,
                                             "properties": {},
                                             "type": "object"
                                         }
                                     },
                                     "required": [
-                                        "oob"
+                                        "url"
                                     ],
                                     "type": "object"
                                 }
@@ -626,7 +626,7 @@
                 "params": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/OutOfBandElicitRequestParams"
+                            "$ref": "#/definitions/URLElicitRequestParams"
                         },
                         {
                             "$ref": "#/definitions/FormElicitRequestParams"
@@ -655,14 +655,14 @@
                     "type": "object"
                 },
                 "message": {
-                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor url mode: Explains why the interaction is needed.",
                     "type": "string"
                 },
                 "mode": {
-                    "description": "The mode of elicitation.\n- \"form\": In-band structured data collection with optional schema validation\n- \"oob\": Out-of-band interaction via URL navigation",
+                    "description": "The mode of elicitation.\n- \"form\": In-band structured data collection with optional schema validation\n- \"url\": Out-of-band interaction via URL navigation",
                     "enum": [
                         "form",
-                        "oob"
+                        "url"
                     ],
                     "type": "string"
                 }
@@ -721,7 +721,7 @@
                             "properties": {
                                 "elicitations": {
                                     "items": {
-                                        "$ref": "#/definitions/OutOfBandElicitRequestParams"
+                                        "$ref": "#/definitions/URLElicitRequestParams"
                                     },
                                     "type": "array"
                                 }
@@ -838,7 +838,7 @@
                     "type": "object"
                 },
                 "message": {
-                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor url mode: Explains why the interaction is needed.",
                     "type": "string"
                 },
                 "mode": {
@@ -1561,46 +1561,6 @@
             },
             "required": [
                 "type"
-            ],
-            "type": "object"
-        },
-        "OutOfBandElicitRequestParams": {
-            "properties": {
-                "_meta": {
-                    "additionalProperties": {},
-                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                    "properties": {
-                        "progressToken": {
-                            "$ref": "#/definitions/ProgressToken",
-                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
-                        }
-                    },
-                    "type": "object"
-                },
-                "elicitationId": {
-                    "description": "The ID of the elicitation, which must be unique within the context of the server.\nThe client MUST treat this ID as an opaque value.",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor out-of-band mode: Explains why the interaction is needed.",
-                    "type": "string"
-                },
-                "mode": {
-                    "const": "oob",
-                    "description": "The elicitation mode.",
-                    "type": "string"
-                },
-                "url": {
-                    "description": "The URL that the user should navigate to.",
-                    "format": "uri",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "elicitationId",
-                "message",
-                "mode",
-                "url"
             ],
             "type": "object"
         },
@@ -2655,6 +2615,46 @@
             },
             "required": [
                 "method"
+            ],
+            "type": "object"
+        },
+        "URLElicitRequestParams": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                        }
+                    },
+                    "type": "object"
+                },
+                "elicitationId": {
+                    "description": "The ID of the elicitation, which must be unique within the context of the server.\nThe client MUST treat this ID as an opaque value.",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor url mode: Explains why the interaction is needed.",
+                    "type": "string"
+                },
+                "mode": {
+                    "const": "url",
+                    "description": "The elicitation mode.",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "The URL that the user should navigate to.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "elicitationId",
+                "message",
+                "mode",
+                "url"
             ],
             "type": "object"
         },

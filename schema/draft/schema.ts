@@ -131,7 +131,7 @@ export interface ElicitationRequiredError extends JSONRPCError {
     code: typeof ELICITATION_REQUIRED;
     message: string;
     data: {
-      elicitations: OutOfBandElicitRequestParams[];
+      elicitations: URLElicitRequestParams[];
       [key: string]: unknown;
     };
   };
@@ -236,7 +236,7 @@ export interface ClientCapabilities {
   /**
    * Present if the client supports elicitation from the server.
    */
-  elicitation?: { form?: object; oob?: object } & ({ form: object } | { oob: object });
+  elicitation?: { form?: object; url?: object } & ({ form: object } | { url: object });
 }
 
 /**
@@ -1338,11 +1338,11 @@ export interface FormElicitRequestParams extends ElicitRequestParams {
   };
 }
 
-export interface OutOfBandElicitRequestParams extends ElicitRequestParams {
+export interface URLElicitRequestParams extends ElicitRequestParams {
   /**
    * The elicitation mode.
    */
-  mode: "oob";
+  mode: "url";
 
   /**
    * The ID of the elicitation, which must be unique within the context of the server.
@@ -1365,14 +1365,14 @@ export interface ElicitRequestParams extends RequestParams {
   /**
    * The mode of elicitation.
    * - "form": In-band structured data collection with optional schema validation
-   * - "oob": Out-of-band interaction via URL navigation
+   * - "url": Out-of-band interaction via URL navigation
    */
-  mode: "form" | "oob";
+  mode: "form" | "url";
 
   /**
    * The message to present to the user.
    * For form mode: Describes what information is being requested.
-   * For out-of-band mode: Explains why the interaction is needed.
+   * For url mode: Explains why the interaction is needed.
    */
   message: string;
 }
@@ -1382,7 +1382,7 @@ export interface ElicitRequestParams extends RequestParams {
  */
 export interface ElicitRequest extends Request {
   method: "elicitation/create";
-  params: FormElicitRequestParams | OutOfBandElicitRequestParams;
+  params: FormElicitRequestParams | URLElicitRequestParams;
 }
 
 /**
