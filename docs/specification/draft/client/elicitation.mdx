@@ -51,7 +51,7 @@ Applications **SHOULD**:
 ## Capabilities
 
 Clients that support elicitation **MUST** declare the `elicitation` capability during
-[initialization](/specification/draft/basic/lifecycle#initialization):
+[initialization](../basic/lifecycle#initialization):
 
 ```json
 {
@@ -319,7 +319,7 @@ of band and the client is not aware of the outcome, unless the client requests p
 
 ### Progress Tracking
 
-The client **MAY** request progress updates from the server by sending an `elicitation/track` request with a [progress token](/specification/draft/basic/utilities/progress#progress-token). This is particularly useful in url mode, because the client is not involved in the interaction.
+The client **MAY** request progress updates from the server by sending an `elicitation/track` request with a [progress token](../basic/utilities/progress#progress-token). This is particularly useful in url mode, because the client is not involved in the interaction.
 
 The client **MUST** include an `elicitationId` in the request to identify which elicitation to send progress updates for. The client **SHOULD** include a `progressToken` in the request's `_meta` field.
 
@@ -673,12 +673,12 @@ These requirements ensure that client implementations have clear rules about whe
 ### Identifying the User
 
 Servers **MUST NOT** rely on client-provided user identification, as this can be forged.
-Instead, servers **SHOULD** follow [security best practices](/specification/draft/basic/security_best_practices).
+Instead, servers **SHOULD** follow [security best practices](../basic/security_best_practices).
 
 Non-normative examples:
 
 - Incorrect: Treat user input like "I am joe@example.com" as authoritative
-- Correct: Rely on the [MCP authorization server](/specification/draft/basic/authorization) to identify the user
+- Correct: Rely on the [MCP authorization server](../basic/authorization) to identify the user
 
 ### Form Mode Security
 
@@ -707,7 +707,7 @@ Further recommendations can be found in the OWASP [SSRF Prevention Cheat Sheet](
 
 URL elicitation returns a URL that an attacker can use to send to a victim. The MCP Server **MUST** verify the identity of the user who opens the URL before accepting information.
 
-Typically identity verification is done by leveraging the [MCP authorization server](/specification/draft/basic/authorization) to identify the user, through a session cookie or equivalent in the browser.
+Typically identity verification is done by leveraging the [MCP authorization server](../basic/authorization) to identify the user, through a session cookie or equivalent in the browser.
 
 For example, url elicitation may be used to perform OAuth flows where the server acts as an OAuth client of another resource server. Without proper mitigation, the following phishing attack is possible:
 
