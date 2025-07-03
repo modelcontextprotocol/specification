@@ -1,0 +1,153 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Model Context Protocol",
+  "colors": {
+    "primary": "#09090b",
+    "light": "#FAFAFA",
+    "dark": "#09090b"
+  },
+  "favicon": "/favicon.svg",
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/modelcontextprotocol"
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "seo": {
+    "metatags": {
+      "og:image": "https://raw.githubusercontent.com/modelcontextprotocol/docs/2eb6171ddbfeefde349dc3b8d5e2b87414c26250/images/og-image.png"
+    },
+    "indexing": "navigable"
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/modelcontextprotocol"
+    }
+  },
+  "contextual": {
+    "options": ["copy", "view"]
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Overview",
+        "pages": ["overview/index"]
+      },
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "documentation/index",
+              "documentation/introduction/index"
+            ]
+          },
+          {
+            "group": "Tutorials",
+            "pages": [
+              "documentation/tutorials/index",
+              {
+                "group": "Server Builders",
+                "pages": [
+                  "documentation/tutorials/server-builders/toy-server",
+                  "documentation/tutorials/server-builders/everything-server",
+                  "documentation/tutorials/server-builders/remote-server",
+                  "documentation/tutorials/server-builders/server-with-auth",
+                  "documentation/tutorials/server-builders/using-inspector",
+                  "documentation/tutorials/server-builders/vibe-code-server"
+                ]
+              },
+              {
+                "group": "Users",
+                "pages": [
+                  "documentation/tutorials/users/claude-desktop-filesystem",
+                  "documentation/tutorials/users/claude-ai-example-server"
+                ]
+              },
+              {
+                "group": "Client Builders",
+                "pages": [
+                  "documentation/tutorials/client-builders/simple-client-typescript",
+                  "documentation/tutorials/client-builders/simple-client-python",
+                  "documentation/tutorials/client-builders/agent-with-mcp",
+                  "documentation/tutorials/client-builders/sampling-example"
+                ]
+              },
+              {
+                "group": "General",
+                "pages": [
+                  "documentation/tutorials/general/using-example-client",
+                  "documentation/tutorials/general/using-example-server"
+                ]
+              },
+              "documentation/tutorials/external-tutorials"
+            ]
+          },
+          {
+            "group": "Learn",
+            "pages": [
+              "documentation/learn/index",
+              "documentation/learn/architecture-deep-dive",
+              "documentation/learn/core-client-concepts",
+              "documentation/learn/core-server-concepts",
+              {
+                "group": "Security & Auth",
+                "pages": [
+                  "documentation/learn/security-auth/confused-deputy"
+                ]
+              },
+              "documentation/learn/wrapping-api-calls"
+            ]
+          },
+          {
+            "group": "How-to Guides",
+            "pages": [
+              "documentation/how-to/index",
+              "documentation/how-to/add-auth-remote-server",
+              "documentation/how-to/build-elicitation-client",
+              "documentation/how-to/sampling-nested-calls",
+              "documentation/how-to/deploy-server",
+              "documentation/how-to/stdio-to-shttp",
+              "documentation/how-to/proxy-calls-augmentation",
+              "documentation/how-to/scale-mcp-server"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "documentation/reference/index",
+              "documentation/reference/spec-types",
+              {
+                "group": "SDKs",
+                "pages": [
+                  "documentation/reference/python-sdk/index",
+                  "documentation/reference/typescript-sdk/index"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Community",
+        "pages": [
+          "community/index",
+          "community/versioning",
+          "community/roadmap",
+          "community/contributing",
+          "community/faqs",
+          "community/github-code",
+          "community/discord"
+        ]
+      }
+    ]
+  }
+}
