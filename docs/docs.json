@@ -34,6 +34,12 @@
                 ]
               },
               {
+                "group": "Learn",
+                "pages": [
+                  "learn/concepts"
+                ]
+              },
+              {
                 "group": "Concepts",
                 "pages": [
                   "docs/concepts/architecture",
@@ -146,6 +152,12 @@
                   "quickstart/server",
                   "quickstart/client",
                   "quickstart/user"
+                ]
+              },
+              {
+                "group": "Learn",
+                "pages": [
+                  "learn/concepts"
                 ]
               },
               {
@@ -262,6 +274,12 @@
                 ]
               },
               {
+                "group": "Learn",
+                "pages": [
+                  "learn/concepts"
+                ]
+              },
+              {
                 "group": "Concepts",
                 "pages": [
                   "docs/concepts/architecture",
@@ -371,6 +389,12 @@
                   "quickstart/server",
                   "quickstart/client",
                   "quickstart/user"
+                ]
+              },
+              {
+                "group": "Learn",
+                "pages": [
+                  "learn/concepts"
                 ]
               },
               {
