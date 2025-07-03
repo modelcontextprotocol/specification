@@ -32,23 +32,13 @@
                   "quickstart/client",
                   "quickstart/user"
                 ]
-              },
+              }, 
               {
                 "group": "Learn",
                 "pages": [
-                  "learn/concepts"
-                ]
-              },
-              {
-                "group": "Concepts",
-                "pages": [
-                  "docs/concepts/architecture",
-                  "docs/concepts/resources",
-                  "docs/concepts/prompts",
-                  "docs/concepts/tools",
-                  "docs/concepts/sampling",
-                  "docs/concepts/roots",
-                  "docs/concepts/transports"
+                  "docs/learn/architecture",
+                  "docs/learn/server-concepts",
+                  "docs/learn/client-concepts"
                 ]
               },
               {
@@ -59,8 +49,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "docs/tools/debugging",
-                  "docs/tools/inspector"
+                  "legacy/tools/debugging",
+                  "legacy/tools/inspector"
                 ]
               },
               "faqs"
@@ -157,19 +147,9 @@
               {
                 "group": "Learn",
                 "pages": [
-                  "learn/concepts"
-                ]
-              },
-              {
-                "group": "Concepts",
-                "pages": [
-                  "docs/concepts/architecture",
-                  "docs/concepts/resources",
-                  "docs/concepts/prompts",
-                  "docs/concepts/tools",
-                  "docs/concepts/sampling",
-                  "docs/concepts/roots",
-                  "docs/concepts/transports"
+                  "docs/learn/architecture",
+                  "docs/learn/server-concepts",
+                  "docs/learn/client-concepts"
                 ]
               },
               {
@@ -180,8 +160,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "docs/tools/debugging",
-                  "docs/tools/inspector"
+                  "legacy/tools/debugging",
+                  "legacy/tools/inspector"
                 ]
               },
               "faqs"
@@ -272,23 +252,13 @@
                   "quickstart/client",
                   "quickstart/user"
                 ]
-              },
+              },              
               {
                 "group": "Learn",
                 "pages": [
-                  "learn/concepts"
-                ]
-              },
-              {
-                "group": "Concepts",
-                "pages": [
-                  "docs/concepts/architecture",
-                  "docs/concepts/resources",
-                  "docs/concepts/prompts",
-                  "docs/concepts/tools",
-                  "docs/concepts/sampling",
-                  "docs/concepts/roots",
-                  "docs/concepts/transports"
+                  "docs/learn/architecture",
+                  "docs/learn/server-concepts",
+                  "docs/learn/client-concepts"
                 ]
               },
               {
@@ -299,8 +269,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "docs/tools/debugging",
-                  "docs/tools/inspector"
+                  "legacy/tools/debugging",
+                  "legacy/tools/inspector"
                 ]
               },
               "faqs"
@@ -394,19 +364,9 @@
               {
                 "group": "Learn",
                 "pages": [
-                  "learn/concepts"
-                ]
-              },
-              {
-                "group": "Concepts",
-                "pages": [
-                  "docs/concepts/architecture",
-                  "docs/concepts/resources",
-                  "docs/concepts/prompts",
-                  "docs/concepts/tools",
-                  "docs/concepts/sampling",
-                  "docs/concepts/roots",
-                  "docs/concepts/transports"
+                  "docs/learn/architecture",
+                  "docs/learn/server-concepts",
+                  "docs/learn/client-concepts"
                 ]
               },
               {
@@ -417,8 +377,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "docs/tools/debugging",
-                  "docs/tools/inspector"
+                  "legacy/tools/debugging",
+                  "legacy/tools/inspector"
                 ]
               },
               "faqs"
