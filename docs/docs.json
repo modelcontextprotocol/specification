@@ -32,13 +32,17 @@
                   "quickstart/client",
                   "quickstart/user"
                 ]
-              }, 
+              },
               {
-                "group": "Learn",
+                "group": "Concepts",
                 "pages": [
-                  "docs/learn/architecture",
-                  "docs/learn/server-concepts",
-                  "docs/learn/client-concepts"
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
                 ]
               },
               {
@@ -49,8 +53,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "legacy/tools/debugging",
-                  "legacy/tools/inspector"
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
                 ]
               },
               "faqs"
@@ -145,11 +149,15 @@
                 ]
               },
               {
-                "group": "Learn",
+                "group": "Concepts",
                 "pages": [
-                  "docs/learn/architecture",
-                  "docs/learn/server-concepts",
-                  "docs/learn/client-concepts"
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
                 ]
               },
               {
@@ -160,8 +168,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "legacy/tools/debugging",
-                  "legacy/tools/inspector"
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
                 ]
               },
               "faqs"
@@ -252,13 +260,17 @@
                   "quickstart/client",
                   "quickstart/user"
                 ]
-              },              
+              },
               {
-                "group": "Learn",
+                "group": "Concepts",
                 "pages": [
-                  "docs/learn/architecture",
-                  "docs/learn/server-concepts",
-                  "docs/learn/client-concepts"
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
                 ]
               },
               {
@@ -269,8 +281,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "legacy/tools/debugging",
-                  "legacy/tools/inspector"
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
                 ]
               },
               "faqs"
@@ -362,11 +374,15 @@
                 ]
               },
               {
-                "group": "Learn",
+                "group": "Concepts",
                 "pages": [
-                  "docs/learn/architecture",
-                  "docs/learn/server-concepts",
-                  "docs/learn/client-concepts"
+                  "docs/concepts/architecture",
+                  "docs/concepts/resources",
+                  "docs/concepts/prompts",
+                  "docs/concepts/tools",
+                  "docs/concepts/sampling",
+                  "docs/concepts/roots",
+                  "docs/concepts/transports"
                 ]
               },
               {
@@ -377,8 +393,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "tutorials/building-mcp-with-llms",
-                  "legacy/tools/debugging",
-                  "legacy/tools/inspector"
+                  "docs/tools/debugging",
+                  "docs/tools/inspector"
                 ]
               },
               "faqs"
