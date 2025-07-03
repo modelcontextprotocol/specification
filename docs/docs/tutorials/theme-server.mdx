@@ -1,0 +1,392 @@
+# Build a System Theme Server
+
+Create an MCP server that can control your operating system's theme (light/dark mode). This tutorial demonstrates local system integration and security considerations.
+
+## What You'll Build
+
+An MCP server that can:
+- Get the current system theme
+- Switch between light and dark themes
+- Work across different operating systems
+- Handle permissions securely
+
+## Prerequisites
+
+- Python 3.8+ or Node.js 16+
+- Basic understanding of system administration
+- Familiarity with the previous [weather server tutorial](/docs/tutorials/weather-server)
+
+## Security Notice
+
+This server modifies system settings. Always:
+- Review code before running
+- Test in a safe environment first
+- Understand what permissions you're granting
+
+## Step 1: Understanding System Theme Control
+
+Different operating systems handle themes differently:
+
+- **macOS**: Uses `osascript` with AppleScript
+- **Windows**: Uses registry settings via PowerShell
+- **Linux**: Varies by desktop environment (GNOME, KDE, etc.)
+
+## Step 2: Create the Theme Server
+
+### Python Implementation
+
+Create `theme_server.py`:
+
+```python
+import asyncio
+import json
+import os
+import platform
+import subprocess
+from typing import Any, Sequence
+from mcp.server import Server
+from mcp.server.models import InitializationOptions
+from mcp.server.stdio import stdio_server
+from mcp.types import Tool, TextContent
+
+# Initialize server
+server = Server("theme-server")
+
+class ThemeController:
+    """Cross-platform theme controller."""
+    
+    def __init__(self):
+        self.system = platform.system().lower()
+    
+    async def get_current_theme(self) -> str:
+        """Get the current system theme."""
+        try:
+            if self.system == "darwin":  # macOS
+                result = subprocess.run([
+                    "osascript", "-e",
+                    "tell application \"System Events\" to tell appearance preferences to get dark mode"
+                ], capture_output=True, text=True, check=True)
+                return "dark" if result.stdout.strip() == "true" else "light"
+            
+            elif self.system == "windows":
+                result = subprocess.run([
+                    "powershell", "-Command",
+                    "Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize' -Name 'AppsUseLightTheme'"
+                ], capture_output=True, text=True, check=True)
+                # Windows: 0 = dark, 1 = light
+                return "light" if "1" in result.stdout else "dark"
+            
+            elif self.system == "linux":
+                # Try GNOME first
+                try:
+                    result = subprocess.run([
+                        "gsettings", "get", "org.gnome.desktop.interface", "gtk-theme"
+                    ], capture_output=True, text=True, check=True)
+                    theme = result.stdout.strip().strip("'\"")
+                    return "dark" if "dark" in theme.lower() else "light"
+                except subprocess.CalledProcessError:
+                    # Fallback: check for common dark theme indicators
+                    try:
+                        result = subprocess.run([
+                            "gsettings", "get", "org.gnome.desktop.interface", "color-scheme"
+                        ], capture_output=True, text=True, check=True)
+                        return "dark" if "dark" in result.stdout.lower() else "light"
+                    except subprocess.CalledProcessError:
+                        return "unknown"
+            
+            return "unsupported"
+        except Exception as e:
+            raise ValueError(f"Failed to get current theme: {str(e)}")
+    
+    async def set_theme(self, theme: str) -> str:
+        """Set the system theme."""
+        if theme not in ["light", "dark"]:
+            raise ValueError("Theme must be 'light' or 'dark'")
+        
+        try:
+            if self.system == "darwin":  # macOS
+                dark_mode = "true" if theme == "dark" else "false"
+                subprocess.run([
+                    "osascript", "-e",
+                    f"tell application \"System Events\" to tell appearance preferences to set dark mode to {dark_mode}"
+                ], check=True)
+                return f"Successfully set macOS theme to {theme} mode"
+            
+            elif self.system == "windows":
+                # Set both apps and system theme
+                light_value = "1" if theme == "light" else "0"
+                subprocess.run([
+                    "powershell", "-Command",
+                    f"Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize' -Name 'AppsUseLightTheme' -Value {light_value}"
+                ], check=True)
+                subprocess.run([
+                    "powershell", "-Command",
+                    f"Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize' -Name 'SystemUsesLightTheme' -Value {light_value}"
+                ], check=True)
+                return f"Successfully set Windows theme to {theme} mode"
+            
+            elif self.system == "linux":
+                # Try GNOME
+                try:
+                    if theme == "dark":
+                        subprocess.run([
+                            "gsettings", "set", "org.gnome.desktop.interface", "color-scheme", "prefer-dark"
+                        ], check=True)
+                        subprocess.run([
+                            "gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "Adwaita-dark"
+                        ], check=True)
+                    else:
+                        subprocess.run([
+                            "gsettings", "set", "org.gnome.desktop.interface", "color-scheme", "prefer-light"
+                        ], check=True)
+                        subprocess.run([
+                            "gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "Adwaita"
+                        ], check=True)
+                    return f"Successfully set GNOME theme to {theme} mode"
+                except subprocess.CalledProcessError:
+                    raise ValueError("Failed to set theme. GNOME desktop environment required.")
+            
+            return "Unsupported operating system"
+        except subprocess.CalledProcessError as e:
+            raise ValueError(f"Failed to set theme: {str(e)}")
+        except Exception as e:
+            raise ValueError(f"Unexpected error setting theme: {str(e)}")
+
+# Initialize theme controller
+theme_controller = ThemeController()
+
+@server.list_tools()
+async def list_tools() -> list[Tool]:
+    """List available theme tools."""
+    return [
+        Tool(
+            name="get_theme",
+            description="Get the current system theme (light or dark)",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "additionalProperties": False
+            }
+        ),
+        Tool(
+            name="set_theme",
+            description="Set the system theme to light or dark mode",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "theme": {
+                        "type": "string",
+                        "enum": ["light", "dark"],
+                        "description": "The theme to set (light or dark)"
+                    }
+                },
+                "required": ["theme"]
+            }
+        ),
+        Tool(
+            name="toggle_theme",
+            description="Toggle between light and dark theme",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "additionalProperties": False
+            }
+        )
+    ]
+
+@server.call_tool()
+async def call_tool(name: str, arguments: dict[str, Any]) -> Sequence[TextContent]:
+    """Handle tool calls."""
+    try:
+        if name == "get_theme":
+            current_theme = await theme_controller.get_current_theme()
+            icon = "🌙" if current_theme == "dark" else "☀️"
+            return [TextContent(type="text", text=f"{icon} Current system theme: {current_theme}")]
+        
+        elif name == "set_theme":
+            theme = arguments.get("theme")
+            if not theme:
+                raise ValueError("Theme parameter is required")
+            
+            result = await theme_controller.set_theme(theme)
+            icon = "🌙" if theme == "dark" else "☀️"
+            return [TextContent(type="text", text=f"{icon} {result}")]
+        
+        elif name == "toggle_theme":
+            current_theme = await theme_controller.get_current_theme()
+            if current_theme in ["light", "dark"]:
+                new_theme = "dark" if current_theme == "light" else "light"
+                result = await theme_controller.set_theme(new_theme)
+                icon = "🌙" if new_theme == "dark" else "☀️"
+                return [TextContent(type="text", text=f"{icon} Toggled theme: {result}")]
+            else:
+                raise ValueError(f"Cannot toggle from current theme: {current_theme}")
+        
+        else:
+            raise ValueError(f"Unknown tool: {name}")
+    
+    except Exception as e:
+        error_icon = "❌"
+        return [TextContent(type="text", text=f"{error_icon} Error: {str(e)}")]
+
+async def main():
+    """Main server entry point."""
+    async with stdio_server() as (read_stream, write_stream):
+        await server.run(
+            read_stream,
+            write_stream,
+            InitializationOptions(
+                server_name="theme-server",
+                server_version="1.0.0",
+                capabilities=server.get_capabilities(
+                    notification_options=None,
+                    experimental_capabilities=None
+                )
+            )
+        )
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Step 3: Set Up Permissions
+
+### macOS Permissions
+
+Your terminal/IDE needs accessibility permissions:
+
+1. Go to **System Preferences** → **Security & Privacy** → **Privacy**
+2. Select **Accessibility** from the list
+3. Add your terminal application (Terminal, iTerm, VS Code, etc.)
+
+### Windows Permissions
+
+The server needs permission to modify registry:
+- Run as administrator, or
+- Ensure your user account has registry modification rights
+
+### Linux Permissions
+
+Ensure your user can run `gsettings`:
+```bash
+# Test if gsettings works
+gsettings get org.gnome.desktop.interface gtk-theme
+```
+
+## Step 4: Test Your Server
+
+```bash
+# Run the server
+python theme_server.py
+```
+
+Test with Claude Desktop or MCP inspector:
+- "What's my current theme?"
+- "Switch to dark mode"
+- "Toggle my system theme"
+
+## Step 5: Connect to Claude Desktop
+
+Add to your Claude Desktop configuration:
+
+```json
+{
+  "mcpServers": {
+    "theme": {
+      "command": "python",
+      "args": ["/path/to/theme_server.py"]
+    }
+  }
+}
+```
+
+## Enhancements
+
+### Add Theme Scheduling
+
+```python
+Tool(
+    name="schedule_theme",
+    description="Schedule automatic theme changes",
+    inputSchema={
+        "type": "object",
+        "properties": {
+            "light_time": {"type": "string", "description": "Time to switch to light (HH:MM)"},
+            "dark_time": {"type": "string", "description": "Time to switch to dark (HH:MM)"}
+        },
+        "required": ["light_time", "dark_time"]
+    }
+)
+```
+
+### Add App-Specific Themes
+
+Extend to control individual application themes:
+
+```python
+async def set_app_theme(self, app_name: str, theme: str):
+    """Set theme for specific applications."""
+    if app_name == "vscode":
+        # Modify VS Code settings
+        pass
+    elif app_name == "terminal":
+        # Modify terminal theme
+        pass
+```
+
+### Add Theme Presets
+
+Create custom theme combinations:
+
+```python
+THEME_PRESETS = {
+    "work": {"system": "light", "terminal": "light", "editor": "light"},
+    "evening": {"system": "dark", "terminal": "dark", "editor": "dark"},
+    "coding": {"system": "dark", "terminal": "dark", "editor": "high-contrast"}
+}
+```
+
+## Security Considerations
+
+1. **Principle of Least Privilege**: Only request necessary permissions
+2. **Input Validation**: Validate all inputs thoroughly
+3. **Error Handling**: Never expose system internals in error messages
+4. **Audit Trail**: Consider logging theme changes
+5. **Reversibility**: Always ensure changes can be undone
+
+## Best Practices
+
+1. **Cross-Platform**: Support multiple operating systems
+2. **Graceful Degradation**: Handle unsupported systems gracefully
+3. **User Feedback**: Provide clear success/error messages
+4. **Testing**: Test on all target platforms
+5. **Documentation**: Document required permissions clearly
+
+## Troubleshooting
+
+**Permission Denied (macOS):**
+- Check Accessibility permissions in System Preferences
+- Try running from Terminal with full disk access
+
+**Registry Access Denied (Windows):**
+- Run as administrator
+- Check user account permissions
+
+**gsettings Not Found (Linux):**
+- Install GNOME desktop utilities
+- Try alternative desktop environment commands
+
+**Theme Not Changing:**
+- Check if the desktop environment supports programmatic theme changes
+- Verify the specific commands work manually
+- Look for desktop environment-specific alternatives
+
+## Next Steps
+
+After building the theme server:
+
+- Try the [Google Calendar tutorial](/docs/tutorials/gcal-server) for OAuth integration
+- Learn about [deployment strategies](/docs/how-to-guides/deployment)
+- Explore [advanced security patterns](/docs/how-to-guides/authentication)
+
+This tutorial demonstrates how MCP servers can integrate with local system functionality while maintaining security and cross-platform compatibility.

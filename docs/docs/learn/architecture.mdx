@@ -1,0 +1,308 @@
+# Architecture Deep-dive
+
+The Model Context Protocol (MCP) is built on a client-server architecture that enables AI assistants to securely connect to external tools, data sources, and services. This guide explores MCP's architectural foundations and design principles.
+
+## Overview
+
+MCP follows a hub-and-spoke model where:
+- **MCP Clients** act as the central hub (typically AI assistants)
+- **MCP Servers** provide specific capabilities as spokes
+- **Transports** handle secure communication between clients and servers
+
+```
+    ┌─────────────┐
+    │   Client    │
+    │ (AI Agent)  │
+    └──────┬──────┘
+           │
+    ┌──────┼──────┐
+    │      │      │
+┌───▼───┐ │  ┌───▼───┐
+│Server │ │  │Server │
+│  A    │ │  │  B    │
+└───────┘ │  └───────┘
+          │
+      ┌───▼───┐
+      │Server │
+      │  C    │
+      └───────┘
+```
+
+## Core Components
+
+### MCP Clients
+
+MCP clients are applications that consume capabilities from MCP servers. They:
+
+- **Initiate connections** to multiple MCP servers
+- **Discover capabilities** each server provides
+- **Execute tools** and access resources through servers
+- **Manage context** and conversation state
+- **Handle user interactions** and present results
+
+**Common client types:**
+- AI assistants (Claude Desktop, custom AI applications)
+- Development tools and IDEs
+- Automation platforms
+- Command-line utilities
+
+### MCP Servers
+
+MCP servers expose specific capabilities to clients. They:
+
+- **Provide tools** that clients can execute
+- **Expose resources** that clients can access
+- **Offer prompts** for specific use cases
+- **Handle authentication** and authorization
+- **Maintain state** as needed for their domain
+
+**Common server types:**
+- File system access servers
+- Database integration servers
+- API gateway servers
+- System administration servers
+
+### Transports
+
+Transports define how clients and servers communicate:
+
+#### stdio Transport
+- **Use case**: Local servers, development, simple deployment
+- **Mechanism**: Standard input/output streams
+- **Security**: Process isolation, local file permissions
+- **Example**: `python server.py` launched by client
+
+#### HTTP/HTTPS Transport
+- **Use case**: Remote servers, web-based deployment
+- **Mechanism**: HTTP requests over TCP
+- **Security**: TLS encryption, authentication headers
+- **Example**: `https://api.example.com/mcp`
+
+#### WebSocket Transport
+- **Use case**: Real-time communication, persistent connections
+- **Mechanism**: WebSocket protocol over TCP
+- **Security**: TLS encryption, token-based auth
+- **Example**: `wss://mcp.example.com/ws`
+
+## Communication Protocol
+
+### JSON-RPC 2.0 Foundation
+
+MCP is built on JSON-RPC 2.0, providing:
+- **Structured messaging** with clear request/response patterns
+- **Error handling** with standardized error codes
+- **Batch operations** for efficiency
+- **Bidirectional communication** supporting notifications
+
+### MCP Message Types
+
+#### Requests
+Require a response from the recipient:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "123",
+  "method": "tools/call",
+  "params": {
+    "name": "weather_tool",
+    "arguments": {"city": "San Francisco"}
+  }
+}
+```
+
+#### Responses
+Reply to requests:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "123",
+  "result": {
+    "content": [
+      {"type": "text", "text": "Weather in SF: 72°F, sunny"}
+    ]
+  }
+}
+```
+
+#### Notifications
+One-way messages that don't require responses:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/progress",
+  "params": {
+    "progressToken": "abc123",
+    "progress": 0.5,
+    "total": 1.0
+  }
+}
+```
+
+## Capability Model
+
+### Capability Negotiation
+
+During initialization, clients and servers negotiate capabilities:
+
+1. **Client announces** its capabilities and requirements
+2. **Server responds** with its available capabilities
+3. **Both parties** operate within the agreed capability set
+
+### Standard Capabilities
+
+#### Tools
+- **Purpose**: Execute actions on behalf of the client
+- **Examples**: File operations, API calls, calculations
+- **Flow**: Client → `tools/call` → Server → Result
+
+#### Resources
+- **Purpose**: Provide access to data and content
+- **Examples**: File contents, database records, web pages
+- **Flow**: Client → `resources/read` → Server → Content
+
+#### Prompts
+- **Purpose**: Offer pre-defined prompt templates
+- **Examples**: Code review prompts, writing templates
+- **Flow**: Client → `prompts/get` → Server → Prompt template
+
+#### Sampling
+- **Purpose**: Allow servers to request LLM completions
+- **Examples**: Code generation, text analysis
+- **Flow**: Server → `sampling/createMessage` → Client → LLM result
+
+## Security Architecture
+
+### Transport Security
+
+#### Local Security
+- **Process isolation**: Servers run in separate processes
+- **File permissions**: Access controlled by OS permissions
+- **User context**: Servers run with appropriate user privileges
+
+#### Network Security
+- **TLS encryption**: All network communication encrypted
+- **Authentication**: Token-based or certificate-based auth
+- **Authorization**: Capability-based access control
+
+### Capability-Based Security
+
+MCP implements capability-based security where:
+- **Explicit capabilities**: Servers declare what they can do
+- **Client control**: Clients choose which capabilities to use
+- **Least privilege**: Servers only get access to declared capabilities
+- **Audit trail**: All interactions can be logged and monitored
+
+## Message Flow Patterns
+
+### Synchronous Tool Execution
+
+```
+Client                    Server
+  │                         │
+  ├─ tools/call ────────────▶│
+  │                         ├─ Execute tool
+  │                         ├─ Return result
+  ◀────────── result ───────┤
+  │                         │
+```
+
+### Resource Access
+
+```
+Client                    Server
+  │                         │
+  ├─ resources/list ────────▶│
+  ◀──── resource list ──────┤
+  │                         │
+  ├─ resources/read ────────▶│
+  │                         ├─ Read resource
+  ◀───── resource data ─────┤
+  │                         │
+```
+
+### Server-Initiated Sampling
+
+```
+Client                    Server
+  │                         │
+  ◀─ sampling/createMessage ┤
+  ├─ Send to LLM            │
+  ├─ Get completion         │
+  ├─ completion result ────▶│
+  │                         │
+```
+
+## Scalability Considerations
+
+### Connection Management
+- **Connection pooling**: Reuse connections efficiently
+- **Load balancing**: Distribute requests across server instances
+- **Circuit breakers**: Handle server failures gracefully
+
+### State Management
+- **Stateless design**: Prefer stateless servers when possible
+- **Session management**: Handle stateful interactions carefully
+- **Data consistency**: Ensure consistent state across requests
+
+### Performance Optimization
+- **Caching**: Cache frequently accessed resources
+- **Batch operations**: Group related operations
+- **Asynchronous processing**: Use async patterns for long operations
+
+## Error Handling
+
+### Error Categories
+
+#### Transport Errors
+- Connection failures
+- Timeout errors
+- Authentication failures
+
+#### Protocol Errors
+- Invalid JSON-RPC messages
+- Unknown methods
+- Capability mismatches
+
+#### Application Errors
+- Tool execution failures
+- Resource access denied
+- Invalid parameters
+
+### Error Recovery
+
+- **Retry mechanisms**: Automatic retry with backoff
+- **Fallback strategies**: Alternative approaches when primary fails
+- **Graceful degradation**: Continue operation with reduced functionality
+
+## Design Principles
+
+### Simplicity
+- **Clear interfaces**: Easy to understand and implement
+- **Minimal overhead**: Efficient protocol with low latency
+- **Standard formats**: JSON-RPC, HTTP, WebSocket standards
+
+### Flexibility
+- **Multiple transports**: Support various deployment scenarios
+- **Extensible capabilities**: Add new capability types as needed
+- **Language agnostic**: Work with any programming language
+
+### Security
+- **Explicit permissions**: Clear capability declarations
+- **Transport security**: Encrypted communication
+- **Principle of least privilege**: Minimal necessary access
+
+### Interoperability
+- **Standard protocols**: Build on well-established standards
+- **Cross-platform**: Work across operating systems
+- **Tool ecosystem**: Enable rich ecosystem of servers and clients
+
+## Next Steps
+
+Now that you understand MCP's architecture:
+
+- Explore [Core Server Concepts](/docs/learn/server-concepts) for server development
+- Learn [Core Client Concepts](/docs/learn/client-concepts) for client integration
+- Review [Security Model](/docs/learn/security) for production deployments
