@@ -34,8 +34,9 @@ This page provides an overview of applications that support the Model Context Pr
 | [Daydreams Agents][Daydreams]                    | ✅          | ✅        | ✅      | ❌                     | ❌         | ❌    | Support for drop in Servers to Daydreams agents                                                 |
 | [Emacs Mcp][Mcp.el]                              | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools in Emacs.                                                                        |
 | [fast-agent][fast-agent]                         | ✅          | ✅        | ✅      | ✅                     | ✅         | ✅    | Full multimodal MCP support, with end-to-end tests                                              |
+| [Firebender][Firebender]                         | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [FLUJO][FLUJO]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Support for resources, Prompts and Roots are coming soon                                        |
-| [Genkit][Genkit]                                 | ⚠️          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports resource list and lookup through tools.                                                |
+| [Genkit][Genkit]                                 | ⚠️           | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports resource list and lookup through tools.                                                |
 | [Glama][Glama]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [GenAIScript][GenAIScript]                       | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [Goose][Goose]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
@@ -109,6 +110,7 @@ This page provides an overview of applications that support the Model Context Pr
 [Mcp.el]: https://github.com/lizqwerscott/mcp.el
 [fast-agent]: https://github.com/evalstate/fast-agent
 [FLUJO]: https://github.com/mario-andreschak/flujo
+[Firebender]: https://docs.firebender.com/context/mcp
 [Glama]: https://glama.ai/chat
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
@@ -412,6 +414,17 @@ Think n8n + ChatGPT. FLUJO is an desktop application that integrates with MCP to
 - MCP Server Integration
 - Workflow Orchestration
 - Chat Interface
+
+### Firebender
+
+[Firebender](https://firebender.com/) is an IntelliJ plugin that offers world class coding agent with MCP integration on tool calling.
+
+**Key features:**
+
+- Tool integration for executing commands and scripts via STDIO, SSE indirectly supported via mcp-remote npm package.
+- Local server connections for enhanced privacy and security
+- MCPs can be installed via project rules or local workstation rules files.
+- Individual tools within MCPs can be turned off.
 
 ### Genkit
 
