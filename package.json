@@ -30,9 +30,7 @@
     "check:docs:links": "cd docs && mintlify broken-links",
     "generate:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required --skipLibCheck \"$f\" \"*\" -o \"${f%ts}json\"; done",
     "format": "prettier --write \"**/*.{md,mdx}\"",
-    "serve:docs": "cd docs && mintlify dev",
-    "serve:docs-v2": "cd docs-v2 && mintlify dev",
-    "check:docs-v2": "cd docs-v2 && mintlify broken-links"
+    "serve:docs": "cd docs && mintlify dev"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
