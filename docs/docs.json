@@ -252,20 +252,21 @@
           {
             "group": "Getting Started",
             "pages": [
-              "docs/index"
+              "docs/getting-started/intro",
+              "docs/getting-started/learning-paths"
             ]
           },
           {
             "group": "Tutorials",
             "pages": [
-              "docs/tutorials/index",
-              "docs/tutorials/connect-server-client"
+              "docs/tutorials/create-a-server",
+              "docs/tutorials/create-a-server-with-llms",
+              "docs/tutorials/inspector"
             ]
           },
           {
             "group": "Learn",
             "pages": [
-              "docs/learn/index",
               "docs/learn/architecture",
               "docs/learn/client-concepts",
               "docs/learn/server-concepts"
@@ -274,7 +275,6 @@
           {
             "group": "How-to Guides",
             "pages": [
-              "docs/how-to-guides/index",
               "docs/how-to-guides/sampling",
               "docs/how-to-guides/deployment",
               "docs/how-to-guides/authentication"
@@ -283,7 +283,9 @@
           {
             "group": "Reference",
             "pages": [
-              "docs/reference/index"
+              "docs/reference/roadmap",
+              "docs/reference/versioning",
+              "docs/reference/types"
             ]
           }
         ]
@@ -291,13 +293,9 @@
       {
         "tab": "Community",
         "pages": [
-          "community/index",
-          "community/versioning",
-          "community/roadmap",
           "community/contributing",
-          "community/faqs",
-          "community/github-code",
-          "community/discord"
+          "community/discord",
+          "community/faqs"
         ]
       }
     ]
