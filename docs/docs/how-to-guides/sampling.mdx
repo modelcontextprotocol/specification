@@ -1,0 +1,771 @@
+# Use Sampling for Nested Tool Calls
+
+Create sophisticated agentic workflows using MCP's sampling capabilities. This guide shows how to build servers that can request LLM completions from clients to enable complex, multi-step operations.
+
+## Overview
+
+Sampling in MCP allows servers to:
+- Request LLM completions from clients
+- Create nested tool execution workflows
+- Implement chain-of-thought reasoning
+- Build agentic behaviors that adapt to context
+
+## Basic Sampling Implementation
+
+### Server-Side Sampling Request
+
+```python
+from mcp.server import Server
+from mcp.types import SamplingMessage, CreateMessageRequest
+
+class SamplingServer:
+    def __init__(self):
+        self.server = Server("sampling-server")
+        self.setup_tools()
+    
+    def setup_tools(self):
+        @self.server.call_tool()
+        async def analyze_and_summarize(name: str, arguments: dict):
+            """Analyze text and create a summary using LLM sampling."""
+            if name != "analyze_and_summarize":
+                raise MCPError(f"Unknown tool: {name}")
+            
+            text = arguments.get("text", "")
+            if not text:
+                raise MCPError("Text argument is required")
+            
+            # Request LLM analysis through sampling
+            analysis_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="You are an expert text analyst. Analyze the following text and provide insights about its tone, key themes, and main arguments."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Please analyze this text:\n\n{text}"
+                )
+            ]
+            
+            # Request sampling from client
+            analysis_result = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=analysis_messages,
+                    max_tokens=500,
+                    temperature=0.3
+                )
+            )
+            
+            # Now request a summary based on the analysis
+            summary_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="Create a concise summary based on the analysis provided."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Analysis:\n{analysis_result.content}\n\nText to summarize:\n{text}\n\nPlease provide a concise summary:"
+                )
+            ]
+            
+            summary_result = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=summary_messages,
+                    max_tokens=200,
+                    temperature=0.1
+                )
+            )
+            
+            return {
+                "original_text": text,
+                "analysis": analysis_result.content,
+                "summary": summary_result.content,
+                "workflow": "analyze_and_summarize"
+            }
+```
+
+### Client-Side Sampling Handler
+
+```python
+class SamplingClient:
+    def __init__(self, llm_client):
+        self.llm_client = llm_client
+        self.client = MCPClient("sampling-client")
+    
+    async def handle_sampling_request(self, request: CreateMessageRequest):
+        """Handle sampling requests from MCP servers."""
+        try:
+            # Convert MCP messages to LLM format
+            llm_messages = []
+            for msg in request.messages:
+                llm_messages.append({
+                    "role": msg.role,
+                    "content": msg.content
+                })
+            
+            # Send to LLM
+            response = await self.llm_client.create_completion(
+                messages=llm_messages,
+                max_tokens=request.max_tokens or 1000,
+                temperature=request.temperature or 0.7
+            )
+            
+            return SamplingMessage(
+                role="assistant",
+                content=response.content
+            )
+            
+        except Exception as e:
+            raise MCPError(f"Sampling failed: {str(e)}")
+    
+    async def connect_with_sampling(self, server_config):
+        """Connect to server with sampling support."""
+        # Set up sampling handler
+        self.client.set_sampling_handler(self.handle_sampling_request)
+        
+        # Connect to server
+        await self.client.connect(server_config)
+```
+
+## Advanced Sampling Patterns
+
+### Chain-of-Thought Reasoning
+
+```python
+class ChainOfThoughtServer:
+    def __init__(self):
+        self.server = Server("cot-server")
+        self.setup_tools()
+    
+    def setup_tools(self):
+        @self.server.call_tool()
+        async def solve_math_problem(name: str, arguments: dict):
+            """Solve math problem using chain-of-thought reasoning."""
+            if name != "solve_math_problem":
+                raise MCPError(f"Unknown tool: {name}")
+            
+            problem = arguments.get("problem", "")
+            if not problem:
+                raise MCPError("Problem argument is required")
+            
+            # Step 1: Understand the problem
+            understanding_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="Break down this math problem. Identify what is being asked and what information is given."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Problem: {problem}"
+                )
+            ]
+            
+            understanding = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=understanding_messages,
+                    max_tokens=300,
+                    temperature=0.1
+                )
+            )
+            
+            # Step 2: Plan the solution
+            planning_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="Create a step-by-step plan to solve this problem."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Problem: {problem}\n\nUnderstanding: {understanding.content}\n\nWhat steps should I take to solve this?"
+                )
+            ]
+            
+            plan = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=planning_messages,
+                    max_tokens=400,
+                    temperature=0.2
+                )
+            )
+            
+            # Step 3: Execute the solution
+            solution_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="Execute the solution plan step by step. Show your work clearly."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Problem: {problem}\n\nPlan: {plan.content}\n\nNow solve it:"
+                )
+            ]
+            
+            solution = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=solution_messages,
+                    max_tokens=500,
+                    temperature=0.1
+                )
+            )
+            
+            # Step 4: Verify the solution
+            verification_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="Check if the solution is correct. Verify each step."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Problem: {problem}\n\nSolution: {solution.content}\n\nIs this correct? Explain your verification."
+                )
+            ]
+            
+            verification = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=verification_messages,
+                    max_tokens=300,
+                    temperature=0.1
+                )
+            )
+            
+            return {
+                "problem": problem,
+                "understanding": understanding.content,
+                "plan": plan.content,
+                "solution": solution.content,
+                "verification": verification.content,
+                "workflow": "chain_of_thought"
+            }
+```
+
+### Multi-Agent Collaboration
+
+```python
+class MultiAgentServer:
+    def __init__(self):
+        self.server = Server("multi-agent-server")
+        self.agents = {
+            "researcher": "You are a research specialist. Find and analyze relevant information.",
+            "writer": "You are a skilled writer. Create clear, engaging content.",
+            "reviewer": "You are a critical reviewer. Identify issues and suggest improvements."
+        }
+        self.setup_tools()
+    
+    def setup_tools(self):
+        @self.server.call_tool()
+        async def collaborative_writing(name: str, arguments: dict):
+            """Collaborative writing using multiple agent perspectives."""
+            if name != "collaborative_writing":
+                raise MCPError(f"Unknown tool: {name}")
+            
+            topic = arguments.get("topic", "")
+            if not topic:
+                raise MCPError("Topic argument is required")
+            
+            # Agent 1: Research
+            research_messages = [
+                SamplingMessage(
+                    role="system",
+                    content=self.agents["researcher"]
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Research the topic '{topic}' and provide key facts, statistics, and insights."
+                )
+            ]
+            
+            research = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=research_messages,
+                    max_tokens=600,
+                    temperature=0.4
+                )
+            )
+            
+            # Agent 2: Writing
+            writing_messages = [
+                SamplingMessage(
+                    role="system",
+                    content=self.agents["writer"]
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Topic: {topic}\n\nResearch: {research.content}\n\nWrite a comprehensive article based on this research."
+                )
+            ]
+            
+            draft = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=writing_messages,
+                    max_tokens=800,
+                    temperature=0.6
+                )
+            )
+            
+            # Agent 3: Review
+            review_messages = [
+                SamplingMessage(
+                    role="system",
+                    content=self.agents["reviewer"]
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Review this article and suggest improvements:\n\n{draft.content}"
+                )
+            ]
+            
+            review = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=review_messages,
+                    max_tokens=400,
+                    temperature=0.3
+                )
+            )
+            
+            # Agent 2: Revision
+            revision_messages = [
+                SamplingMessage(
+                    role="system",
+                    content=self.agents["writer"]
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Original article: {draft.content}\n\nReview feedback: {review.content}\n\nRevise the article based on this feedback."
+                )
+            ]
+            
+            final_article = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=revision_messages,
+                    max_tokens=800,
+                    temperature=0.5
+                )
+            )
+            
+            return {
+                "topic": topic,
+                "research": research.content,
+                "initial_draft": draft.content,
+                "review": review.content,
+                "final_article": final_article.content,
+                "workflow": "collaborative_writing"
+            }
+```
+
+### Adaptive Tool Selection
+
+```python
+class AdaptiveServer:
+    def __init__(self):
+        self.server = Server("adaptive-server")
+        self.available_tools = {
+            "calculator": "Perform mathematical calculations",
+            "web_search": "Search the internet for information",
+            "file_reader": "Read and analyze files",
+            "email_sender": "Send emails to contacts"
+        }
+        self.setup_tools()
+    
+    def setup_tools(self):
+        @self.server.call_tool()
+        async def adaptive_task_execution(name: str, arguments: dict):
+            """Execute tasks by adaptively selecting appropriate tools."""
+            if name != "adaptive_task_execution":
+                raise MCPError(f"Unknown tool: {name}")
+            
+            user_request = arguments.get("request", "")
+            if not user_request:
+                raise MCPError("Request argument is required")
+            
+            # Step 1: Analyze the request and plan tool usage
+            planning_messages = [
+                SamplingMessage(
+                    role="system",
+                    content=f"""You are a task planning assistant. Analyze user requests and determine which tools to use.
+
+Available tools:
+{chr(10).join([f'- {name}: {desc}' for name, desc in self.available_tools.items()])}
+
+For the user request, determine:
+1. What tools are needed
+2. In what order they should be used
+3. What arguments each tool needs
+4. How to combine the results
+
+Respond with a JSON plan."""
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Request: {user_request}"
+                )
+            ]
+            
+            plan_response = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=planning_messages,
+                    max_tokens=400,
+                    temperature=0.2
+                )
+            )
+            
+            # Step 2: Execute the plan (simulated)
+            execution_results = []
+            
+            # In a real implementation, you would parse the plan and execute tools
+            simulation_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="Simulate the execution of the planned tools and provide realistic results."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Request: {user_request}\n\nPlan: {plan_response.content}\n\nSimulate executing this plan and provide the results."
+                )
+            ]
+            
+            execution_result = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=simulation_messages,
+                    max_tokens=500,
+                    temperature=0.3
+                )
+            )
+            
+            # Step 3: Synthesize final response
+            synthesis_messages = [
+                SamplingMessage(
+                    role="system",
+                    content="Synthesize the tool execution results into a comprehensive response to the user's original request."
+                ),
+                SamplingMessage(
+                    role="user",
+                    content=f"Original request: {user_request}\n\nExecution results: {execution_result.content}\n\nProvide a final response to the user."
+                )
+            ]
+            
+            final_response = await self.server.request_sampling(
+                CreateMessageRequest(
+                    messages=synthesis_messages,
+                    max_tokens=400,
+                    temperature=0.4
+                )
+            )
+            
+            return {
+                "user_request": user_request,
+                "plan": plan_response.content,
+                "execution_results": execution_result.content,
+                "final_response": final_response.content,
+                "workflow": "adaptive_task_execution"
+            }
+```
+
+## Error Handling in Sampling Workflows
+
+### Robust Error Handling
+
+```python
+class RobustSamplingServer:
+    def __init__(self):
+        self.server = Server("robust-sampling-server")
+        self.max_retries = 3
+        self.setup_tools()
+    
+    async def safe_sampling_request(self, request: CreateMessageRequest, context: str = "") -> str:
+        """Make a sampling request with error handling and retries."""
+        for attempt in range(self.max_retries):
+            try:
+                result = await self.server.request_sampling(request)
+                return result.content
+            
+            except MCPError as e:
+                if attempt == self.max_retries - 1:
+                    # Last attempt failed, provide fallback
+                    return f"[Sampling failed after {self.max_retries} attempts: {str(e)}]"
+                
+                # Modify request for retry (e.g., reduce max_tokens)
+                request.max_tokens = min(request.max_tokens * 0.8, 100)
+                await asyncio.sleep(1 * (attempt + 1))  # Exponential backoff
+        
+        return "[Sampling failed - no response available]"
+    
+    def setup_tools(self):
+        @self.server.call_tool()
+        async def resilient_analysis(name: str, arguments: dict):
+            """Perform analysis with robust error handling."""
+            if name != "resilient_analysis":
+                raise MCPError(f"Unknown tool: {name}")
+            
+            text = arguments.get("text", "")
+            if not text:
+                raise MCPError("Text argument is required")
+            
+            results = {}
+            
+            # Try multiple analysis approaches
+            analysis_tasks = [
+                ("sentiment", "Analyze the sentiment of this text (positive, negative, neutral)."),
+                ("topics", "Identify the main topics and themes in this text."),
+                ("summary", "Provide a brief summary of this text.")
+            ]
+            
+            for task_name, instruction in analysis_tasks:
+                messages = [
+                    SamplingMessage(
+                        role="system",
+                        content=instruction
+                    ),
+                    SamplingMessage(
+                        role="user",
+                        content=text
+                    )
+                ]
+                
+                request = CreateMessageRequest(
+                    messages=messages,
+                    max_tokens=200,
+                    temperature=0.3
+                )
+                
+                result = await self.safe_sampling_request(request, f"{task_name} analysis")
+                results[task_name] = result
+            
+            return {
+                "text": text,
+                "analysis": results,
+                "workflow": "resilient_analysis"
+            }
+```
+
+## Performance Optimization
+
+### Batching and Caching
+
+```python
+import asyncio
+from typing import Dict, List
+
+class OptimizedSamplingServer:
+    def __init__(self):
+        self.server = Server("optimized-sampling-server")
+        self.response_cache = {}
+        self.pending_requests = {}
+        self.setup_tools()
+    
+    async def batch_sampling_requests(self, requests: List[CreateMessageRequest]) -> List[str]:
+        """Batch multiple sampling requests for efficiency."""
+        # Group similar requests
+        batches = self.group_similar_requests(requests)
+        
+        results = []
+        for batch in batches:
+            # Execute batch concurrently
+            batch_tasks = [
+                self.server.request_sampling(req) for req in batch
+            ]
+            
+            batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+            
+            for result in batch_results:
+                if isinstance(result, Exception):
+                    results.append(f"[Error: {str(result)}]")
+                else:
+                    results.append(result.content)
+        
+        return results
+    
+    def group_similar_requests(self, requests: List[CreateMessageRequest]) -> List[List[CreateMessageRequest]]:
+        """Group similar requests for batching."""
+        # Simple grouping by temperature and max_tokens
+        groups = {}
+        
+        for req in requests:
+            key = (req.temperature or 0.7, req.max_tokens or 1000)
+            if key not in groups:
+                groups[key] = []
+            groups[key].append(req)
+        
+        return list(groups.values())
+    
+    async def cached_sampling_request(self, request: CreateMessageRequest) -> str:
+        """Make sampling request with caching."""
+        # Create cache key from request
+        cache_key = self.create_cache_key(request)
+        
+        if cache_key in self.response_cache:
+            return self.response_cache[cache_key]
+        
+        # Check if request is already pending
+        if cache_key in self.pending_requests:
+            return await self.pending_requests[cache_key]
+        
+        # Create future for pending request
+        future = asyncio.Future()
+        self.pending_requests[cache_key] = future
+        
+        try:
+            result = await self.server.request_sampling(request)
+            response = result.content
+            
+            # Cache the response
+            self.response_cache[cache_key] = response
+            
+            # Resolve pending future
+            future.set_result(response)
+            
+            return response
+        
+        except Exception as e:
+            future.set_exception(e)
+            raise
+        
+        finally:
+            # Clean up pending request
+            if cache_key in self.pending_requests:
+                del self.pending_requests[cache_key]
+    
+    def create_cache_key(self, request: CreateMessageRequest) -> str:
+        """Create a cache key for the request."""
+        messages_str = "|".join([
+            f"{msg.role}:{msg.content}" for msg in request.messages
+        ])
+        
+        return f"{hash(messages_str)}:{request.max_tokens}:{request.temperature}"
+```
+
+## Testing Sampling Workflows
+
+### Unit Tests
+
+```python
+import pytest
+from unittest.mock import AsyncMock
+
+class TestSamplingWorkflows:
+    @pytest.fixture
+    async def mock_server(self):
+        server = SamplingServer()
+        server.request_sampling = AsyncMock()
+        return server
+    
+    async def test_chain_of_thought_workflow(self, mock_server):
+        """Test chain-of-thought reasoning workflow."""
+        # Mock sampling responses
+        mock_responses = [
+            SamplingMessage(role="assistant", content="Understanding: This is a math problem about..."),
+            SamplingMessage(role="assistant", content="Plan: Step 1: ..., Step 2: ..."),
+            SamplingMessage(role="assistant", content="Solution: The answer is 42"),
+            SamplingMessage(role="assistant", content="Verification: The solution is correct because...")
+        ]
+        
+        mock_server.request_sampling.side_effect = mock_responses
+        
+        # Test the workflow
+        result = await mock_server.solve_math_problem("solve_math_problem", {
+            "problem": "What is 6 * 7?"
+        })
+        
+        assert result["problem"] == "What is 6 * 7?"
+        assert "understanding" in result
+        assert "plan" in result
+        assert "solution" in result
+        assert "verification" in result
+        assert mock_server.request_sampling.call_count == 4
+    
+    async def test_error_handling(self, mock_server):
+        """Test error handling in sampling workflows."""
+        # Mock sampling failure
+        mock_server.request_sampling.side_effect = MCPError("Sampling failed")
+        
+        with pytest.raises(MCPError):
+            await mock_server.solve_math_problem("solve_math_problem", {
+                "problem": "What is 6 * 7?"
+            })
+```
+
+### Integration Tests
+
+```python
+async def test_end_to_end_sampling():
+    """Test complete sampling workflow with real client."""
+    # Create mock LLM client
+    class MockLLMClient:
+        async def create_completion(self, messages, max_tokens=1000, temperature=0.7):
+            # Simple mock responses based on message content
+            last_message = messages[-1]["content"].lower()
+            
+            if "analyze" in last_message:
+                return type('Response', (), {'content': 'This text has a positive sentiment.'})()
+            elif "summarize" in last_message:
+                return type('Response', (), {'content': 'Summary of the text.'})()
+            else:
+                return type('Response', (), {'content': 'Generic response.'})()
+    
+    # Set up client and server
+    llm_client = MockLLMClient()
+    sampling_client = SamplingClient(llm_client)
+    
+    server = SamplingServer()
+    transport = TestTransport()
+    
+    # Connect and test
+    await sampling_client.connect_with_sampling(transport)
+    result = await sampling_client.call_tool("analyze_and_summarize", {
+        "text": "This is a test text for analysis."
+    })
+    
+    assert "analysis" in result
+    assert "summary" in result
+```
+
+## Best Practices
+
+### 1. **Design Patterns**
+- Use clear, specific prompts for each sampling step
+- Implement proper error handling and fallbacks
+- Design workflows that can recover from partial failures
+
+### 2. **Performance**
+- Cache similar sampling requests
+- Use batching for multiple requests
+- Implement request deduplication
+
+### 3. **User Experience**
+- Provide progress indicators for long workflows
+- Offer intermediate results when possible
+- Allow users to interrupt long-running processes
+
+### 4. **Security**
+- Validate all sampling inputs and outputs
+- Implement rate limiting for sampling requests
+- Monitor for potential prompt injection attempts
+
+### 5. **Debugging**
+- Log all sampling requests and responses
+- Provide detailed error messages
+- Include workflow state in error reports
+
+## Troubleshooting
+
+### Common Issues
+
+**Sampling requests timeout:**
+- Reduce max_tokens for complex requests
+- Implement request timeouts and retries
+- Break complex workflows into smaller steps
+
+**Inconsistent results:**
+- Use lower temperature values for consistent outputs
+- Implement result validation
+- Add explicit examples in prompts
+
+**Performance issues:**
+- Implement caching for repeated requests
+- Use batching for similar requests
+- Optimize prompt length and complexity
+
+## Next Steps
+
+After mastering sampling workflows:
+- Explore [advanced client patterns](/docs/learn/client-patterns)
+- Learn about [performance optimization](/docs/how-to-guides/performance)
+- Study [multi-server orchestration](/docs/how-to-guides/multi-server)

@@ -1,0 +1,441 @@
+# Build a Weather Server
+
+Build your first MCP server! This tutorial walks through creating a weather server that fetches current weather data and provides it to AI assistants.
+
+## What You'll Build
+
+A complete MCP server that:
+- Fetches weather data from a public API
+- Provides weather tools to AI assistants
+- Handles errors gracefully
+- Supports multiple cities
+
+## Prerequisites
+
+- Python 3.8+ or Node.js 16+
+- Basic programming knowledge
+- A weather API key (we'll use OpenWeatherMap - free tier available)
+
+## Step 1: Setup
+
+### Get a Weather API Key
+
+1. Sign up at [OpenWeatherMap](https://openweathermap.org/api)
+2. Get your free API key
+3. Keep it handy for configuration
+
+### Install MCP SDK
+
+**Python:**
+```bash
+pip install mcp
+```
+
+**TypeScript/Node.js:**
+```bash
+npm install @modelcontextprotocol/sdk
+```
+
+## Step 2: Create the Basic Server
+
+### Python Implementation
+
+Create `weather_server.py`:
+
+```python
+import asyncio
+import json
+import os
+from typing import Any, Sequence
+import aiohttp
+from mcp.server import Server
+from mcp.server.models import InitializationOptions
+from mcp.server.stdio import stdio_server
+from mcp.types import Tool, TextContent
+
+# Initialize server
+server = Server("weather-server")
+
+# Weather API configuration
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
+if not API_KEY:
+    raise ValueError("OPENWEATHER_API_KEY environment variable is required")
+
+BASE_URL = "http://api.openweathermap.org/data/2.5"
+
+@server.list_tools()
+async def list_tools() -> list[Tool]:
+    """List available weather tools."""
+    return [
+        Tool(
+            name="get_weather",
+            description="Get current weather for a city",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "type": "string",
+                        "description": "The city name (e.g., 'New York' or 'London, UK')"
+                    },
+                    "units": {
+                        "type": "string",
+                        "enum": ["metric", "imperial", "kelvin"],
+                        "description": "Temperature units (default: metric)",
+                        "default": "metric"
+                    }
+                },
+                "required": ["city"]
+            }
+        )
+    ]
+
+@server.call_tool()
+async def call_tool(name: str, arguments: dict[str, Any]) -> Sequence[TextContent]:
+    """Handle tool calls."""
+    if name != "get_weather":
+        raise ValueError(f"Unknown tool: {name}")
+    
+    city = arguments.get("city")
+    units = arguments.get("units", "metric")
+    
+    if not city:
+        raise ValueError("City is required")
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            url = f"{BASE_URL}/weather"
+            params = {
+                "q": city,
+                "appid": API_KEY,
+                "units": units
+            }
+            
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    # Format the weather data
+                    weather_info = {
+                        "city": data["name"],
+                        "country": data["sys"]["country"],
+                        "temperature": data["main"]["temp"],
+                        "feels_like": data["main"]["feels_like"],
+                        "humidity": data["main"]["humidity"],
+                        "description": data["weather"][0]["description"],
+                        "wind_speed": data["wind"]["speed"],
+                        "units": units
+                    }
+                    
+                    # Create formatted response
+                    temp_unit = "°C" if units == "metric" else "°F" if units == "imperial" else "K"
+                    wind_unit = "m/s" if units == "metric" else "mph"
+                    
+                    result = f"""Weather for {weather_info['city']}, {weather_info['country']}:
+🌡️ Temperature: {weather_info['temperature']}{temp_unit} (feels like {weather_info['feels_like']}{temp_unit})
+🌤️ Conditions: {weather_info['description'].title()}
+💧 Humidity: {weather_info['humidity']}%
+💨 Wind: {weather_info['wind_speed']} {wind_unit}"""
+                    
+                    return [TextContent(type="text", text=result)]
+                else:
+                    error_data = await response.json()
+                    raise ValueError(f"Weather API error: {error_data.get('message', 'Unknown error')}")
+                    
+    except aiohttp.ClientError as e:
+        raise ValueError(f"Network error: {str(e)}")
+    except Exception as e:
+        raise ValueError(f"Error fetching weather: {str(e)}")
+
+async def main():
+    """Main server entry point."""
+    async with stdio_server() as (read_stream, write_stream):
+        await server.run(
+            read_stream,
+            write_stream,
+            InitializationOptions(
+                server_name="weather-server",
+                server_version="1.0.0",
+                capabilities=server.get_capabilities(
+                    notification_options=None,
+                    experimental_capabilities=None
+                )
+            )
+        )
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### TypeScript Implementation
+
+Create `weather-server.ts`:
+
+```typescript
+#!/usr/bin/env node
+
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from "@modelcontextprotocol/sdk/types.js";
+
+const API_KEY = process.env.OPENWEATHER_API_KEY;
+if (!API_KEY) {
+  throw new Error("OPENWEATHER_API_KEY environment variable is required");
+}
+
+const BASE_URL = "http://api.openweathermap.org/data/2.5";
+
+class WeatherServer {
+  private server: Server;
+
+  constructor() {
+    this.server = new Server(
+      {
+        name: "weather-server",
+        version: "1.0.0",
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      }
+    );
+
+    this.setupToolHandlers();
+  }
+
+  private setupToolHandlers() {
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return {
+        tools: [
+          {
+            name: "get_weather",
+            description: "Get current weather for a city",
+            inputSchema: {
+              type: "object",
+              properties: {
+                city: {
+                  type: "string",
+                  description: "The city name (e.g., 'New York' or 'London, UK')",
+                },
+                units: {
+                  type: "string",
+                  enum: ["metric", "imperial", "kelvin"],
+                  description: "Temperature units (default: metric)",
+                  default: "metric",
+                },
+              },
+              required: ["city"],
+            },
+          },
+        ],
+      };
+    });
+
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      if (request.params.name !== "get_weather") {
+        throw new Error(`Unknown tool: ${request.params.name}`);
+      }
+
+      const { city, units = "metric" } = request.params.arguments as {
+        city: string;
+        units?: string;
+      };
+
+      if (!city) {
+        throw new Error("City is required");
+      }
+
+      try {
+        const url = new URL(`${BASE_URL}/weather`);
+        url.searchParams.set("q", city);
+        url.searchParams.set("appid", API_KEY);
+        url.searchParams.set("units", units);
+
+        const response = await fetch(url.toString());
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Weather API error: ${errorData.message || 'Unknown error'}`);
+        }
+
+        const data = await response.json();
+
+        // Format the weather data
+        const tempUnit = units === "metric" ? "°C" : units === "imperial" ? "°F" : "K";
+        const windUnit = units === "metric" ? "m/s" : "mph";
+
+        const result = `Weather for ${data.name}, ${data.sys.country}:
+🌡️ Temperature: ${data.main.temp}${tempUnit} (feels like ${data.main.feels_like}${tempUnit})
+🌤️ Conditions: ${data.weather[0].description}
+💧 Humidity: ${data.main.humidity}%
+💨 Wind: ${data.wind.speed} ${windUnit}`;
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: result,
+            },
+          ],
+        };
+      } catch (error) {
+        throw new Error(`Error fetching weather: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+
+  async run() {
+    const transport = new StdioServerTransport();
+    await this.server.connect(transport);
+  }
+}
+
+const server = new WeatherServer();
+server.run().catch(console.error);
+```
+
+## Step 3: Test Your Server
+
+### Python Testing
+
+```bash
+# Set your API key
+export OPENWEATHER_API_KEY="your-api-key-here"
+
+# Run the server
+python weather_server.py
+```
+
+### TypeScript Testing
+
+```bash
+# Set your API key
+export OPENWEATHER_API_KEY="your-api-key-here"
+
+# Install dependencies
+npm install
+
+# Compile TypeScript (if needed)
+npx tsc weather-server.ts
+
+# Run the server
+node weather-server.js
+```
+
+## Step 4: Connect to Claude Desktop
+
+Add your weather server to Claude Desktop's configuration:
+
+```json
+{
+  "mcpServers": {
+    "weather": {
+      "command": "python",
+      "args": ["/path/to/weather_server.py"],
+      "env": {
+        "OPENWEATHER_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+For TypeScript:
+```json
+{
+  "mcpServers": {
+    "weather": {
+      "command": "node",
+      "args": ["/path/to/weather-server.js"],
+      "env": {
+        "OPENWEATHER_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+## Step 5: Test with Claude
+
+1. Restart Claude Desktop
+2. Look for the MCP connection indicator
+3. Try asking: "What's the weather like in New York?"
+
+## Enhancements
+
+### Add More Tools
+
+Extend your server with additional weather tools:
+
+```python
+@server.list_tools()
+async def list_tools() -> list[Tool]:
+    return [
+        # ... existing get_weather tool
+        Tool(
+            name="get_forecast",
+            description="Get 5-day weather forecast for a city",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string", "description": "City name"},
+                    "units": {"type": "string", "enum": ["metric", "imperial"], "default": "metric"}
+                },
+                "required": ["city"]
+            }
+        )
+    ]
+```
+
+### Add Error Handling
+
+Improve error messages and handling:
+
+```python
+@server.call_tool()
+async def call_tool(name: str, arguments: dict[str, Any]) -> Sequence[TextContent]:
+    try:
+        # ... existing code
+    except aiohttp.ClientError:
+        return [TextContent(type="text", text="❌ Network error: Unable to connect to weather service")]
+    except KeyError as e:
+        return [TextContent(type="text", text=f"❌ Data error: Missing field {e}")]
+    except Exception as e:
+        return [TextContent(type="text", text=f"❌ Unexpected error: {str(e)}")]
+```
+
+## Best Practices
+
+1. **Environment Variables**: Never hardcode API keys
+2. **Error Handling**: Provide clear, helpful error messages
+3. **Input Validation**: Validate all inputs before processing
+4. **Rate Limiting**: Consider API rate limits in production
+5. **Logging**: Add logging for debugging and monitoring
+
+## Next Steps
+
+Now that you've built a weather server:
+
+- Try the [theme server tutorial](/docs/tutorials/theme-server) for system integration
+- Learn about [authentication](/docs/how-to-guides/authentication) for production servers
+- Explore [server architecture](/docs/learn/server-concepts) for advanced concepts
+
+## Troubleshooting
+
+**Server not starting:**
+- Check Python/Node.js version compatibility
+- Verify API key is set correctly
+- Check for syntax errors in your code
+
+**API errors:**
+- Verify your OpenWeatherMap API key is valid
+- Check city name spelling
+- Ensure API key has necessary permissions
+
+**Claude not seeing the server:**
+- Verify configuration file syntax
+- Check file paths in configuration
+- Restart Claude Desktop after changes

@@ -1,0 +1,203 @@
+# Connect MCP Server to Client
+
+Learn how to connect existing MCP servers to AI clients. This tutorial focuses on the most common scenario: connecting servers to Claude Desktop.
+
+## Prerequisites
+
+- Claude Desktop installed
+- Basic familiarity with JSON configuration files
+- An MCP server to connect (we'll use examples)
+
+## Overview
+
+In this tutorial, you'll:
+1. Understand MCP client-server connections
+2. Configure Claude Desktop to use MCP servers
+3. Test and troubleshoot connections
+4. Manage multiple servers
+
+## Step 1: Understanding the Connection
+
+MCP uses a client-server architecture where:
+- **Claude Desktop** is the MCP client
+- **MCP servers** provide tools, resources, and prompts
+- **Configuration** tells Claude Desktop how to connect to servers
+
+## Step 2: Basic Server Configuration
+
+Claude Desktop reads MCP server configurations from a JSON file. The location depends on your operating system:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+### Example Configuration
+
+Create or edit the configuration file with this basic structure:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/files"]
+    }
+  }
+}
+```
+
+## Step 3: Connecting Different Server Types
+
+### Local Python Server
+
+```json
+{
+  "mcpServers": {
+    "weather-server": {
+      "command": "python",
+      "args": ["/path/to/weather-server.py"],
+      "env": {
+        "API_KEY": "your-weather-api-key"
+      }
+    }
+  }
+}
+```
+
+### NPM Package Server
+
+```json
+{
+  "mcpServers": {
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "your-brave-api-key"
+      }
+    }
+  }
+}
+```
+
+### Docker Server
+
+```json
+{
+  "mcpServers": {
+    "docker-server": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "your-mcp-server:latest"]
+    }
+  }
+}
+```
+
+## Step 4: Testing the Connection
+
+1. **Save your configuration** and restart Claude Desktop
+2. **Look for the MCP indicator** - a small icon appears when servers are connected
+3. **Test server functionality** by using tools or accessing resources provided by your server
+
+### Troubleshooting Common Issues
+
+**Server not appearing:**
+- Check JSON syntax in configuration file
+- Verify file paths and permissions
+- Ensure server dependencies are installed
+
+**Connection errors:**
+- Check server logs for error messages
+- Verify environment variables are set correctly
+- Test server independently outside of Claude Desktop
+
+## Step 5: Managing Multiple Servers
+
+You can connect multiple MCP servers simultaneously:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/username/Documents"]
+    },
+    "weather": {
+      "command": "python",
+      "args": ["/path/to/weather-server.py"],
+      "env": {
+        "API_KEY": "your-api-key"
+      }
+    },
+    "database": {
+      "command": "node",
+      "args": ["/path/to/db-server.js"],
+      "env": {
+        "DB_CONNECTION": "your-connection-string"
+      }
+    }
+  }
+}
+```
+
+## Advanced Configuration
+
+### Server-Specific Settings
+
+Some servers support additional configuration options:
+
+```json
+{
+  "mcpServers": {
+    "custom-server": {
+      "command": "python",
+      "args": ["/path/to/server.py"],
+      "env": {
+        "DEBUG": "true",
+        "TIMEOUT": "30"
+      },
+      "disabled": false
+    }
+  }
+}
+```
+
+### Environment Management
+
+For better security, consider using environment files:
+
+```json
+{
+  "mcpServers": {
+    "secure-server": {
+      "command": "python",
+      "args": ["/path/to/server.py"],
+      "env": {
+        "CONFIG_FILE": "/path/to/.env"
+      }
+    }
+  }
+}
+```
+
+## Best Practices
+
+1. **Use absolute paths** for server commands and arguments
+2. **Store sensitive data** in environment variables, not the config file
+3. **Test servers individually** before adding them to Claude Desktop
+4. **Keep backups** of working configurations
+5. **Use descriptive names** for your servers
+
+## Next Steps
+
+Now that you can connect servers to clients:
+
+- Try [building your own weather server](/docs/tutorials/weather-server)
+- Learn about [server architecture](/docs/learn/server-concepts)
+- Explore [advanced server features](/docs/how-to-guides/authentication)
+
+## Troubleshooting
+
+If you encounter issues:
+1. Check the [debugging guide](/docs/legacy/tools/debugging)
+2. Review [common FAQs](/docs/faqs)
+3. Verify your server implements the MCP protocol correctly
