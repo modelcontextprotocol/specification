@@ -46,6 +46,19 @@ This quickstart assumes you have familiarity with:
 - Python
 - LLMs like Claude
 
+### Guidance on Logging Best Practices in MCP Servers
+
+When implementing MCP servers, it is crucial that developers avoid using print statements that write messages to standard output.
+Certain MCP hosts and clients might be able to deal with these extraneous outputs, but it could result in unexpected behavior in majority of the MCP clients.
+
+Logging messages to standard output could corrupt the structured output and format expected by the clients thus breaking the protocol. Using print functionality in your programming language of choice to send log messages to standard output could make your MCP server unusable. 
+
+Here are some tips you can use to avoid this problem:
+
+- use the built-in logging functionality available in your language specific SDK
+- if you are building your own MCP server from scratch without the SDK, please using logging mechanisms that do not print messages to standard output
+- configure the log levels for your application accordingly
+
 ### System requirements
 
 - Python 3.10 or higher installed.
