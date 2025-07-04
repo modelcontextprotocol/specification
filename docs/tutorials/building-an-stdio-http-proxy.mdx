@@ -268,7 +268,7 @@ chmod +x stdio-wrapper.ts
 export PATH=$PWD:$PATH
 
 # Example w/ npx:
-stdio-wrapper.ts --cloudflare \
+stdio-wrapper.ts \
     docker run --rm -i \
         --network=none --cap-drop=ALL --security-opt=no-new-privileges:true \
         -v claude-memory:/app/dist \
@@ -276,7 +276,7 @@ stdio-wrapper.ts --cloudflare \
         npx -y @modelcontextprotocol/server-memory
 
 # Example w/ uvx (relaxed security / no --network=none: server has full internet *and* host networking access):
-stdio-wrapper.ts --cloudflare \
+stdio-wrapper.ts \
   docker run --rm -i \
     --cap-drop=ALL --security-opt=no-new-privileges:true \
     ghcr.io/astral-sh/uv:debian \
