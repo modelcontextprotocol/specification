@@ -32,18 +32,19 @@ This tutorial shows you how to wrap an existing stdio MCP server as a Streamable
 
 ## Plugging transports together
 
-Our proxy will spawn a subprocess that communicates over a stdio transport and will spawn an Express HTTP server that communicates over a Streamable HTTP transport.
+Our proxy will spawn a subprocess that communicates w/ our wrapped MCP server over an stdio transport and will spawn an Express HTTP server exposes a Streamable HTTP transport endpoint.
 
 The TypeScript MCP SDK exposes a `Transport` interface w/ the following signature:
 
 ```ts
 interface Transport {
-    onmessage?: (message: JSONRPCMessage, extra?: { relatedRequestId?: string }) => void;
+    start(): Promise<void>;
+    send(message: JSONRPCMessage, extra?: { relatedRequestId?: string, ... }): Promise<void>;
+    close(): Promise<void>;
     onclose?: () => void;
     onerror?: (error: Error) => void;
-    start(): Promise<void>;
-    send(message: JSONRPCMessage, extra?: { relatedRequestId?: string }): void;
-    close(): Promise<void>;
+    onmessage?: (message: JSONRPCMessage, extra?: { relatedRequestId?: string, ... }) => void;
+    ...
 }
 ```
 
@@ -59,8 +60,8 @@ import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/in
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import express, { Request, Response, NextFunction } from 'express';
-import { randomUUID } from 'node:crypto';
 import { spawn, ChildProcess } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { createInterface } from 'node:readline';
 
 const isCancelledNotification = (value: unknown): value is CancelledNotification =>
@@ -97,7 +98,7 @@ export function proxyTransports(clientTransport: Transport, serverTransport: Tra
 }
 ```
 
-Then we'll create an Express HTTP server that will handle incoming `/mcp` `POST` and `GET` requests and will create an subprocess w/ our stdio MCP server for each session:
+Then we'll create an Express HTTP server that will handle incoming `POST`, `GET` and `DELETE` requests on `/mcp` and will create a subprocess w/ our stdio MCP server for each new session:
 
 ```ts
 const PORT = Number(process.env.PORT ?? '3000');
@@ -247,18 +248,22 @@ process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 ```
 
-Not it's time to run our server. Most local servers should be run inside Docker unless you really really trust them:
+Now it's time to run our server. Most local servers should be run inside Docker unless you really really trust them:
 
 ```bash
+# On Windows we'll just run w/ something like: `npx -y tsx stdio-wrapper.ts ...`
+chmod +x stdio-wrapper.ts
+export PATH=$PWD:$PATH
+
 # Example w/ npx:
 stdio-wrapper.ts --cloudflare \
     docker run --rm -i \
-    --network=none \
-    --cap-drop=ALL --security-opt=no-new-privileges:true \
-    node:latest \
-    npx -y @modelcontextprotocol/server-everything
+        --network=none --cap-drop=ALL --security-opt=no-new-privileges:true \
+        -v claude-memory:/app/dist \
+        node:latest \
+        npx -y @modelcontextprotocol/server-memory
 
-# Example w/ uvx (relaxed security: server has full internet *and* host networking access):
+# Example w/ uvx (relaxed security / no --network=none: server has full internet *and* host networking access):
 stdio-wrapper.ts --cloudflare \
   docker run --rm -i \
     --cap-drop=ALL --security-opt=no-new-privileges:true \
@@ -266,7 +271,7 @@ stdio-wrapper.ts --cloudflare \
     uvx mcp-server-fetch
 ```
 
-The server is now ready to be used in local MCP clients. For instance w/ Claude Code:
+The server is now ready to be used by local MCP clients. For instance w/ Claude Code:
 
 ```
 claude mcp add my-proxied-server -t http http://localhost:3000/mcp
@@ -274,39 +279,39 @@ claude mcp add my-proxied-server -t http http://localhost:3000/mcp
 
 ## A word of caution
 
-Warning: running untrusted servers is a risky business, addressing all the risks is out of scope for this tutorial (more to come on this matter, stay tuned!).
+Warning: running untrusted servers is a risky business, addressing all the risks involved is out of scope for this tutorial (more to come on this matter, stay tuned!).
 
 Still, here are some quick advice:
 
-- When running thirdparty code, we'd recommend to fork it, clone your fork, audit the code and its dependencies thoroughly, and *only then* proceed to running it w/ any kind of network or elevated access.
-- Consider the following `docker` flags
+- When running thirdparty open-source code, we'd recommend to fork it, clone your fork, audit the code and its dependencies thoroughly, and *only then* proceed to running it w/ any kind of network or elevated access. If you ever sync your fork w/ upstream changes, please review the changes thoroughly (including version bumps on dependencies).
+
+- Consider using the following `docker` flags (`--runtime=runsc` requires installing [installing gVisor](https://gvisor.dev/docs/user_guide/install/), which is highly recommended)
 
     ```bash
     docker run \
-    --runtime=runsc \
-    --network=none \
-    --cap-drop=ALL \
-    --security-opt=no-new-privileges:true \
-    --user 1001:1001 \
-    --tmpfs /tmp:noexec,nosuid,size=100m \
-    --memory=512m \
-    --cpus=0.5 \
-    --pids-limit=50
-    ...
+        --runtime=runsc \
+        --network=none \
+        --cap-drop=ALL \
+        --security-opt=no-new-privileges:true \
+        --user 1001:1001 \
+        --tmpfs /tmp:noexec,nosuid,size=100m \
+        --memory=512m \
+        --cpus=0.5 \
+        --pids-limit=50
+        ...
     ```
 
-- Do [install gVisor](https://gvisor.dev/docs/user_guide/install/) (enabled by the `--runtime=runsc` flag above)
-- Be aware that if you omit the `--network=none` flag, a rogue MCP server can exfiltrate your data over the network and/or scan your local ports for unprotected servers (think about those `python -m http.server` commands you might be running: we'd be wide open to said server).
+- Be aware that if you omit the `--network=none` flag, a rogue MCP server can exfiltrate your data over the network and/or scan your local ports for unprotected servers (think about those `python -m http.server` commands you might be running: they'd be wide open to said server).
 
 ## Exposing your server to the Web... but only to yourself!
 
-Now that you've turned your stdio MCP server into a local Streamable HTTP server, you might be tempted to use it in APIs that support remote MCP servers, e.g. w/ Anthropic's Claude API, or from clients on your other machines.
+Now that you've turned your semi-trusted stdio MCP server into a local Streamable HTTP server, you might be tempted to use it remotely (e.g. w/ [Anthropic's Claude API](https://docs.anthropic.com/en/docs/agents-and-tools/mcp-connector), or from clients on your other machines).
 
-A common way to do this is to use a reverse tunnel; we don't endorse any of them but we'll use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/) here (should be easy to adapt to `ngrok` and other alternatives).
+A common way to do this is to use a reverse tunnel; we don't endorse any of them but we'll use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/) here (should be easy to adapt to the [very many alternatives](https://github.com/anderspitman/awesome-tunneling)).
 
 Also, once we expose our local server, anyone with the URL can access it, so we need some form of authentication to ensure only we can use it (especially if the MCP server has access to your local files / poses a risk of exploit - any unreviewed code does!).
 
-Let's start by making our server's endpoint URL very hard to guess (a form of security through obscurity; nobody should be able to guess the URL of your server, unless your tunnel provider or their TLS certificates are compromised):
+Let's start by making our server's endpoint URL so hard to guess it's *practically secure* (a form of security through obscurity, but nobody should be able to guess the URL of your server unless your tunnel provider or their TLS certificates are compromised):
 
 ```bash
 let authKey: string | undefined;
@@ -316,7 +321,7 @@ if (authKeyIndex !== -1 && authKeyIndex + 1 < args.length) {
   authKey = args[authKeyIndex + 1];
   args.splice(authKeyIndex, 2); // Remove --auth_key and its value
 } else {
-  authKey = randomUUID().replace(/-/g, '').slice(0, 32);
+  authKey = randomUUID().replace(/-/g, '').slice(0, 32); // Random key by default
 }
 
 const mcpPath = authKey !== '' ? `/${authKey}/mcp` : '/mcp';
@@ -324,7 +329,6 @@ const mcpPath = authKey !== '' ? `/${authKey}/mcp` : '/mcp';
 let url: string = `http://localhost:${PORT}${mcpPath}`;
 
 // Naive auth middleware: ensure the auth_key is present in the first path component.
-// Only "safe" if you trust the reverse tunnel.
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   if (authKey) {
     const pathParts = req.path.split('/');
@@ -343,6 +347,8 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   }
   next();
 };
+
+// Authenticate before processing any requests:
 
 app.post(mcpPath, authMiddleware, async (req: Request, res: Response) => {
   ...
