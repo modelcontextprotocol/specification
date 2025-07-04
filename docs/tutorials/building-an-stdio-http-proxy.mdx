@@ -35,10 +35,10 @@ This tutorial shows you how to wrap an existing stdio MCP server as a Streamable
 Before we start, we'll install our two main dependencies:
 
 ```bash
-npm install -g @modelcontextprotocol/sdk express
+mkdir stdio-proxy-tutorial
+cd stdio-proxy-tutorial
+npm install @modelcontextprotocol/sdk express
 ```
-
-(For the sake of simplicity we've used a global install but typically you'll want a local install in a folder in which you've run `npm init` and written a node.js-friendly `tsconfig.json`)
 
 ## Plugging transports together
 
@@ -61,6 +61,7 @@ interface Transport {
 Let's stub a new file `stdio-wrapper.ts` with a few imports / utilities we'll need in this tutorial:
 
 ```ts
+#!/usr/bin/env npx -y tsx
 import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { CancelledNotification, CancelledNotificationSchema, isJSONRPCError, isJSONRPCResponse, Tool } from "@modelcontextprotocol/sdk/types.js";
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -223,7 +224,7 @@ app.delete('/mcp', async (req: Request, res: Response) => {
   }
 });
 
-const url: string = `http://localhost:${PORT}${mcpPath}`;
+const url: string = `http://localhost:${PORT}/mcp`;
 
 app.listen(PORT, async () => {
   console.log(`
