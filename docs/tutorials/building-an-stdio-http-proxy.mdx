@@ -1,0 +1,527 @@
+---
+title: "Proxy an STDIO server as Streamable HTTP"
+description: "Exposing any STDIO server locally or over the web as a Streamable HTTP endpoint"
+---
+
+## TL;DR: these 3 lines to make your local MCP server accessible on the web to anyone with a secret URL:
+
+```bash
+wget https://github.com/modelcontextprotocol/typescript-sdk/blob/ochafik/stdio-wrapper-example/src/examples/proxy/stdio-wrapper.ts
+chmod +x stdio-wrapper.ts
+./stdio-wrapper.ts --cloudflare \
+    docker run --rm -i \
+        --network=none --cap-drop=ALL --security-opt=no-new-privileges:true \
+        -v claude-memory:/app/dist \
+        node:latest \
+        npx -y @modelcontextprotocol/server-memory
+```
+
+The rest of this tutorial explains how to build that wrapper: strap on!
+
+## stdio and streamable HTTP transports, WAT?
+
+The Model Context Protocol (MCP) defines a high-level standard for communication between clients and servers, based on a lower level JSON-RPC protocol, itself reliant on a transport layer.
+
+The simplest transport is the stdio transport, which only allows communication between a local client process and a local MCP server subprocess, spawned with a command line.
+
+MCP also supports HTTP-based transports, the most recent of which is Streamable HTTP (which is essentially POST to send messages, optionally upgradable to Server-Sent Events (SSE) to provide backchannels for the server to send notifications and other messages to the client).
+
+If you want to use an MCP server from multiple clients, including from remote locations, you need to expose it as a Streamable HTTP server.
+
+This tutorial shows you how to wrap an existing stdio MCP server as a Streamable HTTP server, and a basic way to expose it to the web without compromising your security *too much* 😅.
+
+## Plugging transports together
+
+Our proxy will spawn a subprocess that communicates over a stdio transport and will spawn an Express HTTP server that communicates over a Streamable HTTP transport.
+
+The TypeScript MCP SDK exposes a `Transport` interface w/ the following signature:
+
+```ts
+interface Transport {
+    onmessage?: (message: JSONRPCMessage, extra?: { relatedRequestId?: string }) => void;
+    onclose?: () => void;
+    onerror?: (error: Error) => void;
+    start(): Promise<void>;
+    send(message: JSONRPCMessage, extra?: { relatedRequestId?: string }): void;
+    close(): Promise<void>;
+}
+```
+
+Let's start with a few imports / utilities we'll need in this tutorial:
+
+```ts
+import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import { CancelledNotification, CancelledNotificationSchema, isJSONRPCError, isJSONRPCResponse, Tool } from "@modelcontextprotocol/sdk/types.js";
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
+import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js';
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import express, { Request, Response, NextFunction } from 'express';
+import { randomUUID } from 'node:crypto';
+import { spawn, ChildProcess } from 'node:child_process';
+import { createInterface } from 'node:readline';
+
+const isCancelledNotification = (value: unknown): value is CancelledNotification =>
+    CancelledNotificationSchema.safeParse(value).success;
+```
+
+Here's how we can plug the two transports together:
+```ts
+// Bidirectionally propagates onclose & onmessage events between two transports.
+export function proxyTransports(clientTransport: Transport, serverTransport: Transport) {
+    let closed = false;
+    const propagateClose = (source: Transport, target: Transport) => {
+        source.onclose = () => {
+            if (!closed) {
+                closed = true;
+                target.close();
+            }
+        };
+    };
+    propagateClose(serverTransport, clientTransport);
+    propagateClose(clientTransport, serverTransport);
+
+    const propagateMessage = (source: Transport, target: Transport) => {
+        source.onmessage = (message, extra) => {
+            const relatedRequestId = isCancelledNotification(message) ? message.params.requestId : undefined;
+            target.send(message, {relatedRequestId});
+        };
+    };
+    propagateMessage(serverTransport, clientTransport);
+    propagateMessage(clientTransport, serverTransport);
+
+    serverTransport.start();
+    clientTransport.start();
+}
+```
+
+Then we'll create an Express HTTP server that will handle incoming `/mcp` `POST` and `GET` requests and will create an subprocess w/ our stdio MCP server for each session:
+
+```ts
+const PORT = Number(process.env.PORT ?? '3000');
+
+const args = process.argv.slice(2);
+if (args[0] === '--') {
+  args.splice(0, 1); // Remove leading '--' if present
+}
+
+const app = express();
+app.use(express.json());
+
+// Map to store transports by session ID
+const transports: {[sessionId: string]: StreamableHTTPServerTransport} = {};
+
+app.post('/mcp', async (req: Request, res: Response) => {
+  console.log('Received MCP request:', req.body);
+  try {
+    // Check for existing session ID
+    const sessionId = req.headers['mcp-session-id'] as string | undefined;
+    const transport = sessionId && transports[sessionId];
+    if (transport) {
+      // Reuse existing transport to handle the request - no need to reconnect
+      await transport.handleRequest(req, res, req.body);
+    } else if (!sessionId && isInitializeRequest(req.body)) {
+      // New initialization request
+      const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => randomUUID(),
+        eventStore: new InMemoryEventStore(), // Enable resumability
+        onsessioninitialized: (sessionId) => {
+          // Store the transport by session ID when session is initialized
+          // This avoids race conditions where requests might come in before the session is stored
+          console.log(`Session initialized with ID: ${sessionId}`);
+          transports[sessionId] = transport;
+        }
+      });
+
+      // Set up onclose handler to clean up transport when closed
+      transport.onclose = () => {
+        const sid = transport.sessionId;
+        if (sid && transports[sid]) {
+          console.log(`Transport closed for session ${sid}, removing from transports map`);
+          delete transports[sid];
+        }
+      };
+
+      const clientTransport = new StdioClientTransport({
+        command: args[0],
+        args: args.slice(1),
+        env: process.env as Record<string, string>,  // Pass all environment variables to the subprocess
+      });
+
+      proxyTransports(clientTransport, transport);
+
+      await transport.handleRequest(req, res, req.body);
+    } else {
+      // Invalid request - no session ID or not initialization request
+      res.status(400).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32000,
+          message: 'Bad Request: No valid session ID provided',
+        },
+        id: null,
+      });
+    }
+  } catch (error) {
+    console.error('Error handling MCP request:', error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32603,
+          message: 'Internal server error',
+        },
+        id: null,
+      });
+    }
+  }
+});
+
+// Handle GET requests for SSE streams (using built-in support from StreamableHTTP)
+app.get('/mcp', async (req: Request, res: Response) => {
+  const sessionId = req.headers['mcp-session-id'] as string | undefined;
+  const transport = sessionId && transports[sessionId];
+  if (!transport) {
+    res.status(400).send('Invalid or missing session ID');
+    return;
+  }
+  await transport.handleRequest(req, res);
+});
+
+// Handle DELETE requests for session termination (according to MCP spec)
+app.delete('/mcp', async (req: Request, res: Response) => {
+  const sessionId = req.headers['mcp-session-id'] as string | undefined;
+  const transport = sessionId && transports[sessionId];
+  if (!transport) {
+    res.status(400).send('Invalid or missing session ID');
+    return;
+  }
+
+  console.log(`Received session termination request for session ${sessionId}`);
+
+  try {
+    await transport.handleRequest(req, res);
+  } catch (error) {
+    console.error('Error handling session termination:', error);
+    if (!res.headersSent) {
+      res.status(500).send('Error processing session termination');
+    }
+  }
+});
+
+const url: string = `http://localhost:${PORT}${mcpPath}`;
+
+app.listen(PORT, async () => {
+  console.log(`
+    MCP Streamable HTTP Server listening on port ${PORT}
+    Endpoint:
+      ${url}
+  `);
+});
+```
+
+We'll also add a shutdown handler to cleanly close our transports / child subprocesses when the server is stopped:
+
+```ts
+// Handle server shutdown
+const shutdown = async (signal: string) => {
+  console.log(`Shutting down server (${signal})...`);
+
+  // Close all active transports to properly clean up resources
+  for (const sessionId in transports) {
+    try {
+      console.log(`Closing transport for session ${sessionId}`);
+      await transports[sessionId].close();
+      delete transports[sessionId];
+    } catch (error) {
+      console.error(`Error closing transport for session ${sessionId}:`, error);
+    }
+  }
+  console.log('Server shutdown complete');
+  process.exit(0);
+};
+
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+```
+
+Not it's time to run our server. Most local servers should be run inside Docker unless you really really trust them:
+
+```bash
+# Example w/ npx:
+stdio-wrapper.ts --cloudflare \
+    docker run --rm -i \
+    --network=none \
+    --cap-drop=ALL --security-opt=no-new-privileges:true \
+    node:latest \
+    npx -y @modelcontextprotocol/server-everything
+
+# Example w/ uvx (relaxed security: server has full internet *and* host networking access):
+stdio-wrapper.ts --cloudflare \
+  docker run --rm -i \
+    --cap-drop=ALL --security-opt=no-new-privileges:true \
+    ghcr.io/astral-sh/uv:debian \
+    uvx mcp-server-fetch
+```
+
+The server is now ready to be used in local MCP clients. For instance w/ Claude Code:
+
+```
+claude mcp add my-proxied-server -t http http://localhost:3000/mcp
+```
+
+## A word of caution
+
+Warning: running untrusted servers is a risky business, addressing all the risks is out of scope for this tutorial (more to come on this matter, stay tuned!).
+
+Still, here are some quick advice:
+
+- When running thirdparty code, we'd recommend to fork it, clone your fork, audit the code and its dependencies thoroughly, and *only then* proceed to running it w/ any kind of network or elevated access.
+- Consider the following `docker` flags
+
+    ```bash
+    docker run \
+    --runtime=runsc \
+    --network=none \
+    --cap-drop=ALL \
+    --security-opt=no-new-privileges:true \
+    --user 1001:1001 \
+    --tmpfs /tmp:noexec,nosuid,size=100m \
+    --memory=512m \
+    --cpus=0.5 \
+    --pids-limit=50
+    ...
+    ```
+
+- Do [install gVisor](https://gvisor.dev/docs/user_guide/install/) (enabled by the `--runtime=runsc` flag above)
+- Be aware that if you omit the `--network=none` flag, a rogue MCP server can exfiltrate your data over the network and/or scan your local ports for unprotected servers (think about those `python -m http.server` commands you might be running: we'd be wide open to said server).
+
+## Exposing your server to the Web... but only to yourself!
+
+Now that you've turned your stdio MCP server into a local Streamable HTTP server, you might be tempted to use it in APIs that support remote MCP servers, e.g. w/ Anthropic's Claude API, or from clients on your other machines.
+
+A common way to do this is to use a reverse tunnel; we don't endorse any of them but we'll use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/) here (should be easy to adapt to `ngrok` and other alternatives).
+
+Also, once we expose our local server, anyone with the URL can access it, so we need some form of authentication to ensure only we can use it (especially if the MCP server has access to your local files / poses a risk of exploit - any unreviewed code does!).
+
+Let's start by making our server's endpoint URL very hard to guess (a form of security through obscurity; nobody should be able to guess the URL of your server, unless your tunnel provider or their TLS certificates are compromised):
+
+```bash
+let authKey: string | undefined;
+
+const authKeyIndex = args.findIndex(arg => arg === '--auth-key');
+if (authKeyIndex !== -1 && authKeyIndex + 1 < args.length) {
+  authKey = args[authKeyIndex + 1];
+  args.splice(authKeyIndex, 2); // Remove --auth_key and its value
+} else {
+  authKey = randomUUID().replace(/-/g, '').slice(0, 32);
+}
+
+const mcpPath = authKey !== '' ? `/${authKey}/mcp` : '/mcp';
+
+let url: string = `http://localhost:${PORT}${mcpPath}`;
+
+// Naive auth middleware: ensure the auth_key is present in the first path component.
+// Only "safe" if you trust the reverse tunnel.
+const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  if (authKey) {
+    const pathParts = req.path.split('/');
+    if (pathParts.length < 2 || pathParts[1] !== authKey) {
+      console.warn(`Unauthorized request: ${req.method} ${req.path}`);
+      res.status(401).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32001,
+          message: 'Unauthorized: Invalid or missing auth_key',
+        },
+        id: null,
+      });
+      return;
+    }
+  }
+  next();
+};
+
+app.post(mcpPath, authMiddleware, async (req: Request, res: Response) => {
+  ...
+});
+
+app.get(mcpPath, authMiddleware, async (req: Request, res: Response) => {
+  ...
+});
+
+app.delete(mcpPath, authMiddleware, async (req: Request, res: Response) => {
+  ...
+});
+```
+
+Now, let's setup our reverse tunnel:
+
+- [Install `cloudflared`](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) CLI tool (e.g. `brew install cloudflared` on MacOS)
+
+- Update your code to start a subprocess that runs `cloudflared` (if `--cloudflare` flag is passed), and extract the public URL from its output (this step is tunnel-specific but should be easy to adapt to other tunnel services):
+
+  ```js
+  let tunnelProcess: ChildProcess | undefined;
+
+  const cloudflareIndex = args.findIndex(arg => arg === '--cloudflare');
+  if (cloudflareIndex !== -1) {
+    args.splice(cloudflareIndex, 1); // Remove --cloudflare
+    
+    const cloudflareUrl = await new Promise((resolve, reject) => {
+      tunnelProcess = spawn('cloudflared', ['tunnel', '--url', `http://localhost:${PORT}`], {
+        stdio: ['ignore', 'ignore', 'pipe'] // Only capture stderr
+      });
+
+      const rl = createInterface({
+        input: tunnelProcess.stderr!,
+        crlfDelay: Infinity
+      });
+
+      let foundUrl = false;
+      rl.on('line', (line) => {
+        // Look for the tunnel URL in the output
+        const urlMatch = line.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
+        if (urlMatch && !foundUrl) {
+          foundUrl = true;
+          resolve(urlMatch[0]);
+        }
+      });
+
+      tunnelProcess.on('error', (err) => {
+        reject(new Error(`Failed to start cloudflared: ${err.message}`));
+      });
+
+      tunnelProcess.on('exit', (code, signal) => {
+        if (!foundUrl) {
+          reject(new Error(`cloudflared exited unexpectedly with code ${code} and signal ${signal}`));
+        }
+      });
+    });
+    url = `${cloudflareUrl}${mcpPath}`;
+  }
+  ```
+
+- We'll want to setup a shutdown handler to kill the tunnel process when the server is stopped
+
+  ```js
+  const maybeKillTunnel = () => {
+    if (tunnelProcess && !tunnelProcess.killed) {
+      console.log('Killing tunnel process...');
+      tunnelProcess.kill();
+    }
+  };
+
+  // Handle server shutdown
+  const shutdown = async (signal: string) => {
+    console.log(`Shutting down server (${signal})...`);
+
+    maybeKillTunnel();
+
+    ...
+  };
+
+  ...
+  process.on('exit', () => {
+    // Ensure tunnel is killed even on unexpected exit
+    maybeKillTunnel();
+  });
+  ```
+
+- Finally, we'll print a nice message to help us test the resulting tunnel w/ the new public endpoint URL
+
+  ```ts
+  app.listen(PORT, async () => {
+    console.log(`
+      MCP Streamable HTTP Server listening on port ${PORT}
+      Endpoint:
+        ${url}
+
+      Example usage:
+        curl -X POST https://api.anthropic.com/v1/messages \\
+          -H "Content-Type: application/json" \\
+          -H "anthropic-version: 2023-06-01" \\
+          -H "x-api-key: $ANTHROPIC_API_KEY" \\
+          -H "anthropic-beta: mcp-client-2025-04-04" \\
+          -d '{
+            "model": "claude-sonnet-4-20250514",
+            "max_tokens": 1000,
+            "mcp_servers": [{
+              "type": "url",
+              "url": "${url}",
+              "name": "proxied-server"
+            }],
+            "messages": [{
+              "role": "user",
+              "content": "Write a tictactoe game w/ "
+            }]
+          }'
+    `);
+  });
+  ```
+
+- For bonus points, we may want to programmatically introspect on our freshly started server to get its name:
+
+  ```ts
+  app.listen(PORT, async () => {
+    const serverName = await (async () => {
+      const client = new Client({
+          name: 'introspection-client',
+          version: '1.0.0'
+      });
+      await client.connect(new StreamableHTTPClientTransport(new URL(`http://localhost:${PORT}${mcpPath}`)));
+      const serverName = client.getServerVersion()?.name;
+      client.close();
+      return serverName;
+    })();
+    
+    console.log(`
+      ...
+            "mcp_servers": [{
+              "type": "url",
+              "url": "${url}",
+              "name": "${serverName}"
+            }],
+      ...
+    `);
+  });
+  ```
+
+- That's it! You can now wrap any MCP server locally and have them exposed to the web, with a simple command line:
+
+  ```bash
+  # Note: dont pass -t flag to docker as the stdio transport won't work w/ a TTY):
+
+  stdio-wrapper.ts --cloudflare \
+    docker run --rm -i \
+      --cap-drop=ALL --security-opt=no-new-privileges:true \
+      node:latest \
+      npx -y @modelcontextprotocol/server-everything
+      
+  stdio-wrapper.ts --cloudflare \
+    docker run --rm -i \
+      --cap-drop=ALL --security-opt=no-new-privileges:true \
+      ghcr.io/astral-sh/uv:debian \
+      uvx mcp-server-fetch
+  ```
+
+Warning: running untrusted servers is a risky business, which is out of scope for this tutorial (more to come on this matter, stay tuned!).
+We'd advise you to [install gVisor](https://gvisor.dev/docs/user_guide/install/) & use it w/ the `--runtime=runsc` flag, and/or consider the following `docker` flags, but be aware that
+if you choose to omit the `--network=none` flag, any rogue MCP server could exfiltrate your data over the network and/or scan your local ports for unprotected servers (think about those `python -m http.server` commands you might be running!).
+If you choose to run thirdparty code locally, we recommend you fork it, clone your fork, audit the code and its dependencies thoroughly, and *only then* proceed to running it w/ any kind of network access.
+
+```bash
+docker run \
+  --runtime=runsc \
+  --network=none \
+  --cap-drop=ALL \
+  --security-opt=no-new-privileges:true \
+  --user 1001:1001 \
+  --tmpfs /tmp:noexec,nosuid,size=100m \
+  --memory=512m \
+  --cpus=0.5 \
+  --pids-limit=50
+  ...
+```
