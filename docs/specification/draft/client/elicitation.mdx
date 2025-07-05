@@ -323,7 +323,7 @@ The client **MAY** request progress updates from the server by sending an `elici
 
 The client **MUST** include an `elicitationId` in the request to identify which elicitation to send progress updates for. The client **SHOULD** include a `progressToken` in the request's `_meta` field.
 
-The server **MUST** not accept any `elicitation/track` requests containing an `elicitationId` that is not known or does not belong to the client (i.e. respond with an [error](/docs/concepts/architecture#error-handling)).
+The server **MUST** respond with an [error](/docs/concepts/architecture#error-handling) if the client sends an `elicitation/track` request containing an `elicitationId` that is not known or does not belong to the client.
 
 The server **MAY** send a `notifications/progress` notification to the client with the progress token and the progress status.
 
@@ -694,7 +694,7 @@ Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent f
 
 Since clients facilitate the opening of URLs provided by servers, they **MUST** implement SSRF protections.
 
-The following are recommendations for implementing SSRF protections. Servers that choose to relax these contraints should be aware of the risks.
+The following are recommendations for implementing SSRF protections. Servers that choose to relax these constraints should be aware of the risks.
 
 - Require the `https://` scheme for all url mode URLs (no HTTP, `file://`, etc.)
 - Block requests to internal IP ranges (e.g., `127.0.0.1`, `10.0.0.0/8`, etc.)

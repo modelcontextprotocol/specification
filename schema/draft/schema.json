@@ -875,7 +875,8 @@
             },
             "required": [
                 "message",
-                "mode"
+                "mode",
+                "requestedSchema"
             ],
             "type": "object"
         },

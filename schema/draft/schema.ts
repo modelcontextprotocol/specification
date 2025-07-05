@@ -1329,7 +1329,7 @@ export interface FormElicitRequestParams extends ElicitRequestParams {
    * A restricted subset of JSON Schema.
    * Only top-level properties are allowed, without nesting.
    */
-  requestedSchema?: {
+  requestedSchema: {
     type: "object";
     properties: {
       [key: string]: PrimitiveSchemaDefinition;
