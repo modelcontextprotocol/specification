@@ -51,6 +51,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [mcp-agent][mcp-agent]                           | ✅          | ✅        | ✅      | ❓                     | ⚠️         | ✅    | Supports tools, prompts, resources, roots, server connection management, and agent workflows.    |
 | [mcp-client-chatbot][mcp-client-chatbot]         | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [mcp-use][mcp-use]                               | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.                           |
+| [modelcontextchat.com][modelcontextchat.com]     | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Web-based MCP client for remote servers with header Authorization, OAuth, and OpenRouter support.|
 | [MCPHub][MCPHub]                                 | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports tools, resources, and prompts in Neovim                                                |
 | [MCPOmni-Connect][MCPOmni-Connect]               | ✅          | ✅        | ✅      | ❓                     | ✅         | ❌    | Supports tools with agentic mode, ReAct, and orchestrator capabilities.                         |
 | [Memex][Memex]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Support tools. Also support *building and testing* MCP server, all-in-one desktop app.          |
@@ -129,6 +130,7 @@ This page provides an overview of applications that support the Model Context Pr
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [mcp-client-chatbot]: https://github.com/cgoinglove/mcp-client-chatbot
 [mcp-use]: https://github.com/pietrozullo/mcp-use
+[modelcontextchat.com]: https://modelcontextchat.com
 [MCPHub]: https://github.com/ravitemer/mcphub.nvim
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
 [Memex]: https://memex.tech/
@@ -612,6 +614,18 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Supports connection to multiple MCP servers simultaneously.
 - Supports all langchain supported models, also locally.
 - Offers efficient tool orchestration and search functionalities.
+
+### modelcontextchat.com
+
+[modelcontextchat.com](https://modelcontextchat.com) is a web-based MCP client designed for working with remote MCP servers, featuring comprehensive authentication support and integration with OpenRouter.
+
+**Key features:**
+
+- Web-based interface for remote MCP server connections
+- Header-based Authorization support for secure server access
+- OAuth authentication integration
+- OpenRouter API Key support for accessing various LLM providers
+- No installation required - accessible from any web browser
 
 ### MCPHub
 
