@@ -682,11 +682,11 @@
                     "type": "object"
                 },
                 "action": {
-                    "description": "The user action in response to the elicitation.\n- \"accept\": User submitted the form/confirmed the action\n- \"reject\": User explicitly rejected the action\n- \"cancel\": User dismissed without making an explicit choice",
+                    "description": "The user action in response to the elicitation.\n- \"accept\": User submitted the form/confirmed the action\n- \"decline\": User explicitly decline the action\n- \"cancel\": User dismissed without making an explicit choice",
                     "enum": [
                         "accept",
                         "cancel",
-                        "reject"
+                        "decline"
                     ],
                     "type": "string"
                 },

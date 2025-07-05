@@ -44,7 +44,7 @@ Applications **SHOULD**:
 - Provide UI that makes it clear which server is requesting information
 - For url mode, clearly display the target domain/host before navigation
 - Allow users to review and modify their responses before sending
-- Respect user privacy and provide clear reject and cancel options
+- Respect user privacy and provide clear decline and cancel options
 
 </Warning>
 
@@ -494,7 +494,7 @@ Elicitation responses use a three-action model to clearly distinguish between di
   "jsonrpc": "2.0",
   "id": 1,
   "result": {
-    "action": "accept", // or "reject" or "cancel"
+    "action": "accept", // or "decline" or "cancel"
     "content": {
       "propertyName": "value",
       "anotherProperty": 42
@@ -511,7 +511,7 @@ The three response actions are:
    - For url mode: The `content` field is omitted
    - Example: User clicked "Submit", "OK", "Confirm", etc.
 
-2. **Reject** (`action: "reject"`): User explicitly rejected the request
+2. **Decline** (`action: "decline"`): User explicitly declined the request
 
    - The `content` field is typically omitted
    - Example: User clicked "Reject", "Decline", "No", etc.
@@ -522,8 +522,8 @@ The three response actions are:
 
 Servers should handle each state appropriately:
 
-- **Accept**: Process the submitted data or proceed with the interaction
-- **Decline**: Handle explicit rejection (e.g., offer alternatives)
+- **Accept**: Process the submitted data
+- **Decline**: Handle explicit decline (e.g., offer alternatives)
 - **Cancel**: Handle dismissal (e.g., prompt again later)
 
 ## Implementation Considerations
@@ -656,7 +656,7 @@ This pattern maintains clear security boundaries while enabling rich integration
 
 1. Clients **MUST** provide clear indication of which server is requesting information
 2. Clients **SHOULD** implement user approval controls
-3. Clients **SHOULD** allow users to reject elicitation requests at any time
+3. Clients **SHOULD** allow users to decline elicitation requests at any time
 4. Clients **SHOULD** implement rate limiting
 5. Clients **SHOULD** present elicitation requests in a way that makes it clear what information is being requested and why
 6. Servers **MUST** bind elicitation requests to the user's identity
