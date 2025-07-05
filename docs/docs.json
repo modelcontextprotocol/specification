@@ -448,7 +448,8 @@
                     ]
                   }
                 ]
-              }
+              },
+              "specification/draft/schema"
             ]
           },
           {
