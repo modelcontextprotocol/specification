@@ -268,9 +268,6 @@
                 },
                 {
                     "$ref": "#/definitions/RootsListChangedNotification"
-                },
-                {
-                    "$ref": "#/definitions/StreamResumeRequest"
                 }
             ]
         },
@@ -316,7 +313,13 @@
                     "$ref": "#/definitions/CompleteRequest"
                 },
                 {
+                    "$ref": "#/definitions/StreamResumeRequest"
+                },
+                {
                     "$ref": "#/definitions/StreamPollRequest"
+                },
+                {
+                    "$ref": "#/definitions/StreamPollAllRequest"
                 }
             ]
         },
@@ -2241,6 +2244,12 @@
                 },
                 {
                     "$ref": "#/definitions/CompleteResult"
+                },
+                {
+                    "$ref": "#/definitions/StreamPollResult"
+                },
+                {
+                    "$ref": "#/definitions/StreamPollAllResult"
                 }
             ]
         },
@@ -2279,14 +2288,18 @@
                 },
                 "params": {
                     "properties": {
+                        "requestId": {
+                            "$ref": "#/definitions/RequestId",
+                            "description": "The ID of the originating request."
+                        },
                         "resumeInterval": {
                             "properties": {
                                 "max": {
-                                    "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection. A value of 0 indicates that the stream\nis not resumable, and that the work will be cancelled upon disconnect.",
+                                    "description": "The maximum number of seconds a client may wait before resuming or\npolling the stream. A value of 0 indicates that the stream is not\nresumable, and that the task may be cancelled upon disconnect.\n\nIf this number is omitted, the server provides no guarantee, and may\nterminate the stream at its own discretion.",
                                     "type": "integer"
                                 },
                                 "min": {
-                                    "description": "The minimum number of seconds a client should wait before resuming\nthe stream after reconnection or between `stream/poll` requests.",
+                                    "description": "The minimum number of seconds a client should wait before resuming\nor polling the stream.",
                                     "type": "integer"
                                 }
                             },
@@ -2298,6 +2311,7 @@
                         }
                     },
                     "required": [
+                        "requestId",
                         "streamId"
                     ],
                     "type": "object"
@@ -2429,7 +2443,6 @@
                 "status": {
                     "description": "The current status of the stream.",
                     "enum": [
-                        "abandoned",
                         "completed",
                         "live"
                     ],
@@ -2493,7 +2506,6 @@
                 "status": {
                     "description": "The current status of the stream.",
                     "enum": [
-                        "abandoned",
                         "completed",
                         "live"
                     ],
