@@ -1269,9 +1269,7 @@ export interface ListRootsResult extends Result {
  */
 export interface Root {
   /**
-   * The URI identifying the root. This *must* start with file:// for now.
-   * This restriction may be relaxed in future versions of the protocol to allow
-   * other URI schemes.
+   * The URI identifying the root.
    *
    * @format uri
    */
