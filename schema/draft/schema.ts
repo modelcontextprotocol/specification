@@ -1371,10 +1371,10 @@ export interface ElicitResult extends Result {
   /**
    * The user action in response to the elicitation.
    * - "accept": User submitted the form/confirmed the action
-   * - "reject": User explicitly rejected the action
+   * - "decline": User explicitly decline the action
    * - "cancel": User dismissed without making an explicit choice
    */
-  action: "accept" | "reject" | "cancel";
+  action: "accept" | "decline" | "cancel";
 
   /**
    * The submitted form data, only present when action is "accept".
