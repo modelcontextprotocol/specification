@@ -1405,17 +1405,25 @@ export interface StreamCreateNotification extends Notification {
      */
     streamId: string;
 
+    /**
+     * The ID of the originating request.
+     */
+    requestId: RequestId;
+
     resumeInterval?: {
       /**
        * The minimum number of seconds a client should wait before resuming
-       * the stream after reconnection or between `stream/poll` requests.
+       * or polling the stream.
        */
       min?: number;
 
       /**
-       * The minimum number of seconds a client should wait before resuming
-       * the stream after reconnection. A value of 0 indicates that the stream
-       * is not resumable, and that the work will be cancelled upon disconnect.
+       * The maximum number of seconds a client may wait before resuming or
+       * polling the stream. A value of 0 indicates that the stream is not
+       * resumable, and that the task may be cancelled upon disconnect.
+       *
+       * If this number is omitted, the server provides no guarantee, and may
+       * terminate the stream at its own discretion.
        */
       max?: number;
     }
@@ -1472,7 +1480,7 @@ export interface StreamStatus {
   /**
    * The current status of the stream.
    */
-  status: "live" | "completed" | "abandoned";
+  status: "live" | "completed";
 
   /**
    * Whether the stream has pending messages.
@@ -1542,14 +1550,15 @@ export type ClientRequest =
   | UnsubscribeRequest
   | CallToolRequest
   | ListToolsRequest
-  | StreamPollRequest;
+  | StreamResumeRequest
+  | StreamPollRequest
+  | StreamPollAllRequest;
 
 export type ClientNotification =
   | CancelledNotification
   | ProgressNotification
   | InitializedNotification
-  | RootsListChangedNotification
-  | StreamResumeRequest;
+  | RootsListChangedNotification;
 
 export type ClientResult =
   | EmptyResult
@@ -1585,4 +1594,6 @@ export type ServerResult =
   | ListResourcesResult
   | ReadResourceResult
   | CallToolResult
-  | ListToolsResult;
+  | ListToolsResult
+  | StreamPollResult
+  | StreamPollAllResult;
