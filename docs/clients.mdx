@@ -44,11 +44,12 @@ This page provides an overview of applications that support the Model Context Pr
 | [gptme][gptme]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [HyperAgent][HyperAgent]                         | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [JetBrains AI Assistant][JetBrains AI Assistant] | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools for all JetBrains IDEs.                                                          |
+| [Jiki][Jiki]                                     | ✅          | ✅        | ✅      | ✅                     | ✅         | ❌    | Orchestration framework with dynamic tool/roots discovery |
 | [Kilo Code][Kilo Code]                           | ✅          | ❌        | ✅      | ✅                     | ❌         | ❌    | Supports tools and resources.                                                                   |
 | [Klavis AI Slack/Discord/Web][Klavis AI]         | ✅          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools and resources.                                                                   |
 | [LibreChat][LibreChat]                           | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | Supports tools for Agents                                                                       |
 | [Lutra][Lutra]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports any MCP server for reusable playbook creation.                                         |
-| [mcp-agent][mcp-agent]                           | ✅          | ✅        | ✅      | ❓                     | ⚠️         | ✅    | Supports tools, prompts, resources, roots, server connection management, and agent workflows.    |
+| [mcp-agent][mcp-agent]                           | ✅          | ✅        | ✅      | ❓                     | ⚠️         | ✅    | Supports tools, prompts, resources, roots, server connection management, and agent workflows.   |
 | [mcp-client-chatbot][mcp-client-chatbot]         | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | Supports tools.                                                                                 |
 | [mcp-use][mcp-use]                               | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Support tools, resources, stdio & http connection, local llms-agents.                           |
 | [MCPHub][MCPHub]                                 | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | Supports tools, resources, and prompts in Neovim                                                |
@@ -123,6 +124,7 @@ This page provides an overview of applications that support the Model Context Pr
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
 [JetBrains AI Assistant]: https://plugins.jetbrains.com/plugin/22282-jetbrains-ai-assistant
+[Jiki]: https://github.com/teilomillet/jiki
 [Kilo Code]: https://github.com/Kilo-Org/kilocode
 [LibreChat]: https://github.com/danny-avila/LibreChat
 [Lutra]: https://lutra.ai
@@ -495,6 +497,7 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Goose allows you to extend its functionality by [building your own MCP servers](https://block.github.io/goose/docs/tutorials/custom-extensions).
 - Includes built-in tools for development, web scraping, automation, memory, and integrations with JetBrains and Google Drive.
 
+
 ### gptme
 
 [gptme](https://github.com/gptme/gptme) is a open-source terminal-based personal AI assistant/agent, designed to assist with programming tasks and general knowledge work.
@@ -529,6 +532,14 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - Access to top-tier models from OpenAI, Anthropic, and Google.
 - Offline mode with connected local LLMs via Ollama or LM Studio.
 - Deep integration into IDE workflows, including code suggestions in the editor, VCS assistance, runtime error explanation, and more.
+
+### Jiki
+[Jiki](https://github.com/teilomillet/jiki) is a flexible LLM orchestration framework designed for building applications that leverage tool calling via the Multi-Capability Protocol (MCP).
+
+**Key features:**
+- Orchestration framework [docs](https://docs.jiki.dev)
+- Auto-discover tools from MCP servers (stdio and SSE).
+- Detailed interaction data with tool_calls and raw traces.
 
 ### Kilo Code
 
