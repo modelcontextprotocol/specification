@@ -1,0 +1,86 @@
+#content-area {
+  h5 {
+    font-weight: 500;
+  }
+
+  h6 {
+    font-weight: 400;
+  }
+}
+
+#feature-support-matrix-wrapper {
+  overflow-x: auto;
+}
+
+#feature-support-matrix-wrapper table {
+  min-width: 800px;
+}
+
+/*** Add automatic section numbers to headings and table of contents items ***/
+
+#enable-section-numbers {
+  display: none;
+}
+
+body:has(#enable-section-numbers) {
+  #content-area,
+  #table-of-contents {
+    counter-reset: h2-counter h3-counter h4-counter h5-counter h6-counter;
+  }
+
+  #content-area h2[id],
+  #table-of-contents li[data-depth="0"] {
+    counter-set: h3-counter h4-counter h5-counter h6-counter;
+  }
+
+  #content-area h3[id],
+  #table-of-contents li[data-depth="1"] {
+    counter-set: h4-counter h5-counter h6-counter;
+  }
+
+  #content-area h4[id],
+  #table-of-contents li[data-depth="2"] {
+    counter-set: h5-counter h6-counter;
+  }
+
+  #content-area h5[id],
+  #content-area h5,
+  #table-of-contents li[data-depth="3"] {
+    counter-set: h6-counter;
+  }
+
+  #content-area h2[id]::before,
+  #table-of-contents li[data-depth="0"] a::before {
+    counter-increment: h2-counter;
+    content: counter(h2-counter) ". ";
+  }
+
+  #content-area h3[id]::before,
+  #table-of-contents li[data-depth="1"] a::before {
+    counter-increment: h3-counter;
+    content: counter(h2-counter) "." counter(h3-counter) " ";
+  }
+
+  #content-area h4[id]::before,
+  #table-of-contents li[data-depth="2"] a::before {
+    counter-increment: h4-counter;
+    content: counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter)
+      " ";
+  }
+
+  #content-area h5[id]::before,
+  #content-area h5::before,
+  #table-of-contents li[data-depth="3"] a::before {
+    counter-increment: h5-counter;
+    content: counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter)
+      "." counter(h5-counter) " ";
+  }
+
+  #content-area h6[id]::before,
+  #content-area h6::before,
+  #table-of-contents li[data-depth="4"] a::before {
+    counter-increment: h6-counter;
+    content: counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter)
+      "." counter(h5-counter) "." counter(h6-counter) " ";
+  }
+}

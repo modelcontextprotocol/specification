@@ -11,15 +11,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
       - run: npm ci
 
-      - run: npm run validate:schema
+      - name: Check TypeScript definitions
+        run: npm run check:schema:ts
 
-      - run: npm run generate:json
       - name: Verify that `npm run generate:json` did not change outputs (if it did, please re-run it and re-commit!)
-        run: git diff --exit-code
+        run: npm run check:schema:json
