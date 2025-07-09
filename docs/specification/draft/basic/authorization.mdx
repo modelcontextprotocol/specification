@@ -386,19 +386,6 @@ These fields enable authorization servers to validate and identify the software 
 - **Accountability**: Software statements establish a chain of trust back to the software vendor, supporting effective auditing.
 - **Vendor-level controls**: Authorization servers can restrict registration to trusted software vendors, reducing the risk of unauthorized or malicious clients. It can also be used to enable vendor-specific controls, such as rate limiting or blocking.
 
-MCP clients connecting to MCP servers that require software statements **MUST**:
-- Provide a `jwks_uri` that is accessible over HTTPS on a domain that the software vendor controls.
-- Include a valid `software_statement` JWT signed by a trusted authority (typically the software vendor's server) in their dynamic client registration request.
-   - Include `kid` in the `software_statement` JWT header that matches a key in the JWKS.
-
-Authorization servers that support software statements **MUST**:
-- Require the `jwks_uri` to use HTTPS.
-- Fetch the JWKS from the provided `jwks_uri`.
-- Validate the `software_statement` JWT signature using the `kid` in the JWT header to find the corresponding public key in the JWKS.
-- Validate the `exp` and `iat` claims to ensure timeliness.
-- Validate the `aud` claim matches their expected value.
-- Verify the `iss` value matches a trusted software publisher (typically the software vendor's server).
-
 The following sequence shows the Dynamic Client Registration flow when using software statements:
 
 ```mermaid
