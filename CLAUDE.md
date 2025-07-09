@@ -142,3 +142,5 @@ Let's implement this:
         - CLI to wire the 3 together + e2e tests
 - Run /update_sdk typescript
 - Run /update_goldens
+
+Don't forget to use subagents for any task you can delegate and/or parallelize.
