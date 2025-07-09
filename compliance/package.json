@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
+  "bin": {
+    "mcp-mitm": "./src/cli/mitm.ts"
+  },
   "scripts": {
     "test": "tsx --test tests/**/*.test.ts",
     "build": "tsc",
