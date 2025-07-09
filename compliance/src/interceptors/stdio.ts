@@ -1,5 +1,4 @@
 import { spawn, ChildProcess } from 'node:child_process';
-import { createInterface, Interface } from 'node:readline';
 import { Transform } from 'node:stream';
 import type { AnnotatedJSONRPCMessage } from '../types.js';
 import type { JSONRPCMessage } from '../../../schema/draft/schema.js';
@@ -19,8 +18,6 @@ export interface StdioInterceptorOptions {
 export class StdioInterceptor {
   private serverProcess: ChildProcess | null = null;
   private options: StdioInterceptorOptions;
-  private serverToClientInterface: Interface | null = null;
-  private clientToServerInterface: Interface | null = null;
 
   constructor(options: StdioInterceptorOptions) {
     this.options = options;
@@ -39,7 +36,7 @@ export class StdioInterceptor {
 
     // Create transform streams to intercept messages
     const clientToServerTransform = new Transform({
-      transform: (chunk, encoding, callback) => {
+      transform: (chunk, _encoding, callback) => {
         const line = chunk.toString();
         try {
           const message = JSON.parse(line) as JSONRPCMessage;
@@ -52,7 +49,7 @@ export class StdioInterceptor {
     });
 
     const serverToClientTransform = new Transform({
-      transform: (chunk, encoding, callback) => {
+      transform: (chunk, _encoding, callback) => {
         const line = chunk.toString();
         try {
           const message = JSON.parse(line) as JSONRPCMessage;
