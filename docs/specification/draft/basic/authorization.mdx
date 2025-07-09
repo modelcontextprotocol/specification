@@ -382,8 +382,8 @@ The `software_statement` is a signed JWT ([RFC 7519](https://datatracker.ietf.or
 
 These fields enable authorization servers to validate and identify the software requesting registration, providing several benefits:
 
-- **Consistent client identification**: Software statements provide a consistent and trustworthy way to identify MCP clients, making it easier for authorization servers to track, audit, and manage them.
-- **Accountability**: Software statements establish a chain of trust back to the software vendor, supporting effective auditing and incident response.
+- **Consistent client identification**: Software statements provide a consistent and trustworthy way to identify MCP clients, making it easier for authorization servers to manage them.
+- **Accountability**: Software statements establish a chain of trust back to the software vendor, supporting effective auditing.
 - **Vendor-level controls**: Authorization servers can restrict registration to trusted software vendors, reducing the risk of unauthorized or malicious clients. It can also be used to enable vendor-specific controls, such as rate limiting or blocking.
 
 MCP clients connecting to MCP servers that require software statements **MUST**:
