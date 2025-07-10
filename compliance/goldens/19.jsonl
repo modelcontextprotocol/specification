@@ -1,1 +1,0 @@
-// client1 connects to CalcServer via streamable-http transport, maintains session across multiple HTTP requests using session ID

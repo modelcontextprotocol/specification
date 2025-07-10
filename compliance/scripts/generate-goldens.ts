@@ -47,14 +47,15 @@ async function runStdioScenario(scenario: Scenarios['scenarios'][0], logPath: st
     'tsx',
     join(process.cwd(), 'src/cli/mitm.ts'),
     'stdio',
-    '--scenario-id', scenario.id.toString(),
     '--log', logPath,
+    '--scenario-id', scenario.id.toString(),
     '--',
     join(TYPESCRIPT_SDK_DIR, 'test-server'),
     '--server-name', scenario.server_name,
     '--transport', 'stdio'
   ];
   
+  console.error('Running command:', 'tsx', clientArgs.join(' '));
   await runCommand('tsx', clientArgs);
 }
 
@@ -88,8 +89,8 @@ async function runSSEScenario(scenario: Scenarios['scenarios'][0], logPath: stri
     const mitmArgs = [
       join(process.cwd(), 'src/cli/mitm.ts'),
       'sse',
-      '--scenario-id', scenario.id.toString(),
       '--log', logPath,
+      '--scenario-id', scenario.id.toString(),
       '--port', (port + 1000).toString(), // MITM proxy port
       '--',
       `http://127.0.0.1:${port}`

@@ -1,10 +1,14 @@
 #!/usr/bin/env tsx
 import { createWriteStream, WriteStream, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { StdioInterceptor } from '../interceptors/stdio.js';
 import { SSEInterceptor } from '../interceptors/sse.js';
 import { StreamableHTTPInterceptor } from '../interceptors/streamable-http.js';
 import type { AnnotatedJSONRPCMessage, Scenarios } from '../types.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 interface MITMOptions {
   transport: 'stdio' | 'sse' | 'streamable-http';
@@ -53,6 +57,8 @@ Examples:
 async function main() {
   // Parse command line arguments
   const args = process.argv.slice(2);
+  console.error('[MITM] process.argv:', process.argv);
+  console.error('[MITM] args:', args);
   
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
     printUsage();
@@ -148,7 +154,8 @@ async function main() {
     // If scenario ID is provided, write the description as a comment
     if (options.scenarioId !== undefined) {
       try {
-        const dataPath = join(process.cwd(), 'scenarios', 'data.json');
+        // Build path relative to the binary location
+        const dataPath = join(__dirname, '..', '..', 'scenarios', 'data.json');
         const data = JSON.parse(readFileSync(dataPath, 'utf-8')) as Scenarios;
         const scenario = data.scenarios.find(s => s.id === options.scenarioId);
         
