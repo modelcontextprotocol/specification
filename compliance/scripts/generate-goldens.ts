@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import type { Scenarios } from '../src/types.js';
 
 const SCENARIOS_PATH = join(process.cwd(), 'scenarios/data.json');
-const GOLDENS_DIR = join(process.cwd(), 'goldens');
+const GOLDENS_DIR = join(process.cwd(), 'scenarios/goldens');
 const TYPESCRIPT_SDK_DIR = join(process.cwd(), 'typescript-sdk');
 
 // Ensure goldens directory exists

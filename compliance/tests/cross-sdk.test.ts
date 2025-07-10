@@ -6,7 +6,7 @@ import { CrossSDKRunner } from '../src/cross-sdk-runner.js';
 import type { Scenarios } from '../src/types.js';
 
 const SCENARIOS_PATH = join(process.cwd(), 'scenarios/data.json');
-const GOLDENS_DIR = join(process.cwd(), 'goldens');
+const GOLDENS_DIR = join(process.cwd(), 'scenarios/goldens');
 
 // Load scenarios
 const scenariosData = JSON.parse(readFileSync(SCENARIOS_PATH, 'utf-8')) as Scenarios;
