@@ -7,11 +7,12 @@
     "mcp-mitm": "./src/cli/mitm.ts"
   },
   "scripts": {
-    "test": "tsx --test tests/**/*.test.ts",
+    "test": "tsx --no-cache --test tests/**/*.test.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
     "typecheck": "tsc --noEmit",
-    "validate-scenarios": "tsx tests/validate-scenarios.ts"
+    "validate-scenarios": "tsx tests/validate-scenarios.ts",
+    "generate-goldens": "tsx scripts/generate-goldens.ts"
   },
   "dependencies": {
     "express": "^4.18.2",
