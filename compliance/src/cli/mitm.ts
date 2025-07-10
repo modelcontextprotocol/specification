@@ -139,7 +139,7 @@ async function main() {
   };
 
   if (options.logFile) {
-    logStream = createWriteStream(options.logFile, { flags: 'a' });
+    logStream = createWriteStream(options.logFile, { flags: 'w' });
     logStream.on('error', (error) => {
       console.error('Error writing to log file:', error);
       process.exit(1);

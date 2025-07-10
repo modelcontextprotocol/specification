@@ -156,16 +156,24 @@ async function main() {
   console.log(`Found ${scenariosData.scenarios.length} scenarios to run\n`);
   
   // Run each scenario
+  let failedScenarios = 0;
+  
   for (const scenario of scenariosData.scenarios) {
     try {
       await runScenario(scenario);
     } catch (error) {
       console.error(`\nFailed to complete scenario ${scenario.id}`);
-      process.exit(1);
+      failedScenarios++;
+      // Continue to next scenario instead of exiting
     }
   }
   
-  console.log('\n=== All scenarios completed successfully! ===');
+  if (failedScenarios > 0) {
+    console.log(`\n=== Completed with ${failedScenarios} failed scenarios ===`);
+    process.exit(1);
+  } else {
+    console.log('\n=== All scenarios completed successfully! ===');
+  }
 }
 
 // Run the script
