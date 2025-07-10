@@ -24,6 +24,7 @@ program
   .requiredOption('--scenario-id <number>', 'Scenario ID from scenarios data', (val) => parseInt(val, 10))
   .requiredOption('--id <string>', 'Client identifier (e.g., "client1")')
   .arguments('<transport> [args...]')
+  .allowUnknownOption() // Allow options in args that are meant for the command
   .action(async (transport: string, args: string[]) => {
     const options = program.opts();
     
@@ -49,7 +50,7 @@ async function runClient(config: {
   args: string[];
 }) {
   // Load scenarios
-  const scenariosPath = resolve(join(process.cwd(), 'compliance', 'scenarios', 'data.json'));
+  const scenariosPath = resolve(join(process.cwd(), 'scenarios', 'data.json'));
   const scenariosData = JSON.parse(readFileSync(scenariosPath, 'utf-8'));
   const scenarios = scenariosData as Scenarios;
   

@@ -44,6 +44,7 @@ async function runStdioScenario(scenario: Scenarios['scenarios'][0], logPath: st
     '--scenario-id', scenario.id.toString(),
     '--id', scenario.client_ids[0], // Use first client for now
     'stdio',
+    'tsx',
     join(process.cwd(), 'src/cli/mitm.ts'),
     'stdio',
     '--scenario-id', scenario.id.toString(),

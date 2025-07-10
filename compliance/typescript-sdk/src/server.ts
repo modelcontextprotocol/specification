@@ -524,7 +524,7 @@ async function runServer(config: {
   port?: number;
 }) {
   // Load scenarios to validate server name
-  const scenariosPath = resolve(join(process.cwd(), 'compliance', 'scenarios', 'data.json'));
+  const scenariosPath = resolve(join(process.cwd(), 'scenarios', 'data.json'));
   const scenariosData = JSON.parse(readFileSync(scenariosPath, 'utf-8'));
   const scenarios = scenariosData as Scenarios;
 
