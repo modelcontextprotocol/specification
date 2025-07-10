@@ -38,9 +38,9 @@ Resources can be:
 - **Static**: Specific files or data (like "Barcelona Trip Notes.pdf")
 - **Dynamic**: Patterns that fetch information on demand (like `weather://forecast/{city}/{date}` for any city's weather)
 
-### Smart Discovery with Auto-completion
+### Smart Parameter Discovery
 
-When working with resource templates, MCP helps you fill in the parameters. For example, if a travel server has a template like `hotel://search/{city}/{date}`, as you type the city name "Par...", it might suggest "Paris" or "Park City" from available destinations. Similarly, for `email://inbox/{sender}`, typing "Joh..." could auto-complete to "John Smith" or "Johnson Hotels" based on your actual emails. This works just like auto-complete in file explorers or email apps, helping you quickly access the exact resource you need.
+When working with dynamic resources, MCP helps you fill in the parameters. For example, if a travel server has a template like `hotel://search/{city}/{date}`, as you type the city name "Par...", it might suggest "Paris" or "Park City" from available destinations. This intelligent assistance helps you quickly access the exact resource you need without memorizing specific formats.
 
 ### User Interaction Model
 
@@ -60,8 +60,9 @@ Prompts are like having an expert assistant who knows exactly what questions to 
 
 **In our vacation example**, prompts might include:
 
-- **"Show weather for [city]"** - Asks about the city to check there weather for.
-- **"Create daily schedule"** - Organizes activities, restaurants, and transportation
+- **"Plan a vacation"** - Guides you through destination, dates, budget, and preferences
+- **"Show weather for [city]"** - Displays current conditions and forecast for any destination
+- **"Create daily schedule"** - Organizes activities, restaurants, and transportation for each day
 
 ### How Prompts Save Time
 
@@ -69,9 +70,9 @@ Without prompts, you might spend time typing: "I want to plan a vacation sometim
 
 With prompts, you simply select "Plan a vacation" and fill in the blanks as the AI guides you through each important consideration.
 
-### Argument Completion
+### Smart Parameter Completion
 
-Prompts get even better with auto-completion. When you select a prompt like "Show weather", MCP helps you complete the arguments. As you type "Show weather for Par...", it might suggest "Paris, France" or "Park City, Utah". Similarly, with "Send email to Joh...", it could auto-complete to "John Smith" from your contacts. This works just like search suggestions in your favorite apps, making it easy to provide the right information quickly.
+Prompts get even better with auto-completion. When you select a prompt like "Show weather for [city]", MCP helps you complete the arguments. As you type "Par...", it might suggest "Paris, France" or "Park City, Utah". Similarly, with "Send email to [recipient]", typing "Joh..." could auto-complete to "John Smith" from your contacts. This works just like search suggestions in your favorite apps, making it easy to provide the right information quickly.
 
 ### User Interaction Model
 
@@ -89,14 +90,13 @@ This user-controlled approach ensures you're always in charge of when and how to
 
 Tools transform AI from an advisor into an assistant that can actually do things for you. They're the "write access" that lets AI interact with your digital world—always with your explicit permission.
 
-**In our vacation example**, tools might:
+**In our vacation example**, tools enable actions like:
 
-- **Search for flights** across multiple websites
-- **Check hotel availability** for your dates
-- **Add events** to your calendar
-- **Send emails** to travel companions
-- **Create documents** like itineraries or packing lists
-- **Set reminders** for important travel tasks
+- **`searchFlights(origin, destination, dates)`** - Compare options across airlines
+- **`checkHotels(city, checkin, checkout, budget)`** - Find available accommodations
+- **`createCalendarEvent(title, date, location)`** - Block your travel dates
+- **`sendEmail(to, subject, body)`** - Coordinate with travel companions
+- **`createDocument(title, content)`** - Generate itineraries or packing lists
 
 ### User Interaction Model
 
@@ -122,12 +122,12 @@ The real power of MCP comes from combining resources, prompts, and tools. Let's 
    - Reviews weather patterns for potential destinations
    - Looks at travel guides you've saved
 
-3. **You provide prompt arguments** with auto-completion help:
+3. **You fill in the prompt parameters** with smart assistance:
 
    - Destination: "Barcelona" (auto-completed from "Bar...")
-   - Dates: "June 15-22" (auto-suggested from calendar availability)
+   - Dates: "June 15-22" (suggested based on your calendar availability)
    - Budget: "$3000"
-   - The prompt then executes a complete workflow for planning your trip
+   - Preferences: "Beach, local cuisine, walkable neighborhoods"
 
 4. **AI uses tools** to help (with your permission):
 
