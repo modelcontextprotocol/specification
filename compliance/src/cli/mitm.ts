@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-import { parseArgs } from 'node:util';
 import { createWriteStream, WriteStream, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { StdioInterceptor } from '../interceptors/stdio.js';
@@ -149,7 +148,7 @@ async function main() {
     // If scenario ID is provided, write the description as a comment
     if (options.scenarioId !== undefined) {
       try {
-        const dataPath = join(process.cwd(), 'compliance', 'scenarios', 'data.json');
+        const dataPath = join(process.cwd(), 'scenarios', 'data.json');
         const data = JSON.parse(readFileSync(dataPath, 'utf-8')) as Scenarios;
         const scenario = data.scenarios.find(s => s.id === options.scenarioId);
         
