@@ -4,7 +4,6 @@
     "module": "ES2022",
     "lib": ["ES2022"],
     "moduleResolution": "node",
-    "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
@@ -16,6 +15,6 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../src/types.ts", "../../schema/draft/schema.ts"],
   "exclude": ["node_modules", "dist"]
 }

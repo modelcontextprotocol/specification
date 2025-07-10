@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-import { Client, StdioClientTransport, SSEClientTransport } from '@modelcontextprotocol/sdk/client/index.js';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { Command } from 'commander';
 import { readFileSync } from 'fs';
 import { join, resolve } from 'path';
@@ -9,8 +11,7 @@ import type {
   ListResourcesResult, 
   ListToolsResult, 
   ReadResourceResult,
-  ListPromptsResult,
-  Elicitation
+  ListPromptsResult
 } from '@modelcontextprotocol/sdk/types.js';
 import type { Scenarios } from '../../src/types.js';
 
