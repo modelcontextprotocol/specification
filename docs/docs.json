@@ -42,6 +42,7 @@
                   "docs/concepts/tools",
                   "docs/concepts/sampling",
                   "docs/concepts/roots",
+                  "docs/concepts/elicitation",
                   "docs/concepts/transports"
                 ]
               },
