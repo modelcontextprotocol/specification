@@ -122,6 +122,7 @@ The test harness has multiple layers, based on heavy use of Claude Code w/ slash
 
     - `update_sdk.md`: generates or updates a specific SDK's client and server binaries:
         - First, a `compliance/<sdk-name>/CLAUDE.md` must be assembled or updated with links to the SDK's docs, relevant official client/server examples, and directions for implementation.
+        - Pay special attention to all the available features of the SDK. For instance, support to enable/disable registered tools (w/ automatic tool change events emission)
         - Then the client and server binaries can be generated in two independent claude code executions inside `compliance/<sdk-name>`, pointing them towards `../../compliance/scenarios/data.json` to source the scenarios
         - Tests for the client and the server binaries are generated or updated, run, and debugged (SDK / language-dependent)
 

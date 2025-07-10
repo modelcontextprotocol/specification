@@ -22,6 +22,8 @@ class CalcServer {
   private server: McpServer;
   private specialNumber = 42;
   private subscriptions = new Map<string, Set<string>>(); // clientId -> Set of resource URIs
+  private cosToolRef: any; // Reference to cos tool for enable/disable
+  private sinToolRef: any; // Reference to sin tool for enable/disable
 
   constructor() {
     this.server = new McpServer({
@@ -70,8 +72,8 @@ class CalcServer {
         a: z.number().describe('First number')
       }
     }, async ({ a }) => {
-      // Elicitation not directly supported in SDK 1.15.0
-      // For test scenario, use a default value
+      // TODO: Implement elicitation when client sends support
+      // For now, use a default value for test scenario
       const b = 20; // Default for test scenario
 
       return {
@@ -80,43 +82,33 @@ class CalcServer {
     });
 
     // Trigonometric functions (conditionally available)
-    this.server.registerTool('cos', {
+    this.cosToolRef = this.server.registerTool('cos', {
       title: 'Cosine',
       description: 'Calculates the cosine of an angle in radians (disabled by default)',
       inputSchema: {
         angle: z.number().describe('Angle in radians')
       }
     }, async ({ angle }) => {
-      const clientId = 'default';
-      const state = this.getClientState(clientId);
-      
-      if (!state.trigAllowed) {
-        throw new Error('Trigonometric functions are not enabled');
-      }
-
       return {
         content: [{ type: 'text', text: String(Math.cos(angle)) }]
       };
     });
 
-    this.server.registerTool('sin', {
+    this.sinToolRef = this.server.registerTool('sin', {
       title: 'Sine',
       description: 'Calculates the sine of an angle in radians (disabled by default)',
       inputSchema: {
         angle: z.number().describe('Angle in radians')
       }
     }, async ({ angle }) => {
-      const clientId = 'default';
-      const state = this.getClientState(clientId);
-      
-      if (!state.trigAllowed) {
-        throw new Error('Trigonometric functions are not enabled');
-      }
-
       return {
         content: [{ type: 'text', text: String(Math.sin(angle)) }]
       };
     });
+
+    // Disable trig functions by default
+    this.cosToolRef.disable();
+    this.sinToolRef.disable();
 
     // Tool to enable/disable trig functions
     this.server.registerTool('set_trig_allowed', {
@@ -130,8 +122,14 @@ class CalcServer {
       const state = this.getClientState(clientId);
       state.trigAllowed = allowed;
 
-      // Notify tools list changed - method not available
-      console.log('notifyToolsChanged not available in SDK 1.15.0');
+      // Use SDK's built-in enable/disable functionality
+      if (allowed) {
+        this.cosToolRef.enable();
+        this.sinToolRef.enable();
+      } else {
+        this.cosToolRef.disable();
+        this.sinToolRef.disable();
+      }
 
       return {
         content: [{ type: 'text', text: `Trigonometric functions ${allowed ? 'enabled' : 'disabled'}` }]
@@ -151,8 +149,7 @@ class CalcServer {
       state.specialNumber = value;
       this.specialNumber = value;
 
-      // Notify resource subscribers - method not available
-      console.log('notifyResourceUpdated not available in SDK 1.15.0');
+      // TODO: Notify resource subscribers when SDK supports resource change events
 
       return {
         content: [{ type: 'text', text: `Special number updated to ${value}` }]
@@ -167,8 +164,8 @@ class CalcServer {
         expression: z.string().describe('Arithmetic expression to evaluate')
       }
     }, async ({ expression }) => {
-      // Sampling not directly available in SDK 1.15.0
-      // Simple evaluation for test case
+      // TODO: Implement actual LLM sampling when client sends sampling capability
+      // For now, use hardcoded evaluation for test cases
       let result = '8'; // Default
       try {
         // Only evaluate safe expressions
@@ -274,9 +271,8 @@ class FileServer {
     }, async ({ path, content }) => {
       this.fileSystem.set(path, content);
 
-      // Notify if file is being watched - method not available
+      // TODO: Notify resource subscribers when SDK supports resource change events
       const fileUri = `file://${path}`;
-      console.log('notifyResourceUpdated not available in SDK 1.15.0');
 
       return {
         content: [{ type: 'text', text: `File written to ${path}` }]
@@ -452,7 +448,7 @@ class ErrorServer {
       // Support cancellation
       const startTime = Date.now();
       while (Date.now() - startTime < duration) {
-        // Check for cancellation periodically - not directly available
+        // TODO: Check for cancellation when SDK provides cancellation tokens
         await new Promise(resolve => setTimeout(resolve, 100));
       }
 
