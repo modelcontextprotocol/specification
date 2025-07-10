@@ -76,6 +76,32 @@ describe('MITM CLI', () => {
     assert.strictEqual(result.code, 1);
     assert.ok(result.stderr.includes('Missing command'));
   });
+
+  it('should accept scenario ID', async () => {
+    const result = await runCommand([
+      'tsx', mitmPath,
+      'stdio',
+      '--scenario-id', '1',
+      '--'
+    ]);
+    
+    // Should fail because no command provided, but scenario-id should be accepted
+    assert.strictEqual(result.code, 1);
+    assert.ok(result.stderr.includes('Missing command'));
+  });
+
+  it('should reject invalid scenario ID', async () => {
+    const result = await runCommand([
+      'tsx', mitmPath,
+      'stdio',
+      '--scenario-id', 'invalid',
+      '--',
+      'echo', 'test'
+    ]);
+    
+    assert.strictEqual(result.code, 1);
+    assert.ok(result.stderr.includes('--scenario-id must be a number'));
+  });
 });
 
 // Helper function to run a command and capture output

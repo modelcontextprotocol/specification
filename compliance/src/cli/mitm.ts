@@ -1,10 +1,11 @@
 #!/usr/bin/env tsx
 import { parseArgs } from 'node:util';
-import { createWriteStream, WriteStream } from 'node:fs';
+import { createWriteStream, WriteStream, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { StdioInterceptor } from '../interceptors/stdio.js';
 import { SSEInterceptor } from '../interceptors/sse.js';
 import { StreamableHTTPInterceptor } from '../interceptors/streamable-http.js';
-import type { AnnotatedJSONRPCMessage } from '../types.js';
+import type { AnnotatedJSONRPCMessage, Scenarios } from '../types.js';
 
 interface MITMOptions {
   transport: 'stdio' | 'sse' | 'streamable-http';
@@ -16,6 +17,7 @@ interface MITMOptions {
   args?: string[];
   clientId?: string;
   serverId?: string;
+  scenarioId?: number;
 }
 
 function printUsage() {
@@ -31,6 +33,7 @@ Common Options:
   --log <file>       Write JSON logs to file (JSONL format)
   --client-id <id>   Client identifier (default: "client")
   --server-id <id>   Server identifier (default: "server")
+  --scenario-id <id> Scenario ID from data.json (adds description as comment)
 
 Transport-specific Options:
   For 'sse' and 'streamable-http':
@@ -106,6 +109,13 @@ async function main() {
       case '--server-id':
         options.serverId = optionArgs[++i];
         break;
+      case '--scenario-id':
+        options.scenarioId = parseInt(optionArgs[++i], 10);
+        if (isNaN(options.scenarioId)) {
+          console.error('Error: --scenario-id must be a number');
+          process.exit(1);
+        }
+        break;
       default:
         console.error(`Error: Unknown option '${arg}'`);
         printUsage();
@@ -121,7 +131,12 @@ async function main() {
       logStream.write(line);
     }
     // Also log to stderr for debugging
-    process.stderr.write(`[MITM] ${message.metadata.sender} -> ${message.metadata.recipient}: ${message.message.method || 'response'}\n`);
+    const messageInfo = 'method' in message.message 
+      ? message.message.method 
+      : 'result' in message.message 
+        ? 'response' 
+        : 'error';
+    process.stderr.write(`[MITM] ${message.metadata.sender} -> ${message.metadata.recipient}: ${messageInfo}\n`);
   };
 
   if (options.logFile) {
@@ -130,6 +145,29 @@ async function main() {
       console.error('Error writing to log file:', error);
       process.exit(1);
     });
+    
+    // If scenario ID is provided, write the description as a comment
+    if (options.scenarioId !== undefined) {
+      try {
+        const dataPath = join(process.cwd(), 'compliance', 'scenarios', 'data.json');
+        const data = JSON.parse(readFileSync(dataPath, 'utf-8')) as Scenarios;
+        const scenario = data.scenarios.find(s => s.id === options.scenarioId);
+        
+        if (!scenario) {
+          console.error(`Error: Scenario with ID ${options.scenarioId} not found`);
+          process.exit(1);
+        }
+        
+        // Write the description as comment lines
+        const lines = scenario.description.split('\n');
+        for (const line of lines) {
+          logStream.write(`// ${line}\n`);
+        }
+      } catch (error) {
+        console.error('Error reading scenario data:', error);
+        process.exit(1);
+      }
+    }
   }
 
   // Create and start the appropriate interceptor
