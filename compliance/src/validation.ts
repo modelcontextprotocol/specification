@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { readFileSync } from 'node:fs';
 import type { Scenarios, AnnotatedJSONRPCMessage } from './types.js';
 
 // Zod schemas for validation
@@ -186,4 +187,40 @@ export function compareNormalizedLogs(
   }
   
   return true;
+}
+
+// Parse JSONL log file with support for comment lines
+export function parseJSONLLog(filePath: string): {
+  description?: string;
+  messages: AnnotatedJSONRPCMessage[];
+} {
+  const content = readFileSync(filePath, 'utf-8');
+  const lines = content.split('\n').filter(line => line.trim());
+  
+  const commentLines: string[] = [];
+  const messages: AnnotatedJSONRPCMessage[] = [];
+  
+  for (const line of lines) {
+    if (line.startsWith('//')) {
+      // Extract comment content (remove // prefix and trim)
+      commentLines.push(line.substring(2).trim());
+    } else {
+      // Parse JSON line
+      try {
+        const parsed = JSON.parse(line);
+        const result = AnnotatedJSONRPCMessageSchema.safeParse(parsed);
+        if (!result.success) {
+          throw new Error(`Invalid message: ${result.error.message}`);
+        }
+        messages.push(result.data as AnnotatedJSONRPCMessage);
+      } catch (error) {
+        throw new Error(`Failed to parse line: ${line}\n${error}`);
+      }
+    }
+  }
+  
+  return {
+    description: commentLines.length > 0 ? commentLines.join('\n') : undefined,
+    messages,
+  };
 }
