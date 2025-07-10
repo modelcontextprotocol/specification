@@ -64,6 +64,7 @@ To that effect, we will first define a few human-reviewed & versioned scenarios 
       * `streamable-http`: has required flags `--host` and `--port` to listen to, and followed by rest arg `<url>`
     * has flags across all commands
       * `--log`: path to a `JSONL` file where the annotated JSON-RPC messages received from the client and server will be dumped
+        * NOTE: the first line of that file will be a `//` comment line (or multiline if needed, each starting w/ `//`) w/ the scenario's description.
   * Ensures that client & server binaries are built for each SDK (using subagents)
   * Records replay log goldens using the TypeScript SDK as reference to capture golden replay logs
     * e.g. for simple stdio recording (easy start):
@@ -132,7 +133,8 @@ The test harness has multiple layers, based on heavy use of Claude Code w/ slash
 
 Let's implement this:
 - Write the test infra (TS, use tsx to run binaries and tests)
-    - Core TS types: scenarios, annotated log, tests to validate
+    - Core TS types: scenarios, annotated log, tests to validate data
+    - Testing libs that operate on any client and server binaries to test their contract (flags and general behaviour)
     - Write slash commands
     - Run /update_scenarios to stub simple `compliance/scenarios/data.json`
     - Transport interceptors / loggers
