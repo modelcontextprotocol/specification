@@ -57,8 +57,6 @@ Examples:
 async function main() {
   // Parse command line arguments
   const args = process.argv.slice(2);
-  console.error('[MITM] process.argv:', process.argv);
-  console.error('[MITM] args:', args);
   
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
     printUsage();
