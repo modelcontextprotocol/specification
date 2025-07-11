@@ -128,6 +128,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
@@ -241,6 +242,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
@@ -353,6 +355,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
@@ -468,6 +471,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
