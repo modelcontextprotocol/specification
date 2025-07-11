@@ -149,40 +149,9 @@ async function createClient(transport: string, args: string[]): Promise<{
       throw new Error(`Unknown transport: ${transport}`);
   }
   
-  // Set up elicitation handler for scenarios that need it
-  setupElicitationHandler(client);
-  
   return { client, cleanup };
 }
 
-function setupElicitationHandler(client: Client) {
-  client.setRequestHandler(ElicitRequestSchema, async (request) => {
-    // For the ambiguous_add scenario, we expect to receive an elicitation
-    // asking for the 'b' value, and we should respond with 20
-    console.log('Received elicitation request:', request.params.message);
-    
-    // Check if this is the ambiguous_add scenario asking for 'b'
-    if (request.params.message.toLowerCase().includes('b')) {
-      return {
-        action: 'accept' as const,
-        content: 20
-      };
-    }
-    
-    // For declined elicitation scenario (id 24)
-    if (request.params.message.toLowerCase().includes('decline')) {
-      return {
-        action: 'decline' as const
-      };
-    }
-    
-    // Default: accept with appropriate value based on schema
-    return {
-      action: 'accept' as const,
-      content: 20  // Default value for numeric inputs
-    };
-  });
-}
 
 async function executeScenario(
   client: Client,
@@ -316,6 +285,18 @@ async function executeAddScenario(client: Client) {
 }
 
 async function executeAmbiguousAddScenario(client: Client) {
+  // Set up elicitation handler specific to this scenario
+  client.setRequestHandler(ElicitRequestSchema, async (request) => {
+    console.log('Ambiguous add elicitation request:', request.params.message);
+    
+    // For ambiguous_add, we expect to be asked for 'b' value
+    // and should respond with 20
+    return {
+      action: 'accept' as const,
+      content: 20
+    };
+  });
+  
   const result = await client.callTool({
     name: 'ambiguous_add',
     arguments: {
@@ -629,6 +610,16 @@ async function executeToolsChangedScenario(client: Client) {
 }
 
 async function executeDeclinedElicitationScenario(client: Client) {
+  // Set up elicitation handler that declines requests
+  client.setRequestHandler(ElicitRequestSchema, async (request) => {
+    console.log('Declined elicitation request:', request.params.message);
+    
+    // Always decline elicitation requests for this scenario
+    return {
+      action: 'decline' as const
+    };
+  });
+  
   try {
     await client.callTool({
       name: 'ambiguous_add',
