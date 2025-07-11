@@ -13,7 +13,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false
   },
   "include": ["src/**/*", "../src/types.ts", "../../schema/draft/schema.ts"],
   "exclude": ["node_modules", "dist"]

@@ -1,6 +1,6 @@
 // client1 connects to CalcServer, initiates multiple concurrent tool calls, server processes them in parallel and returns results maintaining request order
-{"message":{"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"elicitation":{}},"clientInfo":{"name":"test-client","version":"1.0.0"}},"jsonrpc":"2.0","id":0},"metadata":{"sender":"client","recipient":"server","timestamp":"2025-07-10T23:33:39.499Z","transport":"stdio"}}
-{"message":{"result":{"protocolVersion":"2025-06-18","capabilities":{"elicitation":{},"roots":{},"tools":{"listChanged":true},"resources":{"listChanged":true},"completions":{},"prompts":{"listChanged":true}},"serverInfo":{"name":"CalcServer","version":"1.0.0"}},"jsonrpc":"2.0","id":0},"metadata":{"sender":"server","recipient":"client","timestamp":"2025-07-10T23:33:39.571Z","transport":"stdio"}}
-{"message":{"method":"notifications/initialized","jsonrpc":"2.0"},"metadata":{"sender":"client","recipient":"server","timestamp":"2025-07-10T23:33:39.572Z","transport":"stdio"}}
-{"message":{"method":"tools/call","params":{"name":"add","arguments":{"a":1,"b":2}},"jsonrpc":"2.0","id":1},"metadata":{"sender":"client","recipient":"server","timestamp":"2025-07-10T23:33:39.572Z","transport":"stdio"}}
-{"message":{"result":{"content":[{"type":"text","text":"11"}]},"jsonrpc":"2.0","id":3},"metadata":{"sender":"server","recipient":"client","timestamp":"2025-07-10T23:33:39.573Z","transport":"stdio"}}
+{"from":"client1","to":"CalcServer","message":{"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"elicitation":{}},"clientInfo":{"name":"test-client","version":"1.0.0"}},"jsonrpc":"2.0","id":0}}
+{"from":"CalcServer","to":"client1","message":{"result":{"protocolVersion":"2025-06-18","capabilities":{"elicitation":{},"roots":{},"tools":{"listChanged":true},"resources":{"listChanged":true},"completions":{},"prompts":{"listChanged":true}},"serverInfo":{"name":"CalcServer","version":"1.0.0"}},"jsonrpc":"2.0","id":0}}
+{"from":"client1","to":"CalcServer","message":{"method":"notifications/initialized","jsonrpc":"2.0"}}
+{"from":"client1","to":"CalcServer","message":{"method":"tools/call","params":{"name":"add","arguments":{"a":1,"b":2}},"jsonrpc":"2.0","id":1}}
+{"from":"CalcServer","to":"client1","message":{"result":{"content":[{"type":"text","text":"11"}]},"jsonrpc":"2.0","id":3}}
