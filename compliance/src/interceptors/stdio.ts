@@ -34,32 +34,50 @@ export class StdioInterceptor {
       throw new Error('Failed to create stdio pipes');
     }
 
-    // Create transform streams to intercept messages
-    const clientToServerTransform = new Transform({
-      transform: (chunk, _encoding, callback) => {
-        const line = chunk.toString();
-        try {
-          const message = JSON.parse(line) as JSONRPCMessage;
-          this.logMessage(message, this.options.clientId, this.options.serverId);
-        } catch (e) {
-          // Not JSON, ignore
+    // Create transform streams to intercept messages with proper line buffering
+    const createLineTransform = (sender: string, recipient: string) => {
+      let buffer = '';
+      
+      return new Transform({
+        transform: (chunk, _encoding, callback) => {
+          buffer += chunk.toString();
+          
+          // Process complete lines
+          const lines = buffer.split('\n');
+          // Keep the last incomplete line in the buffer
+          buffer = lines.pop() || '';
+          
+          // Process each complete line
+          for (const line of lines) {
+            if (line.trim()) {
+              try {
+                const message = JSON.parse(line) as JSONRPCMessage;
+                this.logMessage(message, sender, recipient);
+              } catch (e) {
+                // Not valid JSON, ignore
+              }
+            }
+          }
+          
+          callback(null, chunk);
+        },
+        flush: (callback) => {
+          // Process any remaining data in buffer
+          if (buffer.trim()) {
+            try {
+              const message = JSON.parse(buffer) as JSONRPCMessage;
+              this.logMessage(message, sender, recipient);
+            } catch (e) {
+              // Not valid JSON, ignore
+            }
+          }
+          callback();
         }
-        callback(null, chunk);
-      },
-    });
-
-    const serverToClientTransform = new Transform({
-      transform: (chunk, _encoding, callback) => {
-        const line = chunk.toString();
-        try {
-          const message = JSON.parse(line) as JSONRPCMessage;
-          this.logMessage(message, this.options.serverId, this.options.clientId);
-        } catch (e) {
-          // Not JSON, ignore
-        }
-        callback(null, chunk);
-      },
-    });
+      });
+    };
+    
+    const clientToServerTransform = createLineTransform(this.options.clientId, this.options.serverId);
+    const serverToClientTransform = createLineTransform(this.options.serverId, this.options.clientId);
 
     // Wire up the streams
     process.stdin

@@ -251,7 +251,7 @@
     },
     {
       "id": 25,
-      "description": "client1 connects to CalcServer, initiates multiple concurrent tool calls, server processes them in parallel and returns results maintaining request order",
+      "description": "client1 connects to CalcServer, initiates 3 concurrent add tool calls: add(1,2), add(3,4), add(5,6). Server processes them in parallel and returns results (3, 7, 11) maintaining request order",
       "client_ids": ["client1"],
       "server_name": "CalcServer"
     }
