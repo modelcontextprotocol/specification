@@ -35,6 +35,7 @@ To that effect, we will first define a few human-reviewed & versioned scenarios 
     * client1 connects to CalcServer and calls add(a=10, b=20), gets result of 30.
     * client1 connects to CalcServer and calls ambiguous_add(a=10), receives elicitation for b, responds to it with 20, gets tool result of 30.
     * client1 & client2 connect to CalcServer; client1 calls set_trig_allowed(allowed=true) tool. client1 gets list of tools that includes cos & sin, and client2 gets list of tools that doesn't.
+  * Plain english means we say "the CalcServer cancels" and not "the CalcServer sends notifications/cancelled"
 * Definitions live in `compliance/scenarios/data.json` (see `Scenarios` type below)
 * Each SDK implements client and a server executables (under `compliance/<sdk-name>/test-{client,server}`), with the following CLI interfaces:
   * Server: binary w/ all required flags:
