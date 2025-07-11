@@ -96,7 +96,6 @@ describe('validateAnnotatedLog', () => {
         metadata: {
           sender: 'client1',
           recipient: 'CalcServer',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'stdio',
         },
       },
@@ -116,7 +115,6 @@ describe('validateAnnotatedLog', () => {
         metadata: {
           sender: 'client1',
           recipient: 'CalcServer',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'streamable-http',
           streamable_http_metadata: {
             method: 'POST',
@@ -143,7 +141,6 @@ describe('validateAnnotatedLog', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'stdio',
         },
       },
@@ -163,7 +160,6 @@ describe('validateAnnotatedLog', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'invalid-transport',
         },
       },
@@ -174,22 +170,6 @@ describe('validateAnnotatedLog', () => {
 });
 
 describe('log comparison utilities', () => {
-  it('should normalize timestamps for comparison', () => {
-    const log: AnnotatedJSONRPCMessage[] = [
-      {
-        message: { jsonrpc: '2.0', id: 1, method: 'test' },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          timestamp: '2024-03-15T10:30:00.000Z',
-          transport: 'stdio',
-        },
-      },
-    ];
-
-    const normalized = normalizeLogForComparison(log);
-    assert.strictEqual(normalized[0].metadata.timestamp, '2000-01-01T00:00:00.000Z');
-  });
 
   it('should filter non-deterministic HTTP headers', () => {
     const log: AnnotatedJSONRPCMessage[] = [
@@ -198,7 +178,6 @@ describe('log comparison utilities', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'streamable-http',
           streamable_http_metadata: {
             method: 'POST',
@@ -229,7 +208,6 @@ describe('log comparison utilities', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'stdio',
         },
       },
@@ -241,7 +219,6 @@ describe('log comparison utilities', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-12-31T23:59:59.999Z', // Different timestamp
           transport: 'stdio',
         },
       },
@@ -260,7 +237,6 @@ describe('log comparison utilities', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'stdio',
         },
       },
@@ -272,7 +248,6 @@ describe('log comparison utilities', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'stdio',
         },
       },
@@ -298,7 +273,6 @@ describe('parseJSONLLog', () => {
         metadata: {
           sender: 'client1',
           recipient: 'server',
-          timestamp: '2024-01-01T00:00:00.000Z',
           transport: 'stdio',
         },
       },
@@ -324,7 +298,6 @@ ${JSON.stringify({
       metadata: {
         sender: 'client1',
         recipient: 'server',
-        timestamp: '2024-01-01T00:00:00.000Z',
         transport: 'stdio',
       },
     })}`;
@@ -350,7 +323,6 @@ ${JSON.stringify({
       metadata: {
         sender: 'client1',
         recipient: 'server',
-        timestamp: '2024-01-01T00:00:00.000Z',
         transport: 'stdio',
       },
     })}`;
@@ -375,7 +347,6 @@ ${JSON.stringify({
       metadata: {
         sender: 'client1',
         recipient: 'server',
-        timestamp: '2024-01-01T00:00:00.000Z',
         transport: 'stdio',
       },
     })}

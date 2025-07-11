@@ -249,7 +249,6 @@ export class StreamableHTTPInterceptor {
       metadata: {
         sender,
         recipient,
-        timestamp: new Date().toISOString(),
         transport: 'streamable-http',
         streamable_http_metadata: httpMetadata,
       },

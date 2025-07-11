@@ -50,6 +50,8 @@ async function runStdioScenario(scenario: Scenarios['scenarios'][0], logPath: st
     'stdio',
     '--log', logPath,
     '--scenario-id', scenario.id.toString(),
+    '--client-id', scenario.client_ids[0],
+    '--server-id', scenario.server_name,
     '--',
     join(TYPESCRIPT_SDK_DIR, 'test-server'),
     '--server-name', scenario.server_name,
@@ -92,6 +94,8 @@ async function runSSEScenario(scenario: Scenarios['scenarios'][0], logPath: stri
       'sse',
       '--log', logPath,
       '--scenario-id', scenario.id.toString(),
+      '--client-id', scenario.client_ids[0],
+      '--server-id', scenario.server_name,
       '--port', (port + 1000).toString(), // MITM proxy port
       '--',
       `http://127.0.0.1:${port}`

@@ -115,6 +115,8 @@ export class CrossSDKRunner {
       'stdio',
       '--log', logPath,
       '--scenario-id', this.config.scenario.id.toString(),
+      '--client-id', this.config.scenario.client_ids[0],
+      '--server-id', this.config.scenario.server_name,
       '--',
       serverBinary,
       '--server-name', this.config.scenario.server_name,
@@ -158,6 +160,8 @@ export class CrossSDKRunner {
         'sse',
         '--log', logPath,
         '--scenario-id', this.config.scenario.id.toString(),
+        '--client-id', this.config.scenario.client_ids[0],
+        '--server-id', this.config.scenario.server_name,
         '--port', mitmPort.toString(),
         '--',
         `http://127.0.0.1:${port}`

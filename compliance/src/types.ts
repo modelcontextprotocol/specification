@@ -35,7 +35,6 @@ export type AnnotatedJSONRPCMessage = {
   metadata: {
     sender: string; // e.g. "client1", "client2", "CalcServer"
     recipient: string; // same values as sender
-    timestamp: string; // ISO 8601 timestamp
     transport: Transport;
     streamable_http_metadata?: {
       method: 'POST' | 'POST-SSE' | 'GET-SSE';

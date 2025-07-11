@@ -107,7 +107,6 @@ const AnnotatedJSONRPCMessageSchema = z.object({
   metadata: z.object({
     sender: z.string().min(1),
     recipient: z.string().min(1),
-    timestamp: z.string().datetime(),
     transport: TransportSchema,
     streamable_http_metadata: z
       .object({
@@ -144,7 +143,6 @@ export function normalizeLogForComparison(
     ...entry,
     metadata: {
       ...entry.metadata,
-      timestamp: '2000-01-01T00:00:00.000Z', // Normalize timestamps
       streamable_http_metadata: entry.metadata.streamable_http_metadata
         ? {
             ...entry.metadata.streamable_http_metadata,

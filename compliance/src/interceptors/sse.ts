@@ -154,7 +154,6 @@ export class SSEInterceptor {
       metadata: {
         sender,
         recipient,
-        timestamp: new Date().toISOString(),
         transport: 'sse',
       },
     };

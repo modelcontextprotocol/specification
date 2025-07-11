@@ -81,7 +81,6 @@ export class StdioInterceptor {
       metadata: {
         sender,
         recipient,
-        timestamp: new Date().toISOString(),
         transport: 'stdio',
       },
     };
