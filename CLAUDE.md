@@ -42,9 +42,11 @@ To that effect, we will first define a few human-reviewed & versioned scenarios 
     * `--server-name`: refers to one of the definitions in `compliance/scenarios/data.json`, e.g. `CalcServer`. The server must check the description of the corresponding definition matches what it was when it was built / vibe-coded.
     * `--transport`: `stdio` | `sse` | `streamable-http`
     * `--host` / `--port`: for http transport, where to listen
+    * `--scenarios-data`: (optional) path to the scenarios data file. If provided, the server must validate that the server definition description matches what it was built for.
   * Client: binary w/ all required flags:
     * `--scenario-id`: id of one of the scenario in `compliance/scenarios/data.json`. Client must check the description of the corresponding scenario matches what it was when it was built / vibe-coded
     * `--id`: tells the client its name (e.g. client1), which needs to refer to the scenario. Used when there are more than 1 client involved in the scenario.
+    * `--scenarios-data`: (optional) path to the scenarios data file. If provided, the client must validate that the scenario description matches what it was built for.
     * `<server-desc>` is one of:
       * `sse <server-url>`
       * `streamable-http <server-url>`

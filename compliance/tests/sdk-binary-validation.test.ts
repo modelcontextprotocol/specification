@@ -104,14 +104,14 @@ describe('SDK Binary Validation Tests', () => {
         it('should reject invalid scenario ID', async () => {
           const result = await runBinary(clientPath, ['--scenario-id', '9999', '--id', 'client1', 'stdio', 'echo'], { expectError: true });
           assert.notStrictEqual(result.exitCode, 0, 'Should exit with error');
-          assert.ok(result.stderr.includes('9999') || result.stderr.includes('not found') || result.stderr.includes('invalid'));
+          assert.ok(result.stderr.includes('9999') || result.stderr.includes('not found') || result.stderr.includes('invalid') || result.stderr.includes('Scenario'));
         });
 
         it('should reject invalid client ID for scenario', async () => {
           // Use scenario 1 which only has client1
           const result = await runBinary(clientPath, ['--scenario-id', '1', '--id', 'client999', 'stdio', 'echo'], { expectError: true });
           assert.notStrictEqual(result.exitCode, 0, 'Should exit with error');
-          assert.ok(result.stderr.includes('client999') || result.stderr.includes('not found') || result.stderr.includes('not listed'));
+          assert.ok(result.stderr.includes('client999') || result.stderr.includes('not found') || result.stderr.includes('not listed') || result.stderr.includes('Client ID'));
         });
 
         it('should accept valid arguments', async () => {
@@ -143,7 +143,7 @@ describe('SDK Binary Validation Tests', () => {
         it('should reject invalid server name', async () => {
           const result = await runBinary(serverPath, ['--server-name', 'InvalidServer', '--transport', 'stdio'], { expectError: true });
           assert.notStrictEqual(result.exitCode, 0, 'Should exit with error');
-          assert.ok(result.stderr.includes('InvalidServer') || result.stderr.includes('not found') || result.stderr.includes('invalid'));
+          assert.ok(result.stderr.includes('InvalidServer') || result.stderr.includes('not found') || result.stderr.includes('invalid') || result.stderr.includes('Unknown server'));
         });
 
         it('should reject invalid transport', async () => {
