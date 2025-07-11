@@ -640,18 +640,21 @@ async function executeDeclinedElicitationScenario(client: Client) {
     };
   });
   
-  try {
-    await client.callTool({
-      name: 'ambiguous_add',
-      arguments: { a: 10 }
-    });
-    throw new Error('Expected error when elicitation is declined');
-  } catch (error: any) {
-    // Expected error due to declined elicitation
-    if (!error.message || !error.message.toLowerCase().includes('elicitation')) {
-      // The error might be different, but we expect some error
-      console.log('Got error as expected:', error.message);
-    }
+  const result = await client.callTool({
+    name: 'ambiguous_add',
+    arguments: { a: 10 }
+  }) as CallToolResult;
+  
+  // Check if the result has isError flag set to true
+  if (!result.isError) {
+    throw new Error('Expected error result when elicitation is declined');
+  }
+  
+  // Check if the error message mentions elicitation
+  if (!result.content || result.content.length === 0 || 
+      result.content[0].type !== 'text' || 
+      !result.content[0].text.toLowerCase().includes('elicitation')) {
+    throw new Error('Expected error message to mention elicitation decline');
   }
 }
 
