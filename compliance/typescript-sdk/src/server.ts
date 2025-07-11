@@ -434,7 +434,11 @@ class ErrorServer {
       description: 'Always returns a tool execution error',
       inputSchema: {}
     }, async () => {
-      throw new Error('This tool always returns an error');
+      // Return error response with isError flag
+      return {
+        content: [{ type: 'text', text: 'This tool always returns an error' }],
+        isError: true
+      };
     });
 
     // Timeout tool

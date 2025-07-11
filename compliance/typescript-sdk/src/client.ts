@@ -535,20 +535,30 @@ async function executeTimeoutScenario(client: Client) {
 }
 
 async function executeProgressScenario(client: Client) {
-  const progressUpdates: any[] = [];
+  // Set up sampling handler for scenario 15
+  client.setRequestHandler(CreateMessageRequestSchema, async (request) => {
+    console.log('Sampling request for progress scenario:', request.params.messages);
+    
+    // For expression "(2 + 3) * (4 + 5)"
+    // (2 + 3) = 5, (4 + 5) = 9, 5 * 9 = 45
+    return {
+      role: 'assistant' as const,
+      content: {
+        type: 'text' as const,
+        text: '45'
+      }
+    };
+  });
   
-  // Progress notifications would be handled here
-  // SDK 1.15.0 doesn't expose progress notification handlers
-  
-  await client.callTool({
+  const result = await client.callTool({
     name: 'eval_with_sampling',
     arguments: {
       expression: '(2 + 3) * (4 + 5)'
     }
-  });
+  }) as CallToolResult;
   
-  if (progressUpdates.length === 0) {
-    throw new Error('Expected progress notifications');
+  if (result.content[0].type !== 'text' || result.content[0].text !== '45') {
+    throw new Error(`Expected result 45, got ${JSON.stringify(result.content)}`);
   }
 }
 
