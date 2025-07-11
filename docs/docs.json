@@ -268,8 +268,8 @@
             "group": "Learn",
             "pages": [
               "docs/learn/architecture",
-              "docs/learn/client-concepts",
-              "docs/learn/server-concepts"
+              "docs/learn/server-concepts",
+              "docs/learn/client-concepts"
             ]
           },
           {
