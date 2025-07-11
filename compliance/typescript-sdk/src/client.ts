@@ -13,6 +13,7 @@ import type {
   ReadResourceResult,
   ListPromptsResult
 } from '@modelcontextprotocol/sdk/types.js';
+import { ElicitRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import type { Scenarios } from '../../src/types.js';
 
 // CLI setup
@@ -148,7 +149,39 @@ async function createClient(transport: string, args: string[]): Promise<{
       throw new Error(`Unknown transport: ${transport}`);
   }
   
+  // Set up elicitation handler for scenarios that need it
+  setupElicitationHandler(client);
+  
   return { client, cleanup };
+}
+
+function setupElicitationHandler(client: Client) {
+  client.setRequestHandler(ElicitRequestSchema, async (request) => {
+    // For the ambiguous_add scenario, we expect to receive an elicitation
+    // asking for the 'b' value, and we should respond with 20
+    console.log('Received elicitation request:', request.params.message);
+    
+    // Check if this is the ambiguous_add scenario asking for 'b'
+    if (request.params.message.toLowerCase().includes('b')) {
+      return {
+        action: 'accept' as const,
+        content: 20
+      };
+    }
+    
+    // For declined elicitation scenario (id 24)
+    if (request.params.message.toLowerCase().includes('decline')) {
+      return {
+        action: 'decline' as const
+      };
+    }
+    
+    // Default: accept with appropriate value based on schema
+    return {
+      action: 'accept' as const,
+      content: 20  // Default value for numeric inputs
+    };
+  });
 }
 
 async function executeScenario(
