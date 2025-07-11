@@ -7,18 +7,15 @@ MCP servers are programs that expose specific capabilities to AI applications th
 
 Common examples include file system servers for document management, email servers for message handling, travel servers for trip planning, and database servers for data queries. Each server brings domain-specific capabilities to the AI application.
 
-
 ## What Servers Provide
 
 Servers provide core functionality through three building blocks:
 
-| Building Block | Purpose                     | Who Controls It        | Real-World Example                                           |
-| -------------- | --------------------------- | ---------------------- | ------------------------------------------------------------ |
-| **Tools**      | For AI actions              | Model-controlled       | Search flights, send messages, create calendar events        |
-| **Resources**  | For context data            | Application-controlled | Documents, calendars, emails, weather data                   |
-| **Prompts**    | For interaction templates   | User-controlled        | "Plan a vacation", "Summarize my meetings", "Draft an email" |
-
-
+| Building Block | Purpose                   | Who Controls It        | Real-World Example                                           |
+| -------------- | ------------------------- | ---------------------- | ------------------------------------------------------------ |
+| **Tools**      | For AI actions            | Model-controlled       | Search flights, send messages, create calendar events        |
+| **Resources**  | For context data          | Application-controlled | Documents, calendars, emails, weather data                   |
+| **Prompts**    | For interaction templates | User-controlled        | "Plan a vacation", "Summarize my meetings", "Draft an email" |
 
 ## Tools (for AI actions)
 
@@ -30,10 +27,10 @@ Tools are characterized by their schema-defined interfaces, which use JSON Schem
 
 **Protocol operations:**
 
-| Method | Purpose | Returns |
-|--------|---------|---------|
+| Method       | Purpose                  | Returns                                |
+| ------------ | ------------------------ | -------------------------------------- |
 | `tools/list` | Discover available tools | Array of tool definitions with schemas |
-| `tools/call` | Execute a specific tool | Tool execution result |
+| `tools/call` | Execute a specific tool  | Tool execution result                  |
 
 **Example tool definition:**
 
@@ -79,12 +76,12 @@ Resources use URI-based identification, with each resource having a unique URI s
 
 **Protocol operations:**
 
-| Method | Purpose | Returns |
-|--------|---------|---------|
-| `resources/list` | List available direct resources | Array of resource descriptors |
-| `resources/templates/list` | Discover resource templates | Array of resource template definitions |
-| `resources/read` | Retrieve resource contents | Resource data with metadata |
-| `resources/subscribe` | Monitor resource changes | Subscription confirmation |
+| Method                     | Purpose                         | Returns                                |
+| -------------------------- | ------------------------------- | -------------------------------------- |
+| `resources/list`           | List available direct resources | Array of resource descriptors          |
+| `resources/templates/list` | Discover resource templates     | Array of resource template definitions |
+| `resources/read`           | Retrieve resource contents      | Resource data with metadata            |
+| `resources/subscribe`      | Monitor resource changes        | Subscription confirmation              |
 
 ### Example: Accessing Context Data
 
@@ -122,6 +119,7 @@ These templates enable flexible queries. For weather data, users can access fore
 ### Parameter Discovery
 
 Dynamic resources support parameter completion. For example:
+
 - Typing "Par..." in `weather://forecast/{city}` might suggest "Paris" or "Park City"
 - The system helps discover valid values without requiring exact format knowledge
 
@@ -141,10 +139,10 @@ Prompts are structured templates that define expected inputs and interaction pat
 
 **Protocol operations:**
 
-| Method | Purpose | Returns |
-|--------|---------|---------|
-| `prompts/list` | Discover available prompts | Array of prompt descriptors |
-| `prompts/get` | Retrieve prompt details | Full prompt definition with arguments |
+| Method         | Purpose                    | Returns                               |
+| -------------- | -------------------------- | ------------------------------------- |
+| `prompts/list` | Discover available prompts | Array of prompt descriptors           |
+| `prompts/get`  | Retrieve prompt details    | Full prompt definition with arguments |
 
 **Prompt components:**
 
@@ -158,6 +156,7 @@ Prompts are structured templates that define expected inputs and interaction pat
 Prompts provide structured templates for common tasks. In the travel planning context:
 
 **"Plan a vacation" prompt:**
+
 ```yaml
 name: plan-vacation
 description: Guide through vacation planning process
@@ -169,6 +168,7 @@ arguments:
 ```
 
 Rather than unstructured natural language input, the prompt system enables:
+
 1. Selection of the "Plan a vacation" template
 2. Structured input: Barcelona, 7 days, $3000, ["beaches", "architecture", "food"]
 3. Consistent workflow execution based on the template
@@ -188,23 +188,25 @@ The real power of MCP emerges when multiple servers work together, combining the
 Consider an AI application with three connected servers:
 
 1. **Travel Server** - Handles flights, hotels, and itineraries
-2. **Weather Server** - Provides climate data and forecasts  
+2. **Weather Server** - Provides climate data and forecasts
 3. **Calendar/Email Server** - Manages schedules and communications
 
 #### The Complete Flow
 
 **1. User invokes a prompt with parameters:**
+
 ```yaml
 prompt: plan-vacation
 arguments:
   destination: "Barcelona"
   departure_date: "2024-06-15"
-  return_date: "2024-06-22" 
+  return_date: "2024-06-22"
   budget: 3000
   travelers: 2
 ```
 
 **2. User selects resources to include:**
+
 - `calendar://my-calendar/June-2024` (from Calendar Server)
 - `travel://preferences/europe` (from Travel Server)
 - `travel://past-trips/Spain-2023` (from Travel Server)
@@ -215,4 +217,3 @@ arguments:
 The AI first reads all selected resources to gather context. From the calendar, it identifies available dates. From travel preferences, it learns preferred airlines and hotel types. From past trips, it discovers previously enjoyed locations. From weather data, it checks climate conditions for the travel period.
 
 Using this context, the AI then requests user approval to execute a series of coordinated actions: searching for flights from NYC to Barcelona, finding hotels within the specified budget, creating a calendar event for the trip duration, and sending confirmation emails with the trip details.
-
