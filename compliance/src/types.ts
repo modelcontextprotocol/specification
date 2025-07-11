@@ -31,11 +31,10 @@ export type Transport = 'stdio' | 'sse' | 'streamable-http';
 
 // Annotated log types for replay/verification
 export type AnnotatedJSONRPCMessage = {
+  from: string; // e.g. "client1", "client2", "CalcServer"
+  to: string; // same values as from
   message: JSONRPCMessage;
-  metadata: {
-    sender: string; // e.g. "client1", "client2", "CalcServer"
-    recipient: string; // same values as sender
-    transport: Transport;
+  metadata?: {
     streamable_http_metadata?: {
       method: 'POST' | 'POST-SSE' | 'GET-SSE';
       headers: Record<string, string>;

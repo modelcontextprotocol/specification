@@ -245,13 +245,12 @@ export class StreamableHTTPInterceptor {
     }
   ): void {
     const annotated: AnnotatedJSONRPCMessage = {
+      from: sender,
+      to: recipient,
       message,
-      metadata: {
-        sender,
-        recipient,
-        transport: 'streamable-http',
+      metadata: httpMetadata ? {
         streamable_http_metadata: httpMetadata,
-      },
+      } : undefined,
     };
 
     if (this.options.onMessage) {

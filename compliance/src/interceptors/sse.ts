@@ -150,12 +150,9 @@ export class SSEInterceptor {
     recipient: string
   ): void {
     const annotated: AnnotatedJSONRPCMessage = {
+      from: sender,
+      to: recipient,
       message,
-      metadata: {
-        sender,
-        recipient,
-        transport: 'sse',
-      },
     };
 
     if (this.options.onMessage) {

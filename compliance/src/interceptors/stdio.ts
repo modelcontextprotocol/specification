@@ -77,12 +77,9 @@ export class StdioInterceptor {
     recipient: string
   ): void {
     const annotated: AnnotatedJSONRPCMessage = {
+      from: sender,
+      to: recipient,
       message,
-      metadata: {
-        sender,
-        recipient,
-        transport: 'stdio',
-      },
     };
 
     if (this.options.onMessage) {

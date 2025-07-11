@@ -100,21 +100,21 @@ const JSONRPCMessageSchema = z.union([
   }),
 ]);
 
-const TransportSchema = z.enum(['stdio', 'sse', 'streamable-http']);
 
 const AnnotatedJSONRPCMessageSchema = z.object({
+  from: z.string().min(1),
+  to: z.string().min(1),
   message: JSONRPCMessageSchema,
-  metadata: z.object({
-    sender: z.string().min(1),
-    recipient: z.string().min(1),
-    transport: TransportSchema,
-    streamable_http_metadata: z
-      .object({
-        method: z.enum(['POST', 'POST-SSE', 'GET-SSE']),
-        headers: z.record(z.string()),
-      })
-      .optional(),
-  }),
+  metadata: z
+    .object({
+      streamable_http_metadata: z
+        .object({
+          method: z.enum(['POST', 'POST-SSE', 'GET-SSE']),
+          headers: z.record(z.string()),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 export function validateAnnotatedLog(data: unknown): AnnotatedJSONRPCMessage[] {
@@ -141,10 +141,9 @@ export function normalizeLogForComparison(
   // Remove non-deterministic fields for comparison
   return log.map(entry => ({
     ...entry,
-    metadata: {
-      ...entry.metadata,
-      streamable_http_metadata: entry.metadata.streamable_http_metadata
-        ? {
+    metadata: entry.metadata?.streamable_http_metadata
+      ? {
+          streamable_http_metadata: {
             ...entry.metadata.streamable_http_metadata,
             headers: Object.fromEntries(
               Object.entries(entry.metadata.streamable_http_metadata.headers)
@@ -160,9 +159,9 @@ export function normalizeLogForComparison(
                 })
                 .sort(([a], [b]) => a.localeCompare(b))
             ),
-          }
-        : undefined,
-    },
+          },
+        }
+      : undefined,
   }));
 }
 

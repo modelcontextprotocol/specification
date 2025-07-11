@@ -139,7 +139,7 @@ async function main() {
       : 'result' in message.message 
         ? 'response' 
         : 'error';
-    process.stderr.write(`[MITM] ${message.metadata.sender} -> ${message.metadata.recipient}: ${messageInfo}\n`);
+    process.stderr.write(`[MITM] ${message.from} -> ${message.to}: ${messageInfo}\n`);
   };
 
   if (options.logFile) {

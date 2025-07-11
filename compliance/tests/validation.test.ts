@@ -87,16 +87,13 @@ describe('validateAnnotatedLog', () => {
   it('should validate a valid annotated log', () => {
     const validLog: AnnotatedJSONRPCMessage[] = [
       {
+        from: 'client1',
+        to: 'CalcServer',
         message: {
           jsonrpc: '2.0',
           id: 1,
           method: 'initialize',
           params: { protocolVersion: '1.0' },
-        },
-        metadata: {
-          sender: 'client1',
-          recipient: 'CalcServer',
-          transport: 'stdio',
         },
       },
     ];
@@ -107,22 +104,21 @@ describe('validateAnnotatedLog', () => {
   it('should validate HTTP metadata when present', () => {
     const validLog: AnnotatedJSONRPCMessage[] = [
       {
+        from: 'client1',
+        to: 'CalcServer',
         message: {
           jsonrpc: '2.0',
           id: 1,
           method: 'initialize',
         },
-        metadata: {
-          sender: 'client1',
-          recipient: 'CalcServer',
-          transport: 'streamable-http',
-          streamable_http_metadata: {
+      metadata: {
+        streamable_http_metadata: {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
               'mcp-session-id': 'test-session',
             },
-          },
+      },
         },
       },
     ];
@@ -133,40 +129,19 @@ describe('validateAnnotatedLog', () => {
   it('should reject invalid JSON-RPC messages', () => {
     const invalidLog = [
       {
+        from: 'client1',
+        to: 'server',
         message: {
           // Missing jsonrpc field
           id: 1,
           method: 'test',
         },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'stdio',
-        },
       },
     ];
 
     assert.throws(() => validateAnnotatedLog(invalidLog));
   });
 
-  it('should reject invalid transport types', () => {
-    const invalidLog = [
-      {
-        message: {
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'test',
-        },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'invalid-transport',
-        },
-      },
-    ];
-
-    assert.throws(() => validateAnnotatedLog(invalidLog));
-  });
 });
 
 describe('log comparison utilities', () => {
@@ -174,12 +149,11 @@ describe('log comparison utilities', () => {
   it('should filter non-deterministic HTTP headers', () => {
     const log: AnnotatedJSONRPCMessage[] = [
       {
+        from: 'client1',
+        to: 'server',
         message: { jsonrpc: '2.0', id: 1, method: 'test' },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'streamable-http',
-          streamable_http_metadata: {
+      metadata: {
+        streamable_http_metadata: {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
@@ -187,13 +161,13 @@ describe('log comparison utilities', () => {
               'x-request-id': 'random-id',
               'mcp-session-id': 'session-123',
             },
-          },
+      },
         },
       },
     ];
 
     const normalized = normalizeLogForComparison(log);
-    const headers = normalized[0].metadata.streamable_http_metadata!.headers;
+    const headers = normalized[0].metadata?.streamable_http_metadata!.headers;
     
     assert.strictEqual(headers['content-type'], 'application/json');
     assert.strictEqual(headers['mcp-session-id'], 'session-123');
@@ -205,22 +179,16 @@ describe('log comparison utilities', () => {
     const log1: AnnotatedJSONRPCMessage[] = [
       {
         message: { jsonrpc: '2.0', id: 1, method: 'test', params: { a: 1 } },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'stdio',
-        },
+        from: 'client1',
+      to: 'server',
       },
     ];
 
     const log2: AnnotatedJSONRPCMessage[] = [
       {
         message: { jsonrpc: '2.0', id: 1, method: 'test', params: { a: 1 } },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'stdio',
-        },
+        from: 'client1',
+      to: 'server',
       },
     ];
 
@@ -234,22 +202,16 @@ describe('log comparison utilities', () => {
     const log1: AnnotatedJSONRPCMessage[] = [
       {
         message: { jsonrpc: '2.0', id: 1, method: 'test', params: { a: 1 } },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'stdio',
-        },
+        from: 'client1',
+      to: 'server',
       },
     ];
 
     const log2: AnnotatedJSONRPCMessage[] = [
       {
         message: { jsonrpc: '2.0', id: 1, method: 'test', params: { a: 2 } }, // Different param
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'stdio',
-        },
+        from: 'client1',
+      to: 'server',
       },
     ];
 
@@ -269,12 +231,9 @@ describe('parseJSONLLog', () => {
     
     const messages: AnnotatedJSONRPCMessage[] = [
       {
+        from: 'client1',
+        to: 'server',
         message: { jsonrpc: '2.0', id: 1, method: 'test' },
-        metadata: {
-          sender: 'client1',
-          recipient: 'server',
-          transport: 'stdio',
-        },
       },
     ];
     
@@ -294,12 +253,9 @@ describe('parseJSONLLog', () => {
     
     const content = `// This is a test scenario
 ${JSON.stringify({
-      message: { jsonrpc: '2.0', id: 1, method: 'test' },
-      metadata: {
-        sender: 'client1',
-        recipient: 'server',
-        transport: 'stdio',
-      },
+      from: 'client1',
+        to: 'server',
+        message: { jsonrpc: '2.0', id: 1, method: 'test' },
     })}`;
     
     writeFileSync(logPath, content);
@@ -319,12 +275,9 @@ ${JSON.stringify({
 // test scenario description
 // with three lines
 ${JSON.stringify({
-      message: { jsonrpc: '2.0', id: 1, method: 'test' },
-      metadata: {
-        sender: 'client1',
-        recipient: 'server',
-        transport: 'stdio',
-      },
+      from: 'client1',
+        to: 'server',
+        message: { jsonrpc: '2.0', id: 1, method: 'test' },
     })}`;
     
     writeFileSync(logPath, content);
@@ -343,12 +296,9 @@ ${JSON.stringify({
     const content = `// Test scenario
 
 ${JSON.stringify({
-      message: { jsonrpc: '2.0', id: 1, method: 'test' },
-      metadata: {
-        sender: 'client1',
-        recipient: 'server',
-        transport: 'stdio',
-      },
+      from: 'client1',
+        to: 'server',
+        message: { jsonrpc: '2.0', id: 1, method: 'test' },
     })}
 
 `;
