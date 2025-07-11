@@ -55,19 +55,9 @@ Tools are characterized by their schema-defined interfaces, which use JSON Schem
 
 ### Example: Taking Action
 
-Tools transform AI from an advisor into an assistant that can help execute tasks. Consider a travel planning scenario where the AI application helps book a vacation:
+Tools transform AI from an advisor into an assistant that can help execute tasks. In a travel planning scenario, the AI application might orchestrate several actions to book a vacation.
 
-1. **`searchFlights(origin: "NYC", destination: "Barcelona", date: "2024-06-15")`**
-   - Searches across multiple airlines
-   - Returns structured flight options
-
-2. **`createCalendarEvent(title: "Barcelona Trip", startDate: "2024-06-15", endDate: "2024-06-22")`**
-   - Blocks calendar time
-   - Adds trip details
-
-3. **`sendEmail(to: "team@work.com", subject: "Out of Office", body: "...")`**
-   - Notifies team members
-   - Includes return date
+First, it searches for flights using `searchFlights(origin: "NYC", destination: "Barcelona", date: "2024-06-15")`, which queries multiple airlines and returns structured flight options. Once flights are selected, it creates a calendar event with `createCalendarEvent(title: "Barcelona Trip", startDate: "2024-06-15", endDate: "2024-06-22")` to block the travel dates. Finally, it sends an out-of-office notification using `sendEmail(to: "team@work.com", subject: "Out of Office", body: "...")` to inform colleagues about the absence.
 
 Each tool execution requires explicit user approval, ensuring full control over actions taken.
 
