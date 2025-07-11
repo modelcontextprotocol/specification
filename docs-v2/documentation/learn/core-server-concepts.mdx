@@ -1,140 +1,229 @@
 ---
 title: Core Server Concepts
-description: "Understand the core concepts of MCP Servers"
+description: "Understanding MCP server concepts"
 ---
 
-MCP servers are specialized packages that you can connect to your AI applications. Each server is designed for a specific purpose - you might have a file system server for working with documents, an email server for managing messages, or a travel server for booking trips. When you connect a server to your AI app, it gains new abilities.
+MCP servers are programs that expose specific capabilities to AI applications through standardized protocol interfaces. Each server provides focused functionality for a particular domain.
+
+Common examples include file system servers for document management, email servers for message handling, travel servers for trip planning, and database servers for data queries. Each server brings domain-specific capabilities to the AI application.
+
 
 ## What Servers Provide
 
-There are three essential building blocks that work together in a server:
+Servers provide core functionality through three building blocks:
 
-| Building Block | What It Does                                   | Who Controls It        | Real-World Example                                           |
-| -------------- | ---------------------------------------------- | ---------------------- | ------------------------------------------------------------ |
-| **Resources**  | Gives AI access to information                 | Application-controlled | Documents, calendars, emails, weather data                   |
-| **Prompts**    | Provides ready-made templates for common tasks | User-controlled        | "Plan a vacation", "Summarize my meetings", "Draft an email" |
-| **Tools**      | Lets AI take actions for you (with permission) | Model-controlled       | Search flights, send messages, create calendar events        |
+| Building Block | Purpose                     | Who Controls It        | Real-World Example                                           |
+| -------------- | --------------------------- | ---------------------- | ------------------------------------------------------------ |
+| **Tools**      | For AI actions              | Model-controlled       | Search flights, send messages, create calendar events        |
+| **Resources**  | For context data            | Application-controlled | Documents, calendars, emails, weather data                   |
+| **Prompts**    | For interaction templates   | User-controlled        | "Plan a vacation", "Summarize my meetings", "Draft an email" |
 
-Let's explore each of these using our vacation planning example to see how they work together.
 
-## Resources: Giving AI Access to Information
 
-Resources are how MCP lets AI assistants understand context without you having to copy and paste everything manually. They're like giving the AI "read access" to relevant information.
+## Tools (for AI actions)
 
-**In our vacation example**, resources might include:
+Tools enable AI models to perform actions through server-implemented functions. Each tool defines a specific operation with typed inputs and outputs.
 
-- Your calendar (to check when you're free)
-- Weather forecasts for destinations
-- Travel blogs and guides you've saved
-- Your previous trip itineraries
-- Restaurant recommendations from friends
+### Overview
 
-### How Resources Work
+Tools are characterized by their schema-defined interfaces, which use JSON Schema for parameter validation. Each tool performs a single, atomic operation with clearly defined inputs and outputs. Most importantly, tool execution requires explicit user approval, ensuring users maintain control over actions taken on their behalf.
 
-Instead of manually telling the AI "I'm free from June 15-22, and last year I went to Barcelona, and my friend recommended this great restaurant in Paris...", resources let the AI access this information directly (with your permission, of course).
+**Protocol operations:**
 
-Resources can be:
+| Method | Purpose | Returns |
+|--------|---------|---------|
+| `tools/list` | Discover available tools | Array of tool definitions with schemas |
+| `tools/call` | Execute a specific tool | Tool execution result |
 
-- **Static**: Specific files or data (like "Barcelona Trip Notes.pdf")
-- **Dynamic**: Patterns that fetch information on demand (like `weather://forecast/{city}/{date}` for any city's weather)
+**Example tool definition:**
 
-### Smart Parameter Discovery
+```typescript
+{
+  name: "searchFlights",
+  description: "Search for available flights",
+  inputSchema: {
+    type: "object",
+    properties: {
+      origin: { type: "string", description: "Departure city" },
+      destination: { type: "string", description: "Arrival city" },
+      date: { type: "string", format: "date", description: "Travel date" }
+    },
+    required: ["origin", "destination", "date"]
+  }
+}
+```
 
-When working with dynamic resources, MCP helps you fill in the parameters. For example, if a travel server has a template like `hotel://search/{city}/{date}`, as you type the city name "Par...", it might suggest "Paris" or "Park City" from available destinations. This intelligent assistance helps you quickly access the exact resource you need without memorizing specific formats.
+### Example: Taking Action
 
-### User Interaction Model
+Tools transform AI from an advisor into an assistant that can help execute tasks. Consider a travel planning scenario where the AI application helps book a vacation:
 
-Resources in MCP are designed to be application-driven, with different apps choosing how to present them based on their design. For example, applications might:
+1. **`searchFlights(origin: "NYC", destination: "Barcelona", date: "2024-06-15")`**
+   - Searches across multiple airlines
+   - Returns structured flight options
 
-- **File Explorer Style**: Show resources in a familiar folder tree structure
-- **Search Interface**: Provide a search bar with filters and categories
-- **Smart Suggestions**: Automatically recommend relevant resources based on your current conversation
-- **Context Panels**: Display available resources in a sidebar that updates based on the topic
-- **Quick Access**: Pin frequently used resources for one-click access
+2. **`createCalendarEvent(title: "Barcelona Trip", startDate: "2024-06-15", endDate: "2024-06-22")`**
+   - Blocks calendar time
+   - Adds trip details
 
-This flexibility means each app can create the best experience for its users, whether that's a minimalist interface or a feature-rich browser.
+3. **`sendEmail(to: "team@work.com", subject: "Out of Office", body: "...")`**
+   - Notifies team members
+   - Includes return date
 
-## Prompts: Ready-Made Templates for Common Tasks
-
-Prompts are like having an expert assistant who knows exactly what questions to ask and what information to gather for specific tasks. Instead of figuring out how to phrase your request perfectly, prompts provide proven templates.
-
-**In our vacation example**, prompts might include:
-
-- **"Plan a vacation"** - Guides you through destination, dates, budget, and preferences
-- **"Show weather for [city]"** - Displays current conditions and forecast for any destination
-- **"Create daily schedule"** - Organizes activities, restaurants, and transportation for each day
-
-### How Prompts Save Time
-
-Without prompts, you might spend time typing: "I want to plan a vacation sometime in June, somewhere warm but not too hot, with good food, and I have about $3000 to spend..."
-
-With prompts, you simply select "Plan a vacation" and fill in the blanks as the AI guides you through each important consideration.
-
-### Smart Parameter Completion
-
-Prompts get even better with auto-completion. When you select a prompt like "Show weather for [city]", MCP helps you complete the arguments. As you type "Par...", it might suggest "Paris, France" or "Park City, Utah". Similarly, with "Send email to [recipient]", typing "Joh..." could auto-complete to "John Smith" from your contacts. This works just like search suggestions in your favorite apps, making it easy to provide the right information quickly.
+Each tool execution requires explicit user approval, ensuring full control over actions taken.
 
 ### User Interaction Model
 
-Prompts are designed to be user-controlled, appearing in ways that feel natural within each application. Common implementations include:
+Tools are model-controlled, meaning AI models can discover and invoke them automatically. However, MCP emphasizes human oversight through several mechanisms. Applications should clearly display available tools in the UI and provide visual indicators when tools are being considered or used. Before any tool execution, users must be presented with clear approval dialogs that explain exactly what the tool will do.
 
-- **Slash Commands**: Type "/" in a chat to see available prompts like "/plan-vacation" or "/summarize"
-- **Action Buttons**: Quick-access buttons in the toolbar for frequent tasks
-- **Context Menus**: Right-click on content to see relevant prompts
-- **Command Palette**: Press a hotkey to open a searchable list of all prompts
-- **Smart Suggestions**: The app suggests relevant prompts based on your current activity
+For trust and safety, there should always be a human in the loop with the ability to deny tool invocations. Applications typically implement this through approval dialogs, permission settings for pre-approving certain safe operations, and activity logs that show all tool executions with their results.
 
-This user-controlled approach ensures you're always in charge of when and how to use prompts, making them feel like natural extensions of the app rather than automated features.
+## Resources (for context data)
 
-## Tools: Letting AI Take Action (With Your Permission)
+Resources provide structured access to information that an AI model can read and use as context for its operations.
 
-Tools transform AI from an advisor into an assistant that can actually do things for you. They're the "write access" that lets AI interact with your digital world—always with your explicit permission.
+### Overview
 
-**In our vacation example**, tools enable actions like:
+Resources use URI-based identification, with each resource having a unique URI such as `file:///path/to/document.md`. They declare MIME types for appropriate content handling and support two access patterns: direct resources with fixed URIs, and resource templates with parameterized URIs.
 
-- **`searchFlights(origin, destination, dates)`** - Compare options across airlines
-- **`checkHotels(city, checkin, checkout, budget)`** - Find available accommodations
-- **`createCalendarEvent(title, date, location)`** - Block your travel dates
-- **`sendEmail(to, subject, body)`** - Coordinate with travel companions
-- **`createDocument(title, content)`** - Generate itineraries or packing lists
+**Resource Templates** enable dynamic resource access through URI templates. A template like `travel://activities/{city}/{category}` allows accessing filtered activity data by substituting both `{city}` and `{category}` parameters. For example, `travel://activities/barcelona/museums` would return all museums in Barcelona. Templates include metadata such as name, description, and expected MIME type, making them discoverable and self-documenting.
+
+**Protocol operations:**
+
+| Method | Purpose | Returns |
+|--------|---------|---------|
+| `resources/list` | List available direct resources | Array of resource descriptors |
+| `resources/templates/list` | Discover resource templates | Array of resource template definitions |
+| `resources/read` | Retrieve resource contents | Resource data with metadata |
+| `resources/subscribe` | Monitor resource changes | Subscription confirmation |
+
+### Example: Accessing Context Data
+
+Continuing with the travel planning example, resources provide the AI application with access to relevant information:
+
+- **Calendar data** (`calendar://events/2024`) - To check availability
+- **Weather forecasts** (`weather://forecast/{city}/{date}`) - For destination climate
+- **Travel documents** (`file:///Documents/Travel/passport.pdf`) - For important information
+- **Previous itineraries** (`trips://history/barcelona-2023`) - For reference
+
+Instead of manually copying this information, resources let the AI access it directly with user permission. During planning, the AI can check calendar availability, look up weather patterns, and reference travel preferences—all through structured resource access.
+
+**Resource Template Examples:**
+
+```json
+{
+  "uriTemplate": "weather://forecast/{city}/{date}",
+  "name": "weather-forecast",
+  "title": "Weather Forecast",
+  "description": "Get weather forecast for any city and date",
+  "mimeType": "application/json"
+}
+
+{
+  "uriTemplate": "travel://flights/{origin}/{destination}",
+  "name": "flight-search",
+  "title": "Flight Search",
+  "description": "Search available flights between cities",
+  "mimeType": "application/json"
+}
+```
+
+These templates enable flexible queries. For weather data, users can access forecasts for any city/date combination. For flights, they can search routes between any two airports. When users type "travel://flights/NYC/Bar", the system can suggest "Barcelona (BCN)" or "Barbados (BGI)" for the destination parameter.
+
+### Parameter Discovery
+
+Dynamic resources support parameter completion. For example:
+- Typing "Par..." in `weather://forecast/{city}` might suggest "Paris" or "Park City"
+- The system helps discover valid values without requiring exact format knowledge
 
 ### User Interaction Model
 
-Since tools can take actions, they're designed with extra care for user control and transparency. Applications typically show tools through:
+Resources are application-driven, giving hosts flexibility in how they present available context to users. Common interaction patterns include tree or list views for browsing resources in familiar folder-like structures, search and filter interfaces for finding specific resources, automatic context inclusion based on heuristics or AI selection, and manual selection interfaces.
 
-- **Confirmation Dialogs**: Clear pop-ups showing exactly what the tool will do before it runs
-- **Action Previews**: See a summary of the action with all parameters filled in
-- **Permission Settings**: Configure which tools can run automatically vs. requiring approval
-- **Activity Feed**: A log showing all tool executions with timestamps and results
-- **Grouped Approvals**: Approve multiple related actions at once (e.g., "Search all flight comparison sites")
+Applications are free to implement resource discovery through any interface pattern that suits their needs. The protocol doesn't mandate specific UI patterns, allowing for resource pickers with preview capabilities, smart suggestions based on current conversation context, bulk selection for including multiple resources, or integration with existing file browsers and data explorers.
 
-The key is transparency—you should always understand what's happening and maintain control over your digital environment.
+## Prompts (for interaction templates)
+
+Prompts provide reusable templates that guide interactions. They combine instructions with parameter definitions to standardize common workflows.
+
+### Overview
+
+Prompts are structured templates that define expected inputs and interaction patterns. They are user-controlled, requiring explicit invocation rather than automatic triggering. Prompts can be context-aware, referencing available resources and tools to create comprehensive workflows.
+
+**Protocol operations:**
+
+| Method | Purpose | Returns |
+|--------|---------|---------|
+| `prompts/list` | Discover available prompts | Array of prompt descriptors |
+| `prompts/get` | Retrieve prompt details | Full prompt definition with arguments |
+
+**Prompt components:**
+
+- **Name**: Unique identifier for the prompt
+- **Description**: User-facing explanation of purpose
+- **Arguments**: Typed parameters with optional defaults
+- **Instructions**: Template text with parameter placeholders
+
+### Example: Streamlined Workflows
+
+Prompts provide structured templates for common tasks. In the travel planning context:
+
+**"Plan a vacation" prompt:**
+```yaml
+name: plan-vacation
+description: Guide through vacation planning process
+arguments:
+  - destination: string (required)
+  - duration: number (days)
+  - budget: number (optional)
+  - interests: array of strings
+```
+
+Rather than unstructured natural language input, the prompt system enables:
+1. Selection of the "Plan a vacation" template
+2. Structured input: Barcelona, 7 days, $3000, ["beaches", "architecture", "food"]
+3. Consistent workflow execution based on the template
+
+### User Interaction Model
+
+Prompts are user-controlled, requiring explicit invocation. Applications typically expose prompts through various UI patterns such as slash commands (typing "/" to see available prompts like /plan-vacation), command palettes for searchable access, dedicated UI buttons for frequently used prompts, or context menus that suggest relevant prompts.
+
+The protocol gives implementers freedom to design interfaces that feel natural within their application. Key principles include easy discovery of available prompts, clear descriptions of what each prompt does, natural argument input with validation, and transparent display of the prompt's underlying template.
 
 ## How It All Works Together
 
-The real power of MCP comes from combining resources, prompts, and tools. Let's see our complete vacation planning flow:
+The real power of MCP emerges when multiple servers work together, combining their specialized capabilities through a unified interface.
 
-1. **You select the prompt**: "Plan a vacation"
+### Example: Multi-Server Travel Planning
 
-2. **AI accesses resources** to understand context:
+Consider an AI application with three connected servers:
 
-   - Checks your calendar for available dates
-   - Reviews weather patterns for potential destinations
-   - Looks at travel guides you've saved
+1. **Travel Server** - Handles flights, hotels, and itineraries
+2. **Weather Server** - Provides climate data and forecasts  
+3. **Calendar/Email Server** - Manages schedules and communications
 
-3. **You fill in the prompt parameters** with smart assistance:
+#### The Complete Flow
 
-   - Destination: "Barcelona" (auto-completed from "Bar...")
-   - Dates: "June 15-22" (suggested based on your calendar availability)
-   - Budget: "$3000"
-   - Preferences: "Beach, local cuisine, walkable neighborhoods"
+**1. User invokes a prompt with parameters:**
+```yaml
+prompt: plan-vacation
+arguments:
+  destination: "Barcelona"
+  departure_date: "2024-06-15"
+  return_date: "2024-06-22" 
+  budget: 3000
+  travelers: 2
+```
 
-4. **AI uses tools** to help (with your permission):
+**2. User selects resources to include:**
+- `calendar://my-calendar/June-2024` (from Calendar Server)
+- `travel://preferences/europe` (from Travel Server)
+- `travel://past-trips/Spain-2023` (from Travel Server)
+- `weather://forecast/Barcelona/2024-06` (from Weather Server)
 
-   - Searches for flight options
-   - Compares hotel prices and availability
-   - Creates a day-by-day itinerary
-   - Adds trip dates to your calendar
-   - Drafts an email to invite friends
+**3. AI processes the request:**
 
-5. **Result**: Your vacation is researched, planned, and organized—all while you maintained control over every decision.
+The AI first reads all selected resources to gather context. From the calendar, it identifies available dates. From travel preferences, it learns preferred airlines and hotel types. From past trips, it discovers previously enjoyed locations. From weather data, it checks climate conditions for the travel period.
+
+Using this context, the AI then requests user approval to execute a series of coordinated actions: searching for flights from NYC to Barcelona, finding hotels within the specified budget, creating a calendar event for the trip duration, and sending confirmation emails with the trip details.
+
+
