@@ -119,6 +119,10 @@ The test harness has multiple layers, based on heavy use of Claude Code w/ slash
 - Slash commands in `.claude/commands/`
 
     - `update_scenarios.md`: suggests improvements to `compliance/scenarios/data.json`: can be run from scratch to seed the scenarios, or after a spec update to make sure the scenarios cover the diffs. The slash command should link to each and every of the spec files.
+        - Looks at the git history on specs inside @docs/specification/draft, and at diffs on @compliance/scenarios/data.json ; any diffs in the specs that are more recent than scenarios updates deserve particular attention / might warrant updating / creating scenarios (and updating SDKs, goldens, etc)
+        - ensures the following guidelines when creating, updating or reviewing scenarios (uses one todo / subagent per scenario): 
+            - descriptions in @compliance/scenarios/data.json must not be ambiguous / must be prescriptive enough so any SDKs looking to implement it would have no room for interpretation (the goal is to ensure we have predictible replay logs between clients and servers)
+        - if goldens already exist in @compliance/scenarios/goldens/, first we'll need to update the TypeScript SDK with any changes to the scenarios, then update the goldens and iterate until all of the golden changes make sense in light of the scenario descriptions, disambiguating the descriptions if/when needed. The golden logs should match what one would expect after reading the specs for each scenario.
 
     - `update_sdk.md`: generates or updates a specific SDK's client and server binaries:
         - First, a `compliance/<sdk-name>/CLAUDE.md` must be assembled or updated with links to the SDK's docs, relevant official client/server examples, and directions for implementation.
@@ -129,6 +133,15 @@ The test harness has multiple layers, based on heavy use of Claude Code w/ slash
     - `update_goldens.md`: captures the traffic between the TypeScript SDK's client and server binaries over all the scenarios
 
     - `cross_test_sdks.md` (takes list of sdks): runs the tests against each other.
+
+    - `debug_sdk.md`: takes an sdk name, and inspects its behaviour (using the todo list and many subagents):
+
+        - inspects the server testing binary's implementation of all server definitions (one todo / subagent per definition)
+        
+        - inspects each scenario (one todo / subagent per scenario): 
+            - understand its description (in @compliance/scenarios/data.json ; does it need to be disambiguated? should be quite prescriptive so all SDKs will implement the scenario the same) and its output (in @compliance/scenarios/goldens/ ; does it match what one would expect after reading the specs?)
+            - analyze its implementation (does it look correct, idiomatic, is it checking conditions appropriately / erroring on unexpected data?),
+            - proceed to fixing any or all of the relevant bits (use subagents for the analysis, and for the fixes)
 
 - `compliance/<sdk-name>/CLAUDE.md`: artefacts created by `.claude/commands/update_sdk.md` slash commands.
 
