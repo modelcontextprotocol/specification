@@ -150,18 +150,19 @@ available during the session.
 
 Key capabilities include:
 
-| Category | Capability     | Description                                                                          |
-| -------- | -------------- | ------------------------------------------------------------------------------------ |
-| Client   | `roots`        | Ability to provide filesystem [roots](/specification/draft/client/roots)             |
-| Client   | `sampling`     | Support for LLM [sampling](/specification/draft/client/sampling) requests            |
-| Client   | `elicitation`  | Support for server [elicitation](/specification/draft/client/elicitation) requests   |
-| Client   | `experimental` | Describes support for non-standard experimental features                             |
-| Server   | `prompts`      | Offers [prompt templates](/specification/draft/server/prompts)                       |
-| Server   | `resources`    | Provides readable [resources](/specification/draft/server/resources)                 |
-| Server   | `tools`        | Exposes callable [tools](/specification/draft/server/tools)                          |
-| Server   | `logging`      | Emits structured [log messages](/specification/draft/server/utilities/logging)       |
-| Server   | `completions`  | Supports argument [autocompletion](/specification/draft/server/utilities/completion) |
-| Server   | `experimental` | Describes support for non-standard experimental features                             |
+| Category | Capability          | Description                                                                          |
+| -------- | ------------------- | ------------------------------------------------------------------------------------ |
+| Client   | `roots`             | Ability to provide filesystem [roots](/specification/draft/client/roots)             |
+| Client   | `sampling`          | Support for LLM [sampling](/specification/draft/client/sampling) requests            |
+| Client   | `elicitation`       | Support for server [elicitation](/specification/draft/client/elicitation) requests   |
+| Client   | `resumableRequests` | Support for [resumable requests](#resuming-requests)                                 |
+| Client   | `experimental`      | Describes support for non-standard experimental features                             |
+| Server   | `prompts`           | Offers [prompt templates](/specification/draft/server/prompts)                       |
+| Server   | `resources`         | Provides readable [resources](/specification/draft/server/resources)                 |
+| Server   | `tools`             | Exposes callable [tools](/specification/draft/server/tools)                          |
+| Server   | `logging`           | Emits structured [log messages](/specification/draft/server/utilities/logging)       |
+| Server   | `completions`       | Supports argument [autocompletion](/specification/draft/server/utilities/completion) |
+| Server   | `experimental`      | Describes support for non-standard experimental features                             |
 
 Capability objects can describe sub-capabilities like:
 
@@ -178,6 +179,26 @@ Both parties **SHOULD**:
 
 - Respect the negotiated protocol version
 - Only use capabilities that were successfully negotiated
+
+#### Resuming Requests
+
+MCP provides a transport-agnostic mechanism for resuming requests across disconnections.
+
+If a client has advertised the `resumableRequests` capability, a server may send a `notifications/requests/resumePolicy` notification when responding to a request. The notification will specify the resume policy for the request in the event of disconnection, and will include a token that the client can use to resume the request.
+
+After the resume policy is sent, both the client and the server may disconnect at will. This allows servers to handle long-running requests without maintaining a constant connection.
+
+After a disconnection, clients may resume the request by sending a `requests/resume` request with the **same ID** as the original request, plus the server-issued token as a parameter. If the ID and token are valid per the resume policy, the server should reset policy-related timers, send any pending messages (e.g., progress notifications), and then continue as if it were handling the original request.
+
+<Note>
+
+When using the [Streamable HTTP transport](/specification/draft/basic/transports#streamable-http) to stream messages, a server cannot definitively know whether a message has been delivered. Clients use the `Last-Event-ID` HTTP header upon reconnect to indicate the last delivered message.
+
+In order to provide message delivery guarantees, servers may use monotonic SSE event IDs, and maintain a buffer of recently sent messages (a two minute window aligns with common TCP idle timeout configurations). When a client resumes a request, the `Last-Event-ID` header can be used to determine which messages in the buffer should be discarded before sending the remainder to the client.
+
+</Note>
+
+Alternatively, after a disconnection, a client may send a `requests/getStatus` request to get the status of the original request. If the parameters of the `requests/getStatus` request are valid per the request policy, the server should reset policy-related timers, and return the status of the original request.
 
 ### Shutdown
 
