@@ -13,7 +13,7 @@ import type {
   ReadResourceResult,
   ListPromptsResult
 } from '@modelcontextprotocol/sdk/types.js';
-import { ElicitRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { ElicitRequestSchema, CreateMessageRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import type { Scenarios } from '../../src/types.js';
 
 // CLI setup
@@ -108,7 +108,8 @@ async function createClient(transport: string, args: string[]): Promise<{
         version: '1.0.0'
       }, {
         capabilities: {
-          elicitation: {}
+          elicitation: {},
+          sampling: {}
         }
       });
       await client.connect(stdioTransport);
@@ -129,7 +130,8 @@ async function createClient(transport: string, args: string[]): Promise<{
         version: '1.0.0'
       }, {
         capabilities: {
-          elicitation: {}
+          elicitation: {},
+          sampling: {}
         }
       });
       await client.connect(sseTransport);
@@ -374,8 +376,22 @@ async function executePromptScenario(client: Client) {
 }
 
 async function executeEvalWithSamplingScenario(client: Client) {
-  // Note: The client needs to handle sampling requests from the server
-  // This is a more complex scenario that requires sampling support
+  // Set up sampling handler for eval_with_sampling
+  client.setRequestHandler(CreateMessageRequestSchema, async (request) => {
+    console.log('Sampling request:', request.params.messages);
+    
+    // For eval_with_sampling, we need to evaluate the expression
+    // The server will ask us to evaluate "2 + 2 * 3"
+    // Following order of operations: 2 + (2 * 3) = 2 + 6 = 8
+    return {
+      role: 'assistant' as const,
+      content: {
+        type: 'text' as const,
+        text: '8'
+      }
+    };
+  });
+  
   const result = await client.callTool({
     name: 'eval_with_sampling',
     arguments: {
@@ -478,17 +494,21 @@ async function executeFileSubscriptionScenario(client: Client) {
 }
 
 async function executeErrorScenario(client: Client) {
-  try {
-    await client.callTool({
-      name: 'always_error',
-      arguments: {}
-    });
-    throw new Error('Expected tool to return error');
-  } catch (error: any) {
-    // Expected error
-    if (!error.message || !error.message.includes('error')) {
-      throw new Error('Expected proper error response');
-    }
+  const result = await client.callTool({
+    name: 'always_error',
+    arguments: {}
+  }) as CallToolResult;
+  
+  // Check if the result has isError flag set to true
+  if (!result.isError) {
+    throw new Error('Expected tool to return error result with isError: true');
+  }
+  
+  // Check if the error message is present
+  if (!result.content || result.content.length === 0 || 
+      result.content[0].type !== 'text' || 
+      !result.content[0].text.toLowerCase().includes('error')) {
+    throw new Error('Expected proper error message in response');
   }
 }
 
