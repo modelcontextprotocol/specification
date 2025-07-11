@@ -17,7 +17,7 @@ Servers provide functionality through three building blocks:
 | **Resources**  | For context data          | Application-controlled | Documents, calendars, emails, weather data                   |
 | **Prompts**    | For interaction templates | User-controlled        | "Plan a vacation", "Summarize my meetings", "Draft an email" |
 
-### Tools (for AI actions)
+### Tools - AI actions
 
 Tools enable AI models to perform actions through server-implemented functions. Each tool defines a specific operation with typed inputs and outputs.
 
@@ -64,7 +64,7 @@ Tools are model-controlled, meaning AI models can discover and invoke them autom
 
 For trust and safety, there should always be a human in the loop with the ability to deny tool invocations. Applications typically implement this through approval dialogs, permission settings for pre-approving certain safe operations, and activity logs that show all tool executions with their results.
 
-### Resources (for context data)
+### Resources - context data
 
 Resources provide structured access to information that an AI model can read and use as context for its operations.
 
@@ -129,7 +129,7 @@ Resources are application-driven, giving hosts flexibility in how they present a
 
 Applications are free to implement resource discovery through any interface pattern that suits their needs. The protocol doesn't mandate specific UI patterns, allowing for resource pickers with preview capabilities, smart suggestions based on current conversation context, bulk selection for including multiple resources, or integration with existing file browsers and data explorers.
 
-### Prompts (for interaction templates)
+### Prompts - interaction templates
 
 Prompts provide reusable templates that guide interactions. They combine instructions with parameter definitions to standardize common workflows.
 
