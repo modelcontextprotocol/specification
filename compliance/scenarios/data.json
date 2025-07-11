@@ -153,7 +153,7 @@
     },
     {
       "id": 9,
-      "description": "client1 connects to FileServer, reads resource template file:///readme.txt using resource template, then calls write_file to update it, reads again to verify change",
+      "description": "client1 connects to FileServer, reads file:///readme.txt resource directly, then calls write_file(path=/readme.txt) to update it, reads again to verify change",
       "client_ids": ["client1"],
       "server_name": "FileServer"
     },
@@ -171,13 +171,13 @@
     },
     {
       "id": 12,
-      "description": "client1 connects to ErrorServer, calls timeout tool with progress tracking enabled, sends cancellation after 1 second, receives cancelled acknowledgment",
+      "description": "client1 connects to ErrorServer, calls timeout tool with progress tracking, cancels after 1 second, receives cancelled acknowledgment",
       "client_ids": ["client1"],
       "server_name": "ErrorServer"
     },
     {
       "id": 13,
-      "description": "client1 connects to CalcServer via stdio transport, performs basic add operation, verifies stdio-specific message framing",
+      "description": "client1 connects to CalcServer via stdio transport, performs basic add(10,20) operation and gets result 30",
       "client_ids": ["client1"],
       "server_name": "CalcServer"
     },
@@ -190,7 +190,7 @@
     },
     {
       "id": 15,
-      "description": "client1 connects to CalcServer with progress tracking, calls eval_with_sampling with complex expression, receives progress notifications during evaluation",
+      "description": "client1 connects to CalcServer, calls eval_with_sampling(expression='(2 + 3) * (4 + 5)') with progress tracking, receives progress notifications during evaluation, gets result 45",
       "client_ids": ["client1"],
       "server_name": "CalcServer"
     },
@@ -202,7 +202,7 @@
     },
     {
       "id": 17,
-      "description": "client1 connects to CalcServer, enables server logging, performs several operations, calls logging/list to retrieve server-side logs",
+      "description": "client1 connects to CalcServer, sets logging level to debug, performs add(5,10) and tools/list operations, retrieves logs showing operation history",
       "client_ids": ["client1"],
       "server_name": "CalcServer"
     },
@@ -227,7 +227,7 @@
     },
     {
       "id": 21,
-      "description": "client1 connects to CalcServer with older protocol version, server negotiates compatible version, operations proceed with negotiated version",
+      "description": "client1 connects to CalcServer with protocol version 2025-06-18, server accepts same version, performs add(10,20) operation",
       "client_ids": ["client1"],
       "server_name": "CalcServer"
     },
