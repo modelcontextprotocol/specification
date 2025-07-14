@@ -2284,7 +2284,7 @@
                     "properties": {
                         "requestId": {
                             "$ref": "#/definitions/RequestId",
-                            "description": "The ID of the originating request."
+                            "description": "The ID of the request that triggered the creation of the stream.\n\nIf the client cancels the that request (via `notifications/cancelled`),\nthe client SHOULD NOT attempt to resume the stream."
                         },
                         "resumeInterval": {
                             "properties": {
@@ -2299,13 +2299,17 @@
                             },
                             "type": "object"
                         },
+                        "resumeToken": {
+                            "description": "An opaque token that the client MUST send back to the server when\nresuming the stream or polling its status.\n\nThis token should be treated as sensitive information because it can be\nused to access messages from to the stream.",
+                            "type": "string"
+                        },
                         "streamId": {
-                            "description": "A unique identifier for the stream. If the stream is resumable, this ID\nshould be globally unique across instances of the server.",
+                            "description": "A unique identifier for the stream. This ID should be globally unique\nacross instances of the server.",
                             "type": "string"
                         }
                     },
                     "required": [
-                        "requestId",
+                        "resumeToken",
                         "streamId"
                     ],
                     "type": "object"
@@ -2318,6 +2322,7 @@
             "type": "object"
         },
         "StreamEndNotification": {
+            "description": "Notification that a stream has ended.",
             "properties": {
                 "method": {
                     "const": "notifications/stream/end",
@@ -2351,12 +2356,17 @@
                 },
                 "params": {
                     "properties": {
+                        "resumeToken": {
+                            "description": "The resume token for the stream issued by the server via a\n`notifications/stream/create` notification.\n\nIf this value does not match the token issued by the server, the server\nMUST respond with an error.",
+                            "type": "string"
+                        },
                         "streamId": {
                             "description": "The ID of the stream to poll.\n\nThis MUST correspond to the ID of a stream previously created. If the\nstream does not exist, the server MUST respond with an error.",
                             "type": "string"
                         }
                     },
                     "required": [
+                        "resumeToken",
                         "streamId"
                     ],
                     "type": "object"
@@ -2419,12 +2429,17 @@
                 },
                 "params": {
                     "properties": {
+                        "resumeToken": {
+                            "description": "The resume token for the stream issued by the server via a\n`notifications/stream/create` notification.\n\nIf this value does not match the token issued by the server, the server\nMUST respond with an error.",
+                            "type": "string"
+                        },
                         "streamId": {
                             "description": "The ID of the stream to resume.\n\nThis MUST correspond to the ID of a stream previously created. If the\nstream does not exist, the server MUST respond with an error.",
                             "type": "string"
                         }
                     },
                     "required": [
+                        "resumeToken",
                         "streamId"
                     ],
                     "type": "object"
