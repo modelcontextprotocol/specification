@@ -20,19 +20,22 @@ At its core, MCP follows a client-server architecture where a host application c
 ```mermaid
 flowchart LR
     subgraph "Your Computer"
-        Host["Host with MCP Client\n(Claude, IDEs, Tools)"]
+        Host["Host with MCP Client<br/>(Claude, IDEs, Tools)"]
         S1["MCP Server A"]
         S2["MCP Server B"]
-        S3["MCP Server C"]
+        D1[("Local<br/>Data Source A")]
         Host <-->|"MCP Protocol"| S1
         Host <-->|"MCP Protocol"| S2
-        Host <-->|"MCP Protocol"| S3
-        S1 <--> D1[("Local\nData Source A")]
-        S2 <--> D2[("Local\nData Source B")]
+        S1 <--> D1
     end
     subgraph "Internet"
-        S3 <-->|"Web APIs"| D3[("Remote\nService C")]
+        S3["MCP Server C"]
+        D2[("Remote<br/>Service B")]
+        D3[("Remote<br/>Service C")]
+        S2 <-->|"Web APIs"| D2
+        S3 <-->|"Web APIs"| D3
     end
+    Host <-->|"MCP Protocol"| S3
 ```
 
 - **MCP Hosts**: Programs like Claude Desktop, IDEs, or AI tools that want to access data through MCP

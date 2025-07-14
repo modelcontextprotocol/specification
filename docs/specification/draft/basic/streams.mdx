@@ -6,48 +6,58 @@ title: Streams
 
 <Info>**Protocol Revision**: draft</Info>
 
-MCP defines a transport-agnostic mechanism for resumable streams, allowing clients and servers to maintain state across disconnections.
+MCP defines a transport-agnostic mechanism for resumable streams that allow clients and servers to maintain state across disconnections.
 
-## Introduction
-
-Streams provide a way to manage long-running operations and ensure message delivery even when connections are interrupted. Key benefits include:
-
-- Transport-agnostic resumability (works with HTTP, WebSocket, stdio, etc.)
-- Ability for clients and servers to disconnect and reconnect without losing progress
-- Resource management through configurable timeouts
-- Status checking without requiring full reconnection
+- Clients and servers can use streams regardless of transport (HTTP, WebSocket, stdio, etc.).
+- Clients and servers can disconnect and reconnect without losing progress.
+- Servers can communicate expiration timeouts and reclaim resources thereafter.
+- Clients can poll stream status after disconnect without fetching all undelivered messages.
 
 ## Lifecycle
 
 A stream follows a defined lifecycle:
 
-1. **Creation**: The server creates a stream and sends a `notifications/stream/create` notification with a unique stream ID
-2. **Live**: Messages are exchanged on the stream.
-3. **Completion**: Server sends a `notifications/stream/end` notification when the stream is complete
+1. **Creation**: Server creates a stream and sends a `notifications/stream/create` notification with a unique stream ID.
+2. **Live**: Messages are sent as part of the stream.
+3. **Completion**: Server sends a `notifications/stream/end` notification when the stream is complete.
 
-A client may use the `stream/resume` request to receive messages from a live stream, and `stream/poll` to poll a stream's state. A client may also use `stream/poll/all` to poll all available streams.
+In the event of disconnection, the client may send a `stream/poll` to check the stream's status, and a `stream/resume` request to receive messages from the stream.
 
 ```mermaid
 sequenceDiagram
     participant Client
     participant Server
 
-    Note over Client,Server: Stream Creation
     Client->>+Server: Request (e.g., tools/call)
+    Note over Server: Stream creation
     Server-->>Client: notifications/stream/create
 
-    Note over Client,Server: Stream Operation
-    loop Message Exchange
-        Server-->>Client: Messages on stream
+    loop
+        Server-->>Client: Messages (e.g., notifications/progress)
     end
 
-    Note over Client,Server: Stream Termination
+    Note over Server: Disconnection occurs
+    Server--x-Client:
+
+    Note over Client: Client polls stream status
+    Client->>+Server: stream/poll
+    Server-->>-Client: StreamPollResult
+
+    Note over Client: Client decides to resume
+    Client->>+Server: stream/resume
+    Server-->>Client: Undelivered messages
+    loop
+        Server-->>Client: Messages (e.g., notifications/progress)
+    end
+    Server-->>Client: CallToolResult
+
+    Note over Server: Stream termination
     Server-->>-Client: notifications/stream/end
 ```
 
 ### Creation
 
-When a client sends a request that may produce a long-running response, the server can create a stream by sending a `notifications/stream/create` notification with a unique stream ID and resume interval parameters.
+When a client sends a request that might cause a long-running response, the server can create a stream by sending a `notifications/stream/create` notification with a unique stream ID, a resume token, and resume interval parameters.
 
 ```json
 {
@@ -56,6 +66,8 @@ When a client sends a request that may produce a long-running response, the serv
   "params": {
     "stream": {
       "streamId": "550e8400-e29b-41d4-a716-446655440000",
+      "resumeToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "requestId": "1",
       "resumeInterval": {
         "min": 5,
         "max": 3600
@@ -65,58 +77,30 @@ When a client sends a request that may produce a long-running response, the serv
 }
 ```
 
-The `resumeInterval` specifies:
-
-- `min`: Minimum seconds a client should wait before resuming the stream (prevents excessive reconnections)
-- `max`: Maximum seconds a client may wait before the server considers the stream abandoned
+- `streamId` and `resumeToken` are used to resume or poll the stream in the event of disconnection.
+- `resumeInterval.min` specifies the minimum seconds a client should wait before resuming or polling the stream in order to prevent excessive reconnections.
+- `resumeInterval.max` specifies the maximum seconds a client may wait before the server considers the stream abandoned.
 
 ### Disconnection and Resumption
 
-Either the client or server may disconnect at any time. After a disconnection, the client can resume the stream by sending a `stream/resume` request with the stream ID:
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-
-    Client->>+Server: Request (e.g., tools/call)
-    Server-->>Client: notifications/stream/create
-    Server-->>Client: Initial messages
-
-    Note over Client,Server: Disconnection occurs
-
-    Client->>Server: stream/resume
-    Server-->>Client: Unsent messages
-    Server-->>-Client: notifications/stream/end
-```
-
-Example `stream/resume` request:
+Either the client or server may disconnect at any time. After a disconnection, the client can resume the stream by sending a `stream/resume` request with the stream ID and resume token.
 
 ```json
 {
   "jsonrpc": "2.0",
   "method": "stream/resume",
   "params": {
-    "streamId": "550e8400-e29b-41d4-a716-446655440000"
+    "streamId": "550e8400-e29b-41d4-a716-446655440000",
+    "resumeToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 }
 ```
 
 When a client sends a `stream/resume` request, the server should:
 
-1. Send all unsent messages for the stream to the client
-2. If the stream has ended, send a `notifications/stream/end` notification after sending all other unsent messages
-3. If the stream ID is invalid (e.g., abandoned), respond with an error
-
-#### Streamable HTTP Considerations
-
-When using the [Streamable HTTP transport](/specification/draft/basic/transports#streamable-http), streams are implemented using the Server-Sent Events (SSE) protocol. When served over HTTP, a server cannot definitively know when any given message is delivered. Clients use the `Last-Event-ID` HTTP header to resume their SSE connection to Streamable HTTP servers.
-
-In order to deliver durable message guarantees, servers may maintain a buffer of recently sent messages (a two minute window aligns with common TCP idle timeout configurations), and use a scheme to correlate message IDs across streams, such as by using a strictly monotonic counter. When a client reconnects after a disconnection, the `Last-Event-ID` header can be used to derive the point from which its view of streams will resume and poll from.
-
-### Polling
-
-Clients can check a stream's status without receiving all unsent messages by sending a `stream/poll` request:
+1. Send all undelivered messages for the stream to the client.
+2. If the stream has ended, send a `notifications/stream/end` notification after sending all other undelivered messages.
+3. If the stream ID or resume token is invalid, respond with an error.
 
 ```mermaid
 sequenceDiagram
@@ -127,32 +111,41 @@ sequenceDiagram
     Server-->>Client: notifications/stream/create
     Server-->>Client: Initial messages
 
-    Note over Client,Server: Disconnection occurs
+    Note over Server: Disconnection occurs
+    Server--x-Client:
 
-    Client->>Server: stream/poll
-    Server-->>Client: StreamPollResult
-
-    Note over Client,Server: Client decides to resume
-
-    Client->>Server: stream/resume
-    Server-->>Client: Unsent messages
+    Client->>+Server: stream/resume
+    Server-->>Client: Undelivered messages
     Server-->>-Client: notifications/stream/end
 ```
 
-Example `stream/poll` request and response:
+<Note>
+
+When using the [Streamable HTTP transport](/specification/draft/basic/transports#streamable-http) to stream messages, a server cannot definitively know whether a message has been delivered. Clients use the `Last-Event-ID` HTTP header upon reconnect to indicate the last delivered messages.
+
+In order to provide message delivery guarantees, servers may use monotonic SSE event IDs, and maintain a buffer of recently sent messages (a two minute window aligns with common TCP idle timeout configurations). When a client resumes a stream, the `Last-Event-ID` header can be used to determine which messages in the buffer should be discarded before sending the remainder to the client.
+
+</Note>
+
+### Polling
+
+Clients can check a stream's status without fetching all undelivered messages by sending a `stream/poll` request with the stream ID and resume token.
 
 ```json
-// Request
 {
   "jsonrpc": "2.0",
   "id": 2,
   "method": "stream/poll",
   "params": {
-    "streamId": "550e8400-e29b-41d4-a716-446655440000"
+    "streamId": "550e8400-e29b-41d4-a716-446655440000",
+    "resumeToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 }
+```
 
-// Response
+The response will indicate the status of the stream as well as whether there are pending messages.
+
+```json
 {
   "jsonrpc": "2.0",
   "id": 2,
@@ -166,16 +159,14 @@ Example `stream/poll` request and response:
 }
 ```
 
-The response includes:
-
-- `status`: The stream state (`"live"` or `"completed"`)
-- `pendingMessages`: Whether there are unsent messages
+- `status`: The stream status (`"live"` or `"completed"`)
+- `pendingMessages`: Whether there are pending messages
 - `hasRequest`: Whether any pending messages include a server-to-client request
 - `hasError`: Whether any pending messages include an error result
 
 ### Abandonment
 
-If a client fails to resume or poll a stream within the `resumeInterval.max` period, the server may consider the stream abandoned and reclaim resources. The next time a client attempts to resume or poll the stream, the server may respond with an error.
+If a client does not resume or poll a stream within the `resumeInterval.max` period, the server may consider the stream abandoned and reclaim resources. The next time the client attempts to resume or poll the stream, the server may respond with an error.
 
 ```mermaid
 sequenceDiagram
@@ -186,16 +177,18 @@ sequenceDiagram
     Server-->>Client: notifications/stream/create (max=3600)
     Server-->>Client: Initial messages
 
-    Note over Client,Server: Disconnection occurs
-    Note over Client,Server: Client waits > 3600 seconds
+    Note over Server: Disconnection occurs
+    Server--x-Client:
 
-    Client->>Server: stream/resume
+    Note over Client: Client waits > 3600 seconds
+
+    Client->>+Server: stream/resume
     Server-->>-Client: Error (stream abandoned)
 ```
 
 ### Termination
 
-When a stream completes, the server sends a `notifications/stream/end` notification:
+When a stream completes, the server sends a `notifications/stream/end` notification.
 
 ```json
 {
@@ -209,7 +202,12 @@ When a stream completes, the server sends a `notifications/stream/end` notificat
 
 ## Using Streams with Tool Calls
 
-A common pattern is to use streams with tool calls that may take a long time to complete:
+A common pattern is to use streams with tool calls that might take a long time to complete. When using streams with tool calls:
+
+1. The server sends a `notifications/stream/create` notification immediately after receiving the tool call request.
+2. The server can send progress updates and other messages as part of the stream.
+3. When the tool call completes, the server sends the result.
+4. The server ends the stream with a `notifications/stream/end` notification.
 
 ```mermaid
 sequenceDiagram
@@ -219,7 +217,7 @@ sequenceDiagram
     Client->>+Server: tools/call
     Server-->>Client: notifications/stream/create
 
-    loop Message Exchange
+    loop
         Server-->>Client: notifications/progress
         Server-->>Client: Other messages
     end
@@ -228,15 +226,7 @@ sequenceDiagram
     Server-->>-Client: notifications/stream/end
 ```
 
-When using streams with tool calls:
-
-1. The server creates a stream immediately after receiving the tool call
-2. The server can send progress updates and other messages on the stream
-3. When the tool completes, the server sends the result
-4. The server ends the stream with a `notifications/stream/end` notification
-
 ## Security Considerations
 
-- Stream IDs should be treated as sensitive information as they can be used to retrieve message history
-- Servers should validate that clients have appropriate permissions to resume streams
-- Servers should limit the number of unsent messages a disconnected stream may retain in order to prevent denial of service attacks
+- Resume tokens should be treated as sensitive information as they can be used to retrieve message history.
+- Servers should validate that clients have appropriate permissions to resume a stream.
