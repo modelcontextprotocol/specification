@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 import { spawn } from 'child_process';
 import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const scenarios = [1, 2, 3, 4, 5, 6, 11, 13, 15, 21, 24, 25];
 
@@ -14,12 +19,14 @@ async function runScenario(id: number): Promise<boolean> {
     const child = spawn(clientPath, [
       '--scenario-id', id.toString(),
       '--id', 'client1',
+      '--',
       'stdio',
       serverPath,
       '--server-name', getServerName(id),
       '--transport', 'stdio'
     ], {
-      stdio: 'inherit'
+      stdio: 'inherit',
+      cwd: join(__dirname, '..', '..')  // Run from compliance directory
     });
     
     child.on('exit', (code) => {
