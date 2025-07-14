@@ -56,6 +56,8 @@ When a client sends a request that may produce a long-running response, the serv
   "params": {
     "stream": {
       "streamId": "550e8400-e29b-41d4-a716-446655440000",
+      "resumeToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "requestId": "1",
       "resumeInterval": {
         "min": 5,
         "max": 3600
@@ -72,7 +74,7 @@ The `resumeInterval` specifies:
 
 ### Disconnection and Resumption
 
-Either the client or server may disconnect at any time. After a disconnection, the client can resume the stream by sending a `stream/resume` request with the stream ID:
+Either the client or server may disconnect at any time. After a disconnection, the client can resume the stream by sending a `stream/resume` request with the stream ID and resume token:
 
 ```mermaid
 sequenceDiagram
@@ -97,7 +99,8 @@ Example `stream/resume` request:
   "jsonrpc": "2.0",
   "method": "stream/resume",
   "params": {
-    "streamId": "550e8400-e29b-41d4-a716-446655440000"
+    "streamId": "550e8400-e29b-41d4-a716-446655440000",
+    "resumeToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 }
 ```
@@ -106,7 +109,7 @@ When a client sends a `stream/resume` request, the server should:
 
 1. Send all unsent messages for the stream to the client
 2. If the stream has ended, send a `notifications/stream/end` notification after sending all other unsent messages
-3. If the stream ID is invalid (e.g., abandoned), respond with an error
+3. If the stream ID or resume token is invalid, respond with an error
 
 #### Streamable HTTP Considerations
 
@@ -148,7 +151,8 @@ Example `stream/poll` request and response:
   "id": 2,
   "method": "stream/poll",
   "params": {
-    "streamId": "550e8400-e29b-41d4-a716-446655440000"
+    "streamId": "550e8400-e29b-41d4-a716-446655440000",
+    "resumeToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 }
 
@@ -237,6 +241,6 @@ When using streams with tool calls:
 
 ## Security Considerations
 
-- Stream IDs should be treated as sensitive information as they can be used to retrieve message history
+- Resume tokens should be treated as sensitive information as they can be used to retrieve message history
 - Servers should validate that clients have appropriate permissions to resume streams
 - Servers should limit the number of unsent messages a disconnected stream may retain in order to prevent denial of service attacks

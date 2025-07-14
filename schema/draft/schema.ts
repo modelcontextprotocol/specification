@@ -1488,15 +1488,27 @@ export interface StreamCreateNotification extends Notification {
   method: "notifications/stream/create";
   params: {
     /**
-     * A unique identifier for the stream. If the stream is resumable, this ID
-     * should be globally unique across instances of the server.
+     * A unique identifier for the stream. This ID should be globally unique
+     * across instances of the server.
      */
     streamId: string;
 
     /**
-     * The ID of the originating request.
+     * An opaque token that the client MUST send back to the server when
+     * resuming the stream or polling its status.
+     *
+     * This token should be treated as sensitive information because it can be
+     * used to access messages from to the stream.
      */
-    requestId: RequestId;
+    resumeToken: string;
+
+    /**
+     * The ID of the request that triggered the creation of the stream.
+     *
+     * If the client cancels the that request (via `notifications/cancelled`),
+     * the client SHOULD NOT attempt to resume the stream.
+     */
+    requestId?: RequestId;
 
     resumeInterval?: {
       /**
@@ -1534,6 +1546,15 @@ export interface StreamResumeRequest extends Request {
      * stream does not exist, the server MUST respond with an error.
      */
     streamId: string;
+
+    /**
+     * The resume token for the stream issued by the server via a
+     * `notifications/stream/create` notification.
+     *
+     * If this value does not match the token issued by the server, the server
+     * MUST respond with an error.
+     */
+    resumeToken: string;
   };
 }
 
@@ -1553,6 +1574,15 @@ export interface StreamPollRequest extends Request {
      * stream does not exist, the server MUST respond with an error.
      */
     streamId: string;
+
+    /**
+     * The resume token for the stream issued by the server via a
+     * `notifications/stream/create` notification.
+     *
+     * If this value does not match the token issued by the server, the server
+     * MUST respond with an error.
+     */
+    resumeToken: string;
   };
 }
 
