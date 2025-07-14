@@ -72,13 +72,32 @@ class CalcServer {
         a: z.number().describe('First number')
       }
     }, async ({ a }) => {
-      // TODO: Implement elicitation when client sends support
-      // For now, use a default value for test scenario
-      const b = 20; // Default for test scenario
+      try {
+        // Use the lower-level server API for elicitation
+        const result = await this.server.server.elicitInput({
+          message: `Please provide the value for 'b' to add to ${a}`,
+          type: 'number'
+        } as any);
 
-      return {
-        content: [{ type: 'text', text: String(a + b) }]
-      };
+        if (result.action === 'accept' && result.content !== undefined) {
+          const b = result.content as number;
+          return {
+            content: [{ type: 'text', text: String(a + b) }]
+          };
+        } else {
+          // Handle decline or cancel
+          return {
+            content: [{ type: 'text', text: 'Cannot complete operation: elicitation declined' }],
+            isError: true
+          };
+        }
+      } catch (error: any) {
+        // Handle any errors (e.g., client doesn't support elicitation)
+        return {
+          content: [{ type: 'text', text: `Error: ${error.message}` }],
+          isError: true
+        };
+      }
     });
 
     // Trigonometric functions (conditionally available)
