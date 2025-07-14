@@ -54,18 +54,24 @@ Tools are characterized by their schema-defined interfaces, which use JSON Schem
 
 Tools transform AI from an advisor into an assistant that can help execute tasks. In a travel planning scenario, the AI application might orchestrate several actions to book a vacation.
 
-First, it searches for flights using 
+First, it searches for flights using
+
 ```
 searchFlights(origin: "NYC", destination: "Barcelona", date: "2024-06-15")
 ```
-`searchFlights` queries multiple airlines and returns structured flight options. Once flights are selected, it creates a calendar event with 
+
+`searchFlights` queries multiple airlines and returns structured flight options. Once flights are selected, it creates a calendar event with
+
 ```
 createCalendarEvent(title: "Barcelona Trip", startDate: "2024-06-15", endDate: "2024-06-22")
-``` 
+```
+
 to mark the travel dates. Finally, it sends an out-of-office notification using
+
 ```
 sendEmail(to: "team@work.com", subject: "Out of Office", body: "...")
-``` 
+```
+
 to inform colleagues about the absence.
 
 Each tool execution requires explicit user approval, ensuring full control over actions taken.
@@ -155,7 +161,6 @@ Prompts are structured templates that define expected inputs and interaction pat
 | `prompts/list` | Discover available prompts | Array of prompt descriptors           |
 | `prompts/get`  | Retrieve prompt details    | Full prompt definition with arguments |
 
-
 #### Example: Streamlined Workflows
 
 Prompts provide structured templates for common tasks. In the travel planning context:
@@ -168,10 +173,10 @@ Prompts provide structured templates for common tasks. In the travel planning co
   "title": "Plan a vacation",
   "description": "Guide through vacation planning process",
   "arguments": [
-    {"name": "destination", "type": "string", "required": true},
-    {"name": "duration", "type": "number", "description": "days"},
-    {"name": "budget", "type": "number", "required": false},
-    {"name": "interests", "type": "array", "items": {"type": "string"}}
+    { "name": "destination", "type": "string", "required": true },
+    { "name": "duration", "type": "number", "description": "days" },
+    { "name": "budget", "type": "number", "required": false },
+    { "name": "interests", "type": "array", "items": { "type": "string" } }
   ]
 }
 ```
@@ -204,27 +209,27 @@ Consider an AI application with three connected servers:
 
 1. **User invokes a prompt with parameters:**
 
-    ```json
-    {
-      "prompt": "plan-vacation",
-      "arguments": {
-        "destination": "Barcelona",
-        "departure_date": "2024-06-15",
-        "return_date": "2024-06-22",
-        "budget": 3000,
-        "travelers": 2
-      }
-    }
-    ```
+   ```json
+   {
+     "prompt": "plan-vacation",
+     "arguments": {
+       "destination": "Barcelona",
+       "departure_date": "2024-06-15",
+       "return_date": "2024-06-22",
+       "budget": 3000,
+       "travelers": 2
+     }
+   }
+   ```
 
 2. **User selects resources to include:**
 
-    - `calendar://my-calendar/June-2024` (from Calendar Server)
-    - `travel://preferences/europe` (from Travel Server)
-    - `travel://past-trips/Spain-2023` (from Travel Server)
+   - `calendar://my-calendar/June-2024` (from Calendar Server)
+   - `travel://preferences/europe` (from Travel Server)
+   - `travel://past-trips/Spain-2023` (from Travel Server)
 
 3. **AI processes the request:**
 
-    The AI first reads all selected resources to gather context. From the calendar, it identifies available dates. From travel preferences, it learns preferred airlines and hotel types. From past trips, it discovers previously enjoyed locations. From weather data, it checks climate conditions for the travel period.
+   The AI first reads all selected resources to gather context. From the calendar, it identifies available dates. From travel preferences, it learns preferred airlines and hotel types. From past trips, it discovers previously enjoyed locations. From weather data, it checks climate conditions for the travel period.
 
-    Using this context, the AI then requests user approval to execute a series of coordinated actions: searching for flights from NYC to Barcelona, finding hotels within the specified budget, creating a calendar event for the trip duration, and sending confirmation emails with the trip details.
+   Using this context, the AI then requests user approval to execute a series of coordinated actions: searching for flights from NYC to Barcelona, finding hotels within the specified budget, creating a calendar event for the trip duration, and sending confirmation emails with the trip details.
