@@ -376,7 +376,7 @@ cannot be misused across different services.
 
 ### Software Statement and JWKS
 
-MCP clients and authorization servers **SHOULD** support the use of `software_statement` and `jwks_uri` fields during Dynamic Client Registration (DCR), as defined in [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591#section-3.1.1). 
+MCP clients and authorization servers **SHOULD** support the use of `software_statement` and `jwks_uri` fields during Dynamic Client Registration (DCR), as defined in [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591#section-3.1.1).
 
 The `software_statement` is a signed JWT ([RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519)) containing metadata about the client software, and the `jwks_uri` points to a JSON Web Key Set ([RFC 7517](https://datatracker.ietf.org/doc/html/rfc7517)) containing the public keys needed to verify these signatures.
 
