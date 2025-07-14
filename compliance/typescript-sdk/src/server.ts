@@ -75,22 +75,33 @@ class CalcServer {
       try {
         // Use the lower-level server API for elicitation
         const result = await this.server.server.elicitInput({
-          message: `Please provide the value for 'b' to add to ${a}`,
-          type: 'number'
-        } as any);
+          message: `Please provide the second number (b) to add to ${a}:`,
+          requestedSchema: {
+            type: 'object',
+            properties: {
+              b: {
+                type: 'number',
+                description: 'Second number to add'
+              }
+            },
+            required: ['b']
+          }
+        });
 
-        if (result.action === 'accept' && result.content !== undefined) {
-          const b = result.content as number;
-          return {
-            content: [{ type: 'text', text: String(a + b) }]
-          };
-        } else {
-          // Handle decline or cancel
-          return {
-            content: [{ type: 'text', text: 'Cannot complete operation: elicitation declined' }],
-            isError: true
-          };
+        if (result.action === 'accept' && result.content) {
+          const b = (result.content as any).b;
+          if (typeof b === 'number') {
+            return {
+              content: [{ type: 'text', text: String(a + b) }]
+            };
+          }
         }
+        
+        // Handle decline or cancel
+        return {
+          content: [{ type: 'text', text: 'Cannot complete operation: elicitation declined' }],
+          isError: true
+        };
       } catch (error: any) {
         // Handle any errors (e.g., client doesn't support elicitation)
         return {
