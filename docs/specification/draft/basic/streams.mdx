@@ -25,7 +25,7 @@ A stream follows a defined lifecycle:
 2. **Live**: Messages are exchanged on the stream.
 3. **Completion**: Server sends a `notifications/stream/end` notification when the stream is complete
 
-A client may use the `stream/resume` request to receive messages from a live stream, and `stream/poll` to poll a stream's state. A client may also use `stream/poll/all` to poll all available streams.
+A client may use the `stream/resume` request to receive messages from a live stream, and `stream/poll` to poll a stream's state.
 
 ```mermaid
 sequenceDiagram

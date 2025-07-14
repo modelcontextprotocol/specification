@@ -317,9 +317,6 @@
                 },
                 {
                     "$ref": "#/definitions/StreamPollRequest"
-                },
-                {
-                    "$ref": "#/definitions/StreamPollAllRequest"
                 }
             ]
         },
@@ -2247,9 +2244,6 @@
                 },
                 {
                     "$ref": "#/definitions/StreamPollResult"
-                },
-                {
-                    "$ref": "#/definitions/StreamPollAllResult"
                 }
             ]
         },
@@ -2348,52 +2342,6 @@
             ],
             "type": "object"
         },
-        "StreamPollAllRequest": {
-            "description": "A request from the client to the server to check the status of all current\nstreams.\n\nThe server SHOULD reset each stream's abandonment timer when responding to\nthis request.",
-            "properties": {
-                "method": {
-                    "const": "stream/poll/all",
-                    "type": "string"
-                },
-                "params": {
-                    "properties": {
-                        "cursor": {
-                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                }
-            },
-            "required": [
-                "method"
-            ],
-            "type": "object"
-        },
-        "StreamPollAllResult": {
-            "description": "A response to a `stream/poll/all` request.",
-            "properties": {
-                "_meta": {
-                    "additionalProperties": {},
-                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                    "type": "object"
-                },
-                "nextCursor": {
-                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
-                    "type": "string"
-                },
-                "statuses": {
-                    "items": {
-                        "$ref": "#/definitions/StreamStatus"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "statuses"
-            ],
-            "type": "object"
-        },
         "StreamPollRequest": {
             "description": "A request from the client to the server to check the status of a stream.\n\nThe server SHOULD reset the stream's abandonment timer when responding to\nthis request.",
             "properties": {
@@ -2485,43 +2433,6 @@
             "required": [
                 "method",
                 "params"
-            ],
-            "type": "object"
-        },
-        "StreamStatus": {
-            "description": "The status of a stream.",
-            "properties": {
-                "hasError": {
-                    "description": "Whether the stream's pending messages include an error result.",
-                    "type": "boolean"
-                },
-                "hasRequest": {
-                    "description": "Whether the stream's pending messages include a server-sent request.",
-                    "type": "boolean"
-                },
-                "pendingMessages": {
-                    "description": "Whether the stream has pending messages.",
-                    "type": "boolean"
-                },
-                "status": {
-                    "description": "The current status of the stream.",
-                    "enum": [
-                        "completed",
-                        "live"
-                    ],
-                    "type": "string"
-                },
-                "streamId": {
-                    "description": "The ID of the stream.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "hasError",
-                "hasRequest",
-                "pendingMessages",
-                "status",
-                "streamId"
             ],
             "type": "object"
         },
