@@ -1483,6 +1483,8 @@ export interface ElicitResult extends Result {
 /**
  * A notification to the client that a stream was created. Messages may be sent
  * on the stream immediately after the creation notification.
+ *
+ * @category notifications/stream/create
  */
 export interface StreamCreateNotification extends Notification {
   method: "notifications/stream/create";
@@ -1535,6 +1537,8 @@ export interface StreamCreateNotification extends Notification {
  * from a stream. The server SHOULD send all unsent messages to the client
  * when this method is called. If the stream is closed, the server MUST send
  * a `notifications/stream/end` notification after sending its messages.
+ *
+ * @category stream/resume
  */
 export interface StreamResumeRequest extends Request {
   method: "stream/resume";
@@ -1563,6 +1567,8 @@ export interface StreamResumeRequest extends Request {
  *
  * The server SHOULD reset the stream's abandonment timer when responding to
  * this request.
+ *
+ * @category stream/poll
  */
 export interface StreamPollRequest extends Request {
   method: "stream/poll";
@@ -1588,6 +1594,8 @@ export interface StreamPollRequest extends Request {
 
 /**
  * A response to a `stream/poll` request.
+ *
+ * @category stream/poll
  */
 export interface StreamPollResult extends Result {
   /**
@@ -1616,6 +1624,11 @@ export interface StreamPollResult extends Result {
   hasError: boolean;
 }
 
+/**
+ * Notification that a stream has ended.
+ *
+ * @category notifications/stream/end
+ */
 export interface StreamEndNotification extends Notification {
   method: "notifications/stream/end";
   params: {
