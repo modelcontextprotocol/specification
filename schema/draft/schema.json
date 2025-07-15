@@ -2274,7 +2274,7 @@
             "type": "object"
         },
         "StreamCreateNotification": {
-            "description": "A notification to the client that a stream was created. Messages may be sent\non the stream immediately after the creation notification.",
+            "description": "A notification to the client that a stream was created. Messages may be sent\nas part of the stream immediately after the creation notification.",
             "properties": {
                 "method": {
                     "const": "notifications/stream/create",
@@ -2289,11 +2289,11 @@
                         "resumeInterval": {
                             "properties": {
                                 "max": {
-                                    "description": "The maximum number of seconds a client may wait before resuming or\npolling the stream. A value of 0 indicates that the stream is not\nresumable, and that the task may be cancelled upon disconnect.\n\nIf this number is omitted, the server provides no guarantee, and may\nterminate the stream at its own discretion.",
+                                    "description": "The maximum number of seconds a client may wait before resuming or\npolling the stream. A value of 0 indicates that the stream is not\nresumable, and that the task may be cancelled upon disconnect.\n\nIf this number is omitted, the server provides no guarantee, and MAY\nterminate the stream at its own discretion.",
                                     "type": "integer"
                                 },
                                 "min": {
-                                    "description": "The minimum number of seconds a client should wait before resuming\nor polling the stream.",
+                                    "description": "The minimum number of seconds a client SHOULD wait before resuming\nor polling the stream.",
                                     "type": "integer"
                                 }
                             },
@@ -2421,7 +2421,7 @@
             "type": "object"
         },
         "StreamResumeRequest": {
-            "description": "A request from the client to the server to begin receiving messages\nfrom a stream. The server SHOULD send all unsent messages to the client\nwhen this method is called. If the stream is closed, the server MUST send\na `notifications/stream/end` notification after sending its messages.",
+            "description": "A request from the client to the server to begin receiving messages\nfrom a stream. The server SHOULD send all undelivered messages to the client\nwhen this method is called. If the stream is completed, the server MUST send\na `notifications/stream/end` notification after sending its messages.",
             "properties": {
                 "method": {
                     "const": "stream/resume",
