@@ -348,13 +348,16 @@ async function main() {
 
     fs.mkdirSync(outputDir, { recursive: true });
 
-    const styleSourcePath = path.join(docsDir, 'style.css');
-    const styleDestPath = path.join(outputDir, 'style.css');
-    if (fs.existsSync(styleSourcePath)) {
-        fs.copyFileSync(styleSourcePath, styleDestPath);
-        if (!OPTIONS.jsonOutput) console.log(`✅ Copied global stylesheet.`);
+    // Do not copy the global stylesheet if --no-styles is set
+    if (OPTIONS.includeStyle) {
+      const styleSourcePath = path.join(docsDir, 'style.css');
+      const styleDestPath = path.join(outputDir, 'style.css');
+      if (fs.existsSync(styleSourcePath)) {
+          fs.copyFileSync(styleSourcePath, styleDestPath);
+          if (!OPTIONS.jsonOutput) console.log(`✅ Copied global stylesheet.`);
+      }
     }
-    
+      
     const totalSummary = { processed: 0, skipped: 0, duplicates: 0 };
     
     try {
