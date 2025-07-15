@@ -9,7 +9,7 @@ In this tutorial, we'll build a simple MCP weather server and connect it to a ho
 
 Many LLMs do not currently have the ability to fetch the forecast and severe weather alerts. Let's use MCP to solve that!
 
-We'll build a server that exposes two tools: `get-alerts` and `get-forecast`. Then we'll connect the server to an MCP host (in this case, Claude for Desktop):
+We'll build a server that exposes two tools: `get_alerts` and `get_forecast`. Then we'll connect the server to an MCP host (in this case, Claude for Desktop):
 
 <Frame>
   <img src="/images/weather-alerts.png" />
@@ -543,7 +543,7 @@ The tool execution handler is responsible for actually executing the logic of ea
 ```typescript
 // Register weather tools
 server.tool(
-  "get-alerts",
+  "get_alerts",
   "Get weather alerts for a state",
   {
     state: z.string().length(2).describe("Two-letter state code (e.g. CA, NY)"),
@@ -591,7 +591,7 @@ server.tool(
 );
 
 server.tool(
-  "get-forecast",
+  "get_forecast",
   "Get weather forecast for a location",
   {
     latitude: z.number().min(-90).max(90).describe("Latitude of the location"),
