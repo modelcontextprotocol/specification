@@ -2,18 +2,17 @@
  * @fileoverview Generates a single-file, self-contained specification from the project's MDX source files.
  * @author Moire.AI
  *
- * This script reads the `docs/docs.json` manifest to assemble pages, creating artifacts in the `dist/`
- * directory per version:
- *  1. An intermediary raw `.mdx` file with processed paths.
- *  2. A pure `.md` file with all JSX stripped.
- *  3. A self-contained `.html` file for easy reading and sharing.
- * It also copies supporting assets (images, etc.) from the `docs/specification/<version>/` directory,
- * this can be disabled with the `--no-assets` option.
+ * This script reads the `docs/docs.json` manifest to concatenate the documentation into a single-file format.
+ * It deduplicates the files, processes links to be hierarchical and self-contained, optionally copies assets,
+ * ultimately regenerating `dist/` with artifacts for each version of the specification. It creates:
+ *  1. A minimally processed intermediary raw `.mdx` file with processed paths
+ *  2. A minimally processed intermediary `.md` file with JSX stripped
+ *  3. An optionally styled, self-contained `.html` file (the true specification artifact)
  *
  * @usage
  *
- * # Install dependencies (if not added to package.json)
- * npm install --save-dev gray-matter marked serve
+ * # Install dependencies (if not added to package.json; use --save-dev if adding)
+ * npm install gray-matter marked serve
  *
  * # Generate latest version (default)
  * node generate-spec.mjs
@@ -35,8 +34,8 @@
  *  --all: Generate all versions instead of just the latest or specified version
  *  --json-stdout: Emit a machine-readable JSON summary to stdout, suppress normal output
  *
- * # Generate basic version with multiple options
- * npm run generate:spec 2025-03-26 --no-assets --no-styles --no-notice --no-schema
+ * # Generate minimal draft version suitable for pasting into a chat
+ * npm run generate:spec Draft --no-assets --no-styles --no-notice --no-schema
  *
  * # Serve the generated files locally
  * serve dist
@@ -44,8 +43,7 @@
  * npm run serve:dist
  * 
  * # Other Notes:
- * - The script will automatically create the `dist/` directory if it does not exist.
- *   Add this to your `.gitignore` to avoid committing generated files.
+ * - The script will regenerate the `dist/` directory, deleting any existing files.
  */
 
 // Configuration
