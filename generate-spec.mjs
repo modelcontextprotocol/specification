@@ -1,5 +1,6 @@
 /**
  * @fileoverview Generates a single-file, self-contained specification from the project's MDX source files.
+ * @author Moire.AI
  *
  * This script reads the `docs/docs.json` manifest to assemble pages, creating artifacts in the `dist/`
  * directory per version:
@@ -15,8 +16,8 @@
  * npm install --save-dev gray-matter marked serve
  *
  * # Generate latest version (default)
- * node scripts/generate-spec.js
- * # or using a modified package.json ("generate:spec": "node scripts/generate-spec.js")
+ * node generate-spec.mjs
+ * # or using a modified package.json ("generate:spec": "node generate-spec.mjs")
  * npm run generate:spec
  *
  * # Generate a specific version
@@ -25,15 +26,17 @@
  * # Generate all versions (for comparisons, as generate:spec destroys prior output)
  * npm run generate:spec -- --all
  *
- * # Supported options:
+ * # Supported arguments and options:
+ *  <version>: Specify a version to generate, defaults to the latest version in `docs/docs.json`
  *  --no-assets: Skip copying supporting assets (images, etc.) for the version
  *  --no-styles: Skip embedding CSS styles in the HTML output
  *  --no-notice: Skip adding the auto-generated notice at the top of the specification
+ *  --no-schema: Skip including schema pages in the final specification for brevity
  *  --all: Generate all versions instead of just the latest or specified version
  *  --json-stdout: Emit a machine-readable JSON summary to stdout, suppress normal output
  *
  * # Generate basic version with multiple options
- * npm run generate:spec 2025-03-26 --no-assets --no-styles --no-notice
+ * npm run generate:spec 2025-03-26 --no-assets --no-styles --no-notice --no-schema
  *
  * # Serve the generated files locally
  * serve dist
@@ -53,27 +56,42 @@ const PROTOCOL_GROUP_NAME = 'Protocol';
 const LATEST_SPEC_REDIRECT = '/specification/latest';
 
 // HTML Style Configuration - added to HEAD; can be css or a link to an external stylesheet
-const HTML_STYLE = `
+const HTML_STYLE_INLINE = `
   <style type="text/css">
-    body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; color: #333; background-color: #fff; margin: 0; padding: 0; }
-    main { max-width: 800px; margin: 2rem auto; padding: 2rem; }
-    h1, h2 { border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-    code { font-family: monospace; background-color: #f5f5f5; padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 3px; }
-    pre { padding: 16px; overflow: auto; font-size: 85%; line-height: 1.45; background-color: #f8f8f8; border-radius: 3px; }
-    pre code { background-color: transparent; padding: 0; margin: 0; font-size: 100%; }
-    a { color: #0066cc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #ddd; border: 0; }
-    h2 > a { color: inherit; }
-  </style>
-`;
+    body:not(#nonexistent) { font-family: system-ui, -apple-system, sans-serif !important; line-height: 1.6 !important; color: #333 !important; background-color: #fff !important; margin: 0; padding: 0; }
+    main:not(#nonexistent) { max-width: 800px !important; margin: 2rem auto !important; padding: 2rem !important; display: block !important; }
+    #schema-reference { display: block !important; }
+    a svg { width: 12px !important; height: 12px !important; }
+    h1:not(#nonexistent), h2:not(#nonexistent) { border-bottom: 1px solid #ddd; padding-bottom: 0.3em; display: block !important; }
+    h3:not(#nonexistent), h4:not(#nonexistent), h5:not(#nonexistent), h6:not(#nonexistent) { display: block !important; }
+    code:not(#nonexistent) { font-family: var(--font-mono, monospace); background-color: #f5f5f5; padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 3px; display: inline !important; }
+    pre:not(#nonexistent) { padding: 16px; overflow: auto; font-size: 85%; line-height: 1.45; background-color: #f8f8f8; border-radius: 3px; display: block !important; }
+    pre:not(#nonexistent) code { background-color: transparent; padding: 0; margin: 0; font-size: 100%; }
+    a:not(#nonexistent) { color: #0066cc; text-decoration: none; display: inline !important; }
+    a:not(#nonexistent):hover { text-decoration: underline; }
+    hr:not(#nonexistent) { height: 0.25em; padding: 0; margin: 24px 0; background-color: #ddd; border: 0; display: block !important; }
+    h2:not(#nonexistent) > a { color: inherit; }
+    p:not(#nonexistent) { margin: 1em 0; display: block !important; }
+    ul:not(#nonexistent), ol:not(#nonexistent) { margin: 1em 0; padding-left: 2em; display: block !important; }
+    li:not(#nonexistent) { display: list-item !important; }
+    div:not(#nonexistent) { display: block !important; }
+    table:not(#nonexistent) { border-collapse: collapse; width: 100%; margin: 1em 0; display: table !important; }
+    th:not(#nonexistent), td:not(#nonexistent) { border: 1px solid #ddd; padding: 0.5em; text-align: left; display: table-cell !important; }
+    th:not(#nonexistent) { background-color: #f5f5f5; font-weight: bold; }
+  </style>`;
+const HTML_STYLE_CSS = `<link rel="stylesheet" href="/style.css">`;
 
 // Dependencies and Constants
-const fs = require('fs');
-const path = require('path');
-const matter = require('gray-matter');
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { marked } from 'marked';
+import { fileURLToPath } from 'url';
 
-const rootDir = path.join(__dirname, '..');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const rootDir = __dirname;
 const docsDir = path.join(rootDir, DOCS_DIR_NAME);
 const outputDir = path.join(rootDir, OUTPUT_DIR_NAME);
 const docsConfigPath = path.join(docsDir, 'docs.json');
@@ -90,6 +108,7 @@ function parseArguments() {
     copyAssets: !args.includes('--no-assets'),
     includeStyle: !args.includes('--no-styles'),
     includeNotice: !args.includes('--no-notice'),
+    includeSchema: !args.includes('--no-schema'),
     buildAll: args.includes('--all'),
     jsonOutput: args.includes('--json-stdout'),
     version: args.filter(arg => !arg.startsWith('--'))[0] || null
@@ -191,14 +210,18 @@ function rewriteAllLinks(content, currentFileRef, fileSlugs) {
 }
 
 // Generate .md and .html files with proper hierarchical anchors.
-async function generateFinalArtifacts(baseOutputPath, fullContent) {
-    const { marked } = await import('marked');
+function generateFinalArtifacts(baseOutputPath, fullContent) {
 
     // fullContent has HTML heading anchors injected; strip the final frontmatter before converting
     const markdownWithHtmlHeadings = matter(fullContent).content;
 
     const htmlBody = marked(markdownWithHtmlHeadings, { gfm: true });
-    const styleSection = OPTIONS.includeStyle ? `${HTML_STYLE}` : '';
+    // If we are including styles, always use the inline style. If also doing copy assets append the CSS link to the inline style.
+    let styleSection = '';
+    if (OPTIONS.includeStyle) {
+        styleSection = OPTIONS.copyAssets ? HTML_STYLE_INLINE + HTML_STYLE_CSS : HTML_STYLE_INLINE;
+    }
+
     const htmlTemplate = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MCP Specification</title>${styleSection}</head><body><main>${htmlBody}</main></body></html>`;
 
     // The .md artifact will contain the injected HTML anchors, as it's the direct source for the HTML file.
@@ -216,10 +239,20 @@ async function generateSpecForVersion(version, docsConfig, isLatest = false) {
   const summary = { processed: 0, skipped: 0, duplicates: 0 };
   const versionConfig = docsConfig.navigation.versions.find(v => (v.version.match(/(\d{4}-\d{2}-\d{2}|[Dd]raft)/) || [])[0] === version);
   if (!versionConfig) throw new Error(`Version '${version}' configuration not found.`);
-  const protocolGroup = versionConfig.groups.find(g => g.group === PROTOCOL_GROUP_NAME);
-  if (!protocolGroup) throw new Error(`'${PROTOCOL_GROUP_NAME}' group not found for version ${version}.`);
 
-  const fileRefs = collectFilePaths(protocolGroup.pages);
+  const protocolGroup = versionConfig.groups.find(g => g.group === PROTOCOL_GROUP_NAME);
+    if (!protocolGroup) throw new Error(`'${PROTOCOL_GROUP_NAME}' group not found for version ${version}.`);
+
+    let pagesToProcess = protocolGroup.pages;
+    // Skip schema pages if the option is set to avoid including them in the final spec.
+    if (!OPTIONS.includeSchema) {
+      pagesToProcess = pagesToProcess.filter(page => {
+        return !(typeof page === 'string' && page.endsWith('/schema'));
+      });
+    }
+
+  const fileRefs = collectFilePaths(pagesToProcess);
+
   const processedFiles = new Set();
   const versionPrefix = `specification/${version}/`;
 
@@ -279,12 +312,11 @@ title: MCP Full Specification (${version})
   }
 
   const baseOutputPath = path.join(outputDir, `${OUTPUT_FILE_PREFIX}${version}`);
-  if (!fs.existsSync(path.dirname(baseOutputPath))) fs.mkdirSync(path.dirname(baseOutputPath), { recursive: true });
   
   fs.writeFileSync(`${baseOutputPath}.mdx`, fullContent, 'utf8');
   if (!OPTIONS.jsonOutput) console.log(`✅ Generated MDX artifact: ${path.basename(baseOutputPath)}.mdx`);
   
-  await generateFinalArtifacts(baseOutputPath, fullContent);
+  generateFinalArtifacts(baseOutputPath, fullContent);
   copyVersionAssets(version);
 
   if (isLatest) {
@@ -314,6 +346,15 @@ async function main() {
 
     if (fs.existsSync(outputDir)) {
         fs.rmSync(outputDir, { recursive: true, force: true });
+    }
+
+    fs.mkdirSync(outputDir, { recursive: true });
+
+    const styleSourcePath = path.join(docsDir, 'style.css');
+    const styleDestPath = path.join(outputDir, 'style.css');
+    if (fs.existsSync(styleSourcePath)) {
+        fs.copyFileSync(styleSourcePath, styleDestPath);
+        if (!OPTIONS.jsonOutput) console.log(`✅ Copied global stylesheet.`);
     }
     
     const totalSummary = { processed: 0, skipped: 0, duplicates: 0 };

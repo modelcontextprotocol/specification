@@ -32,7 +32,7 @@
     "generate:schema": "npm run generate:schema:json && npm run generate:schema:md",
     "generate:schema:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required --skipLibCheck \"$f\" \"*\" -o \"${f%.ts}.json\"; done",
     "generate:schema:md": "for f in docs/specification/*/schema.mdx; do typedoc --entryPoints \"schema/$(basename -- $(dirname -- \"$f\"))/schema.ts\" > \"$f\"; done",
-    "generate:spec": "node scripts/generate-spec.js",
+    "generate:spec": "node generate-spec.mjs",
     "format": "prettier --write \"**/*.{md,mdx}\"",
     "serve:docs": "cd docs && mintlify dev",
     "serve:dist": "serve dist"
