@@ -1482,7 +1482,7 @@ export interface ElicitResult extends Result {
 
 /**
  * A notification to the client that a stream was created. Messages may be sent
- * on the stream immediately after the creation notification.
+ * as part of the stream immediately after the creation notification.
  *
  * @category notifications/stream/create
  */
@@ -1514,7 +1514,7 @@ export interface StreamCreateNotification extends Notification {
 
     resumeInterval?: {
       /**
-       * The minimum number of seconds a client should wait before resuming
+       * The minimum number of seconds a client SHOULD wait before resuming
        * or polling the stream.
        */
       min?: number;
@@ -1524,7 +1524,7 @@ export interface StreamCreateNotification extends Notification {
        * polling the stream. A value of 0 indicates that the stream is not
        * resumable, and that the task may be cancelled upon disconnect.
        *
-       * If this number is omitted, the server provides no guarantee, and may
+       * If this number is omitted, the server provides no guarantee, and MAY
        * terminate the stream at its own discretion.
        */
       max?: number;
@@ -1534,8 +1534,8 @@ export interface StreamCreateNotification extends Notification {
 
 /**
  * A request from the client to the server to begin receiving messages
- * from a stream. The server SHOULD send all unsent messages to the client
- * when this method is called. If the stream is closed, the server MUST send
+ * from a stream. The server SHOULD send all undelivered messages to the client
+ * when this method is called. If the stream is completed, the server MUST send
  * a `notifications/stream/end` notification after sending its messages.
  *
  * @category stream/resume

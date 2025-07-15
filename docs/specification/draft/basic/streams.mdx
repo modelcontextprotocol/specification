@@ -6,22 +6,22 @@ title: Streams
 
 <Info>**Protocol Revision**: draft</Info>
 
-MCP defines a transport-agnostic mechanism for resumable streams that allow clients and servers to maintain state across disconnections.
+MCP defines a transport-agnostic mechanism for resumable streams that allow clients and servers to maintain state across disconnections. Using resumable streams:
 
-- Clients and servers can use streams regardless of transport (HTTP, WebSocket, stdio, etc.).
 - Clients and servers can disconnect and reconnect without losing progress.
 - Servers can communicate expiration timeouts and reclaim resources thereafter.
-- Clients can poll stream status after disconnect without fetching all undelivered messages.
+- Clients can poll stream status after disconnect without having to fetch undelivered messages.
+- All of the above works regardless of transport (HTTP, WebSocket, stdio, etc.).
 
 ## Lifecycle
 
 A stream follows a defined lifecycle:
 
-1. **Creation**: Server creates a stream and sends a `notifications/stream/create` notification with a unique stream ID.
+1. **Creation**: Server creates a stream and sends a [`notifications/stream/create`][] notification with a unique stream ID.
 2. **Live**: Messages are sent as part of the stream.
-3. **Completion**: Server sends a `notifications/stream/end` notification when the stream is complete.
+3. **Completion**: Server sends a [`notifications/stream/end`][] notification when the stream is complete.
 
-In the event of disconnection, the client may send a `stream/poll` to check the stream's status, and a `stream/resume` request to receive messages from the stream.
+In the event of disconnection, the client may send a [`stream/poll`][] to check the stream's status, and a [`stream/resume`][] request to receive messages from the stream.
 
 ```mermaid
 sequenceDiagram
@@ -29,35 +29,37 @@ sequenceDiagram
     participant Server
 
     Client->>+Server: Request (e.g., tools/call)
-    Note over Server: Stream creation
-    Server-->>Client: notifications/stream/create
-
+    Note over Server: Server creates stream
+    Server-->>Client: notifications/stream/create<br>{ streamId: "123", resumeToken: "abc" }
     loop
         Server-->>Client: Messages (e.g., notifications/progress)
     end
+    Server--x-Client: Disconnection occurs
 
-    Note over Server: Disconnection occurs
-    Server--x-Client:
-
-    Note over Client: Client polls stream status
-    Client->>+Server: stream/poll
+    Note over Client: Client polls stream status (optional)
+    Client->>+Server: stream/poll<br>{ streamId: "123", resumeToken: "abc" }
     Server-->>-Client: StreamPollResult
 
     Note over Client: Client decides to resume
-    Client->>+Server: stream/resume
+    Client->>+Server: stream/resume<br>{ streamId: "123", resumeToken: "abc" }
     Server-->>Client: Undelivered messages
     loop
         Server-->>Client: Messages (e.g., notifications/progress)
     end
     Server-->>Client: CallToolResult
 
-    Note over Server: Stream termination
-    Server-->>-Client: notifications/stream/end
+    Note over Server: Server terminates stream
+    Server-->>-Client: notifications/stream/end<br>{ streamId: "123" }
 ```
+
+[`notifications/stream/create`]: /specification/draft/schema#notifications%2Fstream%2Fcreate
+[`notifications/stream/end`]: /specification/draft/schema#notifications%2Fstream%2Fend
+[`stream/poll`]: /specification/draft/schema#stream%2Fpoll
+[`stream/resume`]: /specification/draft/schema#stream%2Fresume
 
 ### Creation
 
-When a client sends a request that might cause a long-running response, the server can create a stream by sending a `notifications/stream/create` notification with a unique stream ID, a resume token, and resume interval parameters.
+When a client sends a request that might cause a long-running response, the server **MAY** create a stream by sending a [`notifications/stream/create`][] notification with a unique stream ID, a resume token, and resume interval parameters.
 
 ```json
 {
@@ -78,12 +80,12 @@ When a client sends a request that might cause a long-running response, the serv
 ```
 
 - `streamId` and `resumeToken` are used to resume or poll the stream in the event of disconnection.
-- `resumeInterval.min` specifies the minimum seconds a client should wait before resuming or polling the stream in order to prevent excessive reconnections.
+- `resumeInterval.min` specifies the minimum seconds a client **SHOULD** wait before resuming or polling the stream in order to prevent excessive reconnections.
 - `resumeInterval.max` specifies the maximum seconds a client may wait before the server considers the stream abandoned.
 
 ### Disconnection and Resumption
 
-Either the client or server may disconnect at any time. After a disconnection, the client can resume the stream by sending a `stream/resume` request with the stream ID and resume token.
+Either the client or server **MAY** disconnect at any time. After a disconnection, the client can resume the stream by sending a [`stream/resume`][] request with the stream ID and resume token.
 
 ```json
 {
@@ -108,15 +110,13 @@ sequenceDiagram
     participant Server
 
     Client->>+Server: Request (e.g., tools/call)
-    Server-->>Client: notifications/stream/create
+    Server-->>Client: notifications/stream/create<br>{ streamId: "123", resumeToken: "abc" }
     Server-->>Client: Initial messages
+    Server--x-Client: Disconnection occurs
 
-    Note over Server: Disconnection occurs
-    Server--x-Client:
-
-    Client->>+Server: stream/resume
+    Client->>+Server: stream/resume<br>{ streamId: "123", resumeToken: "abc" }
     Server-->>Client: Undelivered messages
-    Server-->>-Client: notifications/stream/end
+    Server-->>-Client: notifications/stream/end<br>{ streamId: "123" }
 ```
 
 <Note>
@@ -129,7 +129,7 @@ In order to provide message delivery guarantees, servers may use monotonic SSE e
 
 ### Polling
 
-Clients can check a stream's status without fetching all undelivered messages by sending a `stream/poll` request with the stream ID and resume token.
+Clients can check a stream's status without fetching all undelivered messages by sending a [`stream/poll`][] request with the stream ID and resume token.
 
 ```json
 {
@@ -166,7 +166,7 @@ The response will indicate the status of the stream as well as whether there are
 
 ### Abandonment
 
-If a client does not resume or poll a stream within the `resumeInterval.max` period, the server may consider the stream abandoned and reclaim resources. The next time the client attempts to resume or poll the stream, the server may respond with an error.
+If a client does not resume or poll a stream within the `resumeInterval.max` period, the server **MAY** consider the stream abandoned and reclaim resources. The next time the client attempts to resume or poll the stream, the server **MAY** respond with an error.
 
 ```mermaid
 sequenceDiagram
@@ -174,11 +174,9 @@ sequenceDiagram
     participant Server
 
     Client->>+Server: Request (e.g., tools/call)
-    Server-->>Client: notifications/stream/create (max=3600)
+    Server-->>Client: notifications/stream/create<br>{ resumeInterval: { max:  3600 } }
     Server-->>Client: Initial messages
-
-    Note over Server: Disconnection occurs
-    Server--x-Client:
+    Server--x-Client: Disconnection occurs
 
     Note over Client: Client waits > 3600 seconds
 
@@ -188,7 +186,7 @@ sequenceDiagram
 
 ### Termination
 
-When a stream completes, the server sends a `notifications/stream/end` notification.
+When a stream completes, the server **MUST** send a [`notifications/stream/end`][] notification.
 
 ```json
 {
@@ -215,7 +213,7 @@ sequenceDiagram
     participant Server
 
     Client->>+Server: tools/call
-    Server-->>Client: notifications/stream/create
+    Server-->>Client: notifications/stream/create<br>{ streamId: "123", resumeToken: "abc" }
 
     loop
         Server-->>Client: notifications/progress
@@ -223,7 +221,7 @@ sequenceDiagram
     end
 
     Server-->>Client: CallToolResult
-    Server-->>-Client: notifications/stream/end
+    Server-->>-Client: notifications/stream/end<br>{ streamId: "123" }
 ```
 
 ## Security Considerations
