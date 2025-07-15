@@ -11,6 +11,21 @@ We intend SEPs to be the primary mechanisms for proposing major new features, fo
 
 Because the SEPs are maintained as text files in a versioned repository (GitHub Issues), their revision history is the historical record of the feature proposal.
 
+## What qualifies a SEP?
+
+The goal is to reserve the SEP process for changes that are substantial enough to require broad community discussion, a formal design document, and a historical record of the decision-making process. A regular GitHub issue or pull request is often more appropriate for smaller, more direct changes.
+
+Consider proposing a SEP if your change involves any of the following:
+
+- **A New Feature or Protocol Change**: Any change that adds, modifies, or removes features in the Model Context Protocol. This includes:
+  - Adding new API endpoints or methods.
+  - Changing the syntax or semantics of existing data structures or messages.
+  - Introducing a new standard for interoperability between different MCP-compatible tools.
+  - Significant changes to how the specification itself is defined, presented, or validated.
+- **A Breaking Change**: Any change that is not backwards-compatible.
+- **A Change to Governance or Process**: Any proposal that alters the project's decision-making, contribution guidelines (like this document itself).
+- **A Complex or Controversial Topic**: If a change is likely to have multiple valid solutions or generate significant debate, the SEP process provides the necessary framework to explore alternatives, document the rationale, and build community consensus before implementation begins.
+
 ## SEP Types
 
 There are three kinds of SEP:
@@ -44,7 +59,7 @@ The standard SEP workflow is:
 1. You, the SEP author, create a well-formatted GitHub Issue with the proposal and SEP tags
 2. Find a Core Maintainer or Maintainer to sponsor your proposal. Core Maintainers and Maintainers will regularly go over the list of open proposals to determine which proposals to sponsor. Once a sponsor is found, the sponsor is "assigned" to the issue and a milestone is assigned. The tag `draft` is added. At this point a unique SEP number is assigned.
 3. The sponsor will review and may request changes before formal review, based on community feedback. Once ready for review, the tag `in-review` is added.
-4. Once sponsored, the SEP enters formal review by the core team
+4. Once tagged `in-review`, the SEP enters formal review by the core team
 5. The SEP may be accepted, rejected, or returned for revision.
 6. If the SEP has not found a sponsor within three months, core-maintainers are free to close the SEP as `dormant`.
 
