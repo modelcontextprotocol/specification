@@ -3,13 +3,13 @@ title: Client Concepts
 description: "Understanding MCP client concepts"
 ---
 
-MCP clients are protocol clients created by host applications to communicate with MCP servers. While the host application (like Claude.ai or Code Editor) manages the overall user experience and coordinates multiple clients, each client handles the direct communication with servers through the Model Context Protocol.
+MCP clients are protocol clients instantiated by host applications to communicate with MCP servers. While the host application (like Claude.ai or Code Editor) manages the overall user experience and coordinates multiple clients, each client handles the direct communication with servers through the Model Context Protocol.
 
 Understanding the distinction is important: the host is the application users interact with, while clients are the protocol-level components that enable server connections. For stateful servers, each client maintains a dedicated connection session. For stateless servers accessed over HTTP, clients may share connections while still maintaining logical separation of concerns and security boundaries.
 
 ## Core Client Features
 
-Clients provide several key features that enhance server capabilities:
+Clients may provide several key features that enhance server capabilities:
 
 ### Sampling
 
@@ -78,7 +78,7 @@ The flow ensures security through multiple human-in-the-loop checkpoints. Users 
 
 Consider a travel booking server with a tool called `findBestFlight` that uses sampling to analyze available flights and recommend the optimal choice. When a user asks "Book me the best flight to Barcelona next month," the tool needs AI assistance to evaluate complex trade-offs.
 
-The tool queries airline APIs and gathers dozens of flight options. It then requests AI assistance to analyze these options: "Analyze 47 flights to Barcelona considering price, duration, layovers, and departure times. User prefers morning flights with one layover maximum."
+The tool queries airline APIs and gathers dozens of flight options. It then requests AI assistance to analyze these options: "Analyze these flight options and recommend the best choice: [...] User preferences: morning departure, max 1 layover."
 
 The client asks the user: "Allow AI to analyze flight options?" Upon approval, the AI evaluates trade-offs—like cheaper red-eye flights versus convenient morning departures. The tool uses this analysis to present the top three recommendations.
 
@@ -91,6 +91,8 @@ Sampling is designed with human-in-the-loop control as a fundamental principle. 
 **Transparency features**: Clients display the exact prompt, model selection, and token limits. Users review AI responses before they return to the server.
 
 **Configuration options**: Users can set model preferences, configure auto-approval for trusted operations, or require approval for everything. Clients may provide options to redact sensitive information.
+
+**Security considerations**: Both clients and servers must handle sensitive data appropriately during sampling. Clients should implement rate limiting and validate all message content. The human-in-the-loop design ensures that server-initiated AI interactions cannot compromise security or access sensitive data without explicit user consent.
 
 ### Roots
 
