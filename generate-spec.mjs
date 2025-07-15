@@ -35,7 +35,7 @@
  *  --json-stdout: Emit a machine-readable JSON summary to stdout, suppress normal output
  *
  * # Generate minimal draft version suitable for pasting into a chat
- * npm run generate:spec Draft --no-assets --no-styles --no-notice --no-schema
+ * npm run generate:spec Draft -- --no-assets --no-styles --no-notice --no-schema
  *
  * # Serve the generated files locally
  * serve dist
