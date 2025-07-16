@@ -91,8 +91,6 @@ MCP supports two transport mechanisms:
 
 The transport layer abstracts communication details from the protocol layer, enabling the same JSON-RPC 2.0 message format across all transport mechanisms.
 
-For more details see [remote MCP servers and local MCP servers](./remote-and-local-mcp).
-
 ### Data Layer Protocol
 
 A core part of MCP is defining the schema and semantics between MCP clients and MCP servers. Developers will likely find the the data layer — in particular, the set of [primitives](#primitives) — to be the most interesting part of MCP. It is the part of MCP that defines the ways developers can share context from MCP servers to MCP clients.
@@ -101,7 +99,7 @@ MCP uses [JSON-RPC 2.0](https://www.jsonrpc.org/) as it's underlying RPC protoco
 
 #### Lifecycle management
 
-MCP is a <Tooltip tip="A subset of MCP can be made stateless using the Streamable HTTP transport">stateful protocol</Tooltip> that requires lifecycle management. The purpose of lifecycle management is to negotiate the <Tooltip tip="Features and operations that a client or server supports, such as tools, resources, or prompts">capabilities</Tooltip> that both client and server support. Detailed information can be found in the [specification](specification/latest/basic/lifecycle), and the [example](#example) showcases the initialization sequence.
+MCP is a <Tooltip tip="A subset of MCP can be made stateless using the Streamable HTTP transport">stateful protocol</Tooltip> that requires lifecycle management. The purpose of lifecycle management is to negotiate the <Tooltip tip="Features and operations that a client or server supports, such as tools, resources, or prompts">capabilities</Tooltip> that both client and server support. Detailed information can be found in the [specification](/specification/2025-06-18/basic/lifecycle), and the [example](#example) showcases the initialization sequence.
 
 #### Primitives
 
