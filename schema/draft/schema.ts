@@ -1484,6 +1484,36 @@ export interface ElicitRequest extends Request {
 }
 
 /**
+ * The parameters for a request to track the progress of an elicitation.
+ *
+ * @category elicitation/track
+ */
+export interface ElicitTrackParams extends RequestParams {
+  _meta: {
+    /**
+     * The progress token as specified in the Progress capability, required in this request.
+     */
+    progressToken: ProgressToken;
+    [key: string]: unknown;
+  };
+
+  /**
+   * The ID of the elicitation to track.
+   */
+  elicitationId: string;
+};
+
+/**
+ * A request from the client to track the progress of an elicitation.
+ *
+ * @category elicitation/track
+ */
+export interface ElicitTrackRequest extends Request {
+  method: "elicitation/track";
+  params: ElicitTrackParams;
+}
+
+/**
  * Restricted schema definitions that only allow primitive types
  * without nested objects or arrays.
  */

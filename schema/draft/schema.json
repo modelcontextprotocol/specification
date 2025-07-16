@@ -803,6 +803,51 @@
             ],
             "type": "object"
         },
+        "ElicitTrackParams": {
+            "description": "The parameters for a request to track the progress of an elicitation.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "The progress token as specified in the Progress capability, required in this request."
+                        }
+                    },
+                    "required": [
+                        "progressToken"
+                    ],
+                    "type": "object"
+                },
+                "elicitationId": {
+                    "description": "The ID of the elicitation to track.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "_meta",
+                "elicitationId"
+            ],
+            "type": "object"
+        },
+        "ElicitTrackRequest": {
+            "description": "A request from the client to track the progress of an elicitation.",
+            "properties": {
+                "method": {
+                    "const": "elicitation/track",
+                    "type": "string"
+                },
+                "params": {
+                    "$ref": "#/definitions/ElicitTrackParams"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
         "ElicitationRequiredError": {
             "description": "An error response that indicates that the server requires the client to provide additional information via an elicitation request.",
             "properties": {
