@@ -117,7 +117,7 @@ MCP defines three core primitives that _servers_ can expose:
 - **Prompts**: Reusable templates that help structure interactions with language models (e.g., system prompts, few-shot examples)
 
 Each primitive type has associated methods for discovery (`*/list`), retrieval (`*/get`), and in some cases, execution (`tools/call`).
-MCP clients will use the `list/*` method to discover available primitives. For example, a client can first list all available tools and then execute them. It also implies that listing of resources and tools are dynamic. For more details about server primitives see the [server concepts](./server-concepts) section.
+MCP clients will use the `*/list` methods to discover available primitives. For example, a client can first list all available tools (`tools/list`) and then execute them. This design allows listings to be dynamic.
 
 Here are some example use cases for these primitives: An MCP server author wants to provide context about a database. They want to choose to expose a tool that can be used to query the database. They also want to expose a resource that can be used to get the schema of the database. They also want to expose a prompt that showcases how best uses resources and tools.
 
