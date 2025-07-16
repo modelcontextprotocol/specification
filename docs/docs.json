@@ -253,7 +253,8 @@
             "group": "Getting Started",
             "pages": [
               "docs/getting-started/intro",
-              "docs/getting-started/learning-paths"
+              "docs/getting-started/learning-paths",
+              "docs/sdk"
             ]
           },
           {
