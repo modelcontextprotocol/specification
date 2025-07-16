@@ -58,6 +58,12 @@
                   "docs/tools/inspector"
                 ]
               },
+              {
+                "group": "Security",
+                "pages": [
+                  "docs/security/overview"
+                ]
+              },
               "faqs"
             ]
           },
