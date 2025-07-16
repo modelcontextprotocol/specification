@@ -688,7 +688,10 @@ Non-normative examples:
 
 ### URL Mode Security
 
-Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent from the user
+Clients **MUST NOT** open a user agent (e.g. browser) without explicit consent from the user.
+
+Clients **MUST** render the URL provided by the server in a browser which does not enable the client or LLM to inspect the content or user inputs.
+For example, on iOS, [SFSafariViewController](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller) is good, but [WkWebView](https://developer.apple.com/documentation/webkit/wkwebview) is not.
 
 #### Server-Side Request Forgery (SSRF)
 
