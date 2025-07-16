@@ -101,7 +101,7 @@ Form elicitation requests **MUST** specify `mode: "form"` and include these para
 The `requestedSchema` parameter allows servers to define the structure of the expected
 response using a restricted subset of JSON Schema.
 
-To simplify implementation for clients, elicitation schemas are limited to flat objects
+To simplify client user experience, elicitation schemas are limited to flat objects
 with primitive properties only.
 
 The schema is restricted to these primitive types:
@@ -162,7 +162,7 @@ Clients can use this schema to:
 2. Validate user input before sending
 3. Provide better guidance to users
 
-Note that complex nested structures, arrays of objects, and other advanced JSON Schema features are intentionally not supported to simplify client implementation.
+Note that complex nested structures, arrays of objects, and other advanced JSON Schema features are intentionally not supported to simplify client user experience.
 
 #### Example: Simple Text Request
 
