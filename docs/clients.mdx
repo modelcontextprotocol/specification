@@ -40,7 +40,9 @@ This page provides an overview of applications that support the Model Context Pr
 | [FLUJO][FLUJO]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Support for resources, Prompts and Roots are coming soon                                        |
 | [Genkit][Genkit]                                 | ⚠️          | ✅        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports resource list and lookup through tools.                                                |
 | [Glama][Glama]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
+| [Gemini CLI][Gemini CLI]                         | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [GenAIScript][GenAIScript]                       | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
+| [GitHub Copilot coding agent][GitHubCopilotCodingAgent]                       | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❌            | Supports tools.                                                                                 |
 | [Goose][Goose]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [gptme][gptme]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [HyperAgent][HyperAgent]                         | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
@@ -85,6 +87,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Zed][Zed]                                       | ❌          | ✅        | ❌      | ❌                     | ❌         | ❌    | ❓            | Prompts appear as slash commands                                                                |
 | [Zencoder][Zencoder]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools                                                                                  |
 
+
 {/* prettier-ignore-end */}
 
 [Resources]: /docs/concepts/resources
@@ -122,8 +125,10 @@ This page provides an overview of applications that support the Model Context Pr
 [FlowDown]: https://github.com/Lakr233/FlowDown
 [FLUJO]: https://github.com/mario-andreschak/flujo
 [Glama]: https://glama.ai/chat
+[Gemini CLI]: https://goo.gle/gemini-cli
 [Genkit]: https://github.com/firebase/genkit
 [GenAIScript]: https://microsoft.github.io/genaiscript/reference/scripts/mcp-tools/
+[GitHubCopilotCodingAgent]: https://docs.github.com/en/enterprise-cloud@latest/copilot/concepts/about-copilot-coding-agent
 [Goose]: https://block.github.io/goose/docs/goose-architecture/#interoperability-with-extensions
 [JetBrains AI Assistant]: https://plugins.jetbrains.com/plugin/22282-jetbrains-ai-assistant
 [Kilo Code]: https://github.com/Kilo-Org/kilocode
@@ -514,6 +519,16 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 - MCPs can be installed directly via the [extensions directory](https://block.github.io/goose/v1/extensions/), CLI, or UI.
 - Goose allows you to extend its functionality by [building your own MCP servers](https://block.github.io/goose/docs/tutorials/custom-extensions).
 - Includes built-in tools for development, web scraping, automation, memory, and integrations with JetBrains and Google Drive.
+
+### GitHub Copilot coding agent
+
+Delegate tasks to [GitHub Copilot coding agent](https://docs.github.com/en/copilot/concepts/about-copilot-coding-agent) and let it work in the background while you stay focused on the highest-impact and most interesting work
+
+**Key features:**
+
+- Delegate tasks to Copilot from GitHub Issues, Visual Studio Code, GitHub Copilot Chat or from your favorite MCP host using the GitHub MCP Server
+- Tailor Copilot to your project by [customizing the agent's development environment](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/agents/copilot-coding-agent/customizing-the-development-environment-for-copilot-coding-agent#preinstalling-tools-or-dependencies-in-copilots-environment) or [writing custom instructions](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/agents/copilot-coding-agent/best-practices-for-using-copilot-to-work-on-tasks#adding-custom-instructions-to-your-repository)
+- [Augment Copilot's context and capabilities with MCP tools](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/agents/copilot-coding-agent/extending-copilot-coding-agent-with-mcp), with support for both local and remote MCP servers
 
 ### gptme
 
