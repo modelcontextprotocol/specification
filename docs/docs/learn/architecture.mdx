@@ -38,7 +38,7 @@ The Model Context Protocol project includes the following projects:
 
 ### Participants
 
-MCP implements a client-server architecture where an MCP host (usually an AI application such as [claude.ai](https://claude.ai) or Cursor) establishes connections to one or more MCP servers. An MCP host manages a set of MCP clients that maintain the connections to MCP servers. Each MCP client maintains a one-to-one connection with a corresponding MCP server.
+MCP implements a client-server architecture where an MCP host (usually an AI application such as [Claude Code](https://www.anthropic.com/claude-code) or Cursor) establishes connections to one or more MCP servers. An MCP host instantiates an MCP client per MCP server. Each MCP client maintains a one-to-one connection with its corresponding MCP server.
 
 The key participants in the MCP architecture are:
 
