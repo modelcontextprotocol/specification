@@ -3,106 +3,123 @@ title: Overview
 type: docs
 ---
 
-This overview covers the core components and concepts of the Model Context Protocol (MCP).
+This overview covers the core components and concepts of the Model Context Protocol (MCP). The document is organized in a logical top-down way. However, most developers will likely find the [data layer protocol](#data-layer-protocol) section to be the most useful. It provides an overview of the ways context can be provided by MCP servers and how to use it in an AI application.
 
 The document is organized in the following way:
-* A concept section with:
-  * An overview of the [scope](#scope) of the protocol and it's specification, giving an outline of what MCP is concerned with,
-  * An overview of the [participants](#participants) within the protcol,
-  * An overview of the [layers](#layers) within the protcool, and it's [data](#data) and [transportation](#transports) layer,
-  * An overview of the data [protocol](#protocol), with it's basic types, it's lifecylce management, primitives, notifications,
-  * An overview of the transport [protocol](#protocol),
-* An [example](#example) exchange in MCP that refers to the different concepts. Feel free to start here for a more hands-on approach.
+
+- A concept section with:
+  - An overview of the [scope](#scope) of the protocol and it's specification, giving an outline of what MCP is concerned with,
+  - An overview of the [participants](#participants) within the protcol,
+  - An overview of the [layers](#layers) within the protcool, and it's [data](#data) and [transportation](#transports) layer,
+  - An overview of the data [protocol](#data-layer-protocol), with it's basic types, it's lifecylce management, primitives, notifications,
+  - An overview of the transport [protocol](#protocol),
+- An [example](#example) exchange in MCP that refers to the different concepts. Feel free to start here for a more hands-on approach.
 
 <Tip>
-For specific implementation details, please refer to the documentation for your language-specific SDK.
+  For specific implementation details, please refer to the documentation for
+  your language-specific SDK.
 </Tip>
 
 ## Scope
 
-The Model Context Protocol (MCP) is an application-level protocol that enables AI applications to access contextual data or provide actions from MCP servers for use with large language models (LLMs). This architecture decouples context providers from AI applications, allowing servers to be implemented once and reused across multiple clients. AI applications can connect to multiple MCP servers simultaneously to access diverse context sources.
+The Model Context Protocol project includes the following projects:
 
-MCP is an open source specification defining implementation requirements for clients and servers. The [MCP project on GitHub](https://github.com/modelcontextprotocol) includes the core specification, SDKs, development tools, and reference implementations.
+- [MCP Specification](https://modelcontextprotocol.io/specification/latest): A specification of the MCP protocol that outlines the implementation requirements for clients and servers.
+- [MCP SDKs](https://modelcontextprotocol.io/sdk/latest): SDKs for different programming languages that implement the MCP protocol.
+- **MCP Development Tools**: Tools for developing MCP servers and clients, including the [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
+- [MCP Reference Implementations](https://github.com/modelcontextprotocol/servers): Reference implementations of MCP servers and clients.
 
+<Note>
 MCP focuses solely on the protocol for context exchange—it does not dictate how AI applications use LLMs or manage the provided context.
+</Note>
 
 ## Concepts
+
 ### Participants
 
-MCP implements a client-server architecture where an AI application (the MCP host) establishes connections to one or more MCP servers through dedicated MCP clients. Each MCP client maintains a one-to-one connection with a corresponding MCP server.
+MCP implements a client-server architecture where an MCP host (usually an AI application such as [claude.ai](https://claude.ai) or Cursor) establishes connections to one or more MCP servers. An MCP host manages a set of MCP clients that maintain the connections to MCP servers. Each MCP client maintains a one-to-one connection with a corresponding MCP server.
 
 The key participants in the MCP architecture are:
 
-* **MCP Host**: The AI application that coordinates and manages one or multiple MCP clients,
-* **MCP Client**: A component that enables AI applications to obtain context from an MCP server
-* **MCP Server**: A program that provides context to MCP clients
+- **MCP Host**: The AI application that coordinates and manages one or multiple MCP clients,
+- **MCP Client**: A component that maintains a connection to an MCP server and obtains context from an MCP server for the MCP host to use,
+- **MCP Server**: A program that provides context to MCP clients
 
-**For example**: Visual Studio Code acts as an MCP host. When Visual Studio Code establishes a connection to an MCP server, such as the [Sentry MCP server](https://docs.sentry.io/product/sentry-mcp/), the Visual Studio Code runtime instantiates a JavaScript client object (the MCP client) that maintains the connection to the Sentry MCP server.
-When Visual Studio Code subsequently connects to another MCP server, such as the [local filesystem server](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem), the Visual Studio Code runtime instantiates an additional JavaScript client object (the MCP client) to maintain this connection.
+**For example**: Visual Studio Code acts as an MCP host. When Visual Studio Code establishes a connection to an MCP server, such as the [Sentry MCP server](https://docs.sentry.io/product/sentry-mcp/), the Visual Studio Code runtime instantiates a client object (the MCP client) that maintains the connection to the Sentry MCP server.
+When Visual Studio Code subsequently connects to another MCP server, such as the [local filesystem server](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem), the Visual Studio Code runtime instantiates an additional client object (the MCP client) to maintain this connection.
 
 <Note>
-    ### Server terminology clarification
-    In MCP terminology, a **server** refers to the program that serves context data, regardless of where it runs. MCP servers can execute locally or remotely. For example, when Claude Desktop launches the [filesystem server](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem), the server runs locally on the same machine because it uses the STDIO transport.
+  #### Terminology: MCP Servers
+  A **server** refers to the program that serves context data, regardless of where it runs. MCP
+  servers can execute locally or remotely. For example, when Claude Desktop
+  launches the [filesystem
+  server](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem),
+  the server runs locally on the same machine because it uses the STDIO
+  transport. This is commonly referred to as a "local" MCP server. The offical [Sentry MCP server](https://docs.sentry.io/product/sentry-mcp/) runs on the Sentry platform, and uses the Streamable HTTP transport. This is commonly referred to as a "remote" MCP server.
 </Note>
 
 ### Layers
 
 The MCP protocol consists of two layers:
 
-* **Data layer**: Defines the JSON-RPC based protocol for client-server communication, including lifecycle management, core primitives (tools, resources, and prompts), and notifications
-* **Transport layer**: Defines the communication mechanisms and channels that enable data exchange between clients and servers, including transport-specific connection establishment, message framing, and authorization.
+- **Data layer**: Defines the JSON-RPC based protocol for client-server communication, including lifecycle management, core primitives (tools, resources, and prompts), and notifications
+- **Transport layer**: Defines the communication mechanisms and channels that enable data exchange between clients and servers, including transport-specific connection establishment, message framing, and authorization.
 
 <Info>
-  Conceptually the data layer is the inner layer, while the transport layer is the outer layer.
+  Conceptually the data layer is the inner layer, while the transport layer is
+  the outer layer.
 </Info>
 
+#### Data layer
 
-
-#### Protocol layer
-The protocol layer implements a JSON-RPC 2.0 based exchange protocol that defines the message structure and semantics.
+The data layer implements a [JSON-RPC 2.0](https://www.jsonrpc.org/) based exchange protocol that defines the message structure and semantics.
 This layer includes:
 
-* **Lifecycle management**: Handles connection initialization, capability negotiation, and connection termination between clients and servers
-* **Server features**: Provides core functionality including tools (for AI actions), resources (for context data), and prompts (for interaction templates)
-* **Client features**: Enables clients to sample LLM completions and log messages for debugging and monitoring
-* **Utility features**: Supports additional capabilities like notifications for real-time updates and progress tracking for long-running operations
+- **Lifecycle management**: Handles connection initialization, capability negotiation, and connection termination between clients and servers
+- **Server features**: Provides core functionality including tools (for AI actions), resources (for context data), and prompts (for interaction templates)
+- **Client features**: Enables clients to sample LLM completions and log messages for debugging and monitoring
+- **Utility features**: Supports additional capabilities like notifications for real-time updates and progress tracking for long-running operations
 
 #### Transport layer
+
 The transport layer manages communication channels and authentication between clients and servers. It handles connection establishment, message framing, and secure communication between MCP participants.
 
 MCP supports two transport mechanisms:
 
-* **Stdio transport**: Uses standard input/output streams for direct process communication between local processes on the same machine, providing optimal performance with no network overhead.
-* **Streamable HTTP transport**: Uses HTTP POST for client-to-server messages with optional Server-Sent Events for streaming capabilities. This transport enables remote server communication and supports standard HTTP authentication methods including bearer tokens, API keys, and custom headers. MCP recommends using OAuth to obtain authentication tokens.
+- **Stdio transport**: Uses standard input/output streams for direct process communication between local processes on the same machine, providing optimal performance with no network overhead.
+- **Streamable HTTP transport**: Uses HTTP POST for client-to-server messages with optional Server-Sent Events for streaming capabilities. This transport enables remote server communication and supports standard HTTP authentication methods including bearer tokens, API keys, and custom headers. MCP recommends using OAuth to obtain authentication tokens.
 
 The transport layer abstracts communication details from the protocol layer, enabling the same JSON-RPC 2.0 message format across all transport mechanisms.
 
 For more details see [remote MCP servers and local MCP servers](./remote-and-local-mcp.mdx).
 
-### Protocol
-A core part of MCP is defining the types and schemas of requests and responses that clients and servers should send to each other and how to interpret them.
+### Data Layer Protocol
 
-The MCP uses [JSON-RPC 2.0](https://www.jsonrpc.org/) as it's underlying RPC protocol. This means, client and servers send requests to each other and respond accordingly. Notifications can be used when no response is required.
+A core part of MCP is defining the schema and semantics between MCP clients and MCP servers. Developers will likly find the the data layer, and particularly the set of [primitives](#primitives), to be the most interesting part of MCP. It describes the ways developers can share context from MCP servers to MCP clients. The other aspects such as Lifecycle management are needed for state management, versioning and other parts, but are not concerned with the context provided by MCP servers.
+
+MCP uses [JSON-RPC 2.0](https://www.jsonrpc.org/) as it's underlying RPC protocol. Client and servers send requests to each other and respond accordingly. Notifications can be used when no response is required.
 
 #### Lifecycle management
+
 MCP is a <Tooltip tip="A subset of MCP can be made stateless using the Streamable HTTP transport">stateful protocol </Tooltip> that requires lifecycle management. The purpose of lifecycle management is to negotiate the <Tooltip tip="Features and operations that a client or server supports, such as tools, resources, or prompts">capabilities</Tooltip> that both client and server support. Detailed information can be found in the [specification](specification/latest/basic/lifecycle) and the [example](#exmple) showcases the initialization sequence.
 
 #### Primitives
-MCP primitives are the most important concept within MCP.  They define what clients and servers can offer each other. These primitives specify the types of contextual information that can be shared with AI applications and the range of actions that can be performed.
 
-MCP defines three core primitives that *servers* can expose:
+MCP primitives are the most important concept within MCP. They define what clients and servers can offer each other. These primitives specify the types of contextual information that can be shared with AI applications and the range of actions that can be performed.
 
-* **Tools**: Executable functions that AI applications can invoke to perform actions (e.g., file operations, API calls, database queries)
-* **Resources**: Data sources that provide contextual information to AI applications (e.g., file contents, database records, API responses)
-* **Prompts**: Reusable templates that help structure interactions with language models (e.g., system prompts, few-shot examples)
+MCP defines three core primitives that _servers_ can expose:
+
+- **Tools**: Executable functions that AI applications can invoke to perform actions (e.g., file operations, API calls, database queries)
+- **Resources**: Data sources that provide contextual information to AI applications (e.g., file contents, database records, API responses)
+- **Prompts**: Reusable templates that help structure interactions with language models (e.g., system prompts, few-shot examples)
 
 Each primitive type has associated methods for discovery (`list_*`), retrieval (`get_*`), and in some cases, execution (`call_tool`). This means for example, a client can first list all available tools and then execute them. For more details about server primitives see the [server concepts](./server-concepts) section.
 
-MCP also defines primitives that *clients* can expose:
+MCP also defines primitives that _clients_ can expose:
 
-* **Sampling**: Allows servers to request language model completions from the client's AI application
-* **Elicitation**: Allows servers to request additional information from users
-* **Logging**: Enables servers to send log messages to clients for debugging and monitoring purposes
+- **Sampling**: Allows servers to request language model completions from the client's AI application
+- **Elicitation**: Allows servers to request additional information from users
+- **Logging**: Enables servers to send log messages to clients for debugging and monitoring purposes
 
 For more details about clientprimitives see the [client concepts](./client-concepts) section.
 
@@ -113,13 +130,14 @@ The protocol supports real-time notifications to enable dynamic updates between 
 ## Example
 
 ### Data Layer
+
 This section provides a step-by-step walkthrough of an MCP client-server interaction, focusing on the data layer protocol. We'll demonstrate the lifecycle sequence, tool operations, and notifications using JSON-RPC 2.0 messages.
+
 
 <Steps>
 <Step title="Initialization (Lifecylce Management)">
 
 The MCP protocol begins with lifecycle management through a capability negotiation handshake. As described in the [lifecycle management](#lifecycle-management) section, the client sends an `initialize` request to establish the connection and negotiate supported features.
-
 
 <CodeGroup>
   ```json Request
@@ -173,9 +191,11 @@ The initialization process is a key part of MCP's lifecycle management and serve
 In this example, the capability negotiation demonstrates how MCP primitives are declared:
 
 **Client Capabilities**:
+
 - `"tools": {}` - The client declares it can work with the tools primitive (can call `tools/list` and `tools/call` methods)
 
 **Server Capabilities**:
+
 - `"tools": {"listChanged": true}` - The server supports the tools primitive AND can send `tools/list_changed` notifications when its tool list changes
 - `"resources": {}` - The server also supports the resources primitive (can handle `resources/list` and `resources/read` methods)
 
@@ -201,6 +221,7 @@ async with stdio_client(server_config) as (read, write):
             app.register_mcp_server(session, supports_tools=True)
         app.set_server_ready(session)
 ```
+
 </Step>
 
 <Step title="Tool Discovery (Primitives)">
@@ -289,6 +310,7 @@ for session in app.mcp_server_sessions():
     available_tools.extend(tools_response.tools)
 conversation.register_available_tools(available_tools)
 ```
+
 </Step>
 
 <Step title="Tool Execution (Primitives)">
@@ -336,6 +358,7 @@ The request structure includes several important components:
 1. **`name`**: Must match exactly the tool name from the discovery response (`com.example.weather/current`). This ensures the server can correctly identify which tool to execute.
 
 2. **`arguments`**: Contains the input parameters as defined by the tool's `inputSchema`. In this example:
+
    - `location`: "San Francisco" (required parameter)
    - `units`: "imperial" (optional parameter, defaults to "metric" if not specified)
 
@@ -364,6 +387,7 @@ async def handle_tool_call(conversation, tool_name, arguments):
     result = await session.call_tool(tool_name, arguments)
     conversation.add_tool_result(result.content)
 ```
+
 </Step>
 
 <Step title="Real-time Updates (Notifications)">
@@ -423,5 +447,6 @@ async def handle_tools_changed_notification(session):
     if app.conversation.is_active():
         app.conversation.notify_llm_of_new_capabilities()
 ```
+
 </Step>
 </Steps>
