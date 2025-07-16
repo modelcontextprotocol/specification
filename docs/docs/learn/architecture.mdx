@@ -42,8 +42,8 @@ MCP implements a client-server architecture where an MCP host (usually an AI app
 
 The key participants in the MCP architecture are:
 
-- **MCP Host**: The AI application that coordinates and manages one or multiple MCP clients,
-- **MCP Client**: A component that maintains a connection to an MCP server and obtains context from an MCP server for the MCP host to use,
+- **MCP Host**: The AI application that coordinates and manages one or multiple MCP clients
+- **MCP Client**: A component that maintains a connection to an MCP server and obtains context from an MCP server for the MCP host to use
 - **MCP Server**: A program that provides context to MCP clients
 
 **For example**: Visual Studio Code acts as an MCP host. When Visual Studio Code establishes a connection to an MCP server, such as the [Sentry MCP server](https://docs.sentry.io/product/sentry-mcp/), the Visual Studio Code runtime instantiates a client object (the MCP client) that maintains the connection to the Sentry MCP server.
