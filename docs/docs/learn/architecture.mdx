@@ -24,8 +24,8 @@ The document is organized in the following way:
 
 The Model Context Protocol project includes the following projects:
 
-- [MCP Specification](https://modelcontextprotocol.io/specification/latest): A specification of the MCP protocol that outlines the implementation requirements for clients and servers.
-- [MCP SDKs](https://modelcontextprotocol.io/sdk/latest): SDKs for different programming languages that implement the MCP protocol.
+- [MCP Specification](https://modelcontextprotocol.io/specification/latest): A specification of MCP that outlines the implementation requirements for clients and servers.
+- [MCP SDKs](https://modelcontextprotocol.io/sdk/latest): SDKs for different programming languages that implement MCP.
 - **MCP Development Tools**: Tools for developing MCP servers and clients, including the [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
 - [MCP Reference Implementations](https://github.com/modelcontextprotocol/servers): Reference implementations of MCP servers and clients.
 
@@ -63,7 +63,7 @@ When Visual Studio Code subsequently connects to another MCP server, such as the
 
 ### Layers
 
-The MCP protocol consists of two layers:
+MCP consists of two layers:
 
 - **Data layer**: Defines the JSON-RPC based protocol for client-server communication, including lifecycle management, core primitives (tools, resources, and prompts), and notifications,
 - **Transport layer**: Defines the communication mechanisms and channels that enable data exchange between clients and servers, including transport-specific connection establishment, message framing, and authorization.
@@ -144,7 +144,7 @@ This section provides a step-by-step walkthrough of an MCP client-server interac
 <Steps>
 <Step title="Initialization (Lifecylce Management)">
 
-The MCP protocol begins with lifecycle management through a capability negotiation handshake. As described in the [lifecycle management](#lifecycle-management) section, the client sends an `initialize` request to establish the connection and negotiate supported features.
+MCP begins with lifecycle management through a capability negotiation handshake. As described in the [lifecycle management](#lifecycle-management) section, the client sends an `initialize` request to establish the connection and negotiate supported features.
 
 <CodeGroup>
   ```json Request
