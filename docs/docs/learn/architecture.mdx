@@ -112,9 +112,9 @@ MCP primitives are the most important concept within MCP. They define what clien
 
 MCP defines three core primitives that _servers_ can expose:
 
-- **Tools**: Executable functions that AI applications can invoke to perform actions (e.g., file operations, API calls, database queries),
-- **Resources**: Data sources that provide contextual information to AI applications (e.g., file contents, database records, API responses),
-- **Prompts**: Reusable templates that help structure interactions with language models (e.g., system prompts, few-shot examples).
+- **Tools**: Executable functions that AI applications can invoke to perform actions (e.g., file operations, API calls, database queries)
+- **Resources**: Data sources that provide contextual information to AI applications (e.g., file contents, database records, API responses)
+- **Prompts**: Reusable templates that help structure interactions with language models (e.g., system prompts, few-shot examples)
 
 Each primitive type has associated methods for discovery (`*/list`), retrieval (`*/get`), and in some cases, execution (`tools/call`).
 MCP clients will use the `list/*` method to discover available primitives. For example, a client can first list all available tools and then execute them. It also implies that listing of resources and tools are dynamic. For more details about server primitives see the [server concepts](./server-concepts) section.
