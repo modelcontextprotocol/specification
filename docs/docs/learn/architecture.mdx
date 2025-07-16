@@ -50,9 +50,9 @@ The key participants in the MCP architecture are:
 When Visual Studio Code subsequently connects to another MCP server, such as the [local filesystem server](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem), the Visual Studio Code runtime instantiates an additional client object (the MCP client) to maintain this connection.
 
 <Note>
-  A **server** refers to the program that serves
-  context data, regardless of where it runs. MCP servers can execute locally or
-  remotely. For example, when Claude Desktop launches the [filesystem
+  A **server** refers to the program that serves context data, regardless of
+  where it runs. MCP servers can execute locally or remotely. For example, when
+  Claude Desktop launches the [filesystem
   server](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem),
   the server runs locally on the same machine because it uses the STDIO
   transport. This is commonly referred to as a "local" MCP server. The offical
@@ -69,7 +69,6 @@ MCP consists of two layers:
 - **Transport layer**: Defines the communication mechanisms and channels that enable data exchange between clients and servers, including transport-specific connection establishment, message framing, and authorization.
 
 Conceptually the data layer is the inner layer, while the transport layer is the outer layer.
-
 
 #### Data layer
 
