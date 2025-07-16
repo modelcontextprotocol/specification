@@ -111,6 +111,7 @@ export const METHOD_NOT_FOUND = -32601;
 export const INVALID_PARAMS = -32602;
 /** @internal */
 export const INTERNAL_ERROR = -32603;
+/** @internal */
 export const ELICITATION_REQUIRED = -32604;
 
 /**
@@ -137,13 +138,15 @@ export interface JSONRPCError {
 
 /**
  * An error response that indicates that the server requires the client to provide additional information via an elicitation request.
+ *
+ * @internal
  */
 export interface ElicitationRequiredError extends JSONRPCError {
   error: {
     code: typeof ELICITATION_REQUIRED;
     message: string;
     data: {
-      elicitations: URLElicitRequestParams[];
+      elicitations: ElicitRequestURLParams[];
       [key: string]: unknown;
     };
   };
@@ -1404,7 +1407,10 @@ export interface RootsListChangedNotification extends Notification {
   method: "notifications/roots/list_changed";
 }
 
-export interface FormElicitRequestParams extends ElicitRequestParams {
+/**
+ * @category elicitation/create
+ */
+export interface ElicitRequestFormParams extends ElicitRequestParams {
   /**
    * The elicitation mode.
    */
@@ -1423,7 +1429,10 @@ export interface FormElicitRequestParams extends ElicitRequestParams {
   };
 }
 
-export interface URLElicitRequestParams extends ElicitRequestParams {
+/**
+ * @category elicitation/create
+ */
+export interface ElicitRequestURLParams extends ElicitRequestParams {
   /**
    * The elicitation mode.
    */
@@ -1445,6 +1454,8 @@ export interface URLElicitRequestParams extends ElicitRequestParams {
 
 /**
  * The parameters for a request to elicit additional information from the user via the client.
+ *
+ * @internal
  */
 export interface ElicitRequestParams extends RequestParams {
   /**
@@ -1469,7 +1480,7 @@ export interface ElicitRequestParams extends RequestParams {
  */
 export interface ElicitRequest extends Request {
   method: "elicitation/create";
-  params: FormElicitRequestParams | URLElicitRequestParams;
+  params: ElicitRequestFormParams | ElicitRequestURLParams;
 }
 
 /**

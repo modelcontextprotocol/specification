@@ -626,10 +626,10 @@
                 "params": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/URLElicitRequestParams"
+                            "$ref": "#/definitions/ElicitRequestURLParams"
                         },
                         {
-                            "$ref": "#/definitions/FormElicitRequestParams"
+                            "$ref": "#/definitions/ElicitRequestFormParams"
                         }
                     ]
                 }
@@ -637,6 +637,62 @@
             "required": [
                 "method",
                 "params"
+            ],
+            "type": "object"
+        },
+        "ElicitRequestFormParams": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                        }
+                    },
+                    "type": "object"
+                },
+                "message": {
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor url mode: Explains why the interaction is needed.",
+                    "type": "string"
+                },
+                "mode": {
+                    "const": "form",
+                    "description": "The elicitation mode.",
+                    "type": "string"
+                },
+                "requestedSchema": {
+                    "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.",
+                    "properties": {
+                        "properties": {
+                            "additionalProperties": {
+                                "$ref": "#/definitions/PrimitiveSchemaDefinition"
+                            },
+                            "type": "object"
+                        },
+                        "required": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "type": {
+                            "const": "object",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "properties",
+                        "type"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "message",
+                "mode",
+                "requestedSchema"
             ],
             "type": "object"
         },
@@ -670,6 +726,46 @@
             "required": [
                 "message",
                 "mode"
+            ],
+            "type": "object"
+        },
+        "ElicitRequestURLParams": {
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "properties": {
+                        "progressToken": {
+                            "$ref": "#/definitions/ProgressToken",
+                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
+                        }
+                    },
+                    "type": "object"
+                },
+                "elicitationId": {
+                    "description": "The ID of the elicitation, which must be unique within the context of the server.\nThe client MUST treat this ID as an opaque value.",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor url mode: Explains why the interaction is needed.",
+                    "type": "string"
+                },
+                "mode": {
+                    "const": "url",
+                    "description": "The elicitation mode.",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "The URL that the user should navigate to.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "elicitationId",
+                "message",
+                "mode",
+                "url"
             ],
             "type": "object"
         },
@@ -721,7 +817,7 @@
                             "properties": {
                                 "elicitations": {
                                     "items": {
-                                        "$ref": "#/definitions/URLElicitRequestParams"
+                                        "$ref": "#/definitions/ElicitRequestURLParams"
                                     },
                                     "type": "array"
                                 }
@@ -821,62 +917,6 @@
             "required": [
                 "enum",
                 "type"
-            ],
-            "type": "object"
-        },
-        "FormElicitRequestParams": {
-            "properties": {
-                "_meta": {
-                    "additionalProperties": {},
-                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                    "properties": {
-                        "progressToken": {
-                            "$ref": "#/definitions/ProgressToken",
-                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
-                        }
-                    },
-                    "type": "object"
-                },
-                "message": {
-                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor url mode: Explains why the interaction is needed.",
-                    "type": "string"
-                },
-                "mode": {
-                    "const": "form",
-                    "description": "The elicitation mode.",
-                    "type": "string"
-                },
-                "requestedSchema": {
-                    "description": "A restricted subset of JSON Schema.\nOnly top-level properties are allowed, without nesting.",
-                    "properties": {
-                        "properties": {
-                            "additionalProperties": {
-                                "$ref": "#/definitions/PrimitiveSchemaDefinition"
-                            },
-                            "type": "object"
-                        },
-                        "required": {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        "type": {
-                            "const": "object",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "properties",
-                        "type"
-                    ],
-                    "type": "object"
-                }
-            },
-            "required": [
-                "message",
-                "mode",
-                "requestedSchema"
             ],
             "type": "object"
         },
@@ -2616,46 +2656,6 @@
             },
             "required": [
                 "method"
-            ],
-            "type": "object"
-        },
-        "URLElicitRequestParams": {
-            "properties": {
-                "_meta": {
-                    "additionalProperties": {},
-                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
-                    "properties": {
-                        "progressToken": {
-                            "$ref": "#/definitions/ProgressToken",
-                            "description": "If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications."
-                        }
-                    },
-                    "type": "object"
-                },
-                "elicitationId": {
-                    "description": "The ID of the elicitation, which must be unique within the context of the server.\nThe client MUST treat this ID as an opaque value.",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "The message to present to the user.\nFor form mode: Describes what information is being requested.\nFor url mode: Explains why the interaction is needed.",
-                    "type": "string"
-                },
-                "mode": {
-                    "const": "url",
-                    "description": "The elicitation mode.",
-                    "type": "string"
-                },
-                "url": {
-                    "description": "The URL that the user should navigate to.",
-                    "format": "uri",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "elicitationId",
-                "message",
-                "mode",
-                "url"
             ],
             "type": "object"
         },
