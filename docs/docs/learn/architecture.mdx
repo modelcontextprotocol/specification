@@ -98,7 +98,7 @@ For more details see [remote MCP servers and local MCP servers](./remote-and-loc
 
 ### Data Layer Protocol
 
-A core part of MCP is defining the schema and semantics between MCP clients and MCP servers. Developers will likly find the the data layer, and particularly the set of [primitives](#primitives), to be the most interesting part of MCP. It describes the ways developers can share context from MCP servers to MCP clients. The other aspects such as Lifecycle management are needed for state management, versioning and other parts, but are not concerned with the context provided by MCP servers.
+A core part of MCP is defining the schema and semantics between MCP clients and MCP servers. Developers will likely find the the data layer — in particular, the set of [primitives](#primitives) — to be the most interesting part of MCP. It is the part of MCP that defines the ways developers can share context from MCP servers to MCP clients.
 
 MCP uses [JSON-RPC 2.0](https://www.jsonrpc.org/) as it's underlying RPC protocol. Client and servers send requests to each other and respond accordingly. Notifications can be used when no response is required.
 
