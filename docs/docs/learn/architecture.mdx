@@ -27,7 +27,7 @@ The Model Context Protocol includes the following projects:
 - [MCP Specification](https://modelcontextprotocol.io/specification/latest): A specification of MCP that outlines the implementation requirements for clients and servers.
 - [MCP SDKs](https://modelcontextprotocol.io/sdk): SDKs for different programming languages that implement MCP.
 - **MCP Development Tools**: Tools for developing MCP servers and clients, including the [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
-- [MCP Reference Implementations](https://github.com/modelcontextprotocol/servers): Reference implementations of MCP servers and clients.
+- [MCP Reference Server Implementations](https://github.com/modelcontextprotocol/servers): Reference implementations of MCP servers.
 
 <Note>
   MCP focuses solely on the protocol for context exchange—it does not dictate
@@ -68,10 +68,8 @@ MCP consists of two layers:
 - **Data layer**: Defines the JSON-RPC based protocol for client-server communication, including lifecycle management, core primitives (tools, resources, and prompts), and notifications,
 - **Transport layer**: Defines the communication mechanisms and channels that enable data exchange between clients and servers, including transport-specific connection establishment, message framing, and authorization.
 
-<Info>
-  Conceptually the data layer is the inner layer, while the transport layer is
-  the outer layer.
-</Info>
+Conceptually the data layer is the inner layer, while the transport layer is the outer layer.
+
 
 #### Data layer
 
@@ -80,7 +78,7 @@ This layer includes:
 
 - **Lifecycle management**: Handles connection initialization, capability negotiation, and connection termination between clients and servers
 - **Server features**: Provides core functionality including tools (for AI actions), resources (for context data), and prompts (for interaction templates)
-- **Client features**: Enables clients to sample LLM completions and log messages for debugging and monitoring
+- **Client features**: Enables servers to sample from the host LLM, log messages to clients, and elicit
 - **Utility features**: Supports additional capabilities like notifications for real-time updates and progress tracking for long-running operations
 
 #### Transport layer
