@@ -22,7 +22,7 @@ All maintainers form the MCP steering group. Core and lead maintainers meet bi-w
 
 ## Specification Enhancement Proposals (SEPs)
 
-We're introducing [SEPs](https://modelcontextprotocol.io/community/sep-guidelines) as the primary mechanism for proposing changes to MCP, similar to Python's PEPs or Rust's RFCs.  Briefly, the SEP process is:
+We're introducing the [Spec Enhancement Proposal](https://modelcontextprotocol.io/community/sep-guidelines) (SEP) as the primary mechanism for proposing changes to MCP, similar to Python's PEPs or Rust's RFCs.  Briefly, the SEP process is:
 
 1. Submit a proposal as a GitHub issue
 2. Find a steering group sponsor
