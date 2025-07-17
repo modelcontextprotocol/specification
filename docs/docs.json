@@ -11,6 +11,10 @@
   "navbar": {
     "links": [
       {
+        "label": "Blog",
+        "href": "https://blog.modelcontextprotocol.io"
+      },
+      {
         "label": "GitHub",
         "href": "https://github.com/modelcontextprotocol"
       }
