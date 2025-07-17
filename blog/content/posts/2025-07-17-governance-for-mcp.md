@@ -34,13 +34,13 @@ SEPs ensure thoughtful evolution of the protocol while maintaining an open contr
 
 We're actively looking for contributors at all levels:
 
-**New Contributors**: Start with documentation improvements, bug fixes, or examples. Every contribution matters, and we're here to help you get started.
+- **New Contributors**: Start with documentation improvements, bug fixes, or examples. Every contribution matters, and we're here to help you get started.
 
-**SDK Developers**: Help build or maintain SDKs in new languages. We especially need maintainers for emerging language ecosystems.
+- **SDK Developers**: Help build or maintain SDKs in new languages. We especially need maintainers for emerging language ecosystems.
 
-**Documentation Writers**: Clear documentation is crucial for MCP's success. Help us improve guides, tutorials, and API references.
+- **Documentation Writers**: Clear documentation is crucial for MCP's success. Help us improve guides, tutorials, and API references.
 
-**Future Maintainers**: Show your expertise through consistent contributions. We promote from within our community based on merit and commitment.
+- **Future Maintainers**: Show your expertise through consistent contributions. We promote from within our community based on merit and commitment.
 
 Join our [Discord](https://discord.gg/modelcontextprotocol) to connect with other contributors, ask questions, and find mentorship. Whether you're fixing typos or proposing protocol changes through SEPs, there's a place for you in the MCP community.
 
