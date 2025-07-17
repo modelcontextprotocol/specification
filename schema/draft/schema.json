@@ -1081,7 +1081,7 @@
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "namespaces": {
@@ -1444,7 +1444,7 @@
             "description": "Sent from the client to request a scoped list of tools the server has for a specific namespace.",
             "properties": {
                 "method": {
-                    "const": "@{namespace}/tools/list",
+                    "const": "{namespace}/tools/list",
                     "type": "string"
                 },
                 "params": {
@@ -1463,11 +1463,11 @@
             "type": "object"
         },
         "NamespacedListToolsResult": {
-            "description": "The server's response to a",
+            "description": "The server's response to a {namespace}/tools/list request from the client.",
             "properties": {
                 "_meta": {
                     "additionalProperties": {},
-                    "description": "This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.",
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
                     "type": "object"
                 },
                 "namespace": {

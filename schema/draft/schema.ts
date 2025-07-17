@@ -784,11 +784,11 @@ export interface ListToolsResult extends PaginatedResult {
  * Sent from the client to request a scoped list of tools the server has for a specific namespace.
  */
 export interface NamespacedListToolsRequest extends PaginatedRequest {
-  method: "@{namespace}/tools/list";
+  method: "{namespace}/tools/list";
 }
 
 /**
- * The server's response to a @{namespace}/tools/list request from the client.
+ * The server's response to a {namespace}/tools/list request from the client.
  */
 export interface NamespacedListToolsResult extends PaginatedResult {
   'namespace': {

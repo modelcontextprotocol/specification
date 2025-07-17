@@ -15,8 +15,10 @@ Namespacing functionality is implemented through a simple, single depth hierarch
 This namespace is then optionally included in method calls and name parameters.
 
 ## Capability
+
 To indicate support for feature level advanced filtering, i.e. `<namespace>/tools/list`, the server **MAY** expose a
 namespace capability:
+
 ```json
 {
   "capabilities": {
@@ -26,10 +28,12 @@ namespace capability:
 ```
 
 ## Namespace Format
+
 A namespace must be a string of is any of alphanumeric characters (A-Z, a-z, 0-9), underscores, and hyphens.
 For instance, com_github would be an acceptable namespace.
 
 ### Tool, Resource, and Prompt Names
+
 As part of being in a namespace, a tool name or prompt name **MUST** begin with the namespace, e.g.
 `weather__get_weather_forecast_by_location`.
 
@@ -76,12 +80,12 @@ As an optional capability (for backwards compatibility), the server **MAY** expo
 }
 ```
 
-
 2. List commands can be invoked by prepending a namespace prefix to the method name `weather/namespaces/list`, which
 
 ### Filtering
+
 1. List commands can be invoked by prepending a namespace prefix to the method name `weather/tools/list`, which will
-return a paginated list of tools within the `weather` namespace.
+   return a paginated list of tools within the `weather` namespace.
 
 ## Usage Patterns
 
@@ -112,5 +116,6 @@ sequenceDiagram
 ```
 
 ## Implementation Considerations
+
 - Namespace registration and requirement enforcement is an implementation detail - in shared environments, it may be
-necessary to require tools have an approved namespaces, but this spec offers no guidance on this.
+  necessary to require tools have an approved namespaces, but this spec offers no guidance on this.
