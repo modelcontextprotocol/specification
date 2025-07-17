@@ -11,6 +11,10 @@
   "navbar": {
     "links": [
       {
+        "label": "Blog",
+        "href": "https://blog.modelcontextprotocol.io"
+      },
+      {
         "label": "GitHub",
         "href": "https://github.com/modelcontextprotocol"
       }
@@ -42,6 +46,7 @@
                   "docs/concepts/tools",
                   "docs/concepts/sampling",
                   "docs/concepts/roots",
+                  "docs/concepts/elicitation",
                   "docs/concepts/transports"
                 ]
               },
@@ -108,7 +113,15 @@
                     ]
                   }
                 ]
-              }
+              },
+              "specification/2025-06-18/schema"
+            ]
+          },
+          {
+            "group": "Community",
+            "pages": [
+              "community/governance",
+              "community/sep-guidelines"
             ]
           },
           {
@@ -127,6 +140,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
@@ -225,6 +239,13 @@
             ]
           },
           {
+            "group": "Community",
+            "pages": [
+              "community/governance",
+              "community/sep-guidelines"
+            ]
+          },
+          {
             "group": "Development",
             "pages": [
               "specification/versioning",
@@ -240,6 +261,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
@@ -337,6 +359,13 @@
             ]
           },
           {
+            "group": "Community",
+            "pages": [
+              "community/governance",
+              "community/sep-guidelines"
+            ]
+          },
+          {
             "group": "Development",
             "pages": [
               "specification/versioning",
@@ -352,6 +381,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
@@ -449,7 +479,15 @@
                     ]
                   }
                 ]
-              }
+              },
+              "specification/draft/schema"
+            ]
+          },
+          {
+            "group": "Community",
+            "pages": [
+              "community/governance",
+              "community/sep-guidelines"
             ]
           },
           {
@@ -468,6 +506,7 @@
               "links/sdks/kotlin",
               "links/sdks/python",
               "links/sdks/ruby",
+              "links/sdks/rust",
               "links/sdks/swift",
               "links/sdks/typescript"
             ]
