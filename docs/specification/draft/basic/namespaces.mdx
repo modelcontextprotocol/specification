@@ -11,12 +11,12 @@ prompts, and resources.
 
 ## Overview
 
-Namespacing functionality is implemented through a simple, single depth hierarchy, `@weather`.
+Namespacing functionality is implemented through a simple, single depth hierarchy, e.g. `weather`.
 This namespace is then optionally included in method calls and name parameters.
 
 ## Capability
-Although it is not required, since namespaces at a high level are backwards compatible with names, to indicate support
-for feature level advanced filtering, the server **MAY** expose a namespace capability:
+To indicate support for feature level advanced filtering, i.e. `<namespace>/tools/list`, the server **MAY** expose a
+namespace capability:
 ```json
 {
   "capabilities": {
@@ -26,12 +26,12 @@ for feature level advanced filtering, the server **MAY** expose a namespace capa
 ```
 
 ## Namespace Format
-A namespace must be a string of the form `@<namespace>` where `<namespace>` is any of alphanumeric characters
-(A-Z, a-z, 0-9), underscores, dots (.), and hyphens. For instance, @com.github would be an acceptable namespace.
+A namespace must be a string of is any of alphanumeric characters (A-Z, a-z, 0-9), underscores, dots (.), and hyphens.
+For instance, com.github would be an acceptable namespace.
 
 ### Tool, Resource, and Prompt Names
-As part of being in a namespace, a tool name, resource name, or prompt name **MUST** begin with the namespace
-`@weather/get_weather_forecast_by_location`.
+As part of being in a namespace, a tool name, resource name, or prompt name **MUST** begin with the namespace, e.g.
+`weather/get_weather_forecast_by_location`.
 
 ## Namespace Prefixing
 
@@ -68,7 +68,7 @@ As an optional capability (for backwards compatibility), the server **MAY** expo
   "result": {
     "resourceTemplates": [
       {
-        "name": "@weather",
+        "name": "weather",
         "description": "Collection of tools, resources, and prompts to help with weather based queries. Includes tools to retrieve current weather by location, weather forecasts by location, and more."
       }
     ]
@@ -77,11 +77,11 @@ As an optional capability (for backwards compatibility), the server **MAY** expo
 ```
 
 
-2. List commands can be invoked by prepending a namespace prefix to the method name `@weather/namespaces/list`, which
+2. List commands can be invoked by prepending a namespace prefix to the method name `weather/namespaces/list`, which
 
 ### Filtering
-1. List commands can be invoked by prepending a namespace prefix to the method name `@weather/tools/list`, which will
-return a paginated list of tools within the `@weather` namespace.
+1. List commands can be invoked by prepending a namespace prefix to the method name `weather/tools/list`, which will
+return a paginated list of tools within the `weather` namespace.
 
 ## Usage Patterns
 
@@ -95,19 +95,19 @@ sequenceDiagram
     Server-->>Client: List of namespaces
 
     Note over Client,Server: Tool Listing
-    Client->>Server: @namespace/tools/list
+    Client->>Server: namespace/tools/list
     Server-->>Client: Tool list
 
     Note over Client,Server: Prompt Listing
-    Client->>Server: @namespace/prompts/list
+    Client->>Server: namespace/prompts/list
     Server-->>Client: Tool list
 
     Note over Client,Server: Resource Listing
-    Client->>Server: @namespace/resources/list
+    Client->>Server: namespace/resources/list
     Server-->>Client: Resource list
 
     Note over Client,Server: Resource Template Listing
-    Client->>Server: @namespace/resources/templates/list
+    Client->>Server: namespace/resources/templates/list
     Server-->>Client: Resource Template list
 ```
 

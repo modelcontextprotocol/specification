@@ -252,12 +252,6 @@ sequenceDiagram
     Client->>Server: @namespace/resources/list
     Server-->>Client: Scoped list of resources
 
-    Note over Client,Server: Resource Template Discovery
-    Client->>Server: resources/templates/list
-    Server-->>Client: List of resources
-    Client->>Server: @namespace/resources/templates/list
-    Server-->>Client: Scoped list of resources templates
-
     Note over Client,Server: Resource Access
     Client->>Server: resources/read
     Server-->>Client: Resource contents
