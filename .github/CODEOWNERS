@@ -1,6 +1,9 @@
 # CODEOWNERS file for MCP Specification repository
 
-# Global ownership - @core-maintainer team owns docs/specification and schema/ directories
+# General documentation ownership - @steering-committee owns all of /docs
+/docs/ @modelcontextprotocol/steering-committee
+
+# Specific ownership - @core-maintainer team owns docs/specification and schema/ directories
 /docs/specification/ @modelcontextprotocol/core-maintainers
 /schema/ @modelcontextprotocol/core-maintainers
 
