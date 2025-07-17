@@ -25,7 +25,7 @@ All maintainers form the MCP steering group. Core and lead maintainers meet bi-w
 We're introducing the [Spec Enhancement Proposal](https://modelcontextprotocol.io/community/sep-guidelines) (SEP) as the primary mechanism for proposing changes to MCP, similar to Python's PEPs or Rust's RFCs.  Briefly, the SEP process is:
 
 1. Submit a proposal as a GitHub issue
-2. Find a steering group sponsor
+2. Find a steering group sponsor through the [MCP Discord](https://discord.gg/modelcontextprotocol) or GitHub
 3. Progress through draft, review, and implementation stages
 
 SEPs ensure thoughtful evolution of the protocol while maintaining an open contribution process.
