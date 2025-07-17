@@ -12,7 +12,7 @@ Since MCP's open source release in November 2024, the project has grown rapidly.
 
 ## Governance Structure
 
-The new model establishes three tiers:
+The new model establishes three tiers of participants:
 
 - **Maintainers** manage specific components (SDKs, documentation, repositories)
 - **Core Maintainers** guide overall project direction and specification evolution
