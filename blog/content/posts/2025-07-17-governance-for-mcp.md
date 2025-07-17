@@ -18,7 +18,7 @@ The new model establishes three tiers of leadership:
 - **Core Maintainers** guide overall project direction and specification evolution
 - **Lead Maintainers** serve as final decision-makers with veto power
 
-All maintainers form the MCP steering group, meeting bi-weekly to review proposals. Meeting notes and decisions will be made public, ensuring transparent governance for the entire community.
+All maintainers form the MCP steering group. Core and lead maintainers meet bi-weekly to review [Specification Enhancement Proposals (SEPs)](#specification-enhancement-proposals-seps). Meeting notes and decisions from these meetings will be made public, ensuring transparent governance for the entire community.
 
 ## Specification Enhancement Proposals (SEPs)
 
