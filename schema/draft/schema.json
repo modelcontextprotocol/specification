@@ -298,7 +298,13 @@
                     "$ref": "#/definitions/ListToolsRequest"
                 },
                 {
+                    "$ref": "#/definitions/NamespacedListToolsRequest"
+                },
+                {
                     "$ref": "#/definitions/CallToolRequest"
+                },
+                {
+                    "$ref": "#/definitions/ListNamespacesRequest"
                 },
                 {
                     "$ref": "#/definitions/SetLevelRequest"
@@ -1048,6 +1054,52 @@
             ],
             "type": "object"
         },
+        "ListNamespacesRequest": {
+            "description": "Sent from the client to request a list of tools the server has.",
+            "properties": {
+                "method": {
+                    "const": "namespaces/list",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "ListNamespacesResult": {
+            "description": "The server's response to a tools/list request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "namespaces": {
+                    "items": {
+                        "$ref": "#/definitions/Namespace"
+                    },
+                    "type": "array"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "namespaces"
+            ],
+            "type": "object"
+        },
         "ListPromptsRequest": {
             "description": "Sent from the client to request a list of prompts and prompt templates the server has.",
             "properties": {
@@ -1369,6 +1421,77 @@
                     "type": "number"
                 }
             },
+            "type": "object"
+        },
+        "Namespace": {
+            "description": "A known resource that the server is capable of reading.",
+            "properties": {
+                "description": {
+                    "description": "A description of what tools, prompts, and resources are available in this namespace.\n\nThis can be used by clients to improve the LLM's understanding of available namespaces and how they might be used. The client may display this information or allow selecting of namespaces to work within.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The structured and formatted name for this namespace.\n\nMust begin with an",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "NamespacedListToolsRequest": {
+            "description": "Sent from the client to request a scoped list of tools the server has for a specific namespace.",
+            "properties": {
+                "method": {
+                    "const": "{namespace}/tools/list",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "cursor": {
+                            "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method"
+            ],
+            "type": "object"
+        },
+        "NamespacedListToolsResult": {
+            "description": "The server's response to a {namespace}/tools/list request from the client.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "namespace": {
+                    "properties": {
+                        "tools": {
+                            "items": {
+                                "$ref": "#/definitions/Tool"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "tools"
+                    ],
+                    "type": "object"
+                },
+                "nextCursor": {
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "namespace"
+            ],
             "type": "object"
         },
         "Notification": {
@@ -2098,6 +2221,16 @@
                     "properties": {},
                     "type": "object"
                 },
+                "namespaces": {
+                    "description": "Present if the server namespacing",
+                    "properties": {
+                        "list": {
+                            "description": "Whether this server supports listing namespaces.",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
                 "prompts": {
                     "description": "Present if the server offers any prompt templates.",
                     "properties": {
@@ -2203,7 +2336,13 @@
                     "$ref": "#/definitions/ListToolsResult"
                 },
                 {
+                    "$ref": "#/definitions/NamespacedListToolsResult"
+                },
+                {
                     "$ref": "#/definitions/CallToolResult"
+                },
+                {
+                    "$ref": "#/definitions/ListNamespacesResult"
                 },
                 {
                     "$ref": "#/definitions/CompleteResult"
