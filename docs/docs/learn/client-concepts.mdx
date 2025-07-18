@@ -3,13 +3,14 @@ title: Client Concepts
 description: "Understanding MCP client concepts"
 ---
 
-MCP clients are protocol clients instantiated by host applications to communicate with MCP servers. While the host application (like Claude.ai or Code Editor) manages the overall user experience and coordinates multiple clients, each client handles the direct communication with servers through the Model Context Protocol.
+MCP clients are protocol clients instantiated by host applications to communicate with particular MCP servers. The host application (like Claude.ai or an IDE) manages the overall user experience and coordinates multiple clients, each client handles the direct communication with servers through the Model Context Protocol.
 
-Understanding the distinction is important: the host is the application users interact with, while clients are the protocol-level components that enable server connections. For stateful servers, each client maintains a dedicated connection session. For stateless servers accessed over HTTP, clients may share connections while still maintaining logical separation of concerns and security boundaries.
+Understanding the distinction is important: the *host* is the application users interact with, while *clients* are the protocol-level components that enable server connections. For stateful servers, each client maintains a dedicated connection session. For stateless servers accessed over HTTP, clients may share connections while still maintaining logical separation of concerns and security boundaries.
 
 ## Core Client Features
 
-Clients may provide several key features that enhance server capabilities:
+In addition to making use of server features via *client-initiated requests*, clients may optionally provide several key features that enhance server capabilities, via *server-initiated requests*:
+
 
 ### Sampling
 
@@ -17,16 +18,16 @@ Sampling allows servers to request language model completions through the client
 
 #### Overview
 
-Sampling is a standardized mechanism that enables servers to implement complex behaviors by requesting AI model interactions through the client. Rather than servers needing their own API keys or model integrations, they can request completions in a controlled manner. The client handles model selection based on the server's preferences (cost, speed, or intelligence priorities), manages user approval flows, and ensures security boundaries. This nested capability means sampling requests occur within the context of other operations—like a tool analyzing data or a resource being processed—always with human oversight.
+Sampling is a standardized mechanism that enables servers to implement complex behaviors by requesting AI model interactions through the client. Rather than servers needing their own API keys or model integrations, they can request completions in a controlled manner. The host application handles model selection based on the server's preferences (cost, speed, or intelligence priorities), manages user approval flows, and ensures security boundaries. This nested capability means sampling requests occur within the context of other operations—like a tool analyzing data or a resource being processed—always with human oversight.
 
 **Sampling flow:**
 
 ```mermaid
 sequenceDiagram
-    participant Server
-    participant Client
-    participant User
     participant LLM
+    participant User
+    participant Client
+    participant Server
 
     Note over Server,Client: Server initiates sampling
     Server->>Client: sampling/createMessage
@@ -49,7 +50,7 @@ sequenceDiagram
 
 The flow ensures security through multiple human-in-the-loop checkpoints. Users review and can modify both the initial request and the generated response before it returns to the server.
 
-**Request parameters:**
+**Request parameters example:**
 
 ```typescript
 {
@@ -78,9 +79,9 @@ The flow ensures security through multiple human-in-the-loop checkpoints. Users 
 
 Consider a travel booking server with a tool called `findBestFlight` that uses sampling to analyze available flights and recommend the optimal choice. When a user asks "Book me the best flight to Barcelona next month," the tool needs AI assistance to evaluate complex trade-offs.
 
-The tool queries airline APIs and gathers dozens of flight options. It then requests AI assistance to analyze these options: "Analyze these flight options and recommend the best choice: [...] User preferences: morning departure, max 1 layover."
+The tool queries airline APIs and gathers 47 flight options. It then requests AI assistance to analyze these options: "Analyze these flight options and recommend the best choice: [47 flights with prices, times, airlines, and layovers] User preferences: morning departure, max 1 layover."
 
-The client asks the user: "Allow AI to analyze flight options?" Upon approval, the AI evaluates trade-offs—like cheaper red-eye flights versus convenient morning departures. The tool uses this analysis to present the top three recommendations.
+The client asks the user: "Allow sampling request?" Upon approval, the AI evaluates trade-offs—like cheaper red-eye flights versus convenient morning departures. The tool uses this analysis to present the top three recommendations.
 
 #### User Interaction Model
 
@@ -90,7 +91,9 @@ Sampling is designed with human-in-the-loop control as a fundamental principle. 
 
 **Transparency features**: Clients display the exact prompt, model selection, and token limits. Users review AI responses before they return to the server.
 
-**Configuration options**: Users can set model preferences, configure auto-approval for trusted operations, or require approval for everything. Clients may provide options to redact sensitive information.
+**Configuration options**: Users can set model preferences, configure auto-approval for trusted operations, or require approval for everything. Clients may provide options to redact sensitive information. Users decide how much conversation context may be included in sampling requests through the `includeContext` parameter.
+
+**Security and isolation**: Sampling requests are isolated from the main conversation context by default. Servers cannot access user conversations or sensitive data unless explicitly included through `includeContext`. Each sampling request is sandboxed, preventing servers from exfiltrating data or compromising the client's security boundaries.
 
 **Security considerations**: Both clients and servers must handle sensitive data appropriately during sampling. Clients should implement rate limiting and validate all message content. The human-in-the-loop design ensures that server-initiated AI interactions cannot compromise security or access sensitive data without explicit user consent.
 
@@ -113,6 +116,8 @@ Roots are a mechanism for clients to communicate filesystem access boundaries to
 
 Roots are exclusively filesystem paths and always use the `file://` URI scheme. They help servers understand project boundaries, workspace organization, and accessible directories. The roots list can be updated dynamically as users work with different projects or folders, with servers receiving notifications through `roots/list_changed` when boundaries change.
 
+It's important to note that while roots provide guidance to servers about where to operate, the client is always in full control of file access. Roots simply communicate intended boundaries—actual file access is always mediated by the client's security policies.
+
 #### Example: Travel Planning Workspace
 
 A travel agent working with multiple client trips benefits from roots to organize filesystem access. Consider a workspace with different directories for various aspects of travel planning.
@@ -123,7 +128,7 @@ The client provides filesystem roots to the travel planning server:
 - `file:///Users/agent/travel-templates` - Reusable itinerary templates and resources
 - `file:///Users/agent/client-documents` - Client passports and travel documents
 
-When the agent creates a Barcelona itinerary, the server works within these boundaries—accessing templates, saving the new itinerary, and referencing client documents. It cannot access files outside these roots.
+When the agent creates a Barcelona itinerary, the server works within these boundaries—accessing templates, saving the new itinerary, and referencing client documents. It cannot access files outside these roots. Servers typically access files within roots by using relative paths from the root directories or by utilizing file search tools that respect the root boundaries.
 
 If the agent opens an archive folder like `file:///Users/agent/archive/2023-trips`, the client updates the roots list via `roots/list_changed`.
 
@@ -141,7 +146,7 @@ Elicitation enables servers to request specific information from users during in
 
 #### Overview
 
-Elicitation provides a structured way for servers to gather necessary information on-demand. Instead of requiring all information upfront or failing when data is missing, servers can pause their operations to request specific inputs from users. This creates more flexible interactions where servers adapt to user needs rather than following rigid patterns.
+Elicitation provides a structured way for servers to gather necessary information on demand. Instead of requiring all information up front or failing when data is missing, servers can pause their operations to request specific inputs from users. This creates more flexible interactions where servers adapt to user needs rather than following rigid patterns.
 
 **Elicitation flow:**
 
@@ -166,7 +171,7 @@ sequenceDiagram
 
 The flow enables dynamic information gathering. Servers can request specific data when needed, users provide information through appropriate UI, and servers continue processing with the newly acquired context.
 
-**Elicitation components:**
+**Elicitation components example:**
 
 ```typescript
 {
@@ -204,9 +209,9 @@ The flow enables dynamic information gathering. Servers can request specific dat
 
 #### Example: Holiday Booking Approval
 
-A travel booking server demonstrates elicitation's power through the final booking confirmation process. When a user has selected their ideal vacation package to Barcelona, the server needs to gather final approval and payment details before proceeding.
+A travel booking server demonstrates elicitation's power through the final booking confirmation process. When a user has selected their ideal vacation package to Barcelona, the server needs to gather final approval and any missing details before proceeding.
 
-The server elicits booking confirmation with a summary: Barcelona flights June 15-22, beachfront hotel, total $3,000. Based on the response, it might request additional preferences—seat selection, room type, or travel insurance.
+The server elicits booking confirmation with a structured request that includes the trip summary (Barcelona flights June 15-22, beachfront hotel, total $3,000) and fields for any additional preferences—such as seat selection, room type, or travel insurance options.
 
 As the booking progresses, the server elicits contact information needed to complete the reservation. It might ask for traveler details for flight bookings, special requests for the hotel, or emergency contact information.
 
