@@ -309,3 +309,13 @@ In most enterprise deployments, the IdP policy will only allow users to sign in 
 It is also assumed that the MCP client will be pre-registered with the MCP server's authorization server.
 
 In order for the IdP to include the correct `client_id` in the ID-JAG (described in Section 4.3), the IdP will need to be aware of the MCP Client's `client_id` that it normally uses with the MCP Server. This mapping happens outside of the protocol, such as during the configuration of the feature in the IdP.
+
+### 6.2 Scope of Enterprise Visibility and Policy Enforcement
+
+This specification enables the enterprise IdP to be part of the issuance of the access token. The visibility the IdP has between the MCP Client and MCP Server is limited to the process of issuing the access token, but does not extend to the actual API calls between the MCP Client and Server.
+
+This enables the enterprise IdP to enforce policies such as which users in the organization can use certain MCP clients with certain MCP servers. Depending on the granularity of the OAuth scopes defined at the MCP server, this can also extend to govern which scopes a given user can request.
+
+For example, the enterprise policy of granting an access token through this extension may allow users in the "engineering" group to get read-only access from an AI code editor to the source control MCP server, whereas users in the "marketing" group may be able to get read and write access to the internal documentation application.
+
+
