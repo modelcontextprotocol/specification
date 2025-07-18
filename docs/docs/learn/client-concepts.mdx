@@ -92,7 +92,7 @@ Sampling is designed with human-in-the-loop control as a fundamental principle. 
 
 **Configuration options**: Users can set model preferences, configure auto-approval for trusted operations, or require approval for everything. Clients may provide options to redact sensitive information. Users decide how much conversation context may be included in sampling requests through the `includeContext` parameter.
 
-**Security and isolation**: Sampling requests are isolated from the main conversation context by default. Servers cannot access user conversations or sensitive data unless explicitly included through `includeContext`. Each sampling request is sandboxed, preventing servers from exfiltrating data or compromising the client's security boundaries.
+**Isolation**: Sampling requests are isolated from the main conversation context by default. Servers cannot access user conversations.
 
 **Security considerations**: Both clients and servers must handle sensitive data appropriately during sampling. Clients should implement rate limiting and validate all message content. The human-in-the-loop design ensures that server-initiated AI interactions cannot compromise security or access sensitive data without explicit user consent.
 
