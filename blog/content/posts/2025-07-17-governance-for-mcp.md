@@ -16,7 +16,7 @@ One of the first major changes we're introducing is [Specification Enhancement P
 
 1. Following the [SEP guidelines](https://modelcontextprotocol.io/community/sep-guidelines), submit a proposal as [a GitHub issue](https://github.com/modelcontextprotocol/modelcontextprotocol/issues) to start the conversation.
 2. Find a sponsor from the steering group, either on [Discord](https://discord.gg/modelcontextprotocol) or [GitHub](https://github.com/modelcontextprotocol/modelcontextprotocol). Refer to [`MAINTAINERS.md`] for a list of currently active maintainers and their focus areas, as well as their preferred contact information.
-3. Work with the sponsoer and the MCP community to move your proposal through draft, review, and implementation stages.
+3. Work with the sponsor and the MCP community to move your proposal through draft, review, and implementation stages.
 
 SEPs provide a clear, documented path for evolving the protocol, ensuring that every major change is well-vetted by the community.
 
