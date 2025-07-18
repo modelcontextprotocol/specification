@@ -24,12 +24,13 @@ Enterprise-managed authorization for MCP Clients and Servers has two key benefit
 - **Client**: In the context of this profile, the Client is the MCP Client.
 - **ID Token**: A security token that contains claims about the authentication of a user when using a client, as defined in [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#IDToken).
 - **Subject Token**: A security token that represents the identity of the user, such as an ID Token.
+- **JAG**: JWT Authorization Grant, as described in [RFC7523](https://datatracker.ietf.org/doc/html/rfc7523#section-2.1).
 
 ## 2. Identity Assertion Authorization Grant Overview
 
-This profile uses the "Identity Assertion Authorization Grant" as defined in [draft-parecki-oauth-identity-assertion-authz-grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/).
+This profile is an application of the "Identity Assertion Authorization Grant" as defined in [draft-parecki-oauth-identity-assertion-authz-grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/).
 
-The Identity Assertion Authorization Grant follows two steps:
+The Identity Assertion Authorization Grant follows two steps after obtaining an Identity Assertion through single sign-on:
 
 1. Single Sign-On to the MCP Client via OpenID Connect or SAML
 2. Token Exchange ([RFC8623](https://datatracker.ietf.org/doc/html/rfc8693))
@@ -38,8 +39,8 @@ The Identity Assertion Authorization Grant follows two steps:
 The core flow is as follows:
 
 - A user logs in to an MCP Client through their enterprise Identity Provider, resulting in an Identity Assertion (ID Token or SAML assertion) being issued to the MCP Client.
-- The MCP Client sends a Token Exchange [[RFC8623](https://datatracker.ietf.org/doc/html/rfc8693)] request to the Identity Provider including the identity assertion and identifier of the MCP Server it is attempting to access, and obtains a Identity Assertion Authorization Grant.
-- The MCP Client uses the Identity Assertion Authorization Grant as a JWT Authorization Grant [[RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)] to request an access token from the Authorization Server.
+- The MCP Client sends a Token Exchange [[RFC8623](https://datatracker.ietf.org/doc/html/rfc8693)] request to the Identity Provider including the identity assertion and identifier of the MCP Server it is attempting to access, and obtains a Identity Assertion JWT Authorization Grant (ID-JAG).
+- The MCP Client uses the Identity Assertion JWT Authorization Grant as a JWT Authorization Grant [[RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)] to request an access token from the Authorization Server.
 - The Authorization Server validates the Identity Assertion Authorization Grant and, if valid, issues an access token.
 - The MCP Client uses the access token to make requests to the MCP Server.
 
@@ -158,7 +159,7 @@ The IdP may also introspect the authentication context described in the Identity
 
 ### 4.2 Token Exchange Response
 
-If access is granted, the IdP creates a signed Identity Assertion Authorization Grant JWT and returns it in the token exchange response defined in [Section 2.2 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-2.2):
+If access is granted, the IdP creates a signed Identity Assertion JWT Authorization Grant and returns it in the token exchange response defined in [Section 2.2 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-2.2):
 
 ```
 HTTP/1.1 200 OK
@@ -178,7 +179,7 @@ Pragma: no-cache
 | Parameter           | Required/Optional | Description                                                                                                                                                       | Example/Allowed Values                             |
 | ------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | `issued_token_type` | REQUIRED          | Indicates the type of token issued.                                                                                                                               | `urn:ietf:params:oauth:token-type:id-jag`          |
-| `access_token`      | REQUIRED          | The Identity Assertion Authorization Grant JWT. (Note: Token Exchange requires the `access_token` response parameter for historical reasons, not an OAuth token.) | (JWT string)                                       |
+| `access_token`      | REQUIRED          | The Identity Assertion JWT Authorization Grant. (Note: Token Exchange requires the `access_token` response parameter for historical reasons, not an OAuth token.) | (JWT string)                                       |
 | `token_type`        | REQUIRED          | The token type.                                                                                                                                                   | `N_A` (because this is not an OAuth access token.) |
 | `scope`             | OPTIONAL/REQUIRED | OPTIONAL if the scope of the issued token is identical to the requested; otherwise REQUIRED. May be fewer scopes than requested.                                  | `scope1 scope2`                                    |
 | `expires_in`        | RECOMMENDED       | The lifetime in seconds of the authorization grant.                                                                                                               | `3600`                                             |
@@ -198,9 +199,9 @@ Cache-Control: no-store
 }
 ```
 
-### 4.3 Identity Assertion Authorization Grant JWT
+### 4.3 Identity Assertion JWT Authorization Grant
 
-The Identity Assertion Authorization Grant JWT is issued and signed by the IdP, and describes the intended audience of the authorization grant as well as the client to which it was issued and the subject identifier of the resource owner, using the following claims:
+The Identity Assertion JWT Authorization Grant (ID-JAG) is issued and signed by the IdP, and describes the intended audience of the authorization grant as well as the client to which it was issued and the subject identifier of the resource owner, using the following claims:
 
 | Parameter   | Required/Optional | Description                                                                                                                                                     | Reference / Example                                                                                         |
 | ----------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -253,7 +254,7 @@ The MCP Client makes an access token request to the MCP Server's authorization s
 | Parameter    | Required/Optional | Description                                                                                 | Example/Allowed Values                                                                                                                |
 | ------------ | ----------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `grant_type` | REQUIRED          | **MUST** be `urn:ietf:params:oauth:grant-type:jwt-bearer`                                   | `urn:ietf:params:oauth:grant-type:jwt-bearer`<br/>[Section 4.1 of RFC7523](https://datatracker.ietf.org/doc/html/rfc7523#section-4.1) |
-| `assertion`  | REQUIRED          | The Identity Assertion Authorization Grant JWT obtained in the previous token exchange step | (JWT string)                                                                                                                          |
+| `assertion`  | REQUIRED          | The Identity Assertion JWT Authorization Grant obtained in the previous token exchange step | (JWT string)                                                                                                                          |
 
 The MCP Client authenticates with its credentials as registered with the MCP Server's authorization server.
 
