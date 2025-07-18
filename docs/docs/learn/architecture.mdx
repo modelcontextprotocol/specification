@@ -7,11 +7,11 @@ This overview covers the core components and concepts of the Model Context Proto
 
 The document is organized in the following way:
 
+- An overview of the [scope](#scope) of the protocol, its specification, and the wider MCP project
 - A [concept section](#concepts-of-mcp) with:
-  - An overview of the [scope](#scope) of the protocol, it's specification and the wider MCP project,
-  - An overview of the [participants](#participants) within the protcol,
-  - An overview of the [layers](#layers) within the protcool, and it's [data](#data-layer) and [transportation](#transport-layer) layer,
-  - An overview of the data [protocol](#data-layer-protocol), with it's basic types, it's lifecylce management, primitives, notifications,
+  - An overview of the [participants](#participants) within the protocol
+  - An overview of the [layers](#layers) within the protocol, and it's [data](#data-layer) and [transportation](#transport-layer) layer
+  - An overview of the data [protocol](#data-layer-protocol), with it's basic types, it's lifecycle management, primitives, notifications
 - An [example](#example) exchange in MCP that refers to the different concepts. Feel free to start here for a more hands-on approach.
 
 <Tip>
@@ -76,7 +76,7 @@ This layer includes:
 
 - **Lifecycle management**: Handles connection initialization, capability negotiation, and connection termination between clients and servers
 - **Server features**: Provides core functionality including tools (for AI actions), resources (for context data), and prompts (for interaction templates)
-- **Client features**: Enables servers to sample from the host LLM, log messages to clients, and elicit
+- **Client features**: Enables servers to sample from the host LLM, elicit input from the user, and log messages to the client
 - **Utility features**: Supports additional capabilities like notifications for real-time updates and progress tracking for long-running operations
 
 #### Transport layer
