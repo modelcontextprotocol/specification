@@ -9,7 +9,7 @@ In this tutorial, we'll build a simple MCP weather server and connect it to a ho
 
 Many LLMs do not currently have the ability to fetch the forecast and severe weather alerts. Let's use MCP to solve that!
 
-We'll build a server that exposes two tools: `get-alerts` and `get-forecast`. Then we'll connect the server to an MCP host (in this case, Claude for Desktop):
+We'll build a server that exposes two tools: `get_alerts` and `get_forecast`. Then we'll connect the server to an MCP host (in this case, Claude for Desktop):
 
 <Frame>
   <img src="/images/weather-alerts.png" />
@@ -45,6 +45,36 @@ This quickstart assumes you have familiarity with:
 
 - Python
 - LLMs like Claude
+
+### Logging in MCP Servers
+
+When implementing MCP servers, be careful about how you handle logging:
+
+**For STDIO-based servers:** Never write to standard output (stdout). This includes:
+
+- `print()` statements in Python
+- `console.log()` in JavaScript
+- `fmt.Println()` in Go
+- Similar stdout functions in other languages
+
+Writing to stdout will corrupt the JSON-RPC messages and break your server.
+
+**For HTTP-based servers:** Standard output logging is fine since it doesn't interfere with HTTP responses.
+
+### Best Practices
+
+1. Use a logging library that writes to stderr or files.
+
+### Quick Examples
+
+```python
+# ❌ Bad (STDIO)
+print("Processing request")
+
+# ✅ Good (STDIO)
+import logging
+logging.info("Processing request")
+```
 
 ### System requirements
 
@@ -345,6 +375,36 @@ This quickstart assumes you have familiarity with:
 - TypeScript
 - LLMs like Claude
 
+### Logging in MCP Servers
+
+When implementing MCP servers, be careful about how you handle logging:
+
+**For STDIO-based servers:** Never write to standard output (stdout). This includes:
+
+- `print()` statements in Python
+- `console.log()` in JavaScript
+- `fmt.Println()` in Go
+- Similar stdout functions in other languages
+
+Writing to stdout will corrupt the JSON-RPC messages and break your server.
+
+**For HTTP-based servers:** Standard output logging is fine since it doesn't interfere with HTTP responses.
+
+### Best Practices
+
+1. Use a logging library that writes to stderr or files, such as `logging` in Python.
+2. For JavaScript, be especially careful - `console.log()` writes to stdout by default
+
+### Quick Examples
+
+```javascript
+// ❌ Bad (STDIO)
+console.log("Server started");
+
+// ✅ Good (STDIO)
+console.error("Server started"); // stderr is safe
+```
+
 ### System requirements
 
 For TypeScript, make sure you have the latest version of Node installed.
@@ -543,7 +603,7 @@ The tool execution handler is responsible for actually executing the logic of ea
 ```typescript
 // Register weather tools
 server.tool(
-  "get-alerts",
+  "get_alerts",
   "Get weather alerts for a state",
   {
     state: z.string().length(2).describe("Two-letter state code (e.g. CA, NY)"),
@@ -591,7 +651,7 @@ server.tool(
 );
 
 server.tool(
-  "get-forecast",
+  "get_forecast",
   "Get weather forecast for a location",
   {
     latitude: z.number().min(-90).max(90).describe("Latitude of the location"),
@@ -797,6 +857,26 @@ Let's get started with building our weather server!
 
 For more information, see the [MCP Server Boot Starter](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html) reference documentation.
 For manual MCP Server implementation, refer to the [MCP Server Java SDK documentation](/sdk/java/mcp-server).
+
+### Logging in MCP Servers
+
+When implementing MCP servers, be careful about how you handle logging:
+
+**For STDIO-based servers:** Never write to standard output (stdout). This includes:
+
+- `print()` statements in Python
+- `console.log()` in JavaScript
+- `fmt.Println()` in Go
+- Similar stdout functions in other languages
+
+Writing to stdout will corrupt the JSON-RPC messages and break your server.
+
+**For HTTP-based servers:** Standard output logging is fine since it doesn't interfere with HTTP responses.
+
+### Best Practices
+
+1. Use a logging library that writes to stderr or files.
+2. Ensure any configured logging library will not write to STDOUT
 
 ### System requirements
 
@@ -1489,6 +1569,25 @@ This quickstart assumes you have familiarity with:
 - C#
 - LLMs like Claude
 - .NET 8 or higher
+
+### Logging in MCP Servers
+
+When implementing MCP servers, be careful about how you handle logging:
+
+**For STDIO-based servers:** Never write to standard output (stdout). This includes:
+
+- `print()` statements in Python
+- `console.log()` in JavaScript
+- `fmt.Println()` in Go
+- Similar stdout functions in other languages
+
+Writing to stdout will corrupt the JSON-RPC messages and break your server.
+
+**For HTTP-based servers:** Standard output logging is fine since it doesn't interfere with HTTP responses.
+
+### Best Practices
+
+1. Use a logging library that writes to stderr or files
 
 ### System requirements
 
