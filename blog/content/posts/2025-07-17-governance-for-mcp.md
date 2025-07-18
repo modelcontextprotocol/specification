@@ -15,12 +15,12 @@ Today, we're taking a big step to ensure MCP can continue to grow and thrive. We
 One of the first major changes we're introducing is [Specification Enhancement Proposals](https://modelcontextprotocol.io/community/sep-guidelines) (SEPs). This will be the primary mechanism for anyone to propose changes to MCP. If you're familiar with Python's PEPs or Rust's RFCs, you'll feel right at home. The process is very straightforward:
 
 1. Following the [SEP guidelines](https://modelcontextprotocol.io/community/sep-guidelines), submit a proposal as [a GitHub issue](https://github.com/modelcontextprotocol/modelcontextprotocol/issues) to start the conversation.
-2. Find a sponsor from the steering group, either on [Discord](https://discord.gg/modelcontextprotocol) or [GitHub](https://github.com/modelcontextprotocol/modelcontextprotocol). Refer to [`MAINTAINERS.md`] for a list of currently active maintainers and their focus areas, as well as their preferred contact information.
+2. Find a sponsor from the steering group, either on [Discord](https://discord.gg/modelcontextprotocol) or [GitHub](https://github.com/modelcontextprotocol/modelcontextprotocol). Refer to [`MAINTAINERS.md`](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/MAINTAINERS.md) for a list of currently active maintainers and their focus areas, as well as their preferred contact information.
 3. Work with the sponsor and the MCP community to move your proposal through draft, review, and implementation stages.
 
 SEPs provide a clear, documented path for evolving the protocol, ensuring that every major change is well-vetted by the community.
 
-## A Structure for Sustainable Growth
+## Leadership Roles
 
 The new model also establishes three types of leadership roles, ensuring both focused ownership and broad community representation:
 
@@ -32,13 +32,15 @@ All maintainers form the **MCP steering group**. To ensure a structured and time
 
 ## Get Involved
 
-We need your help to build the future of MCP. No matter your skill level or area of interest, there's a way to contribute!
+We need your help to build the future of MCP, and everyone is welcome here. Whether you're a seasoned open source veteran or just curious about how to get started, there's a place for you in our community.
 
-- **New Contributors**: The best way to get started is by helping us with documentation, fixing bugs, or building out examples. Every contribution matters, and we are here to help you make your first one.
-- **SDK Developers**: As MCP expands, we need help building and maintaining SDKs for new languages and ecosystems.
-- **Documentation Writers**: Clear, comprehensive documentation is what turns a good project into a great one. Help us improve our guides, tutorials, and API references.
-- **Future Maintainers**: We believe in promoting from within. The path to becoming a maintainer starts with consistent, quality contributions and a commitment to the project's success.
+Many of our maintainers began with a single small contribution—sometimes just fixing a typo or asking a thoughtful question. Every journey starts somewhere, and we're excited to help you take your first step.
 
-The MCP community is growing, and we want you to be a part of it. Join our [Discord](https://discord.gg/modelcontextprotocol) to connect with other contributors, ask questions, and find mentorship. Whether you're fixing a typo or proposing a major change to the protocol, you are welcome here.
+- **New Contributors**: Unsure where to begin? Start by helping with documentation, fixing bugs, or building out examples. Every contribution matters, and we're here to support you. Check out issues tagged with [`good first issue`](https://github.com/modelcontextprotocol/modelcontextprotocol/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22) - they're perfect for getting started, and you'll find friendly faces ready to help.
+- **SDK Developers**: Have a favorite programming language? As MCP grows, we need your expertise to build and maintain the protocol SDKs. Your work could empower entire new communities to use MCP.
+- **Documentation Writers**: Clear, comprehensive [documentation](https://modelcontextprotocol.io/introduction) is what turns a good project into a great one. If you love explaining things or making guides, your contributions will help others succeed.
+- **Future Maintainers**: We believe in growing our team from within. The path to becoming a maintainer starts with consistent, quality contributions and a commitment to the project's success. Imagine yourself guiding new contributors and shaping the future of MCP.
+
+No matter your background or experience, you belong here. Join our [Discord](https://discord.gg/modelcontextprotocol) to connect with other contributors, ask questions, and find mentorship. Whether you're fixing a typo or proposing a major change to the protocol, your voice is valued and your efforts make a difference.
 
 For all the details, please see our full [governance documentation](https://modelcontextprotocol.io/community/governance).
