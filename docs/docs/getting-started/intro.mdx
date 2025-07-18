@@ -3,16 +3,38 @@ title: Introduction
 description: "Get started with the Model Context Protocol (MCP)"
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+MCP is an open protocol that standardizes how applications provide context to LLMs. Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to connect your devices to various peripherals and accessories, MCP provides a standardized way to connect AI models to different data sources and tools.
 
-### Heading
+MCP helps you build agents and complex workflows on top of LLMs. LLMs frequently need to integrate with data and tools, and MCP provides:
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
+- **A growing list of pre-built integrations** that your LLM can directly plug into
+- **The flexibility to change** between different apps and take your context with you
+- **Best practices for securing your data** within your infrastructure
 
-### List
+## Choose Your Path
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit:
+<CardGroup cols={2}>
+  <Card title="Understand Concepts" icon="book" href="/docs/learn/architecture">
+    Learn the core concepts and architecture of MCP
+  </Card>
+  
+  <Card title="Use MCP" icon="plug" href="/docs/tutorials/use-mcp">
+    Connect to existing MCP servers and start using them
+  </Card>
+  
+  <Card title="Server Developers" icon="server" href="/docs/tutorials/create-a-server">
+    Build MCP servers to expose your data and tools
+  </Card>
+  
+  <Card title="Client Developers" icon="computer" href="/docs/tutorials/create-a-server-with-llms">
+    Create applications that connect to MCP servers
+  </Card>
+</CardGroup>
 
-1. **Sed**: Ut enim ad minim veniam quis nostrud exercitation (ullamco laboris nisi aliquip)
-2. **Duis**: Aute irure dolor in reprehenderit in voluptate velit esse (cillum dolore eu fugiat)
-3. **Excepteur**: Sint occaecat cupidatat non proident sunt in culpa (qui officia deserunt mollit)
+## Looking for Advanced Topics?
+
+Once you're comfortable with the basics, explore our [**How-to Guides**](/docs/how-to-guides/sampling) for in-depth tutorials on advanced topics like authentication and deployment strategies. These guides provide detailed walkthroughs for specific use cases.
+
+## Ready to Build?
+
+MCP provides official **SDKs** in multiple languages including TypeScript, Python, Java, Kotlin, C#, and Ruby. See the [SDK documentation](/docs/sdk) to find the right SDK for your project. The SDKs handle the protocol details so you can focus on building your features.

@@ -253,7 +253,6 @@
             "group": "Getting Started",
             "pages": [
               "docs/getting-started/intro",
-              "docs/getting-started/learning-paths",
               "docs/sdk"
             ]
           },
@@ -268,9 +267,25 @@
           {
             "group": "Tutorials",
             "pages": [
-              "docs/tutorials/create-a-server",
-              "docs/tutorials/create-a-server-with-llms",
-              "docs/tutorials/inspector"
+              {
+                "group": "Using MCP",
+                "pages": [
+                  "docs/tutorials/use-mcp",
+                  "docs/tutorials/inspector"
+                ]
+              },
+              {
+                "group": "Server Development",
+                "pages": [
+                  "docs/tutorials/create-a-server",
+                  "docs/tutorials/create-a-server-with-llms"
+                ]
+              },
+              {
+                "group": "Client Development",
+                "pages": [
+                ]
+              }
             ]
           },
           {
