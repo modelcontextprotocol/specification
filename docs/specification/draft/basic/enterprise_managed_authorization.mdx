@@ -299,3 +299,13 @@ Cache-Control: no-store
   "scope": "chat.read chat.history"
 }
 ```
+
+## 6. Security Considerations
+
+### 6.1 Client Registration
+
+In most enterprise deployments, the IdP policy will only allow users to sign in to pre-registered clients. The MCP client will likely need to be pre-registered with the enterprise IdP for single sign-on.
+
+It is also assumed that the MCP client will be pre-registered with the MCP server's authorization server.
+
+In order for the IdP to include the correct `client_id` in the ID-JAG (described in Section 4.3), the IdP will need to be aware of the MCP Client's `client_id` that it normally uses with the MCP Server. This mapping happens outside of the protocol, such as during the configuration of the feature in the IdP.
