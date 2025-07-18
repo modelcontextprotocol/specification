@@ -50,6 +50,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Kilo Code][Kilo Code]                           | ✅          | ❌        | ✅      | ✅                     | ❌         | ❌    | ❓            | Supports tools and resources.                                                                   |
 | [Klavis AI Slack/Discord/Web][Klavis AI]         | ✅          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools and resources.                                                                   |
 | [LibreChat][LibreChat]                           | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools for Agents                                                                       |
+| [LM Studio][LM Studio]                           | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools, GUI interface, and automatic server loading from mcp.json.                      |
 | [Lutra][Lutra]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports any MCP server for reusable playbook creation.                                         |
 | [mcp-agent][mcp-agent]                           | ✅          | ✅        | ✅      | ❓                     | ⚠️         | ✅    | ✅            | Supports tools, prompts, resources, roots, server connection management, and agent workflows.   |
 | [mcp-client-chatbot][mcp-client-chatbot]         | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
@@ -133,6 +134,7 @@ This page provides an overview of applications that support the Model Context Pr
 [JetBrains AI Assistant]: https://plugins.jetbrains.com/plugin/22282-jetbrains-ai-assistant
 [Kilo Code]: https://github.com/Kilo-Org/kilocode
 [LibreChat]: https://github.com/danny-avila/LibreChat
+[LM Studio]: https://lmstudio.ai
 [Lutra]: https://lutra.ai
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [mcp-client-chatbot]: https://github.com/cgoinglove/mcp-client-chatbot
@@ -602,6 +604,24 @@ Delegate tasks to [GitHub Copilot coding agent](https://docs.github.com/en/copil
 - Add tools to customizable [Agents](https://www.librechat.ai/docs/features/agents), using a variety of LLMs from top providers
 - Open-source and self-hostable, with secure multi-user support
 - Future roadmap includes expanded MCP feature support
+
+### LM Studio
+
+[LM Studio](https://lmstudio.ai) is a cross-platform desktop app for discovering, downloading, and running open-source LLMs locally. You can now connect local models to tools via Model Context Protocol (MCP).
+
+**Key features:**
+
+- Use MCP servers with local models on your computer. Add entries to `mcp.json` and save to get started.
+- Tool confirmation UI: when a model calls a tool, you can confirm the call in the LM Studio app.
+- Cross-platform: runs on macOS, Windows, and Linux, one-click installer with no need to fiddle in the command line
+- Supports GGUF (llama.cpp) or MLX models with GPU acceleration
+- GUI & terminal mode: use the LM Studio app or CLI (lms) for scripting and automation
+
+**Learn more:**
+
+- [Docs: Using MCP in LM Studio](https://lmstudio.ai/docs/app/plugins/mcp)
+- [Create a 'Add to LM Studio' button for your server](https://lmstudio.ai/docs/app/plugins/mcp/deeplink)
+- [Announcement blog: LM Studio + MCP](https://lmstudio.ai/blog/mcp)
 
 ### Lutra
 
