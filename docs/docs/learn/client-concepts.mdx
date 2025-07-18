@@ -5,12 +5,11 @@ description: "Understanding MCP client concepts"
 
 MCP clients are protocol clients instantiated by host applications to communicate with particular MCP servers. The host application (like Claude.ai or an IDE) manages the overall user experience and coordinates multiple clients, each client handles the direct communication with servers through the Model Context Protocol.
 
-Understanding the distinction is important: the *host* is the application users interact with, while *clients* are the protocol-level components that enable server connections. For stateful servers, each client maintains a dedicated connection session. For stateless servers accessed over HTTP, clients may share connections while still maintaining logical separation of concerns and security boundaries.
+Understanding the distinction is important: the _host_ is the application users interact with, while _clients_ are the protocol-level components that enable server connections.
 
 ## Core Client Features
 
-In addition to making use of server features via *client-initiated requests*, clients may optionally provide several key features that enhance server capabilities, via *server-initiated requests*:
-
+In addition to making use of server features via _client-initiated requests_, clients may optionally provide several key features that enhance server capabilities, via _server-initiated requests_:
 
 ### Sampling
 
