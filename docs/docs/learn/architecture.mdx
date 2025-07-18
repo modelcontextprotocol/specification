@@ -3,17 +3,9 @@ title: Overview
 type: docs
 ---
 
-This overview covers the core components and concepts of the Model Context Protocol (MCP). The document is organized in a logical top-down way. Most developers will likely find the [data layer protocol](#data-layer-protocol) section to be the most useful. It provides an overview of the ways context can be provided by MCP servers and how to use it in an AI application. SDKs for MCP will expose the primitives and abstract transport and lifecycle concerns away.
+This overview of the Model Context Protocol (MCP) discusses its [scope](#scope) and [core concepts](#concepts-of-mcp), and provides an [example](#example) demonstrating each core concept.
 
-The document is organized in the following way:
-
-- A [concept section](#concepts-of-mcp) with:
-  - An overview of the [scope](#scope) of the protocol, it's specification and the wider MCP project,
-  - An overview of the [participants](#participants) within the protcol,
-  - An overview of the [layers](#layers) within the protcool, and it's [data](#data) and [transportation](#transports) layer,
-  - An overview of the data [protocol](#data-layer-protocol), with it's basic types, it's lifecylce management, primitives, notifications,
-  - An overview of the transport [protocol](#protocol),
-- An [example](#example) exchange in MCP that refers to the different concepts. Feel free to start here for a more hands-on approach.
+Because MCP SDKs abstract away many concerns, most developers will likely find the [data layer protocol](#data-layer-protocol) section to be the most useful. It discusses how MCP servers can provide context to an AI application.
 
 <Tip>
   For specific implementation details, please refer to the documentation for
@@ -77,7 +69,7 @@ This layer includes:
 
 - **Lifecycle management**: Handles connection initialization, capability negotiation, and connection termination between clients and servers
 - **Server features**: Provides core functionality including tools (for AI actions), resources (for context data), and prompts (for interaction templates)
-- **Client features**: Enables servers to sample from the host LLM, log messages to clients, and elicit
+- **Client features**: Enables servers to sample from the host LLM, elicit input from the user, and log messages to the client
 - **Utility features**: Supports additional capabilities like notifications for real-time updates and progress tracking for long-running operations
 
 #### Transport layer
