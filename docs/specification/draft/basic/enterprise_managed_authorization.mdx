@@ -8,9 +8,13 @@ title: Enterprise-Managed Authorization Profile
 
 ### 1.1 Purpose and Scope
 
-This document defines an application of the "[Identity Assertion Authorization Grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/)" for use within enterprise deployments of the Model Context Protocol (MCP). It specifies how an MCP Client can obtain an access token from an MCP Server's Authorization Server by presenting an identity assertion obtained through an external identity provider, and how an MCP Server's Authorization Server validates and utilizes this identity assertion before issuing an access token. This profile is designed to facilitate secure and interoperable authorization within enterprise environments, leveraging the organization's existing identity infrastructure.
+This document defines an application of the "[Identity Assertion Authorization Grant](https://datatracker.ietf.org/doc/draft-parecki-oauth-identity-assertion-authz-grant/)" for use within enterprise deployments of the Model Context Protocol (MCP).
 
-Enterprise-managed authorization for MCP Clients and Servers has two key benefits:
+When an MCP Client and MCP Server are both enabled for single sign-on through an enterprise Identity Provider, this three-way relationship can be leveraged to streamline the authorization process.
+
+This document specifies how an MCP Client can obtain an access token from an MCP Server's Authorization Server by presenting an identity assertion it previously obtained from an enterprise Identity Provider during single sign-on. It also describes how an MCP Server's Authorization Server can validate the request from the client before issuing an access token.
+
+This profile is designed to facilitate secure and interoperable authorization within enterprise environments, leveraging the organization's existing identity infrastructure. Enterprise-managed authorization for MCP Clients and Servers has two key benefits:
 
 - For end users, this removes the need to manually connect and authorize the MCP Client to each MCP Server for use within the organization.
 - For enterprise admins, this enables visibility and control over which MCP Servers are able to be used within the organization.
@@ -209,7 +213,7 @@ The Identity Assertion JWT Authorization Grant (ID-JAG) is issued and signed by 
 | `sub`       | REQUIRED          | The subject identifier (e.g., user ID) of the user at the MCP Server.                                                                                           | [Section 4.1.2 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2)                     |
 | `aud`       | REQUIRED          | The Issuer URL of the MCP Server's authorization server.                                                                                                        | [Section 4.1.3 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3)                     |
 | `resource`  | REQUIRED          | The Resource Identifier of the MCP Server.                                                                                                                      | [Section 1.2 of RFC9728](https://datatracker.ietf.org/doc/html/rfc9728#section-1.2)                         |
-| `client_id` | REQUIRED          | An identifier of the MCP Client registered at the Authorization Server that this JWT was issued to; SHOULD be a client_id as defined in Section 4.3 of RFC8693. | [Section 4.3 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-4.3)                         |
+| `client_id` | REQUIRED          | An identifier of the MCP Client registered at the Authorization Server that this JWT was issued to; SHOULD be a `client_id` as defined in Section 4.3 of RFC8693. | [Section 4.3 of RFC8693](https://datatracker.ietf.org/doc/html/rfc8693#section-4.3)                         |
 | `jti`       | REQUIRED          | Unique ID of this JWT.                                                                                                                                          | [Section 4.1.7 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7)                     |
 | `exp`       | REQUIRED          | Expiration time of this JWT (Unix timestamp in seconds).                                                                                                        | [Section 4.1.4 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4)                     |
 | `iat`       | REQUIRED          | Issued-at time of this JWT (Unix timestamp in seconds).                                                                                                         | [Section 4.1.6 of RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6)                     |
