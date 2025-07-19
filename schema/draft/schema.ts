@@ -286,6 +286,34 @@ export interface ServerCapabilities {
   };
 }
 
+interface UrlIcon {
+  kind: 'url';
+  /**
+   * A standard URI pointing to an icon resource.
+   * @format uri
+   */
+  src: string;
+  /** Optional override if the server’s MIME type is missing or generic. */
+  mimeType?: string;
+  /** e.g. "48x48", "any" (for SVG), or "48x48 96x96" */
+  sizes?: string;
+}
+
+/** Inline icon: base64-encoded data URI */
+interface DataIcon {
+  kind: 'data';
+  /**
+   * Data URI embedding the image, e.g.:
+   *   "data:image/png;base64,iVBORw0KGgoAAAANS…"
+   */
+  src: `data:${string};base64,${string}`;
+  /** Always required for clarity, though data URI also encodes it */
+  mimeType: string;
+  sizes?: string;
+}
+
+export type Icon = UrlIcon | DataIcon;
+
 /**
  * Base interface for metadata with name (identifier) and title (display name) properties.
  *
@@ -306,10 +334,27 @@ export interface BaseMetadata {
    * if present).
    */
   title?: string;
+
+  /**
+   * An optional URL of the website for this implementation.
+   *
+   * @format: uri
+   */
+  websiteUrl?: string;
+
+  /**
+   * An optional list of icons for this implementation.
+   * This can be used by clients to display the implementation in a user interface.
+   * Each icon should have a `kind` property that specifies whether it is a data representation or a URL source, a `src` property that points to the icon file or data representation, and may also include a `mimeType` and `sizes` property.
+   * The `mimeType` property should be a valid MIME type for the icon file, such as "image/png" or "image/svg+xml".
+   * The `sizes` property should be a string that specifies one or more sizes at which the icon file can be used, such as "48x48" or "any" for scalable formats like SVG.
+   * The `sizes` property is optional, and if not provided, the client should assume that the icon can be used at any size.
+   */
+  icons?: Icon[];
 }
 
 /**
- * Describes the name and version of an MCP implementation, with an optional title for UI representation.
+ * Describes the MCP implementation
  */
 export interface Implementation extends BaseMetadata {
   version: string;
