@@ -1,0 +1,33 @@
+{
+    "sdk_platform": "python",
+    "sdk_version": "1.0.0",
+    "mcp_spec_support": {
+      "2025-03-26": {
+        "transport": {
+          "stdio": true,
+          "streamable_http": true
+        },
+        "client": {
+          "roots": true,
+          "sampling": true
+        },
+        "server": {
+          "prompts": true,
+          "resources": true,
+          "tools": true
+        },
+        "utilities": {
+          "cancellation": true,
+          "ping": true,
+          "completion": false,
+          "logging": false,
+          "pagination": false,
+          "progress": false
+        },
+        "authorization": {
+          "oauth_client_auth": false
+        }
+      }
+    },
+    "last_updated": "2025-04-30"
+  }
