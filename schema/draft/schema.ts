@@ -235,6 +235,10 @@ export interface ClientCapabilities {
    * Present if the client supports elicitation from the server.
    */
   elicitation?: object;
+  /**
+   * Present if the client supports authentication requests from servers.
+   */
+  authentication?: object;
 }
 
 /**
@@ -284,6 +288,10 @@ export interface ServerCapabilities {
      */
     listChanged?: boolean;
   };
+  /**
+   * Present if the server may request authentication from clients.
+   */
+  authentication?: object;
 }
 
 /**
@@ -1471,6 +1479,42 @@ export interface ElicitResult extends Result {
   content?: { [key: string]: string | number | boolean };
 }
 
+/**
+ * Request OAuth authentication from the client for accessing upstream resources.
+ * 
+ * @category authentication/create
+ */
+export interface AuthenticationCreateRequest extends Request {
+  method: "authentication/create";
+  params: {
+    /**
+     * The complete OAuth authorization URL to open.
+     * This URL contains all necessary OAuth parameters including
+     * client_id, redirect_uri, scope, state, code_challenge, etc.
+     */
+    url: string;
+    
+    /**
+     * Human-readable message explaining why authentication is needed.
+     */
+    message: string;
+  };
+}
+
+/**
+ * Result of an authentication request.
+ * 
+ * @category authentication/create
+ */
+export interface AuthenticationCreateResult extends Result {
+  /**
+   * The complete callback URL from the OAuth provider.
+   * Only present if the user completed authentication.
+   * Contains the authorization code and state parameters.
+   */
+  url?: string;
+}
+
 /* Client messages */
 /** @internal */
 export type ClientRequest =
@@ -1500,7 +1544,8 @@ export type ClientResult =
   | EmptyResult
   | CreateMessageResult
   | ListRootsResult
-  | ElicitResult;
+  | ElicitResult
+  | AuthenticationCreateResult;
 
 /* Server messages */
 /** @internal */
@@ -1508,7 +1553,8 @@ export type ServerRequest =
   | PingRequest
   | CreateMessageRequest
   | ListRootsRequest
-  | ElicitRequest;
+  | ElicitRequest
+  | AuthenticationCreateRequest;
 
 /** @internal */
 export type ServerNotification =

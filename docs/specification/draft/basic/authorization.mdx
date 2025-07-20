@@ -400,3 +400,14 @@ MCP clients **MUST** implement and use the `resource` parameter as defined in [R
 to explicitly specify the target resource for which the token is being requested. This requirement aligns with the recommendation in
 [RFC 9728 Section 7.4](https://datatracker.ietf.org/doc/html/rfc9728#section-7.4). This ensures that access tokens are bound to their intended resources and
 cannot be misused across different services.
+
+## Server-Initiated Authentication
+
+MCP servers may need to access authenticated upstream resources on behalf of users. For these scenarios, MCP provides the [authentication primitive](/specification/draft/client/authentication) which allows servers to request OAuth authentication from clients.
+
+This complements the authorization flow described in this document:
+
+- **Authorization** (this document): How MCP clients authenticate TO MCP servers
+- **Authentication** ([/client/authentication](/specification/draft/client/authentication)): How MCP servers request authentication FROM MCP clients for upstream resources
+
+Both specifications follow OAuth 2.1 best practices and work together to enable secure authentication flows in both directions.
