@@ -264,6 +264,7 @@
             "group": "Learn",
             "pages": [
               "docs/learn/architecture",
+              "specification/versioning",
               "docs/learn/server-concepts",
               "docs/learn/client-concepts"
             ]
@@ -299,14 +300,6 @@
               "docs/how-to-guides/deployment",
               "docs/how-to-guides/authentication"
             ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "docs/reference/roadmap",
-              "docs/reference/versioning",
-              "docs/reference/types"
-            ]
           }
         ]
       },
@@ -314,6 +307,7 @@
         "tab": "Community",
         "pages": [
           "community/contributing",
+          "development/roadmap",
           "community/discord",
           "community/faqs"
         ]
