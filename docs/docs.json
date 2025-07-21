@@ -275,15 +275,16 @@
               {
                 "group": "Using MCP",
                 "pages": [
-                  "docs/tutorials/use-mcp",
-                  "docs/tutorials/inspector"
+                  "docs/tutorials/use-local-mcp-server",
+                  "docs/tutorials/use-remote-mcp-server"
                 ]
               },
               {
                 "group": "Server Development",
                 "pages": [
                   "docs/tutorials/create-a-server",
-                  "docs/tutorials/create-a-server-with-llms"
+                  "docs/tutorials/create-a-server-with-llms",
+                  "docs/tutorials/inspector"
                 ]
               },
               {
