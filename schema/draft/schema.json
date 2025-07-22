@@ -575,6 +575,13 @@
                             "description": "Human-readable message explaining why authorization is needed.",
                             "type": "string"
                         },
+                        "redirect_uri_options": {
+                            "description": "Optional: Alternative redirect URI templates the server supports.\nClients SHOULD select the first option they can handle.\nTemplates may include placeholders like {port} or {session}.\n\nExamples:\n- \"http://127.0.0.1:{port}/callback\" (desktop clients)\n- \"https://callback.example.com/{session}\" (web clients)\n- \"com.example.app://oauth/callback\" (mobile clients)",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
                         "url": {
                             "description": "The complete OAuth authorization URL to open.\nThis URL contains all necessary OAuth parameters including\nclient_id, redirect_uri, scope, state, code_challenge, etc.",
                             "type": "string"

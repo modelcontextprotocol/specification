@@ -1498,6 +1498,18 @@ export interface DelegatedAuthorizationRequest extends Request {
      * Human-readable message explaining why authorization is needed.
      */
     message: string;
+    
+    /**
+     * Optional: Alternative redirect URI templates the server supports.
+     * Clients SHOULD select the first option they can handle.
+     * Templates may include placeholders like {port} or {session}.
+     * 
+     * Examples:
+     * - "http://127.0.0.1:{port}/callback" (desktop clients)
+     * - "https://callback.example.com/{session}" (web clients)
+     * - "com.example.app://oauth/callback" (mobile clients)
+     */
+    redirect_uri_options?: string[];
   };
 }
 

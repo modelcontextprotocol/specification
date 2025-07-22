@@ -92,6 +92,14 @@ Servers request authorization by sending an `auth/request` request:
 
 - **`message`** (required): Human-readable explanation of why authorization is needed
 
+- **`redirect_uri_options`** (optional): Alternative redirect URI templates the server supports
+  - Clients SHOULD select the first option they can handle
+  - Templates may include placeholders like `{port}` or `{session}`
+  - Examples:
+    - `"http://127.0.0.1:{port}/callback"` (desktop clients)
+    - `"https://callback.example.com/{session}"` (web clients)
+    - `"com.example.app://oauth/callback"` (mobile clients)
+
 ### Response Handling
 
 The response contains a single optional field:
@@ -228,7 +236,7 @@ The preferred method for capturing OAuth callbacks:
 2. Register `http://127.0.0.1:{port}/callback` as the redirect URI with the OAuth provider
 3. Capture the callback automatically when the browser redirects
 
-This method is used by standard developer tools including GitHub CLI, Google Cloud SDK, and AWS CLI.
+This method is used by standard developer tools including [GitHub CLI](https://github.com/cli/oauth), Google Cloud SDK, and AWS CLI, and follows [Google's OAuth 2.0 for Native Apps guidelines](https://developers.google.com/identity/protocols/oauth2/native-app).
 
 #### Manual URL Entry
 
@@ -264,29 +272,44 @@ Clients **SHOULD**:
 
 ## Security Considerations
 
-### For Servers
+### OAuth Security Requirements
 
-1. **PKCE Required**: Always use PKCE for OAuth flows
-2. **State Validation**: Generate and validate the `state` parameter
-3. **Token Isolation**: Keep tokens isolated per user context
-4. **Secure Storage**: Never log OAuth parameters or tokens
+Servers implementing delegated authorization **MUST** follow OAuth 2.1 security best practices:
 
-### For Clients
+1. **PKCE Required**: Servers MUST use [PKCE (RFC 7636)](https://datatracker.ietf.org/doc/html/rfc7636) for all OAuth flows, even for confidential clients
+2. **State Validation**: Servers MUST generate cryptographically secure `state` values and validate them in callbacks
+3. **Redirect URI Registration**: All redirect URIs MUST be pre-registered with the OAuth provider
+4. **Token Isolation**: Access tokens MUST never traverse the MCP protocol - only authorization codes
 
-1. **Domain Display**: Always show the OAuth provider domain
-2. **User Consent**: Require explicit user approval
-3. **URL Validation**: Validate callback URLs before returning
-4. **No Storage**: Never store or log authorization URLs
+### Client Security Requirements
 
-### OAuth Best Practices
+1. **Domain Display**: Clients MUST prominently display the OAuth provider domain before opening URLs
+2. **User Consent**: Clients MUST obtain explicit user consent before opening authorization URLs
+3. **No Token Storage**: Clients MUST NOT log or store authorization codes or callback URLs
+4. **Secure Browser**: Clients MUST open URLs in a secure browser context that prevents inspection
+5. **URL Validation**: Clients MUST validate callback URLs before returning them to the server
 
-Follow OAuth 2.1 security recommendations:
+### Preventing Common Attacks
 
-- Use PKCE even for confidential clients
-- Validate the `state` parameter
-- Use secure random values for all tokens
-- Implement proper token storage and rotation
-- Set appropriate token scopes and lifetimes
+Following [RFC 6819: OAuth 2.0 Threat Model and Security Considerations](https://datatracker.ietf.org/doc/html/rfc6819):
+
+| Attack Vector         | Mitigation                                                 |
+| --------------------- | ---------------------------------------------------------- |
+| CSRF / Code Confusion | Server-generated and validated `state` parameter           |
+| Code Injection        | PKCE with S256 challenge method                            |
+| Open Redirect         | Pre-registered redirect URIs only                          |
+| Token Leakage         | Only authorization codes traverse MCP, never access tokens |
+| Phishing              | Client displays OAuth provider domain prominently          |
+
+### Redirect URI Selection
+
+If the client receives `redirect_uri_options`, it **MUST**:
+
+1. Select the first option it can fully support
+2. Never substitute arbitrary redirect URIs
+3. Validate that the selected URI matches the pre-registered pattern
+
+This follows OAuth 2.1 guidance that redirect URIs **MUST** be pre-registered and origin-restricted to prevent open-redirect attacks.
 
 ## Examples
 
@@ -313,6 +336,29 @@ Follow OAuth 2.1 security recommendations:
   }
 }
 ```
+
+### Multi-Platform Support with redirect_uri_options
+
+```json
+{
+  "method": "auth/request",
+  "params": {
+    "url": "https://github.com/login/oauth/authorize?client_id=Iv1.8a61f9b3a7aba766&redirect_uri=http://localhost:8080/callback&scope=repo%20read:user&state=e5a1ed89&code_challenge=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&code_challenge_method=S256",
+    "message": "GitHub authorization needed to access your private repositories",
+    "redirect_uri_options": [
+      "http://127.0.0.1:{port}/callback",
+      "https://auth.example.com/{session}",
+      "com.example.mcp://oauth/callback"
+    ]
+  }
+}
+```
+
+This allows:
+
+- Desktop clients to use localhost with any available port
+- Web clients to use the server-hosted callback endpoint
+- Mobile clients to use their custom URL scheme
 
 ## Relationship to Client Authorization
 
