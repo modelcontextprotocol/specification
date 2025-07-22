@@ -1,13 +1,15 @@
 +++
 date = '2025-07-22T10:00:00Z'
 draft = true
-title = 'OAuth Client Registration in MCP'
+title = 'Evolving OAuth Client Registration in the Model Context Protocol'
 author = 'Paul Carleton (Core Maintainer)'
 tags = ['security', 'authorization', 'announcement]
 +++
 
 
-To restrict access to sensitive resources, MCP needs a mechanism for enforcing authorization. The goal of a standard like MCP is to maximize compatibility between clients and servers developed independently. If a client has developed against the MCP specification, it should be compatible with any server that developed against the specification. For this reason, MCP has adopted OAuth 2.1 as the basis for its authorization functionality.
+The Model Context Protocol (MCP) has adopted OAuth 2.1 as the basis for its authorization framework.  A key part of this flow is client registration.  In this post, I'll explore how we're looking to evolve client registration to address pain points for server implementers while providing better protections for users.
+
+If you're familiar with OAuth and the current state of client registration in MCP, skip to "the options forward" section.
 
 ## Background on OAuth
 
