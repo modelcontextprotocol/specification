@@ -23,6 +23,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Augment Code][AugmentCode]                      | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools in local and remote agents.                                                      |
 | [BeeAI Framework][BeeAI Framework]               | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools in agentic workflows.                                                            |
 | [BoltAI][BoltAI]                                 | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
+| [ChatGPT][ChatGPT]                               | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [ChatWise][ChatWise]                             | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [Claude.ai][Claude.ai]                           | ✅          | ✅        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools, prompts, and resources for remote MCP servers.                                  |
 | [Claude Code][Claude Code]                       | ✅          | ✅        | ✅      | ❌                     | ❌         | ✅    | ❓            | Supports resources, prompts, tools, and roots                                                   |
@@ -43,7 +44,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Gemini CLI][Gemini CLI]                         | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [GenAIScript][GenAIScript]                       | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [GitHub Copilot coding agent][GitHubCopilotCodingAgent]                       | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❌            | Supports tools.                                                                                 |
-| [Goose][Goose]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
+| [Goose][Goose]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports resources, prompts, and tools.                                                                                 |
 | [gptme][gptme]                                   | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [HyperAgent][HyperAgent]                         | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [JetBrains AI Assistant][JetBrains AI Assistant] | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools for all JetBrains IDEs.                                                          |
@@ -55,6 +56,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [mcp-agent][mcp-agent]                           | ✅          | ✅        | ✅      | ❓                     | ⚠️         | ✅    | ✅            | Supports tools, prompts, resources, roots, server connection management, and agent workflows.   |
 | [mcp-client-chatbot][mcp-client-chatbot]         | ❌          | ❌        | ✅      | ❌                     | ❌         | ❌    | ❓            | Supports tools.                                                                                 |
 | [mcp-use][mcp-use]                               | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | ❓            | Support tools, resources, stdio & http connection, local llms-agents.                           |
+| [modelcontextchat.com][modelcontextchat.com]     | ❌          | ❌        | ✅      | ❓                     | ❌         | ❌    | ❓            | Web-based MCP client for remote servers with header Authorization, OAuth, and OpenRouter support.|
 | [MCPHub][MCPHub]                                 | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | ❓            | Supports tools, resources, and prompts in Neovim                                                |
 | [MCPOmni-Connect][MCPOmni-Connect]               | ✅          | ✅        | ✅      | ❓                     | ✅         | ❌    | ❓            | Supports tools with agentic mode, ReAct, and orchestrator capabilities.                         |
 | [Memex][Memex]                                   | ✅          | ✅        | ✅      | ❓                     | ❌         | ❌    | ❓            | Support tools. Also support *building and testing* MCP server, all-in-one desktop app.          |
@@ -109,6 +111,7 @@ This page provides an overview of applications that support the Model Context Pr
 [AugmentCode]: https://augmentcode.com
 [BeeAI Framework]: https://i-am-bee.github.io/beeai-framework
 [BoltAI]: https://boltai.com
+[ChatGPT]: https://chatgpt.com
 [ChatWise]: https://chatwise.app
 [Claude.ai]: https://claude.ai
 [Claude Code]: https://claude.ai/code
@@ -139,6 +142,7 @@ This page provides an overview of applications that support the Model Context Pr
 [mcp-agent]: https://github.com/lastmile-ai/mcp-agent
 [mcp-client-chatbot]: https://github.com/cgoinglove/mcp-client-chatbot
 [mcp-use]: https://github.com/pietrozullo/mcp-use
+[modelcontextchat.com]: https://modelcontextchat.com
 [MCPHub]: https://github.com/ravitemer/mcphub.nvim
 [MCPOmni-Connect]: https://github.com/Abiorh001/mcp_omni_connect
 [Memex]: https://memex.tech/
@@ -313,6 +317,16 @@ It uses plain JavaScript (old-school style) and is hosted on Apify, allowing you
 
 - [BoltAI docs](https://boltai.com/docs/plugins/mcp-servers)
 - [BoltAI website](https://boltai.com)
+
+### ChatGPT
+
+ChatGPT is OpenAI's AI assistant that provides MCP support for remote servers to conduct deep research.
+
+**Key features:**
+
+- Support for MCP via connections UI in settings
+- Access to search tools from configured MCP servers for deep research
+- Enterprise-grade security and compliance features
 
 ### ChatWise
 
@@ -670,6 +684,18 @@ Delegate tasks to [GitHub Copilot coding agent](https://docs.github.com/en/copil
 - Supports connection to multiple MCP servers simultaneously.
 - Supports all langchain supported models, also locally.
 - Offers efficient tool orchestration and search functionalities.
+
+### modelcontextchat.com
+
+[modelcontextchat.com](https://modelcontextchat.com) is a web-based MCP client designed for working with remote MCP servers, featuring comprehensive authentication support and integration with OpenRouter.
+
+**Key features:**
+
+- Web-based interface for remote MCP server connections
+- Header-based Authorization support for secure server access
+- OAuth authentication integration
+- OpenRouter API Key support for accessing various LLM providers
+- No installation required - accessible from any web browser
 
 ### MCPHub
 
