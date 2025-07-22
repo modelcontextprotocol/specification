@@ -28,11 +28,6 @@
   text-align: left;
 }
 
-/* Wrap text in Notes column */
-#feature-support-matrix-wrapper td:last-child {
-  text-align: left;
-  white-space: normal;
-}
 
 
 /*** Add automatic section numbers to headings and table of contents items ***/
