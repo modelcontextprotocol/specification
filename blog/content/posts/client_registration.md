@@ -144,7 +144,7 @@ This is discussed more in this SEP: (TODO: link to SEP).
 | **Pre-registration (by developer)** | ❌ Must coordinate with each server | ✅ None - just connects | ✅ Full trust via manual verification | ✅ Yes | ✅ Full control | ✅ Simple, bounded |
 | **Pre-registration (by user)** | ✅ None | ❌ Must register & manage credentials | ✅ User explicitly registers | ❌ Each user gets own ID | ✅ Full control | ⚠️ Grows with users |
 | **Basic DCR** | ✅ None | ✅ None | ❌ Must trust self-asserted data | ❌ New ID per user/session | ⚠️ Limited (blocklists) | ❌ Unbounded growth or complex expiry |
-| **DCR + Software Statements** | ⚠️ Must host JWKS & sign statements | ✅ None | ✅ Trust via domain/signature | ✅ Yes (via key identity) | ✅ Via trusted domains | ⚠️ Better but still needs storage |
+| **DCR + Software Statements** | ⚠️ Must host JWKS & sign statements | ✅ None | ✅ Trust via domain/signature | ✅ Possible (via key identity) | ✅ Via trusted domains | ⚠️ Better but still needs storage |
 | **Client ID Metadata** | ⚠️ Must host metadata document | ✅ None | ✅ Trust via domain | ✅ Yes (URL is ID) | ✅ Via domains | ✅ No storage needed* |
 
 \* Servers may choose to cache for performance but aren't required to maintain a registration database
