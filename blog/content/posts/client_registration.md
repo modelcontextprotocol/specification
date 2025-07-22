@@ -163,5 +163,3 @@ Some notes worth knowing regardless of the SEP discussions above:
 * It's **very unlikely** we'll remove DCR from the spec (e.g. in favor of Client ID Metadata Documents), as DCR already has adoption and removing it would cause a lot of churn.
 * These proposals are not mutually exclusive, as we could keep DCR and recommend software statements while also adding support for client ID metadata documents.
 * Both of these proposals require the Authorization server to open up potentially unbounded egress, so establishing patterns for doing this safely (e.g. avoiding internal network scans, SSRF, reflection attacks) will be important
-
-Thanks for reading, and let us know what your thoughts are on this in the comments.
