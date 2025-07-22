@@ -103,6 +103,24 @@ Another promising solution to this problem is called "Client ID Metadata Documen
 
 In this approach, we skip the registration step altogether, and provide an https metadata URL as the client ID directly.  The server then fetches the metadata from the URL and uses it as the client's metadata. 
 
+```mermaid
+sequenceDiagram
+   participant Client
+   participant User
+   participant AuthServer
+   participant MetadataURL
+
+   Client->>User: Start OAuth flow
+   User->>AuthServer: Authorization request<br/>(client_id=https://app.com/oauth.json)
+   AuthServer->>MetadataURL: GET https://app.com/oauth.json
+   MetadataURL-->>AuthServer: {name: "App", redirect_uris: [...]}
+   AuthServer->>User: Show consent screen<br/>("App wants access...")
+   User->>AuthServer: Approve
+   AuthServer-->>Client: Authorization code
+   Client->>AuthServer: Exchange code for token<br/>(client_id=https://app.com/oauth.json)
+   AuthServer-->>Client: Access token
+```
+
 Checking against our goals:
 * The servers can trust the client metadata by trusting the domain the metadata is hosted on
 * Servers will have a single client ID per client (the metadata URL)
