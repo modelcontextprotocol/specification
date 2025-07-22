@@ -173,28 +173,23 @@ Local MCP servers should not log messages to stdout (standard out), as this will
 
 For all [transports](/docs/concepts/transports), you can also provide logging to the client by sending a log message notification:
 
-<Tabs>
-  <Tab title="Python">
+<CodeGroup>
 
-    ```python
-    server.request_context.session.send_log_message(
-      level="info",
-      data="Server started successfully",
-    )
-    ```
+```python Python
+server.request_context.session.send_log_message(
+  level="info",
+  data="Server started successfully",
+)
+```
 
-  </Tab>
-  <Tab title="TypeScript">
+```typescript TypeScript
+server.sendLoggingMessage({
+  level: "info",
+  data: "Server started successfully",
+});
+```
 
-    ```typescript
-    server.sendLoggingMessage({
-      level: "info",
-      data: "Server started successfully",
-    });
-    ```
-
-  </Tab>
-</Tabs>
+</CodeGroup>
 
 Important events to log:
 
