@@ -401,13 +401,13 @@ to explicitly specify the target resource for which the token is being requested
 [RFC 9728 Section 7.4](https://datatracker.ietf.org/doc/html/rfc9728#section-7.4). This ensures that access tokens are bound to their intended resources and
 cannot be misused across different services.
 
-## Server-Initiated Authentication
+## Delegated Authorization
 
-MCP servers may need to access authenticated upstream resources on behalf of users. For these scenarios, MCP provides the [authentication primitive](/specification/draft/client/authentication) which allows servers to request OAuth authentication from clients.
+MCP servers may need to access authenticated upstream resources on behalf of users. For these scenarios, MCP provides the [delegated authorization primitive](/specification/draft/client/delegated_authorization) which allows servers to request OAuth authorization from clients.
 
 This complements the authorization flow described in this document:
 
-- **Authorization** (this document): How MCP clients authenticate TO MCP servers
-- **Authentication** ([/client/authentication](/specification/draft/client/authentication)): How MCP servers request authentication FROM MCP clients for upstream resources
+- **Client Authorization** (this document): How MCP clients obtain authorization to access MCP servers
+- **Delegated Authorization** ([/client/delegated_authorization](/specification/draft/client/delegated_authorization)): How MCP servers request authorization FROM MCP clients for upstream resources
 
 Both specifications follow OAuth 2.1 best practices and work together to enable secure authentication flows in both directions.

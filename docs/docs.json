@@ -459,7 +459,8 @@
                 "pages": [
                   "specification/draft/client/roots",
                   "specification/draft/client/sampling",
-                  "specification/draft/client/elicitation"
+                  "specification/draft/client/elicitation",
+                  "specification/draft/client/delegated_authorization"
                 ]
               },
               {

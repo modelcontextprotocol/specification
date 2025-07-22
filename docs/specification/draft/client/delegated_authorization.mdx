@@ -1,5 +1,5 @@
 ---
-title: Authentication
+title: Delegated Authorization
 ---
 
 <div id="enable-section-numbers" />
@@ -8,48 +8,40 @@ title: Authentication
 
 <Note>
 
-Authentication is newly introduced in this version of the MCP specification and its design may evolve in future protocol versions.
+Delegated authorization is newly introduced in this version of the MCP specification and its design may evolve in future protocol versions.
 
 </Note>
 
-The Model Context Protocol (MCP) provides a standardized way for servers to request OAuth authentication from clients when accessing upstream resources. This feature enables servers that act as both MCP servers and clients (dual-role components) to obtain necessary tokens for upstream APIs through the user's MCP client interface.
+The Model Context Protocol (MCP) provides a standardized way for servers to request OAuth authorization from clients in order to access upstream resources.
+This feature enables servers to obtain necessary access tokens for upstream APIs through the user's MCP client.
 
 ## Overview
 
-The authentication primitive allows MCP servers to:
-- Request OAuth authentication for upstream resources
+The delegated authorization primitive allows MCP servers to:
+
+- Request OAuth authorization for upstream resources
 - Receive authorization codes through the client's UI
 - Maintain security boundaries between different services
 
-This is distinct from the [authorization flow](/specification/draft/basic/authorization) where clients authenticate to servers. Here, servers request authentication help from clients.
+This is distinct from the [authorization flow](/specification/draft/basic/authorization) where clients obtain authorization to access servers. Here, servers request authorization assistance from clients to access upstream resources.
 
 ## Capabilities
 
-Clients that support authentication requests **MUST** declare the `authentication` capability during [initialization](/specification/draft/basic/lifecycle#initialization):
+Clients that support delegated authorization requests **MUST** declare the `delegated_authorization` capability during [initialization](/specification/draft/basic/lifecycle#initialization):
 
 ```json
 {
   "capabilities": {
-    "authentication": {}
-  }
-}
-```
-
-Servers that may request authentication **MUST** declare this in their capabilities:
-
-```json
-{
-  "capabilities": {
-    "authentication": {}
+    "delegated_authorization": {}
   }
 }
 ```
 
 ## Protocol Messages
 
-### Authentication Request
+### Authorization Request
 
-Servers request authentication by sending an `authentication/create` request:
+Servers request authorization by sending an `auth/request` request:
 
 **Request:**
 
@@ -57,10 +49,10 @@ Servers request authentication by sending an `authentication/create` request:
 {
   "jsonrpc": "2.0",
   "id": 1,
-  "method": "authentication/create",
+  "method": "auth/request",
   "params": {
     "url": "https://github.com/login/oauth/authorize?client_id=abc123&redirect_uri=http://localhost:8080/callback&scope=repo%20read:user&state=xyz789&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256",
-    "message": "GitHub authentication required to access private repositories"
+    "message": "GitHub authorization required to access private repositories"
   }
 }
 ```
@@ -90,6 +82,7 @@ Servers request authentication by sending an `authentication/create` request:
 ### Request Parameters
 
 - **`url`** (required): The complete OAuth authorization URL containing all necessary parameters:
+
   - `client_id`: OAuth application identifier
   - `redirect_uri`: Callback URL for the OAuth flow
   - `scope`: Requested permissions
@@ -97,20 +90,41 @@ Servers request authentication by sending an `authentication/create` request:
   - `code_challenge`: PKCE challenge for security
   - `code_challenge_method`: PKCE method (typically "S256")
 
-- **`message`** (required): Human-readable explanation of why authentication is needed
+- **`message`** (required): Human-readable explanation of why authorization is needed
 
 ### Response Handling
 
 The response contains a single optional field:
 
-- **`url`**: The OAuth callback URL if authentication succeeded
+- **`url`**: The OAuth callback URL if auth succeeded
   - Contains `code` parameter with the authorization code
   - Contains `state` parameter for CSRF validation
   - May contain `error` and `error_description` for OAuth errors
 
-If `url` is omitted, the user declined or cancelled authentication.
+If `url` is omitted, the user declined or cancelled authorization.
 
 ## Message Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Client as MCP Client
+    participant Server as MCP Server
+    participant OAuth as OAuth Provider
+
+    Note over Server: Server initiates delegated authorization
+    Server->>Client: auth/request<br/>{url: "oauth_url", message: "authorize upstream resource"}
+    Client->>User: Show authorization prompt
+    User->>Client: Approves
+    Client->>User: Open OAuth URL
+    User->>OAuth: Complete OAuth flow
+    OAuth->>User: Redirect with code
+    User->>Client: Callback URL
+    Client-->>Server: {url: "callback_url"}
+    Note over Server: Exchange code for token
+```
+
+### Complete Flow
 
 ```mermaid
 sequenceDiagram
@@ -124,30 +138,30 @@ sequenceDiagram
     Client->>Server: MCP request
     Server->>Upstream: Attempt API call
     Upstream-->>Server: 401 Unauthorized
-    
+
     Note over Server: Prepare OAuth URL with PKCE
-    Server->>Client: authentication/create
-    
+    Server->>Client: auth/request
+
     Note over Server: Request blocks here
-    
-    Client->>User: Show authentication prompt
-    User->>Client: Approves authentication
+
+    Client->>User: Show authorization prompt
+    User->>Client: Approves authorization
     Client->>User: Open OAuth URL in browser
     User->>OAuth: Complete OAuth flow
     OAuth->>User: Redirect to callback URL
-    
+
     alt Manual callback
         User->>Client: Paste callback URL
     else Automatic capture
         Client->>Client: Capture from local server
     end
-    
+
     Client-->>Server: Return callback URL
-    
+
     Note over Server: Validate state, exchange code
     Server->>OAuth: Exchange code for token
     OAuth-->>Server: Access token
-    
+
     Server->>Upstream: API call with token
     Upstream-->>Server: Success
     Server-->>Client: Original request result
@@ -158,111 +172,94 @@ sequenceDiagram
 Servers **MUST** handle OAuth parameters according to OAuth 2.1:
 
 ### Success Response
+
 ```
 http://localhost:8080/callback?code=abc123def456&state=xyz789
 ```
 
 The server should:
+
 1. Validate the `state` parameter matches the original request
 2. Extract the `code` parameter
 3. Exchange the code for an access token
 
 ### Error Response
+
 ```
 http://localhost:8080/callback?error=access_denied&error_description=User+denied+access&state=xyz789
 ```
 
 OAuth defines standard error codes:
+
 - `access_denied`: User denied authorization
 - `invalid_scope`: Requested scope is invalid
 - `server_error`: Authorization server error
 - `temporarily_unavailable`: Server is temporarily unavailable
 
-## Integration with Long-Running Operations
-
-When authentication is needed during a long-running operation:
-
-1. The operation pauses with a progress notification
-2. The server requests authentication
-3. After authentication, the operation resumes
-
-```json
-// Operation pauses
-{
-  "method": "notifications/progress",
-  "params": {
-    "progressToken": "op-123",
-    "progress": 50,
-    "total": 100,
-    "status": "paused",
-    "_meta": {
-      "reason": "authentication_required"
-    }
-  }
-}
-
-// Authentication request
-{
-  "method": "authentication/create",
-  "params": {
-    "url": "https://api.example.com/oauth/authorize?...",
-    "message": "Authentication required to continue operation"
-  }
-}
-
-// Operation resumes after authentication
-{
-  "method": "notifications/progress",
-  "params": {
-    "progressToken": "op-123",
-    "progress": 50,
-    "total": 100,
-    "status": "running",
-    "message": "Resumed after authentication"
-  }
-}
-```
-
 ## Client Implementation Guidelines
 
 ### User Interface
 
-Clients **SHOULD** present authentication requests with:
+Clients **SHOULD** present authorization requests with:
 
 1. Clear indication of the requesting server
 2. The OAuth provider domain (extracted from the URL)
-3. The message explaining why authentication is needed
+3. The message explaining why authorization is needed
 4. Options to approve or decline
 
 Example UI elements:
+
 - Show the OAuth provider's domain prominently
-- Display a lock icon to indicate secure authentication
-- Provide clear "Authenticate" and "Cancel" buttons
+- Display a lock icon to indicate secure authorization
+- Provide clear "Authorize" and "Cancel" buttons
 - Show instructions for manual callback URL entry if needed
 
-### Callback Handling
+### OAuth Callback Capture
 
-Clients may support two callback methods:
+Clients **MUST** implement OAuth callback capture following [RFC 8252](https://datatracker.ietf.org/doc/html/rfc8252) (OAuth 2.0 for Native Apps).
 
-1. **Automatic capture**: Start a local HTTP server to capture the callback
-2. **Manual entry**: Provide a text field for users to paste the callback URL
+Clients **SHOULD** support at least one of the following methods:
 
-For automatic capture:
-- Start a local server on the `redirect_uri` port
-- Automatically close the browser tab after capture
-- Return the complete callback URL to the server
+#### Loopback Interface Redirect
 
-For manual entry:
-- Provide clear instructions
-- Validate the URL format
+The preferred method for capturing OAuth callbacks:
+
+1. Start a temporary HTTP server on `127.0.0.1` with an ephemeral port
+2. Register `http://127.0.0.1:{port}/callback` as the redirect URI with the OAuth provider
+3. Capture the callback automatically when the browser redirects
+
+This method is used by standard developer tools including GitHub CLI, Google Cloud SDK, and AWS CLI.
+
+#### Manual URL Entry
+
+For environments where local servers are not feasible:
+
+1. Display clear instructions to the user
+2. Provide an input field for the callback URL
+3. Validate the URL contains required OAuth parameters
+
+### Callback Validation
+
+When processing OAuth callbacks, clients **MUST**:
+
+- Validate the callback URL format
 - Check for required parameters (`code` or `error`)
+- Return the complete callback URL to the server
+- Clear any temporary state after capture
+
+For automatic capture, clients **SHOULD**:
+
+- Use the port specified in the `redirect_uri`
+- Automatically close the browser tab after successful capture
+- Handle both successful and error callbacks
 
 ### Error Handling
 
 Clients **SHOULD**:
+
 - Set reasonable timeouts (recommended: 10 minutes)
 - Allow users to cancel at any time
-- Clear any authentication UI state on completion
+- Clear any authorization UI state on completion
 - Never log or store callback URLs
 
 ## Security Considerations
@@ -279,11 +276,12 @@ Clients **SHOULD**:
 1. **Domain Display**: Always show the OAuth provider domain
 2. **User Consent**: Require explicit user approval
 3. **URL Validation**: Validate callback URLs before returning
-4. **No Storage**: Never store or log authentication URLs
+4. **No Storage**: Never store or log authorization URLs
 
 ### OAuth Best Practices
 
 Follow OAuth 2.1 security recommendations:
+
 - Use PKCE even for confidential clients
 - Validate the `state` parameter
 - Use secure random values for all tokens
@@ -292,14 +290,14 @@ Follow OAuth 2.1 security recommendations:
 
 ## Examples
 
-### GitHub Authentication
+### GitHub Authorization
 
 ```json
 {
-  "method": "authentication/create",
+  "method": "auth/request",
   "params": {
     "url": "https://github.com/login/oauth/authorize?client_id=Iv1.8a61f9b3a7aba766&redirect_uri=http://localhost:3000/callback&scope=repo%20read:user&state=e5a1ed89&code_challenge=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&code_challenge_method=S256",
-    "message": "GitHub authentication needed to access your private repositories"
+    "message": "GitHub authorization needed to access your private repositories"
   }
 }
 ```
@@ -308,7 +306,7 @@ Follow OAuth 2.1 security recommendations:
 
 ```json
 {
-  "method": "authentication/create",
+  "method": "auth/request",
   "params": {
     "url": "https://accounts.google.com/o/oauth2/v2/auth?client_id=123456.apps.googleusercontent.com&redirect_uri=http://localhost:8080/callback&response_type=code&scope=https://www.googleapis.com/auth/drive.readonly&state=abc123&code_challenge=E9Melhoa&code_challenge_method=S256",
     "message": "Google Drive access required to read shared documents"
@@ -316,11 +314,9 @@ Follow OAuth 2.1 security recommendations:
 }
 ```
 
-## Relationship to Authorization
+## Relationship to Client Authorization
 
-This authentication primitive complements the existing [authorization specification](/specification/draft/basic/authorization):
+This delegated authorization primitive complements the existing [authorization specification](/specification/draft/basic/authorization):
 
-- **Authorization**: How clients authenticate TO servers
-- **Authentication**: How servers request authentication FROM clients
-
-Both features may be used together in dual-role components that act as both MCP servers and clients.
+- **Client Authorization**: How clients obtain authorization to access servers
+- **Delegated Authorization**: How servers request authorization FROM clients for upstream resources

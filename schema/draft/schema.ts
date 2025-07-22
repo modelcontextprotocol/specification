@@ -236,9 +236,9 @@ export interface ClientCapabilities {
    */
   elicitation?: object;
   /**
-   * Present if the client supports authentication requests from servers.
+   * Present if the client supports delegated authorization requests from servers.
    */
-  authentication?: object;
+  delegated_authorization?: object;
 }
 
 /**
@@ -289,9 +289,9 @@ export interface ServerCapabilities {
     listChanged?: boolean;
   };
   /**
-   * Present if the server may request authentication from clients.
+   * Present if the server may request delegated authorization from clients.
    */
-  authentication?: object;
+  delegated_authorization?: object;
 }
 
 /**
@@ -1480,12 +1480,12 @@ export interface ElicitResult extends Result {
 }
 
 /**
- * Request OAuth authentication from the client for accessing upstream resources.
+ * Request OAuth authorization from the client for accessing upstream resources.
  * 
- * @category authentication/create
+ * @category auth/request
  */
-export interface AuthenticationCreateRequest extends Request {
-  method: "authentication/create";
+export interface DelegatedAuthorizationRequest extends Request {
+  method: "auth/request";
   params: {
     /**
      * The complete OAuth authorization URL to open.
@@ -1495,21 +1495,21 @@ export interface AuthenticationCreateRequest extends Request {
     url: string;
     
     /**
-     * Human-readable message explaining why authentication is needed.
+     * Human-readable message explaining why authorization is needed.
      */
     message: string;
   };
 }
 
 /**
- * Result of an authentication request.
+ * Result of a delegated authorization request.
  * 
- * @category authentication/create
+ * @category auth/request
  */
-export interface AuthenticationCreateResult extends Result {
+export interface DelegatedAuthorizationResult extends Result {
   /**
    * The complete callback URL from the OAuth provider.
-   * Only present if the user completed authentication.
+   * Only present if the user completed authorization.
    * Contains the authorization code and state parameters.
    */
   url?: string;
@@ -1545,7 +1545,7 @@ export type ClientResult =
   | CreateMessageResult
   | ListRootsResult
   | ElicitResult
-  | AuthenticationCreateResult;
+  | DelegatedAuthorizationResult;
 
 /* Server messages */
 /** @internal */
@@ -1554,7 +1554,7 @@ export type ServerRequest =
   | CreateMessageRequest
   | ListRootsRequest
   | ElicitRequest
-  | AuthenticationCreateRequest;
+  | DelegatedAuthorizationRequest;
 
 /** @internal */
 export type ServerNotification =

@@ -215,6 +215,12 @@
         "ClientCapabilities": {
             "description": "Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.",
             "properties": {
+                "delegated_authorization": {
+                    "additionalProperties": true,
+                    "description": "Present if the client supports delegated authorization requests from servers.",
+                    "properties": {},
+                    "type": "object"
+                },
                 "elicitation": {
                     "additionalProperties": true,
                     "description": "Present if the client supports elicitation from the server.",
@@ -321,6 +327,9 @@
                 },
                 {
                     "$ref": "#/definitions/ElicitResult"
+                },
+                {
+                    "$ref": "#/definitions/DelegatedAuthorizationResult"
                 }
             ]
         },
@@ -552,6 +561,52 @@
         "Cursor": {
             "description": "An opaque token used to represent a cursor for pagination.",
             "type": "string"
+        },
+        "DelegatedAuthorizationRequest": {
+            "description": "Request OAuth authorization from the client for accessing upstream resources.",
+            "properties": {
+                "method": {
+                    "const": "auth/request",
+                    "type": "string"
+                },
+                "params": {
+                    "properties": {
+                        "message": {
+                            "description": "Human-readable message explaining why authorization is needed.",
+                            "type": "string"
+                        },
+                        "url": {
+                            "description": "The complete OAuth authorization URL to open.\nThis URL contains all necessary OAuth parameters including\nclient_id, redirect_uri, scope, state, code_challenge, etc.",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "message",
+                        "url"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "method",
+                "params"
+            ],
+            "type": "object"
+        },
+        "DelegatedAuthorizationResult": {
+            "description": "Result of a delegated authorization request.",
+            "properties": {
+                "_meta": {
+                    "additionalProperties": {},
+                    "description": "See [specification/draft/basic/index#general-fields] for notes on _meta usage.",
+                    "type": "object"
+                },
+                "url": {
+                    "description": "The complete callback URL from the OAuth provider.\nOnly present if the user completed authorization.\nContains the authorization code and state parameters.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
         },
         "ElicitRequest": {
             "description": "A request from the server to elicit additional information from the user via the client.",
@@ -2083,6 +2138,12 @@
                     "properties": {},
                     "type": "object"
                 },
+                "delegated_authorization": {
+                    "additionalProperties": true,
+                    "description": "Present if the server may request delegated authorization from clients.",
+                    "properties": {},
+                    "type": "object"
+                },
                 "experimental": {
                     "additionalProperties": {
                         "additionalProperties": true,
@@ -2173,6 +2234,9 @@
                 },
                 {
                     "$ref": "#/definitions/ElicitRequest"
+                },
+                {
+                    "$ref": "#/definitions/DelegatedAuthorizationRequest"
                 }
             ]
         },
