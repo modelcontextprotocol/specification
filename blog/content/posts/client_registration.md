@@ -13,11 +13,6 @@ If you're familiar with OAuth and the current state of client registration in MC
 
 ## Background on OAuth
 
-In OAuth, there are 3 parties:
-1. User (Resource Owner)
-2. Client
-3. Resource Server
-
 A system implementing OAuth 2.1 should allow the user to grant a client access to a resource, and prevent attempts to trick the user into granting access to a client they didn't intend to (e.g. phishing).
 
 The high level flow for OAuth is:
@@ -31,7 +26,9 @@ As part of this flow, the server needs a few pieces of information about the cli
 1. **Client name**: Human readable text to display in the consent screen to help the user decide whether they want to grant access.
 2. **Redirect URL**: The destination to send the authorization code back to if the user consents.
 
-It's important that the server trust the information that it has about the client in order to prevent a malicious client from tricking a user into consenting access it didn't intend to.  For instance, if a client were able to say it was "Claude Desktop", but had a redirect URL of "attacker.com", a user might mistakenly consent, and grant an attacker access to their resource.
+It's important that the server trust the information that it has about the client in order to prevent a malicious client from tricking a user into consenting access it didn't intend to.  For instance, if a malicious client could claim to be 'Claude Desktop' on the consent screen while actually being 'attacker.com', users might grant access thinking they're authorizing the legitimate Claude application.
+
+(Note: we're specifically calling out redirect URLS)
 
 ## Client Registration: The Story So Far
 
@@ -56,11 +53,12 @@ It does have the nice property that the user almost certainly trusts the client 
 Another option that the MCP specification supports today is Dynamic Client Registration (DCR). In DCR, the Authorization Server provides a `/register` endpoint that the client can use to register "just in time" for the authorization flow.
 
 This takes work off the user, and off the client, but has other tradeoffs the server implementer to consider. A server implementation needs to:
-* handle expiry of these records and graceful handling of when they are expired (challenging without open redirect risks), or it needs to allow for unbounded growth of client records.
+* rate limiting requests to an unauthenticated registration endpoint
+* handle expiry of these records (challenging without open redirect risks), or allow for unbounded growth of client records
 * determine how to trust the metadata the client is providing
   * This could be by limiting redirect URLs (e.g. allowing localhost, but requiring pre-registration or allowlisting of non-localhost) 
   * This could alternatively involve signed software statements if clients implement this. (see [this section](https://www.rfc-editor.org/rfc/rfc7591.html#appendix-A.2) in the DCR spec.)
-* display authorized clients to users in a way that makes sense
+* display a sensible revocation UI for users to review authorized clients
 * find a way to revoke malicious clients without them just immediately re-registering
 
 For these reasons, server implementors often very reasonably ask about best practices for DCR.  However, some of these difficulties are inherent to DCR and not actually that helpful for MCP's use case.  For example, in a common implementation, each user gets their own client ID even if they're using the same client application (e.g. Cursor). That's space and complexity for no benefit.
@@ -74,7 +72,7 @@ Let's recap what we want out of a client registration process, specifically for 
   1. have a way to trust the metadata they associate with a client (e.g. name and redirect URL)
   2. can have a single client ID per client for users to revoke access or the server to revoke access
   3. can selectively allow or deny clients
-  4. do not need to handle an unbounded database or annoying expiration flows
+  4. do not need to handle an unbounded database or expiration flows
 
 There are a few candidates to improve this situation:
 
@@ -128,6 +126,6 @@ Over the next few weeks, we'll be discussing both SEP's in the links above, and 
 Some notes worth knowing regardless of the SEP discussions above:
 * It's **very unlikely** we'll remove DCR from the spec (e.g. in favor of Client ID Metadata Documents), as DCR already has adoption and removing it would cause a lot of churn.
 * These proposals are not mutually exclusive, as we could keep DCR and recommend software statements while also adding support for client ID metadata documents.
-* Both of these proposals require the Authorization server to open up potentially unbounded egress, so establishing patterns for doing this safely (e.g. avoiding internal network scans) will be important
+* Both of these proposals require the Authorization server to open up potentially unbounded egress, so establishing patterns for doing this safely (e.g. avoiding internal network scans, SSRF, reflection attacks) will be important
 
 Thanks for reading, and let us know what your thoughts are on this in the comments.
