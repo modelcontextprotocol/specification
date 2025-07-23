@@ -282,14 +282,14 @@
               {
                 "group": "Server Development",
                 "pages": [
-                  "docs/tutorials/create-a-server",
-                  "docs/tutorials/create-a-server-with-llms",
-                  "docs/tutorials/inspector"
+                  "quickstart/server",
+                  "legacy/tools/inspector"
                 ]
               },
               {
                 "group": "Client Development",
                 "pages": [
+                  "quickstart/client"
                 ]
               }
             ]
