@@ -386,6 +386,10 @@ These fields enable authorization servers to validate and identify the software 
 - **Accountability**: Software statements establish a chain of trust back to the software vendor, supporting effective auditing.
 - **Vendor-level controls**: Authorization servers can restrict registration to trusted software vendors, reducing the risk of unauthorized or malicious clients. It can also be used to enable vendor-specific controls, such as rate limiting or blocking.
 
+To prevent replay attacks, MCP clients **MUST** include the authorization server's issuer URL in the software statement JWT claims. 
+The issuer URL **MUST** match the `issuer` field from the authorization server's metadata. 
+Authorization servers **MUST** verify that the issuer claim in the software statement matches their own issuer URL and **MUST** reject any software statements that do not include a matching issuer claim.
+
 The following sequence shows the Dynamic Client Registration flow when using software statements:
 
 ```mermaid
@@ -395,14 +399,14 @@ sequenceDiagram
     participant A as Authorization Server
 
     Note over C,CB: Software Statement Preparation
-    C->>CB: Request software_statement JWT
-    Note over CB: Generate JWT with claims:<br/>- client metadata<br/>- software ID<br/>- software version<br/>- expiration
+    C->>CB: Request software_statement JWT with AS issuer
+    Note over CB: Generate JWT with claims:<br/>- client metadata<br/>- software ID<br/>- software version<br/>- expiration<br/>- AS issuer URL
     CB-->>C: Signed software_statement JWT
 
     Note over C,A: Dynamic Registration
     C->>A: POST /register<br/>software_statement + jwks_uri
     A->>CB: GET /mcp/jwks.json
     CB-->>A: JWKS document
-    Note over A: 1. Validate software_statement<br/>2. Verify JWT signature using JWKS<br/>3. Check issuer trust<br/>4. Validate claims & expiry
+    Note over A: 1. Validate software_statement<br/>2. Verify JWT signature using JWKS<br/>3. Check issuer trust<br/>4. Validate claims & expiry<br/>5. Verify AS issuer claim matches
     A-->>C: Client credentials
 ```
