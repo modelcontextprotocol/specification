@@ -213,6 +213,30 @@ body:has(#enable-section-numbers) {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.quick-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.quick-links a {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.quick-links a:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.quick-links .separator {
+  color: #d1d5db;
+}
+
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -473,7 +497,7 @@ body:has(#enable-section-numbers) {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
   text-align: center;
 }
