@@ -6,20 +6,27 @@ title: Resuming
 
 <Info>**Protocol Revision**: draft</Info>
 
-The Model Context Protocol (MCP) supports a mechanism for servers to communicate
-to clients that a call is resumable, allowing the server to provide robust support
-for long-running operations, large result sets, and eventually consistent operations.
+The Model Context Protocol (MCP) supports a mechanism for servers to
+communicate to clients that a call is resumable, allowing the server to provide
+robust support for long-running operations, large result sets, and eventually
+consistent operations.
 
-This technique is essential to load-balancing, fairness, and isolation guarantees
-within highly distributed serving environments to distribute load related to large
-or long-running operations among many tasks and is also tolerant of client-side
-disconnection.
+This technique is essential to load-balancing, fairness, and isolation
+guarantees within highly distributed serving environments to distribute load
+related to large or long-running operations among many tasks and is also
+tolerant of client-side disconnection as a side-effect.
 
 ## Resume Token Flow
 
-When a server wants to communicate to a client that a call may be resumed, it includes
-a `nextResumeToken` in the result metadata. If the caller chooses to resume the call
-it provides this value in the `resumeToken` metadata of the original request.
+When a tool supports resuming, it specifies an optional string-typed
+`resumeToken` parameter. The MCP server, if the call may be continued
+beyond the initial response, will reply with a `nextResumeToken` in the
+result payload.
+
+If the caller chooses to resume the call it provides this value in the
+`resumeToken` of the original request. An agent may choose not to continue the
+call and servers should communicate an expected time-to-live for the resumable
+operation.
 
 The caller initiates a new long-running operation as usual:
 
@@ -44,16 +51,15 @@ transport and streaming agnostic.
   "jsonrpc": "2.0",
   "id": 1,
   "result": {
-    ...
-    "_meta": {
-      "nextResumeToken": "adef50"
-    }
+    ...,
+    "nextResumeToken": "adef50"
   },
 }
 ```
 
 The opaque `nextResumeToken` communicates to the caller that the request may
-be resumed by providing the `resumeToken` in the request params metadata.
+be resumed by providing the `resumeToken` in the request params on a future
+call.
 
 ```json
 {
@@ -63,9 +69,7 @@ be resumed by providing the `resumeToken` in the request params metadata.
   "params": {
     "param_str": "value",
     "param_num": 2,
-    "_meta": {
-      "resumeToken": "adef50"
-    }
+    "resumeToken": "adef50"
   }
 }
 ```
@@ -93,13 +97,13 @@ sequenceDiagram
 - **SHOULD** ensure that resume tokens are stable.
 - **MUST** ensure tokens do not expose internal or sensitive information.
 - **MUST** omit the nextResumeToken if the operation errors.
-- **MUST** validate the parameters of a resumed request.
+- **MUST** validate call parameters of a resumed request.
 - **MAY** communicate tool execution duration hints in tool metadata
 
 2. Clients:
 
 - **SHOULD** treat an absent `nextResumeToken` as the completion of the operation.
-- **MUST** only mutate the metadata for the resume token on a resumed request.
+- **MUST** only mutate the `resumeToken` field of a resumed request.
 - **MUST** treat resume tokens from completed requests as expired.
 
 3. Clients **MUST** treat resume tokens as opaque tokens:
