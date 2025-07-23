@@ -1,57 +1,58 @@
 ---
 title: SDKs
-description: Official SDKs for the Model Context Protocol
+description: Official SDKs for building with the Model Context Protocol
 ---
 
-The Model Context Protocol provides official SDKs for multiple programming languages, making it easy to build MCP servers and clients in your preferred language. Each SDK is actively maintained and follows consistent design patterns across languages.
+The Model Context Protocol provides official SDKs in multiple programming languages, enabling developers to build MCP servers and clients using their preferred technology stack. Each SDK is actively maintained by leading technology companies and follows consistent design patterns to ensure a familiar experience across languages.
 
-## Available SDKs
+## Choosing an SDK
 
-### TypeScript SDK
+All MCP SDKs provide the same core functionality for building servers and clients. Choose the SDK that best fits your existing technology stack and team expertise. Each SDK includes:
 
-The official TypeScript SDK for building MCP servers and clients in JavaScript and TypeScript environments.
+- **Complete protocol implementation** for both server and client development
+- **Type-safe interfaces** that leverage each language's type system
+- **Built-in transport support** for stdio and SSE communication
+- **Comprehensive documentation** with examples and best practices
+- **Active maintenance** and regular updates from dedicated teams
 
-- **Maintained by**: Anthropic
-- **Package**: [`@modelcontextprotocol/sdk`](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
-- **Repository**: [modelcontextprotocol/typescript-sdk](https://github.com/modelcontextprotocol/typescript-sdk)
-- **Requirements**: Node.js v18.x or higher
+## Official SDKs
 
-### Python SDK
+<CardGroup cols={3}>
+  <Card title="TypeScript" icon="square-js" href="https://github.com/modelcontextprotocol/typescript-sdk" />
+  <Card title="Python" icon="python" href="https://github.com/modelcontextprotocol/python-sdk" />
+  <Card title="Kotlin" icon="square-k" href="https://github.com/modelcontextprotocol/kotlin-sdk" />
+  <Card title="Swift" icon="swift" href="https://github.com/modelcontextprotocol/swift-sdk" />
+  <Card title="Java" icon="java" href="https://github.com/modelcontextprotocol/java-sdk" />
+  <Card title="C#" icon="square-c" href="https://github.com/modelcontextprotocol/csharp-sdk" />
+  <Card title="Ruby" icon="gem" href="https://github.com/modelcontextprotocol/ruby-sdk" />
+</CardGroup>
 
-The official Python SDK for building MCP servers and clients in Python.
+## Getting Started
 
-- **Maintained by**: Anthropic
-- **Package**: [`mcp`](https://pypi.org/project/mcp/)
-- **Repository**: [modelcontextprotocol/python-sdk](https://github.com/modelcontextprotocol/python-sdk)
+Each SDK provides similar functionality but follows the idioms and best practices of its language. All SDKs support:
 
-### Java SDK
+- Creating MCP servers that expose tools, resources, and prompts
+- Building MCP clients that can connect to any MCP server
+- Local and Remote transport protocols
+- Full protocol compliance with type safety
 
-The official Java SDK for building MCP servers and clients in Java.
+Visit the SDK page for your chosen language to find installation instructions, documentation, and examples.
 
-- **Maintained by**: Spring AI
-- **Package**: [`io.modelcontextprotocol.sdk:mcp`](https://mvnrepository.com/artifact/io.modelcontextprotocol.sdk/mcp)
-- **Repository**: [modelcontextprotocol/java-sdk](https://github.com/modelcontextprotocol/java-sdk)
+## Next Steps
 
-### Kotlin SDK
+Ready to start building with MCP? Choose your path:
 
-The official Kotlin SDK supporting multiple platforms including JVM, WebAssembly, and iOS.
-
-- **Maintained by**: JetBrains
-- **Package**: [`io.modelcontextprotocol:kotlin-sdk`](https://mvnrepository.com/artifact/io.modelcontextprotocol/kotlin-sdk)
-- **Repository**: [modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk)
-
-### C# SDK
-
-The official C# SDK for building MCP servers and clients in .NET environments.
-
-- **Maintained by**: Microsoft
-- **Package**: [`ModelContextProtocol`](https://www.nuget.org/packages/ModelContextProtocol)
-- **Repository**: [modelcontextprotocol/csharp-sdk](https://github.com/modelcontextprotocol/csharp-sdk)
-
-### Ruby SDK
-
-The official Ruby SDK for building MCP servers and clients in Ruby.
-
-- **Maintained by**: Shopify
-- **Package**: [`mcp`](https://rubygems.org/gems/mcp)
-- **Repository**: [modelcontextprotocol/ruby-sdk](https://github.com/modelcontextprotocol/ruby-sdk)
+<CardGroup cols={2}>
+  <Card title="Build a Server" icon="server" href="/quickstart/server">
+    Learn how to create your first MCP server
+  </Card>
+  <Card title="Build a Client" icon="computer" href="/quickstart/client">
+    Create applications that connect to MCP servers
+  </Card>
+  <Card title="Explore Examples" icon="code" href="/servers">
+    Browse pre-built servers for inspiration
+  </Card>
+  <Card title="Understand the Architecture" icon="book" href="/concepts/architecture">
+    Dive deeper into how MCP works
+  </Card>
+</CardGroup>
