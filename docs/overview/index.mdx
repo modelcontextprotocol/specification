@@ -1,6 +1,6 @@
 ---
 title: Model Context Protocol
-description: The open protocol for connecting AI assistants to the systems where data lives
+description: The open protocol that connects AI applications to the systems where context lives
 mode: "custom"
 ---
 
@@ -14,55 +14,154 @@ mode: "custom"
       />
     </div>
 
-    <p className="hero-subtitle">
-      The open protocol for seamless integration between AI assistants and the
-      systems where your data lives. Build powerful, context-aware AI
-      applications with ease.
-    </p>
-
-    <div className="video-container">
-      <div className="video-placeholder">
-        <div className="play-button">
-          <div className="play-icon"></div>
+    <div className="intro-video-section">
+      <div className="intro-content">
+        <h2 className="intro-title">Give your AI applications access to your world</h2>
+        <p className="intro-description">
+          AI-powered tools are powerful, but they're often limited to the information you manually provide. MCP changes this by enabling AI applications to securely access the data and tools you already use.
+        </p>
+        <p className="intro-description">
+          Whether it's reading files from your computer, searching through your company's knowledge base, or executing code in your development environment, MCP provides a secure, standardized way to give AI systems the context they need to truly assist you.
+        </p>
+      </div>
+      <div className="intro-video">
+        <div className="video-placeholder">
+          <div className="play-button">
+            <div className="play-icon"></div>
+          </div>
         </div>
       </div>
     </div>
 
     <div className="cta-buttons">
-      <a href="/docs" className="cta-primary">
+      <a href="/quickstart/user" className="cta-primary">
         Get Started
       </a>
-      <a href="/docs/tutorials" className="cta-secondary">
-        View Tutorials
+      <a href="/servers" className="cta-secondary">
+        Browse Servers
       </a>
+    </div>
+
+
+
+
+    <div className="how-section">
+      <h2 className="section-title">How it works</h2>
+      <div className="steps-grid">
+        <div className="step-card">
+          <div className="step-number">1</div>
+          <h3>Install an MCP server</h3>
+          <p>Choose from pre-built servers for popular tools like GitHub, Google Drive, or Slack. Or build your own for custom integrations.</p>
+        </div>
+        <div className="step-card">
+          <div className="step-number">2</div>
+          <h3>Connect your AI application</h3>
+          <p>Configure your AI application (like Claude Desktop, Continue, or Cline) to connect to the MCP server. The application can now see available tools and resources.</p>
+        </div>
+        <div className="step-card">
+          <div className="step-number">3</div>
+          <h3>Work with context</h3>
+          <p>Your AI-powered application can now access real data, execute actions, and provide more helpful responses based on your actual context.</p>
+        </div>
+      </div>
     </div>
 
     <div className="features-grid">
       <div className="feature-card">
-        <span className="feature-icon">🔌</span>
-        <h3 className="feature-title">Universal Connectivity</h3>
+        <span className="feature-icon">🎯</span>
+        <h3 className="feature-title">Simple Protocol</h3>
         <p className="feature-description">
-          Connect AI assistants to any data source or system with a standardized
-          protocol that just works.
+          Built on JSON-RPC 2.0. If you can build a REST API, you can build an MCP server. No complex abstractions to learn.
+        </p>
+      </div>
+
+      <div className="feature-card">
+        <span className="feature-icon">🔧</span>
+        <h3 className="feature-title">Any Language</h3>
+        <p className="feature-description">
+          Official SDKs for Python, TypeScript, Go, and 6 other languages. Or implement the simple protocol directly.
+        </p>
+      </div>
+
+      <div className="feature-card">
+        <span className="feature-icon">🚀</span>
+        <h3 className="feature-title">Production Ready</h3>
+        <p className="feature-description">
+          Battle-tested by millions of Claude Desktop users. Built for reliability with robust error handling and retry logic.
+        </p>
+      </div>
+
+      <div className="feature-card">
+        <span className="feature-icon">🔒</span>
+        <h3 className="feature-title">Secure by Default</h3>
+        <p className="feature-description">
+          Every action requires user consent. Support for OAuth, API keys, and custom authentication methods.
+        </p>
+      </div>
+
+      <div className="feature-card">
+        <span className="feature-icon">🌐</span>
+        <h3 className="feature-title">Open Standard</h3>
+        <p className="feature-description">
+          No vendor lock-in. Connect any AI to any data source. Join a growing ecosystem of tools and integrations.
         </p>
       </div>
 
       <div className="feature-card">
         <span className="feature-icon">⚡</span>
-        <h3 className="feature-title">Lightning Fast</h3>
+        <h3 className="feature-title">Lightweight</h3>
         <p className="feature-description">
-          Built for performance with efficient transport mechanisms and
-          optimized data exchange patterns.
+          Minimal overhead with efficient binary protocols. Run locally or deploy globally with standard HTTP transports.
         </p>
       </div>
+    </div>
 
-      <div className="feature-card">
-        <span className="feature-icon">🛡️</span>
-        <h3 className="feature-title">Secure by Design</h3>
-        <p className="feature-description">
-          Enterprise-grade security with built-in authentication, authorization,
-          and data protection.
-        </p>
+
+    <div className="ecosystem-section">
+      <h2 className="section-title">Join a growing ecosystem</h2>
+      <div className="stats-container">
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-number">9</div>
+            <div className="stat-label">Official SDKs</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-number">30+</div>
+            <div className="stat-label">Pre-built Servers</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-number">15+</div>
+            <div className="stat-label">Compatible Clients</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-number">1M+</div>
+            <div className="stat-label">Active Users</div>
+          </div>
+        </div>
+      </div>
+      <p className="ecosystem-description">
+        Major platforms like Claude Desktop, Continue, Cline, and others already support MCP. Companies are building MCP servers to expose their services to AI systems. Join the community shaping the future of AI integration.
+      </p>
+    </div>
+
+    <div className="final-cta">
+      <h2 className="section-title">Get started today</h2>
+      <div className="cta-cards">
+        <a href="/quickstart/user" className="cta-card">
+          <span className="cta-icon">▶️</span>
+          <h3>Quick Start</h3>
+          <p>Connect Claude Desktop to your first MCP server in under 5 minutes</p>
+        </a>
+        <a href="/servers" className="cta-card">
+          <span className="cta-icon">🔍</span>
+          <h3>Browse Servers</h3>
+          <p>Explore 30+ pre-built servers for popular tools and services</p>
+        </a>
+        <a href="/quickstart/server" className="cta-card">
+          <span className="cta-icon">🔨</span>
+          <h3>Build Your Own</h3>
+          <p>Create a custom MCP server for your specific needs</p>
+        </a>
       </div>
     </div>
 
