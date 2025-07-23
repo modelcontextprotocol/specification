@@ -8,7 +8,10 @@ Model Context Protocol (MCP) servers extend AI applications' capabilities by pro
 This guide demonstrates how to connect to local MCP servers using Claude Desktop as an example, one of the [many clients that support MCP](/clients). While we focus on Claude Desktop's implementation, the concepts apply broadly to other MCP-compatible clients. By the end of this tutorial, Claude will be able to interact with files on your computer, create new documents, organize folders, and search through your file system—all with your explicit permission for each action.
 
 <Frame>
-  <img src="/images/quickstart-filesystem.png" alt="Claude Desktop with filesystem integration showing file management capabilities" />
+  <img
+    src="/images/quickstart-filesystem.png"
+    alt="Claude Desktop with filesystem integration showing file management capabilities"
+  />
 </Frame>
 
 ## Prerequisites
@@ -53,10 +56,15 @@ Start by accessing the Claude Desktop settings. Click on the Claude menu in your
 On macOS, this appears in the top menu bar:
 
 <Frame style={{ textAlign: "center" }}>
-  <img src="/images/quickstart-menu.png" width="400" alt="Claude Desktop menu showing Settings option" />
+  <img
+    src="/images/quickstart-menu.png"
+    width="400"
+    alt="Claude Desktop menu showing Settings option"
+  />
 </Frame>
 
 This opens the Claude Desktop configuration window, which is separate from your Claude account settings.
+
 </Step>
 
 <Step title="Access Developer Settings">
@@ -65,14 +73,17 @@ In the Settings window, navigate to the "Developer" tab in the left sidebar. Thi
 Click the "Edit Config" button to open the configuration file:
 
 <Frame>
-  <img src="/images/quickstart-developer.png" alt="Developer settings showing Edit Config button" />
+  <img
+    src="/images/quickstart-developer.png"
+    alt="Developer settings showing Edit Config button"
+  />
 </Frame>
 
 This action creates a new configuration file if one doesn't exist, or opens your existing configuration. The file is located at:
 
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-</Step>
+  </Step>
 
 <Step title="Configure the Filesystem Server">
 Replace the contents of the configuration file with the following JSON structure. This configuration tells Claude Desktop to start the Filesystem Server with access to specific directories:
@@ -123,12 +134,13 @@ Replace `username` with your actual computer username. The paths listed in the `
 - `"-y"`: Automatically confirms the installation of the server package
 - `"@modelcontextprotocol/server-filesystem"`: The package name of the Filesystem Server
 - The remaining arguments: Directories the server is allowed to access
-</Tip>
+  </Tip>
 
 <Warning>
 **Security Consideration**
 
 Only grant access to directories you're comfortable with Claude reading and modifying. The server runs with your user account permissions, so it can perform any file operations you can perform manually.
+
 </Warning>
 </Step>
 
@@ -138,16 +150,24 @@ After saving the configuration file, completely quit Claude Desktop and restart 
 Upon successful restart, you'll see an MCP server indicator <img src="/images/claude-desktop-mcp-slider.svg" style={{display: 'inline', margin: 0, height: '1.3em'}} /> in the bottom-right corner of the conversation input box:
 
 <Frame>
-  <img src="/images/quickstart-slider.png" alt="Claude Desktop interface showing MCP server indicator" />
+  <img
+    src="/images/quickstart-slider.png"
+    alt="Claude Desktop interface showing MCP server indicator"
+  />
 </Frame>
 
 Click on this indicator to view the available tools provided by the Filesystem Server:
 
 <Frame style={{ textAlign: "center" }}>
-  <img src="/images/quickstart-tools.png" width="400" alt="Available filesystem tools in Claude Desktop" />
+  <img
+    src="/images/quickstart-tools.png"
+    width="400"
+    alt="Available filesystem tools in Claude Desktop"
+  />
 </Frame>
 
 If the server indicator doesn't appear, refer to the [Troubleshooting](#troubleshooting) section for debugging steps.
+
 </Step>
 </Steps>
 
@@ -166,7 +186,11 @@ With the Filesystem Server connected, Claude can now interact with your file sys
 Before executing any file system operation, Claude will request your approval. This ensures you maintain control over all actions:
 
 <Frame style={{ textAlign: "center" }}>
-  <img src="/images/quickstart-approve.png" width="500" alt="Claude requesting approval to perform a file operation" />
+  <img
+    src="/images/quickstart-approve.png"
+    width="500"
+    alt="Claude requesting approval to perform a file operation"
+  />
 </Frame>
 
 Review each request carefully before approving. You can always deny a request if you're not comfortable with the proposed action.
@@ -276,15 +300,26 @@ Now that you've successfully connected Claude Desktop to a local MCP server, exp
 
 <CardGroup cols={2}>
   <Card title="Explore other servers" icon="grid" href="/servers">
-    Browse our collection of official and community-created MCP servers for additional capabilities
+    Browse our collection of official and community-created MCP servers for
+    additional capabilities
   </Card>
   <Card title="Build your own server" icon="code" href="/quickstart/server">
-    Create custom MCP servers tailored to your specific workflows and integrations
+    Create custom MCP servers tailored to your specific workflows and
+    integrations
   </Card>
-  <Card title="Connect to remote servers" icon="cloud" href="/docs/tutorials/use-remote-mcp-server">
-    Learn how to connect Claude to remote MCP servers for cloud-based tools and services
+  <Card
+    title="Connect to remote servers"
+    icon="cloud"
+    href="/docs/tutorials/use-remote-mcp-server"
+  >
+    Learn how to connect Claude to remote MCP servers for cloud-based tools and
+    services
   </Card>
-  <Card title="Understand the protocol" icon="book" href="/concepts/architecture">
+  <Card
+    title="Understand the protocol"
+    icon="book"
+    href="/concepts/architecture"
+  >
     Dive deeper into how MCP works and its architecture
   </Card>
 </CardGroup>
