@@ -39,21 +39,26 @@ mode: "custom"
 
     <div className="how-section">
       <h2 className="section-title">How it works</h2>
-      <div className="steps-grid">
-        <div className="step-card">
-          <div className="step-number">1</div>
-          <h3>Choose MCP servers</h3>
-          <p>Pick from pre-built servers for popular tools like GitHub, Google Drive, or Slack. Combine multiple servers for complete workflows, or build your own for custom integrations.</p>
+      <div className="steps-container">
+        <div className="step-item">
+          <div className="step-content">
+            <h3><span className="step-number">1</span> Choose MCP servers</h3>
+            <p>Pick from pre-built servers for popular tools like GitHub, Google Drive, or Slack. Combine multiple servers for complete workflows, or build your own for custom integrations.</p>
+          </div>
         </div>
-        <div className="step-card">
-          <div className="step-number">2</div>
-          <h3>Connect your AI application</h3>
-          <p>Configure your AI application (like Claude, VS Code, or Cloude Code) to connect to your MCP servers. The application can now see available tools and resources from all connected servers.</p>
+        <div className="step-connector"></div>
+        <div className="step-item">
+          <div className="step-content">
+            <h3><span className="step-number">2</span> Connect your AI application</h3>
+            <p>Configure your AI application (like Claude, VS Code, or Claude Code) to connect to your MCP servers. The application can now see available tools and resources from all connected servers.</p>
+          </div>
         </div>
-        <div className="step-card">
-          <div className="step-number">3</div>
-          <h3>Work with context</h3>
-          <p>Your AI-powered application can now access real data, execute actions, and provide more helpful responses based on your actual context.</p>
+        <div className="step-connector"></div>
+        <div className="step-item">
+          <div className="step-content">
+            <h3><span className="step-number">3</span> Work with context</h3>
+            <p>Your AI-powered application can now access real data, execute actions, and provide more helpful responses based on your actual context.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -77,7 +82,7 @@ mode: "custom"
         </div>
       </div>
       <p className="ecosystem-description">
-        Major platforms already support MCP. Companies are building MCP servers to expose their services to AI systems. Join the community shaping the future of AI integration.
+        Join the community shaping the future of AI integration.
       </p>
     </div>
 

@@ -428,53 +428,71 @@ body:has(#enable-section-numbers) {
   margin: 0 auto;
 }
 
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin: 2rem 0;
+.steps-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+  margin: 3rem 0;
+  flex-wrap: wrap;
 }
 
-.step-card {
-  padding: 2rem;
-  position: relative;
-  text-align: center;
+.step-item {
+  flex: 1;
+  min-width: 250px;
+  max-width: 350px;
+  text-align: left;
+}
+
+.step-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .step-number {
-  width: 60px;
-  height: 60px;
+  width: 36px;
+  height: 36px;
   background: #111827;
   color: white;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 700;
-  margin: 0 auto 1.5rem;
+  flex-shrink: 0;
 }
 
-.step-card h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #111827;
-}
-
-.step-card p {
+.step-content p {
   color: #6b7280;
   line-height: 1.6;
+  font-size: 0.95rem;
+  margin-left: calc(36px + 0.75rem);
 }
 
-.security-note {
-  text-align: center;
-  color: #4b5563;
-  font-style: italic;
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #f3f4f6;
-  border-radius: 8px;
+.step-connector {
+  width: 40px;
+  height: 2px;
+  background: #e5e7eb;
+  position: relative;
+  margin-top: 18px;
+}
+
+.step-connector::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid #e5e7eb;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
 }
 
 /* Video text */
@@ -483,6 +501,9 @@ body:has(#enable-section-numbers) {
 .ecosystem-section {
   padding: 4rem 2rem;
   background: #f9fafb;
+  border-radius: 24px;
+  margin: 4rem 0;
+  width: 60%;
 }
 
 .stats-container {
@@ -490,8 +511,8 @@ body:has(#enable-section-numbers) {
   border-radius: 24px;
   padding: 3rem;
   box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  max-width: 1000px;
-  margin: 0 auto 3rem;
+  width: 100%;
+  margin: 0 0 3rem;
   border: 1px solid #e5e7eb;
 }
 
@@ -618,5 +639,18 @@ body:has(#enable-section-numbers) {
   }
   .stat-number {
     font-size: 2.5rem;
+  }
+  .steps-container {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .step-connector {
+    display: none;
+  }
+  .step-item {
+    max-width: 100%;
+  }
+  .step-content p {
+    margin-left: 0;
   }
 }
