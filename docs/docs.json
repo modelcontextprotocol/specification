@@ -275,8 +275,8 @@
               {
                 "group": "Using MCP",
                 "pages": [
-                  "docs/tutorials/use-local-mcp-server",
-                  "docs/tutorials/use-remote-mcp-server"
+                  "docs/tutorials/use-remote-mcp-server",
+                  "docs/tutorials/use-local-mcp-server"
                 ]
               },
               {
