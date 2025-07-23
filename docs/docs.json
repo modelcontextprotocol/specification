@@ -136,6 +136,7 @@
             "group": "SDKs",
             "pages": [
               "links/sdks/csharp",
+              "links/sdks/go",
               "links/sdks/java",
               "links/sdks/kotlin",
               "links/sdks/python",
