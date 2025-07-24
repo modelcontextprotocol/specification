@@ -1,6 +1,6 @@
 # MCP Maintainers
 
-This document lists the current maintainers of the Model Context Protocol project.
+This document lists current maintainers and working groups in the Model Context Protocol project.
 
 **Last updated:** July 23, 2025
 
