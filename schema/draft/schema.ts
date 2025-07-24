@@ -1520,8 +1520,8 @@ export interface ServerDiscoveryMetadata {
   transports?: {
     /** Streamable HTTP transport configuration (preferred over SSE) */
     http?: {
-      /** Base URL for streamable HTTP transport */
-      baseUrl: string;
+      /** HTTP endpoint URL for streamable HTTP transport */
+      endpoint: string;
     };
     /** Server-Sent Events transport configuration */
     sse?: {

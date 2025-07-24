@@ -2185,13 +2185,13 @@
                         "http": {
                             "description": "Streamable HTTP transport configuration (preferred over SSE)",
                             "properties": {
-                                "baseUrl": {
-                                    "description": "Base URL for streamable HTTP transport",
+                                "endpoint": {
+                                    "description": "HTTP endpoint URL for streamable HTTP transport",
                                     "type": "string"
                                 }
                             },
                             "required": [
-                                "baseUrl"
+                                "endpoint"
                             ],
                             "type": "object"
                         },

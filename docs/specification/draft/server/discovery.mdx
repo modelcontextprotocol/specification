@@ -42,7 +42,7 @@ interface McpMetadata {
   endpoint?: string; // Primary web endpoint (required when transports.http or transports.sse is provided)
   transports?: {
     http?: {
-      baseUrl: string; // Base URL for streamable HTTP transport (preferred)
+      endpoint: string; // HTTP endpoint for streamable HTTP transport (preferred)
     };
     sse?: {
       endpoint: string; // SSE endpoint URL
@@ -77,7 +77,7 @@ interface McpMetadata {
   "endpoint": "https://api.example.com/mcp",
   "transports": {
     "http": {
-      "baseUrl": "https://api.example.com/mcp"
+      "endpoint": "https://api.example.com/mcp"
     },
     "sse": {
       "endpoint": "https://api.example.com/mcp/sse"
