@@ -3,13 +3,13 @@ title: Client Concepts
 description: "Understanding MCP client concepts"
 ---
 
-MCP clients are protocol clients instantiated by host applications to communicate with particular MCP servers. The host application (like Claude.ai or an IDE) manages the overall user experience and coordinates multiple clients, each client handles the direct communication with servers through the Model Context Protocol.
+MCP clients are instantiated by host applications to communicate with particular MCP servers. The host application, like Claude.ai or an IDE, manages the overall user experience and coordinates multiple clients. Each client handles one direct communication with one server.
 
 Understanding the distinction is important: the _host_ is the application users interact with, while _clients_ are the protocol-level components that enable server connections.
 
 ## Core Client Features
 
-In addition to making use of server features via _client-initiated requests_, clients may optionally provide several key features that enhance server capabilities, via _server-initiated requests_:
+In addition to making use of context provided by servers, clients may provide several features to servers. These client features allow server authors to build richer interactions. For example, clients can allow MCP servers to request additional information from the user via elicitations. Clients can offer the following capabilities:
 
 ### Sampling
 
@@ -17,7 +17,7 @@ Sampling allows servers to request language model completions through the client
 
 #### Overview
 
-Sampling is a standardized mechanism that enables servers to implement complex behaviors by requesting AI model interactions through the client. Rather than servers needing their own API keys or model integrations, they can request completions in a controlled manner. The host application handles model selection based on the server's preferences (cost, speed, or intelligence priorities), manages user approval flows, and ensures security boundaries. This nested capability means sampling requests occur within the context of other operations—like a tool analyzing data or a resource being processed—always with human oversight.
+Sampling enables servers to perform AI-dependent tasks without directly integrating with or paying for AI models. Instead, servers can request that the client—which already has AI model access—handle these tasks on their behalf. This approach puts the client in complete control of user permissions and security measures. Because sampling requests occur within the context of other operations—like a tool analyzing data—and are processed as separate model calls, they maintain clear boundaries between different contexts, allowing for more efficient use of the context window.
 
 **Sampling flow:**
 
