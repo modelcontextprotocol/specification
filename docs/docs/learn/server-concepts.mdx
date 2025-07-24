@@ -23,7 +23,7 @@ Tools enable AI models to perform actions through server-implemented functions. 
 
 #### Overview
 
-Tools are characterized by their schema-defined interfaces, which use JSON Schema for validation. Each tool performs a single operation with clearly defined inputs and outputs. Most importantly, tool execution requires explicit user approval, ensuring users maintain control over actions taken on their behalf.
+Tools are schema-defined interfaces that LLMs can invoke. MCP uses JSON Schema for validation. Each tool performs a single operation with clearly defined inputs and outputs. Most importantly, tool execution requires explicit user approval, ensuring users maintain control over actions taken by a model.
 
 **Protocol operations:**
 
@@ -52,7 +52,7 @@ Tools are characterized by their schema-defined interfaces, which use JSON Schem
 
 #### Example: Taking Action
 
-Tools transform AI from an advisor into an assistant that can help execute tasks. In a travel planning scenario, the AI application might orchestrate several actions to book a vacation.
+Tools enable AI applications to perform actions on behalf of users. In a travel planning scenario, the AI application might use several tools to help book a vacation.
 
 First, it searches for flights using
 
@@ -84,9 +84,11 @@ For trust and safety, applications often enforce manual approval to give humans 
 
 ### Resources - Context Data
 
-Resources provide structured access to information that an AI model can read and use as context for its operations.
+Resources provide structured access to information that the host application can retrieve and provide to AI models as context.
 
 #### Overview
+
+Resources expose data from files, APIs, databases, or any other source that an AI needs to understand context. Applications can access this information directly and decide how to use it - whether that's selecting relevant portions, searching with embeddings, or passing it all to the model.
 
 Resources use URI-based identification, with each resource having a unique URI such as `file:///path/to/document.md`. They declare MIME types for appropriate content handling and support two discovery patterns: **direct resources** with fixed URIs, and **resource templates** with parameterized URIs.
 
@@ -109,7 +111,7 @@ Continuing with the travel planning example, resources provide the AI applicatio
 - **Travel documents** (`file:///Documents/Travel/passport.pdf`) - For important information
 - **Previous itineraries** (`trips://history/barcelona-2023`) - User selects which past trip style to follow
 
-Instead of manually copying this information, resources let the AI application provide the information to the model, with user permission. During planning, the AI can check calendar availability, look up weather patterns, and reference travel preferences—all through structured resource access.
+Instead of manually copying this information, resources provide raw information to AI applications. The application can choose how to best handle the data. Applications might choose to select a subset of data, using embeddings or keyword search, or pass the raw data from a resource directly to a model. In our example, during the planning phase, the AI application can pass the calendar data, weather data and travel preferences, so that the model can check availability, look up weather patterns, and reference travel preferences.
 
 **Resource Template Examples:**
 
@@ -142,17 +144,17 @@ Dynamic resources support parameter completion. For example:
 
 #### User Interaction Model
 
-Resources are application-driven, giving hosts flexibility in how they present available context to users. Common interaction patterns include tree or list views for browsing resources in familiar folder-like structures, search and filter interfaces for finding specific resources, automatic context inclusion based on heuristics or AI selection, and manual selection interfaces.
+Resources are application-driven, giving hosts flexibility in how they retrieve, process, and present available context. Common interaction patterns include tree or list views for browsing resources in familiar folder-like structures, search and filter interfaces for finding specific resources, automatic context inclusion based on heuristics or AI selection, and manual selection interfaces.
 
 Applications are free to implement resource discovery through any interface pattern that suits their needs. The protocol doesn't mandate specific UI patterns, allowing for resource pickers with preview capabilities, smart suggestions based on current conversation context, bulk selection for including multiple resources, or integration with existing file browsers and data explorers.
 
 ### Prompts - Interaction Templates
 
-Prompts provide reusable templates that guide interactions. They combine instructions with parameter definitions to standardize common workflows.
+Prompts provide reusable templates. They allow MCP server authors to provide parameterized prompts for a domain, or showcase how to best use the MCP server.
 
 #### Overview
 
-Prompts are structured templates that define expected inputs and interaction patterns. They are user-controlled, requiring explicit invocation rather than automatic triggering. Prompts can be context-aware, referencing available resources and tools to create comprehensive workflows.
+Prompts are structured templates that define expected inputs and interaction patterns. They are user-controlled, requiring explicit invocation rather than automatic triggering. Prompts can be context-aware, referencing available resources and tools to create comprehensive workflows. Like resources, prompts support parameter completion to help users discover valid argument values.
 
 **Protocol operations:**
 
