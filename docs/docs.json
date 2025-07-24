@@ -11,6 +11,10 @@
   "navbar": {
     "links": [
       {
+        "label": "Blog",
+        "href": "https://blog.modelcontextprotocol.io"
+      },
+      {
         "label": "GitHub",
         "href": "https://github.com/modelcontextprotocol"
       }
@@ -109,7 +113,8 @@
                     ]
                   }
                 ]
-              }
+              },
+              "specification/2025-06-18/schema"
             ]
           },
           {
@@ -131,6 +136,7 @@
             "group": "SDKs",
             "pages": [
               "links/sdks/csharp",
+              "links/sdks/go",
               "links/sdks/java",
               "links/sdks/kotlin",
               "links/sdks/python",
@@ -252,6 +258,7 @@
             "group": "SDKs",
             "pages": [
               "links/sdks/csharp",
+              "links/sdks/go",
               "links/sdks/java",
               "links/sdks/kotlin",
               "links/sdks/python",
@@ -372,6 +379,7 @@
             "group": "SDKs",
             "pages": [
               "links/sdks/csharp",
+              "links/sdks/go",
               "links/sdks/java",
               "links/sdks/kotlin",
               "links/sdks/python",
@@ -496,6 +504,7 @@
             "group": "SDKs",
             "pages": [
               "links/sdks/csharp",
+              "links/sdks/go",
               "links/sdks/java",
               "links/sdks/kotlin",
               "links/sdks/python",
