@@ -444,7 +444,13 @@
                 "pages": [
                   "specification/draft/basic/index",
                   "specification/draft/basic/lifecycle",
-                  "specification/draft/basic/transports",
+                  {
+                    "group": "Transports",
+                    "pages": [
+                      "specification/draft/basic/transports",
+                      "specification/draft/basic/transports/postmessage"
+                    ]
+                  },
                   "specification/draft/basic/authorization",
                   "specification/draft/basic/security_best_practices",
                   {

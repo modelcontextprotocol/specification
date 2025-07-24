@@ -49,7 +49,7 @@ There are three types of JSON-RPC messages used:
 
 ## Built-in Transport Types
 
-MCP currently defines two standard transport mechanisms:
+MCP currently defines three standard transport mechanisms:
 
 ### Standard Input/Output (stdio)
 
@@ -305,6 +305,49 @@ When implementing Streamable HTTP transport, follow these security best practice
 5. **Validate Session IDs**: Ensure session IDs are cryptographically secure and properly validated
 
 Without these protections, attackers could use DNS rebinding to interact with local MCP servers from remote websites.
+
+### postMessage
+
+The postMessage transport enables secure, zero-installation MCP connections between browser contexts (iframes and popup windows). This transport leverages the browser's native `window.postMessage` API to provide browser-sandboxed execution without requiring software installation.
+
+Use postMessage when:
+
+- Building browser-based integrations with embedded MCP servers
+- Requiring zero-installation server distribution (servers as URLs)
+- Processing sensitive data locally without remote server transmission
+- Needing rich interactive UIs with full graphical interfaces
+- Implementing privacy-preserving edge computing
+- Creating inverted architectures where applications provide tools to embedded AI clients
+
+#### Key Features
+
+**Two Architectural Patterns**:
+
+- **Standard Architecture**: Outer Frame (MCP Client) embeds Inner Frame (MCP Server)
+- **Inverted Architecture**: Outer Frame (MCP Server) provides tools to Inner Frame (MCP Client)
+
+**Two-Phase Protocol**:
+
+1. **Setup Phase** (`#setup` URL hash): One-time configuration for authentication, API keys, preferences
+2. **Transport Phase** (no hash): Ongoing MCP communication with configured servers
+
+**Security Model**: Uses browser's origin-based security with strict `event.origin` validation and origin pinning after handshake.
+
+#### Security Considerations
+
+The postMessage transport uses origin-based security validation. Servers should maintain an explicit allowlist of permitted origins and use restrictive iframe sandbox attributes.
+
+#### Use Cases
+
+**Privacy-First Processing**: Healthcare and financial applications can process sensitive data entirely in-browser without remote transmission.
+
+**Interactive Visualization Tools**: Servers provide rich UI tools like diagram editors, data visualization dashboards, and real-time collaboration interfaces.
+
+**Zero Installation**: Servers distributed as URLs eliminate installation barriers and security risks, enabling instant access to MCP capabilities.
+
+**Edge Computing**: Computation occurs in the user's browser context, reducing latency and server costs while improving data locality.
+
+For detailed implementation guidance including message flows, version negotiation, and session management, see the [postMessage transport specification](/specification/draft/basic/transports/postmessage).
 
 ### Server-Sent Events (SSE) - Deprecated
 

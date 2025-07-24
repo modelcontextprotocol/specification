@@ -8,11 +8,12 @@ title: Transports
 
 MCP uses JSON-RPC to encode messages. JSON-RPC messages **MUST** be UTF-8 encoded.
 
-The protocol currently defines two standard transport mechanisms for client-server
+The protocol currently defines three standard transport mechanisms for client-server
 communication:
 
 1. [stdio](#stdio), communication over standard in and standard out
 2. [Streamable HTTP](#streamable-http)
+3. [postMessage](#postmessage), secure browser-based communication using window.postMessage
 
 Clients **SHOULD** support stdio whenever possible.
 
@@ -286,6 +287,48 @@ protocol version 2024-11-05) as follows:
      - When the `endpoint` event arrives, the client can assume this is a server running
        the old HTTP+SSE transport, and should use that transport for all subsequent
        communication.
+
+## postMessage
+
+The **postMessage transport** enables secure, zero-installation MCP connections between browser contexts (iframes and popup windows). This transport leverages the browser's native `window.postMessage` API to provide browser-sandboxed execution without requiring software installation.
+
+### Key Features
+
+- **Zero Installation**: Servers are distributed as URLs, eliminating installation barriers and security risks
+- **Privacy-First Processing**: Sensitive data can be processed locally in the browser without remote server transmission
+- **Rich Interactive UIs**: Servers can provide full graphical interfaces, not just text-based responses
+- **Two Architectural Patterns**: Supports both traditional client-server patterns and inverted architectures where applications provide tools to embedded AI clients
+
+### Security Warning
+
+<Warning>
+
+When implementing postMessage transport, servers **MUST** validate message origins using `event.origin` from the browser's MessageEvent API.
+
+</Warning>
+
+### Two-Phase Protocol
+
+The transport uses a two-phase connection model:
+
+1. **Setup Phase** (`#setup` URL hash): One-time configuration when adding a server (authentication, API keys, preferences)
+2. **Transport Phase** (no hash): Ongoing MCP communication with configured servers
+
+Both phases implement secure handshake protocols with origin validation and session management.
+
+### Supported Architectures
+
+The transport supports two powerful patterns:
+
+**Standard Architecture**: Outer Frame acts as MCP Client, Inner Frame acts as MCP Server
+
+- Use case: Chat application embeds third-party diagram tool
+
+**Inverted Architecture**: Outer Frame acts as MCP Server, Inner Frame acts as MCP Client
+
+- Use case: User dashboard provides contextual data as tools to embedded AI copilot
+
+For detailed specification including message flows, security protocols, version negotiation, and implementation guidance, see the [postMessage transport specification](./transports/postmessage).
 
 ## Custom Transports
 
