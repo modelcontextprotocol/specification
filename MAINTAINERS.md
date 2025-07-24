@@ -2,150 +2,144 @@
 
 This document lists the current maintainers of the Model Context Protocol project.
 
-> [!IMPORTANT]
-> Contact information listed here is provided on a voluntary basis with the intent to only be used for Model Context Protocol-related communications.
-
-**Last updated:** July 18, 2025
+**Last updated:** July 23, 2025
 
 ## Lead Maintainers
 
-| Name                                                     | Contact |
-| -------------------------------------------------------- | ------- |
-| [Justin Spahr-Summers](https://github.com/jspahrsummers) | TBD     |
-| [David Soria Parra](https://github.com/dsp-ant)          | TBD     |
+| Name                                                     |
+| -------------------------------------------------------- |
+| [Justin Spahr-Summers](https://github.com/jspahrsummers) |
+| [David Soria Parra](https://github.com/dsp-ant)          |
 
 ## Core Maintainers
 
-| Name                                           | Contact                                  |
-| ---------------------------------------------- | ---------------------------------------- |
-| [Inna Harper](https://github.com/ihrpr)        | TBD                                      |
-| [Basil Hosmer](https://github.com/bhosmer-ant) | TBD                                      |
-| [Paul Carleton](https://github.com/pcarleton)  | TBD                                      |
-| [Nick Cooper](https://github.com/nicknotfun)   | TBD                                      |
-| Nick Aldridge                                  | TBD                                      |
-| Che Liu                                        | TBD                                      |
-| [Den Delimarsky](https://github.com/localden)  | `mcp@den.dev`</br>`hilocalden` @ Discord |
+| Name                                           |
+| ---------------------------------------------- |
+| [Inna Harper](https://github.com/ihrpr)        |
+| [Basil Hosmer](https://github.com/bhosmer-ant) |
+| [Paul Carleton](https://github.com/pcarleton)  |
+| [Nick Cooper](https://github.com/nicknotfun)   |
+| Nick Aldridge                                  |
+| Che Liu                                        |
+| [Den Delimarsky](https://github.com/localden)  |
 
 ## SDK Maintainers
 
 ### Java SDK
 
-| Name                                              | Contact |
-| ------------------------------------------------- | ------- |
-| [Christian Tzolov](https://github.com/tzolov)     | TBD     |
-| [Dariusz Jędrzejczyk](https://github.com/chemicL) | TBD     |
+| Name                                              |
+| ------------------------------------------------- |
+| [Christian Tzolov](https://github.com/tzolov)     |
+| [Dariusz Jędrzejczyk](https://github.com/chemicL) |
 
 ### Ruby SDK
 
-| Name                                               | Contact |
-| -------------------------------------------------- | ------- |
-| [Topher Bullock](https://github.com/topherbullock) | TBD     |
-| [Koichi Ito](https://github.com/koic)              | TBD     |
-| [Ateş Göral](https://github.com/atesgoral)         | TBD     |
+| Name                                               |
+| -------------------------------------------------- |
+| [Topher Bullock](https://github.com/topherbullock) |
+| [Koichi Ito](https://github.com/koic)              |
+| [Ateş Göral](https://github.com/atesgoral)         |
 
 ### Swift SDK
 
-| Name                                           | Contact |
-| ---------------------------------------------- | ------- |
-| [Mattt Zmuda](https://github.com/mattt)        | TBD     |
-| [Carl Peaslee](https://github.com/carlpeaslee) | TBD     |
+| Name                                           |
+| ---------------------------------------------- |
+| [Mattt Zmuda](https://github.com/mattt)        |
+| [Carl Peaslee](https://github.com/carlpeaslee) |
 
 ### Go SDK
 
-| Name                                       | Contact |
-| ------------------------------------------ | ------- |
-| [Rob Findley](https://github.com/findleyr) | TBD     |
+| Name                                       |
+| ------------------------------------------ |
+| [Rob Findley](https://github.com/findleyr) |
 
 ### C# SDK
 
-| Name                                           | Contact |
-| ---------------------------------------------- | ------- |
-| [Stephan Halter](https://github.com/halter73)  | TBD     |
-| [Mike Kistler](https://github.com/mikekistler) | TBD     |
+| Name                                           |
+| ---------------------------------------------- |
+| [Stephan Halter](https://github.com/halter73)  |
+| [Mike Kistler](https://github.com/mikekistler) |
 
 ### Kotlin SDK
 
-| Name                                         | Contact |
-| -------------------------------------------- | ------- |
-| [Leonid Stashevsky](https://github.com/e5l)  | TBD     |
-| [Sergey Ignatov](https://github.com/ignatov) | TBD     |
+| Name                                         |
+| -------------------------------------------- |
+| [Leonid Stashevsky](https://github.com/e5l)  |
+| [Sergey Ignatov](https://github.com/ignatov) |
 
 ### Python SDK
 
-| Name                                             | Contact |
-| ------------------------------------------------ | ------- |
-| [Inna Harper](https://github.com/ihrpr)          | TBD     |
-| [Jerome Swannack](https://github.com/jerome3o)   | TBD     |
-| [Samuel Colvin](https://github.com/samuelcolvin) | TBD     |
-| [Marcelo Trylesinski](https://github.com/Kludex) | TBD     |
+| Name                                             |
+| ------------------------------------------------ |
+| [Inna Harper](https://github.com/ihrpr)          |
+| [Jerome Swannack](https://github.com/jerome3o)   |
+| [Samuel Colvin](https://github.com/samuelcolvin) |
+| [Marcelo Trylesinski](https://github.com/Kludex) |
 
 ### TypeScript SDK
 
-| Name                                                   | Contact |
-| ------------------------------------------------------ | ------- |
-| [Inna Harper](https://github.com/ihrpr)                | TBD     |
-| [Felix Weinberger](https://github.com/felixweinberger) | TBD     |
-| [Olivier Chafik](https://github.com/ochafik)           | TBD     |
+| Name                                                   |
+| ------------------------------------------------------ |
+| [Inna Harper](https://github.com/ihrpr)                |
+| [Felix Weinberger](https://github.com/felixweinberger) |
+| [Olivier Chafik](https://github.com/ochafik)           |
 
 ### Rust SDK
 
-| Name                                           | Contact |
-| ---------------------------------------------- | ------- |
-| [Alex Hancock](https://github.com/alexhancock) | TBD     |
+| Name                                           |
+| ---------------------------------------------- |
+| [Alex Hancock](https://github.com/alexhancock) |
 
 ## Project Maintainers
 
-| Name                                                 | Project                         | Contact |
-| ---------------------------------------------------- | ------------------------------- | ------- |
-| [Glen Maddern](https://github.com/geelen)            | use-mcp                         | TBD     |
-| [Ola Hungerford](https://github.com/olaservo)        | Inspector<br/>Reference Servers | TBD     |
-| [Cliff Hall](https://github.com/cliffhall)           | Inspector<br/>Reference Servers | TBD     |
-| [Toby Padilla](https://github.com/toby)              | Registry                        | TBD     |
-| [Tadas Antanavicius](https://github.com/tadasant)    | Registry<br/>Reference Servers  | TBD     |
-| [Shaun Smith](https://github.com/evalstate)          | Reference Servers               | TBD     |
-| [Jonathan Hefner](https://github.com/jonathanhefner) | Reference Servers               | TBD     |
+| Name                                                 | Project                         |
+| ---------------------------------------------------- | ------------------------------- |
+| [Glen Maddern](https://github.com/geelen)            | use-mcp                         |
+| [Ola Hungerford](https://github.com/olaservo)        | Inspector<br/>Reference Servers |
+| [Cliff Hall](https://github.com/cliffhall)           | Inspector<br/>Reference Servers |
+| [Toby Padilla](https://github.com/toby)              | Registry                        |
+| [Tadas Antanavicius](https://github.com/tadasant)    | Registry<br/>Reference Servers  |
+| [Shaun Smith](https://github.com/evalstate)          | Reference Servers               |
+| [Jonathan Hefner](https://github.com/jonathanhefner) | Reference Servers               |
 
 ## Community Moderators
 
-| Name                                                 | Contact |
-| ---------------------------------------------------- | ------- |
-| [Ola Hungerford](https://github.com/olaservo)        | TBD     |
-| [Cliff Hall](https://github.com/cliffhall)           | TBD     |
-| [Shaun Smith](https://github.com/evalstate)          | TBD     |
-| [Jonathan Hefner](https://github.com/jonathanhefner) | TBD     |
-| [Tadas Antanavicius](https://github.com/tadasant)    | TBD     |
+| Name                                                 |
+| ---------------------------------------------------- |
+| [Ola Hungerford](https://github.com/olaservo)        |
+| [Cliff Hall](https://github.com/cliffhall)           |
+| [Shaun Smith](https://github.com/evalstate)          |
+| [Jonathan Hefner](https://github.com/jonathanhefner) |
+| [Tadas Antanavicius](https://github.com/tadasant)    |
 
 ## Working Groups
 
 ### Security Working Group
 
-| Name                                          | Contact                                  |
-| --------------------------------------------- | ---------------------------------------- |
-| [Den Delimarsky](https://github.com/dend)     | `mcp@den.dev`</br>`hilocalden` @ Discord |
-| [Paul Carleton](https://github.com/pcarleton) | TBD                                      |
-| [Jenn Newton](https://github.com/jenn-newton) | TBD                                      |
+| Name                                          |
+| --------------------------------------------- |
+| [Den Delimarsky](https://github.com/dend)     |
+| [Paul Carleton](https://github.com/pcarleton) |
+| [Jenn Newton](https://github.com/jenn-newton) |
 
 ### Authorization Working Group
 
-| Name                                          | Contact |
-| --------------------------------------------- | ------- |
-| [Aaron Parecki](https://github.com/aaronpk)   | TBD     |
-| [Darin McAdams](https://github.com/D-McAdams) | TBD     |
-| [Paul Carleton](https://github.com/pcarleton) | TBD     |
+| Name                                          |
+| --------------------------------------------- |
+| [Aaron Parecki](https://github.com/aaronpk)   |
+| [Darin McAdams](https://github.com/D-McAdams) |
+| [Paul Carleton](https://github.com/pcarleton) |
 
 ### Client Implementor Working Group
 
-| Name                                                | Contact |
-| --------------------------------------------------- | ------- |
-| [Michael Feldstein](https://github.com/msfeldstein) | TBD     |
-| [Harald Kirschner](https://github.com/digitarald)   | TBD     |
-| [Connor Peet](https://github.com/connor4312)        | TBD     |
+| Name                                                |
+| --------------------------------------------------- |
+| [Michael Feldstein](https://github.com/msfeldstein) |
+| [Harald Kirschner](https://github.com/digitarald)   |
+| [Connor Peet](https://github.com/connor4312)        |
 
 ## About This Document
 
 This document is updated by the MCP maintainers and reflects the current
 governance structure. For more information about MCP governance, see our
 [governance documentation](https://modelcontextprotocol.io/community/governance).
-
-Contact information will be updated as maintainers provide their preferred
-contact methods (GitHub handles, Discord usernames, email addresses, etc.).
