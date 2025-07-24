@@ -19,7 +19,7 @@ sequenceDiagram
     participant Client
     participant Server
 
-    User->>Client: Provides URL (e.g., notion.so/doc/123)
+    User->>Client: Provides URL (e.g., example.com/doc/123)
     Client->>Server: GET /.well-known/mcp.json
     Server-->>Client: Returns server metadata
     Client->>User: "MCP server available. Connect?"
@@ -33,10 +33,10 @@ The well-known file provides essential information about the server:
 
 ```json
 {
-  "name": "Notion",
-  "description": "Connect your Notion workspace to search, update, and trigger workflows across tools.",
-  "icon": "https://www.notion.so/images/notion-logo-block-main.svg",
-  "endpoint": "https://mcp.notion.com/mcp"
+  "name": "Example",
+  "description": "Access and manage Example.com resources through MCP",
+  "icon": "https://example.com/logo.png",
+  "endpoint": "https://api.example.com/mcp"
 }
 ```
 

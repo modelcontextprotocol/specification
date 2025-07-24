@@ -35,10 +35,10 @@ The well-known metadata file **MUST** be a valid JSON object with the following 
 
 ```typescript
 interface McpMetadata {
-  name: string;        // Human-readable server name
+  name: string; // Human-readable server name
   description: string; // Brief description of server functionality
-  icon: string;        // URL to server icon/logo image
-  endpoint: string;    // Web endpoint URL for connecting to the MCP server
+  icon: string; // URL to server icon/logo image
+  endpoint: string; // Web endpoint URL for connecting to the MCP server
 
   // Capabilities hint
   capabilities?: {
@@ -53,10 +53,10 @@ interface McpMetadata {
 
 ```json
 {
-  "name": "Notion",
-  "description": "Connect your Notion workspace to search, update, and trigger workflows across tools.",
-  "icon": "https://www.notion.so/images/notion-logo-block-main.svg",
-  "endpoint": "https://mcp.notion.com/mcp"
+  "name": "Example",
+  "description": "Access and manage Example.com resources through MCP",
+  "icon": "https://example.com/logo.png",
+  "endpoint": "https://api.example.com/mcp"
 }
 ```
 
@@ -86,10 +86,10 @@ sequenceDiagram
     participant Client
     participant Domain
 
-    User->>Client: Provides URL https://notion.so/doc/123
-    Client->>Domain: GET https://notion.so/.well-known/mcp.json
+    User->>Client: Provides URL https://example.com/doc/123
+    Client->>Domain: GET https://example.com/.well-known/mcp.json
     Domain-->>Client: Returns server metadata
-    Client->>User: "Notion has an MCP server available. Connect?"
+    Client->>User: "Example.com has an MCP server available. Connect?"
     User->>Client: Approves
     Client->>Client: Connect to endpoint from metadata
 ```
