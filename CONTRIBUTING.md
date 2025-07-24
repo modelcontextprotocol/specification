@@ -50,11 +50,11 @@ npm run check:schema:ts
 npm run generate:schema
 ```
 
-4. Validate documentation changes and apply formatting:
+4. Apply formatting and validate documentation changes:
 
 ```bash
-npm run check:docs
 npm run format
+npm run check:docs
 ```
 
 5. Preview documentation locally (optional):

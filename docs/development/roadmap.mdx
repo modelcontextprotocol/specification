@@ -43,11 +43,17 @@ To foster a robust developer ecosystem, we plan to invest in:
 
 These tools will help developers confidently implement MCP while ensuring consistent behavior across the ecosystem.
 
-## Registry
+## Registry and Discovery
 
 For MCP to reach its full potential, we need streamlined ways to distribute and discover MCP servers.
 
-We plan to develop an [**MCP Registry**](https://github.com/orgs/modelcontextprotocol/discussions/159) that will enable centralized server discovery and metadata. This registry will primarily function as an API layer that third-party marketplaces and discovery services can build upon.
+### Server Discovery (Now Available)
+
+The draft specification now includes support for automatic server discovery via well-known metadata files. Servers can host a `/.well-known/mcp.json` file to advertise their capabilities, enabling clients to automatically detect and connect to MCP servers when users provide URLs from those domains. See the [Server Discovery specification](/specification/draft/server/discovery) for implementation details.
+
+### Future Registry Plans
+
+We plan to develop an [**MCP Registry**](https://github.com/orgs/modelcontextprotocol/discussions/159) that will complement the well-known discovery mechanism by providing centralized server discovery and metadata. This registry will primarily function as an API layer that third-party marketplaces and discovery services can build upon.
 
 ## Multimodality
 

@@ -2135,6 +2135,116 @@
             },
             "type": "object"
         },
+        "ServerDiscoveryMetadata": {
+            "description": "Server metadata for automatic discovery via well-known URLs.\nThis metadata is hosted at /.well-known/mcp.json on server domains.",
+            "properties": {
+                "apiCompatibility": {
+                    "description": "Supported protocol versions",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "capabilities": {
+                    "description": "Hints about server capabilities",
+                    "properties": {
+                        "prompts": {
+                            "description": "Server provides prompts",
+                            "type": "boolean"
+                        },
+                        "resources": {
+                            "description": "Server provides resources",
+                            "type": "boolean"
+                        },
+                        "tools": {
+                            "description": "Server provides tools",
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "endpoint": {
+                    "description": "Primary web endpoint URL (required when transports.http or transports.sse is provided)",
+                    "type": "string"
+                },
+                "logo": {
+                    "description": "URL to the server's logo image",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Human-readable name of the MCP server",
+                    "type": "string"
+                },
+                "tagline": {
+                    "description": "Brief description of the server's functionality",
+                    "type": "string"
+                },
+                "transports": {
+                    "description": "Transport configuration for connecting to the server",
+                    "properties": {
+                        "http": {
+                            "description": "Streamable HTTP transport configuration (preferred over SSE)",
+                            "properties": {
+                                "baseUrl": {
+                                    "description": "Base URL for streamable HTTP transport",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "baseUrl"
+                            ],
+                            "type": "object"
+                        },
+                        "sse": {
+                            "description": "Server-Sent Events transport configuration",
+                            "properties": {
+                                "endpoint": {
+                                    "description": "SSE endpoint URL",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "endpoint"
+                            ],
+                            "type": "object"
+                        },
+                        "stdio": {
+                            "description": "Stdio transport configuration",
+                            "properties": {
+                                "args": {
+                                    "description": "Optional command arguments",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "command": {
+                                    "description": "Command to execute for stdio transport",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "command"
+                            ],
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "vendor": {
+                    "description": "Vendor or organization name",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Server version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
         "ServerNotification": {
             "anyOf": [
                 {

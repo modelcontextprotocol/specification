@@ -410,6 +410,7 @@
                 "group": "Concepts",
                 "pages": [
                   "docs/concepts/architecture",
+                  "docs/concepts/discovery",
                   "docs/concepts/resources",
                   "docs/concepts/prompts",
                   "docs/concepts/tools",
@@ -469,6 +470,7 @@
                 "group": "Server Features",
                 "pages": [
                   "specification/draft/server/index",
+                  "specification/draft/server/discovery",
                   "specification/draft/server/prompts",
                   "specification/draft/server/resources",
                   "specification/draft/server/tools",

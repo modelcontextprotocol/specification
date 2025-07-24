@@ -1,0 +1,74 @@
+---
+title: Server Discovery
+description: Automatic discovery of MCP servers via well-known metadata
+---
+
+## Overview
+
+Server discovery enables MCP clients to automatically detect and connect to MCP servers when users provide URLs from domains that host MCP-enabled services. This mechanism streamlines the user experience by eliminating manual configuration.
+
+## How it works
+
+MCP servers can advertise their presence by hosting a metadata file at `/.well-known/mcp.json` on their domain. When a client encounters a URL, it can check for this file to determine if an MCP server is available.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Client
+    participant Server
+
+    User->>Client: Provides URL (e.g., notion.so/doc/123)
+    Client->>Server: GET /.well-known/mcp.json
+    Server-->>Client: Returns server metadata
+    Client->>User: "MCP server available. Connect?"
+    User->>Client: Approves connection
+    Client->>Server: Establishes MCP connection
+```
+
+## Metadata format
+
+The well-known file provides essential information about the server:
+
+```json
+{
+  "name": "Example MCP Server",
+  "logo": "https://example.com/logo.png",
+  "tagline": "Access Example resources through MCP",
+  "endpoint": "https://api.example.com/mcp",
+  "transports": {
+    "http": {
+      "baseUrl": "https://api.example.com/mcp"
+    }
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": false
+  }
+}
+```
+
+## Benefits
+
+**For users:**
+
+- Seamless discovery of MCP-enabled services
+- No manual configuration required
+- Clear information about server capabilities
+
+**For developers:**
+
+- Standard way to advertise MCP capabilities
+- Simplified onboarding for users
+- Consistent discovery across all MCP clients
+
+## Security considerations
+
+- Well-known files must be served over HTTPS
+- Clients should validate metadata before connecting
+- Users should explicitly approve new connections
+- Servers should implement appropriate CORS policies
+
+## Implementation
+
+For detailed implementation guidelines, see the [Server Discovery specification](/specification/draft/server/discovery).
