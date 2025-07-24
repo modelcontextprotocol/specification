@@ -1510,47 +1510,12 @@ export type ClientResult =
 export interface ServerDiscoveryMetadata {
   /** Human-readable name of the MCP server */
   name: string;
-  /** URL to the server's logo image */
-  logo?: string;
   /** Brief description of the server's functionality */
-  tagline?: string;
-  /** Primary web endpoint URL (required when transports.http or transports.sse is provided) */
-  endpoint?: string;
-  /** Transport configuration for connecting to the server */
-  transports?: {
-    /** Streamable HTTP transport configuration (preferred over SSE) */
-    http?: {
-      /** HTTP endpoint URL for streamable HTTP transport */
-      endpoint: string;
-    };
-    /** Server-Sent Events transport configuration */
-    sse?: {
-      /** SSE endpoint URL */
-      endpoint: string;
-    };
-    /** Stdio transport configuration */
-    stdio?: {
-      /** Command to execute for stdio transport */
-      command: string;
-      /** Optional command arguments */
-      args?: string[];
-    };
-  };
-  /** Hints about server capabilities */
-  capabilities?: {
-    /** Server provides tools */
-    tools?: boolean;
-    /** Server provides resources */
-    resources?: boolean;
-    /** Server provides prompts */
-    prompts?: boolean;
-  };
-  /** Server version */
-  version?: string;
-  /** Vendor or organization name */
-  vendor?: string;
-  /** Supported protocol versions */
-  apiCompatibility?: string[];
+  description: string;
+  /** URL to the server's icon/logo image */
+  icon: string;
+  /** Web endpoint URL for connecting to the MCP server */
+  endpoint: string;
 }
 
 /* Server messages */

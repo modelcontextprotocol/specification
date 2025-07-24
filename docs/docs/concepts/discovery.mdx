@@ -9,7 +9,9 @@ Server discovery enables MCP clients to automatically detect and connect to MCP 
 
 ## How it works
 
-MCP servers can advertise their presence by hosting a metadata file at `/.well-known/mcp.json` on their domain. When a client encounters a URL, it can check for this file to determine if an MCP server is available.
+MCP servers can advertise their presence by hosting a metadata file at `/.well-known/mcp.json` on their domain. When a client encounters a URL, it can check for this file to determine if an MCP server with an HTTP endpoint is available.
+
+This discovery mechanism is specifically designed for web-based MCP servers and does not apply to stdio-based servers.
 
 ```mermaid
 sequenceDiagram
@@ -31,20 +33,10 @@ The well-known file provides essential information about the server:
 
 ```json
 {
-  "name": "Example MCP Server",
-  "logo": "https://example.com/logo.png",
-  "tagline": "Access Example resources through MCP",
-  "endpoint": "https://api.example.com/mcp",
-  "transports": {
-    "http": {
-      "endpoint": "https://api.example.com/mcp"
-    }
-  },
-  "capabilities": {
-    "tools": true,
-    "resources": true,
-    "prompts": false
-  }
+  "name": "Notion",
+  "description": "Connect your Notion workspace to search, update, and trigger workflows across tools.",
+  "icon": "https://www.notion.so/images/notion-logo-block-main.svg",
+  "endpoint": "https://mcp.notion.com/mcp"
 }
 ```
 

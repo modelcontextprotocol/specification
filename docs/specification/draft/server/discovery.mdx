@@ -8,7 +8,9 @@ title: Server Discovery
 
 ## Overview
 
-MCP supports automatic server discovery through well-known metadata files hosted on domain origins. This mechanism enables clients to discover and connect to MCP servers when users provide URLs from those domains.
+MCP supports automatic server discovery for web-based servers through well-known metadata files hosted on domain origins. This mechanism enables clients to discover and connect to MCP servers with HTTP endpoints when users provide URLs from those domains.
+
+This discovery mechanism is specifically designed for MCP servers that expose web endpoints (HTTP/HTTPS) and does not apply to stdio-based servers.
 
 ## Discovery Mechanism
 
@@ -33,25 +35,10 @@ The well-known metadata file **MUST** be a valid JSON object with the following 
 
 ```typescript
 interface McpMetadata {
-  // Required fields
-  name: string; // Human-readable server name
-  logo?: string; // URL to server logo image
-  tagline?: string; // Brief description of server functionality
-
-  // Connection information
-  endpoint?: string; // Primary web endpoint (required when transports.http or transports.sse is provided)
-  transports?: {
-    http?: {
-      endpoint: string; // HTTP endpoint for streamable HTTP transport (preferred)
-    };
-    sse?: {
-      endpoint: string; // SSE endpoint URL
-    };
-    stdio?: {
-      command: string; // Command to execute for stdio transport
-      args?: string[]; // Optional command arguments
-    };
-  };
+  name: string;        // Human-readable server name
+  description: string; // Brief description of server functionality
+  icon: string;        // URL to server icon/logo image
+  endpoint: string;    // Web endpoint URL for connecting to the MCP server
 
   // Capabilities hint
   capabilities?: {
@@ -59,11 +46,6 @@ interface McpMetadata {
     resources?: boolean; // Server provides resources
     prompts?: boolean; // Server provides prompts
   };
-
-  // Additional metadata
-  version?: string; // Server version
-  vendor?: string; // Vendor/organization name
-  apiCompatibility?: string[]; // Supported protocol versions
 }
 ```
 
@@ -71,26 +53,10 @@ interface McpMetadata {
 
 ```json
 {
-  "name": "Example MCP Server",
-  "logo": "https://example.com/logo.png",
-  "tagline": "Access and manage Example.com resources through MCP",
-  "endpoint": "https://api.example.com/mcp",
-  "transports": {
-    "http": {
-      "endpoint": "https://api.example.com/mcp"
-    },
-    "sse": {
-      "endpoint": "https://api.example.com/mcp/sse"
-    }
-  },
-  "capabilities": {
-    "tools": true,
-    "resources": true,
-    "prompts": false
-  },
-  "version": "1.0.0",
-  "vendor": "Example Corp",
-  "apiCompatibility": ["2024-11-05", "draft"]
+  "name": "Notion",
+  "description": "Connect your Notion workspace to search, update, and trigger workflows across tools.",
+  "icon": "https://www.notion.so/images/notion-logo-block-main.svg",
+  "endpoint": "https://mcp.notion.com/mcp"
 }
 ```
 
@@ -120,19 +86,13 @@ sequenceDiagram
     participant Client
     participant Domain
 
-    User->>Client: Provides URL https://example.com/doc/123
-    Client->>Domain: GET https://example.com/.well-known/mcp.json
+    User->>Client: Provides URL https://notion.so/doc/123
+    Client->>Domain: GET https://notion.so/.well-known/mcp.json
     Domain-->>Client: Returns server metadata
-    Client->>User: "Example.com has MCP server available. Use it?"
+    Client->>User: "Notion has an MCP server available. Connect?"
     User->>Client: Approves
-    Client->>Client: Establish MCP connection using metadata
+    Client->>Client: Connect to endpoint from metadata
 ```
-
-### Endpoint Field
-
-The top-level `endpoint` field **MUST** be provided when the server supports web-based transports (`transports.http` or `transports.sse`). This field provides a canonical URL for connecting to the server.
-
-When both `transports.http` and `transports.sse` are available, clients **SHOULD** prefer streamable HTTP transport as it uses a single unified endpoint and is the standard approach for MCP servers.
 
 ## Security Considerations
 
