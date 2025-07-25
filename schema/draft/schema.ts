@@ -1502,6 +1502,22 @@ export type ClientResult =
   | ListRootsResult
   | ElicitResult;
 
+/* Server discovery */
+/**
+ * Server metadata for automatic discovery via well-known URLs.
+ * This metadata is hosted at /.well-known/mcp.json on server domains.
+ */
+export interface ServerDiscoveryMetadata {
+  /** Human-readable name of the MCP server */
+  name: string;
+  /** Brief description of the server's functionality */
+  description: string;
+  /** URL to the server's icon/logo image */
+  icon: string;
+  /** Web endpoint URL for connecting to the MCP server */
+  endpoint: string;
+}
+
 /* Server messages */
 /** @internal */
 export type ServerRequest =

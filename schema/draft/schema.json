@@ -2135,6 +2135,34 @@
             },
             "type": "object"
         },
+        "ServerDiscoveryMetadata": {
+            "description": "Server metadata for automatic discovery via well-known URLs.\nThis metadata is hosted at /.well-known/mcp.json on server domains.",
+            "properties": {
+                "description": {
+                    "description": "Brief description of the server's functionality",
+                    "type": "string"
+                },
+                "endpoint": {
+                    "description": "Web endpoint URL for connecting to the MCP server",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "URL to the server's icon/logo image",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Human-readable name of the MCP server",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description",
+                "endpoint",
+                "icon",
+                "name"
+            ],
+            "type": "object"
+        },
         "ServerNotification": {
             "anyOf": [
                 {

@@ -156,6 +156,10 @@ MCP has these main types of messages:
 
 ## Connection lifecycle
 
+### 0. Discovery (optional)
+
+Before establishing a connection, clients may use [server discovery](/docs/concepts/discovery) to automatically detect available MCP servers when users provide URLs from MCP-enabled domains.
+
 ### 1. Initialization
 
 ```mermaid
