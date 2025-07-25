@@ -279,9 +279,10 @@
         "pages": [
           "community/governance",
           "community/sep-guidelines",
-          "community/communication",
           "development/roadmap",
-          "development/contributing"
+          "development/contributing",
+          "clients",
+          "examples"         
         ]
       }
     ]
