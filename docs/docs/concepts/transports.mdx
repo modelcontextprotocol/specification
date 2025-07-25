@@ -194,31 +194,26 @@ app.listen(3000);
 ```
 
 ```python Python
-from mcp.server.http import HttpServerTransport
+from mcp.server.lowlevel import Server
+from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from starlette.applications import Starlette
-from starlette.routing import Route
+from starlette.routing import Mount
+from starlette.types import Receive, Scope, Send
 
 app = Server("example-server")
 
-async def handle_mcp(scope, receive, send):
-    if scope["method"] == "POST":
-        # Handle JSON-RPC request
-        response = await app.handle_request(request_body)
+session_manager = StreamableHTTPSessionManager(
+    app=app,
+)
 
-        if needs_streaming:
-            # Return SSE stream
-            await send_sse_response(send, response)
-        else:
-            # Return JSON response
-            await send_json_response(send, response)
-
-    elif scope["method"] == "GET":
-        # Optional: Support server-initiated SSE streams
-        await send_sse_stream(send)
+async def handle_streamable_http(
+    scope: Scope, receive: Receive, send: Send
+) -> None:
+    await session_manager.handle_request(scope, receive, send)
 
 starlette_app = Starlette(
     routes=[
-        Route("/mcp", endpoint=handle_mcp, methods=["POST", "GET"]),
+        Mount(path="/mcp", app=handle_streamable_http,),
     ]
 )
 ```
@@ -245,8 +240,17 @@ await client.connect(transport);
 ```
 
 ```python Python
-async with http_client("http://localhost:8000/mcp") as transport:
-    async with ClientSession(transport[0], transport[1]) as session:
+from mcp import ClientSession
+from mcp.client.streamablehttp_client import streamablehttp_client
+
+
+async with streamablehttp_client("http://localhost:8000/mcp") as (
+    read_stream,
+    write_stream,
+    _,
+):
+    async with ClientSession(read_stream=read_stream, write_stream=write_stream
+    ) as session:
         await session.initialize()
 ```
 
