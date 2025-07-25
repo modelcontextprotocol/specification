@@ -29,19 +29,13 @@
       },
         {
         "tab": "Documentation",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "docs/getting-started/intro",
-              "docs/sdk"
-            ]
-          },
+        "pages": [
+          "docs/getting-started/intro",
+          "docs/sdk",
           {
             "group": "Learn",
             "pages": [
               "docs/learn/architecture",
-              "specification/versioning",
               "docs/learn/server-concepts",
               "docs/learn/client-concepts"
             ]
@@ -71,14 +65,7 @@
               }
             ]
           },
-          {
-            "group": "How-to Guides",
-            "pages": [
-              "docs/how-to-guides/sampling",
-              "docs/how-to-guides/deployment",
-              "docs/how-to-guides/authentication"
-            ]
-          }
+          "specification/versioning"
         ]
       },
       {
