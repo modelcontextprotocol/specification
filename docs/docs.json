@@ -132,7 +132,8 @@
                     ]
                   }
                 ]
-              }
+              },
+              "specification/2025-06-18/schema"
             ]
           },
           {
@@ -181,7 +182,8 @@
                     ]
                   }
                 ]
-              }
+              },
+               "specification/2025-03-26/schema"
             ]
           },
           {
@@ -229,7 +231,8 @@
                     ]
                   }
                 ]
-              }
+              },
+               "specification/2024-11-05/schema"
             ]
           },
           {
@@ -280,7 +283,8 @@
                     ]
                   }
                 ]
-              }
+              },
+              "specification/draft/schema"
             ]
           }
         ]
