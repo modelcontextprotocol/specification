@@ -63,12 +63,7 @@
               "docs/how-to-guides/sampling"
             ]
           },
-          {
-            "group": "Security & Advanced Topics",
-            "pages": [
-              "docs/how-to-guides/authentication"
-            ]
-          }
+          "faqs"
         ]
       },
       {
@@ -286,8 +281,7 @@
           "community/sep-guidelines",
           "community/communication",
           "development/roadmap",
-          "development/contributing",
-          "faqs"
+          "development/contributing"
         ]
       }
     ]
