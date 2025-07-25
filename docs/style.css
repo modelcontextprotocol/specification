@@ -323,38 +323,39 @@ body:has(#enable-section-numbers) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 2rem 6rem;
   width: 100%;
 }
 
-.intro-content {
-  max-width: 900px;
-  text-align: center;
+.intro-content-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
   width: 100%;
 }
 
-.intro-content.with-floating-logo {
+.intro-content {
+  flex: 1;
+  text-align: center;
+}
+
+.intro-content.left-aligned {
+  text-align: left;
+}
+
+.intro-logo {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 3rem;
-  text-align: left;
-  max-width: 1200px;
+  justify-content: center;
 }
 
-.intro-content.with-floating-logo > div {
-  flex: 1;
-}
-
-.floating-logo {
+.intro-logo img {
   width: 300px;
   height: auto;
-  flex-shrink: 0;
-  order: 2;
-  border-radius: 50px;
-  object-fit: cover;
-  filter: invert(1);
+  display: block;
 }
 
 .intro-title {
@@ -449,6 +450,7 @@ body:has(#enable-section-numbers) {
   padding: 4rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .steps-container {
@@ -525,8 +527,8 @@ body:has(#enable-section-numbers) {
   padding: 4rem 2rem;
   background: #f9fafb;
   border-radius: 24px;
-  margin: 4rem 0;
-  width: 60%;
+  margin: 4rem auto;
+  max-width: 1200px;
 }
 
 .stats-container {
@@ -671,5 +673,14 @@ body:has(#enable-section-numbers) {
   }
   .step-content p {
     margin-left: 0;
+  }
+  .intro-content-wrapper {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .intro-logo {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
   }
 }
