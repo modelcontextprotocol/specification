@@ -27,8 +27,9 @@ support exactly the features they need.
 ## Messages
 
 All messages between MCP clients and servers **MUST** follow the
-[JSON-RPC 2.0](https://www.jsonrpc.org/specification) specification. The protocol defines
-these types of messages:
+[JSON-RPC 2.0](https://www.jsonrpc.org/specification) specification, with the exception
+that MCP does not support batch messages, and clients MUST NOT send batch requests.
+The protocol defines these types of messages:
 
 ### Requests
 
