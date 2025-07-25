@@ -320,18 +320,19 @@ body:has(#enable-section-numbers) {
 
 /* Intro video section */
 .intro-video-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
   padding: 4rem 2rem 6rem;
+  width: 100%;
 }
 
 .intro-content {
-  max-width: 600px;
-  text-align: left;
+  max-width: 900px;
+  text-align: center;
+  width: 100%;
 }
 
 .intro-title {
@@ -607,10 +608,6 @@ body:has(#enable-section-numbers) {
   }
   .hero-subtitle {
     font-size: 1.2rem;
-  }
-  .intro-video-section {
-    grid-template-columns: 1fr;
-    gap: 2rem;
   }
   .features-grid {
     grid-template-columns: 1fr;
