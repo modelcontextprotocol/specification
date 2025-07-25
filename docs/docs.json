@@ -24,8 +24,7 @@
     "tabs": [
       {
         "tab": "Overview",
-        "pages": ["overview/index"],
-        "hidden": true
+        "pages": ["overview/index"]
       },
         {
         "tab": "Documentation",
