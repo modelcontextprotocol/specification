@@ -335,6 +335,28 @@ body:has(#enable-section-numbers) {
   width: 100%;
 }
 
+.intro-content.with-floating-logo {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  text-align: left;
+  max-width: 1200px;
+}
+
+.intro-content.with-floating-logo > div {
+  flex: 1;
+}
+
+.floating-logo {
+  width: 300px;
+  height: auto;
+  flex-shrink: 0;
+  order: 2;
+  border-radius: 50px;
+  object-fit: cover;
+  filter: invert(1);
+}
+
 .intro-title {
   font-size: 2.5rem;
   font-weight: 700;
