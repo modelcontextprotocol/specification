@@ -33,39 +33,42 @@
           "docs/getting-started/intro",
           "docs/sdk",
           {
-            "group": "Learn",
+            "group": "Understand Concepts",
             "pages": [
               "docs/learn/architecture",
               "docs/learn/server-concepts",
-              "docs/learn/client-concepts"
+              "docs/learn/client-concepts",
+              "specification/versioning"
             ]
           },
           {
-            "group": "Tutorials",
+            "group": "Use MCP",
             "pages": [
-              {
-                "group": "Using MCP",
-                "pages": [
-                  "docs/tutorials/use-remote-mcp-server",
-                  "quickstart/user"
-                ]
-              },
-              {
-                "group": "Server Development",
-                "pages": [
-                  "quickstart/server",
-                  "legacy/tools/inspector"
-                ]
-              },
-              {
-                "group": "Client Development",
-                "pages": [
-                  "quickstart/client"
-                ]
-              }
+              "docs/tutorials/use-remote-mcp-server",
+              "quickstart/user"
             ]
           },
-          "specification/versioning"
+          {
+            "group": "Build Servers",
+            "pages": [
+              "quickstart/server",
+              "legacy/tools/inspector",
+              "docs/how-to-guides/deployment"
+            ]
+          },
+          {
+            "group": "Build Clients",
+            "pages": [
+              "quickstart/client",
+              "docs/how-to-guides/sampling"
+            ]
+          },
+          {
+            "group": "Security & Advanced Topics",
+            "pages": [
+              "docs/how-to-guides/authentication"
+            ]
+          }
         ]
       },
       {
