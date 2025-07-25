@@ -33,7 +33,7 @@
           "docs/getting-started/intro",
           "docs/sdk",
           {
-            "group": "Understand Concepts",
+            "group": "Concepts",
             "pages": [
               "docs/learn/architecture",
               "docs/learn/server-concepts",
@@ -42,25 +42,28 @@
             ]
           },
           {
-            "group": "Use MCP",
+            "group": "Tutorials",
             "pages": [
-              "docs/tutorials/use-remote-mcp-server",
-              "quickstart/user"
-            ]
-          },
-          {
-            "group": "Build Servers",
-            "pages": [
-              "quickstart/server",
-              "legacy/tools/inspector",
-              "docs/how-to-guides/deployment"
-            ]
-          },
-          {
-            "group": "Build Clients",
-            "pages": [
-              "quickstart/client",
-              "docs/how-to-guides/sampling"
+              {
+                "group": "Using MCP",
+                "pages": [
+                  "docs/tutorials/use-remote-mcp-server",
+                  "quickstart/user"
+                ]
+              },
+              {
+                "group": "Server Development",
+                "pages": [
+                  "quickstart/server",
+                  "legacy/tools/inspector"
+                ]
+              },
+              {
+                "group": "Client Development",
+                "pages": [
+                  "quickstart/client"
+                ]
+              }
             ]
           },
           "faqs"
