@@ -170,7 +170,8 @@ body:has(#schema-reference) {
       scroll-margin-top: 5rem;
     }
 
-    & > .tsd-comment {
+    & > .tsd-comment,
+    & > .tsd-type-declaration {
       margin-left: 1.25rem;
     }
 
